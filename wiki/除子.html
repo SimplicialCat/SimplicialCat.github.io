@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“除子”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="除子"><header><h1><span class="taxon">Wiki. </span>“除子” <a class="slug" href="./除子.html">[除子]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>除子是 “余一维子流形” 概念的推广, 也是交换环中 “因子” 概念的推广.</p>
+<h2>直观</h2>
+<h3>交换代数</h3>
+<p>整环 $A$ 的除子理论涉及构造某个半群的态射 $\varphi\colon A^* \to D_0$, 其中 $D_0$ 是唯一分解半群. 此时 $A$ 中的素因子分解问题 (分解可能不唯一) 即可化为 $D_0$ 中的素因子分解问题. 对于 $a\in A^*$, 其像 $\varphi(a)\in D_0$ 称为<span class="link local"><a href="./主除子.html" title="“主除子” [主除子]">主除子</a></span>, 记作 $(a)$. 对于除子 $\mathfrak{a}\in D_0$, 若 $\mathfrak{a}$ 在 $D_0$ 中整除 $(a)$, 则称除子 $\mathfrak{a}$ 整除 $a$.</p>
+<p>一般的 [Dedekind 整环](Dedekind 整环.md)里都有除子理论. “Dedekind 整环就是模仿代数曲线构造的.” <sup class="footnote-reference" id="除子_Dieudonne85-back"><a href="#除子_Dieudonne85">1</a></sup></p>
+<div class="footnote-definition" id="除子_Dieudonne85">
+  <sup class="footnote-definition-label"><a href="#除子_Dieudonne85-back">1</a></sup>
+<p>Dieudonne, History of Algebraic Geometry, VI</p>
+</div>
+<h3>复几何</h3>
+<p>复流形 $M$ 上的<strong>非奇异除子</strong> (nonsingular divisor) $D$ 是余一维的复子流形, 其对应的线丛 $[D]$ 定义如下. 取开覆盖 $\{U_\lambda\}$ 与 $U_\lambda$ 上的全纯函数 $f_\lambda$, 使得 $f_\lambda$ 在 $U_\lambda$ 上沿 $D$ 一阶消失, $U_\lambda \cap D = \{f_\lambda =0\}$. 定义 $[D]$ 是 $f_{\lambda \mu}=\dfrac{f_\lambda }{f_\mu}$ 为转移函数的<span class="link local"><a href="./全纯线丛.html" title="“全纯线丛” [全纯线丛]">全纯线丛</a></span>.</p>
+<h2>Weil 除子与 Cartier 除子</h2>
+<p>拓扑上, Weil 除子像是同调类 (余 $1$ 维的圈), 而 Cartier 除子像是上同调类.</p>
+<h3>Weil 除子</h3>
+<p>设 $X$ 为 (光滑不可约) 代数簇. $X$ 上的 Weil 除子是余 $1$ 维子簇的 $\mathbb{Z}$-线性组合. Weil 除子的群正是 $(n-1)$-圈 $Z_{n-1}(X)$.</p>
+<p><strong>有效</strong> (effective)  除子是指系数全为正的 Weil 除子.</p>
+<p>余 $1$ 维子簇局部上是一个函数的零点. 因此反过来, 由一个有理函数 (一般地, <strong>线丛的有理截面</strong>) 也可定义一个 Weil 除子 (称为<span class="link local"><a href="./主除子.html" title="“主除子” [主除子]">主除子</a></span>)
+$$
+\operatorname{div}g = (g) := \sum_{V} \operatorname{ord}_V(g)\cdot V.
+$$
+相差一个主除子的关系称为<strong>线性等价</strong> (linear equivalence, 或有理等价). Weil 除子模掉这个等价关系就得到 <strong>Weil 类群</strong> (Weil class group) $\operatorname{WCl}(X)$.</p>
+<p>对于线丛 $L$ 的有理截面 $s$ 和 $M$ 的有理截面 $t$, 其<strong>张量积</strong> $s\otimes t$ 是 $L\otimes M$ 的有理截面, 对应的除子 $\operatorname{div} (s\otimes t) = \operatorname{div}s+\operatorname{div}t$.</p>
+<h3>Cartier 除子</h3>
+<p>Cartier 除子体现了一种 “将定理变成定义” 的思想. 我们定义 Cartier 除子 “就是线丛的有理截面” ; 但要做出一些限制 (截面不能为零截面), 并规定哪些截面给出相同的除子.</p>
+<p><strong>定义</strong>. (“古典” 定义) 复流形 (或代数簇) $X$ 上的 Cartier 除子是如下的资料: 一个开覆盖 $\{U_\alpha\}$, 每个 $U_\alpha$ 上的亚纯函数 (有理函数) $f_\alpha$, 满足在 $U_\alpha\cap U_\beta$ 上 $f_\alpha$ 与 $f_\beta$ 之比没有零点与极点.</p>
+<p><strong>定义</strong>. $X$ 上的 Cartier 除子是 $\mathcal D_X$ 的全局截面. 两个 Cartier 除子有理等价 (rationally equivalent) 是指 $\sigma / \tau \in \Gamma(X,\mathcal Mer(X)^*)$. 其中, $\mathcal Mer(X)^*$ 是 $\mathcal Mer(X)$ 的可逆元.</p>
+<h2>除子与线丛</h2>
+<p>除子和<span class="link local"><a href="./全纯线丛.html" title="“全纯线丛” [全纯线丛]">线丛</a></span>有关. 对于 [Riemann 面](Riemann 面.md) $M$ 上恒不为零的全纯函数层 $\mathcal{O}^*$ 与恒不为零的亚纯函数层 $\mathcal{M}^*$ 有短正合列
+$$
+0\to \mathcal{O}^* \to \mathcal{M}^* \to \mathcal{M}^*/\mathcal{O}^* \to 0,
+$$
+其诱导的长正合列为
+$$
+\underbrace{H^0(M,\mathcal{M}^*)\overset{h}{\to} H^0(M,\mathcal{M}^*/\mathcal{O}^*)}_{\text{除子}} \overset{\delta}{\to} \underbrace{H^1(M,\mathcal{O}^*)}_{\text{线丛}} \to\cdots,
+$$
+映射 $\delta$ 表明如何由除子过渡到<span class="link local"><a href="./线丛.html" title="“线丛” [线丛]">线丛</a></span>, 而映射 $h$ 定义了除子的线性等价关系 (相差一个 $h$ 的像就称为线性等价).</p>
+<p>设 $D$ 为除子, 其对应的<span class="link local"><a href="./线丛.html" title="“线丛” [线丛]">线丛</a></span>由如下转移函数给出:
+$$
+f_{ij}=f_i/f_j\colon U_{ij}\to \mathbb{C}^\times.
+$$
+除子的<strong>和</strong>对应线丛的<strong>张量积</strong>.</p>
+<blockquote>
+<p>为什么只做除子, 不做更高余维数的子簇? 搞清楚推广遇到什么困难, 才有研究好做. — Yau 2023年3月2日于院长讨论班</p>
+</blockquote>
+<p><strong>定义</strong>. 称除子 $D$ 光滑 (nonsingular), 是指存在某种表示 $(U_i,f_i)$, 使得 $f_i\equiv 1$ 或 $f_i$ 可扩展为局部坐标系. (换言之, 当 $f_i=0$ 时 $f_i'\neq 0$.)</p>
+<h3>法丛</h3>
+<p>除子 (余一维子流形) 对应的线丛在其自身上的限制同构于<span class="link local"><a href="./法丛.html" title="“法丛” [法丛]">法丛</a></span>.</p>
+<h2>除子与子概形</h2>
+<p>若 $D$ 是 $X$ 的子概形对应的除子, 则有短正合列
+$$
+0\to \mathcal O(-D) \to \mathcal O_X \to \mathcal O_D\to 0.
+$$
+其中 $\mathcal O(-D)$ 同构于 $D$ 对应的<span class="link local"><a href="./理想层.html" title="“理想层” [理想层]">理想层</a></span>.</p>
+<h2>可逆层</h2>
+<p>设 $X$ 为 $K$ 上的光滑代数簇, $X$ 上的<span class="link local"><a href="./可逆层.html" title="“可逆层” [可逆层]">可逆层</a></span>是指秩为 $1$ 的局部自由 $\mathcal{O}_X$-模. 详见该页面.</p>
+<h2>例</h2>
+<p>复射影空间 $\mathbb P^n(\mathbb{C})$ 上的超平面 $H=\{z^0=0\}$ 可视为除子, 它对应的线丛记为 $\mathcal O(1)$, 称为<span class="link local"><a href="./超平面丛.html" title="“超平面丛” [超平面丛]">超平面丛</a></span> (hyperplane bundle). 对任意整数 $k$, 除子 $kH$ 对应线丛 $\mathcal O(k)$.</p>
+<p>$\mathbb P^n(\mathbb{C})$ 上的<span class="link local"><a href="./重言丛.html" title="“重言丛” [重言丛]">重言丛</a></span> (tautological line bundle) 同构于 $\mathcal O(-1)$.</p>
+<h2>相关概念</h2>
+<p><span class="link local"><a href="./主除子.html" title="“主除子” [主除子]">主除子</a></span></p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Riemann–Roch 定理” <a class="slug" href="./Riemann--Roch 定理.html">[Riemann--Roch 定理]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“全纯线丛” <a class="slug" href="./全纯线丛.html">[全纯线丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“可逆层” <a class="slug" href="./可逆层.html">[可逆层]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“椭圆曲线” <a class="slug" href="./椭圆曲线.html">[椭圆曲线]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“法丛” <a class="slug" href="./法丛.html">[法丛]</a></h1><div class="metadata"><ul><li class="meta-item">余法丛, (余)法丛</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“线丛” <a class="slug" href="./线丛.html">[线丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“重言丛” <a class="slug" href="./重言丛.html">[重言丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“闭子概形” <a class="slug" href="./闭子概形.html">[闭子概形]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈类” <a class="slug" href="./陈类.html">[陈类]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

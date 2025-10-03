@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Atiyah–Singer 指标定理”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Atiyah--Singer 指标定理"><header><h1><span class="taxon">Wiki. </span>“Atiyah–Singer 指标定理” <a class="slug" href="./Atiyah--Singer 指标定理.html">[Atiyah--Singer 指标定理]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<h2>定理陈述</h2>
+<h3>指标</h3>
+<p>一般的指标定理的陈述为: 椭圆<span class="link local"><a href="./微分算子.html" title="“微分算子” [微分算子]">微分算子</a></span>的<span class="link local"><a href="./拓扑指标.html" title="“拓扑指标” [拓扑指标]">拓扑指标</a></span>等于<span class="link local"><a href="./解析指标.html" title="“解析指标” [解析指标]">解析指标</a></span>.</p>
+<p>指标定理在流形上整体地描述微分方程的拓扑.</p>
+<h3>Nicolaescu 讲义中的陈述</h3>
+<p>[[[Nicolaescu] Notes on the Atiyah-Singer Index Theorem.pdf]]
+设 $E$ 为 Dirac 丛, $D$ 为 Dirac 算子, $F^{E/\mathbb S}\in \operatorname{End}_{\mathrm{Cl}(M)}(E)$ 为曲率 (twisting curvature), 定义<span class="link local"><a href="./陈特征.html" title="“陈特征” [陈特征]">陈特征</a></span>
+$$
+\operatorname{ch}^{E/\mathbb S}:= \operatorname{str}^{E/\mathbb S} \exp\left(\frac{i}{2\pi} F^{E/\mathbb S}\right) \in\Omega^\bullet(M),
+$$
+[A-hat 类](A-hat 类.md)
+$$
+\widehat{A}(M)=\det \left(\frac{\frac{i}{4\pi}R}{\sinh (\frac{i}{4\pi}R)}\right)^{1/2},
+$$
+那么 Atiyah–Singer 定理为
+$$
+\operatorname{ind}D=\dim\ker D -\dim\ker D^* =\int_M \widehat{A}(M) \operatorname{ch}^{E/\mathbb S}(E).
+$$</p>
+<h3>Morgan 书中的介绍</h3>
+<p>(John W. Morgan, The Seiberg–Witten Equations and Applications …, 3.3 节)</p>
+<p>设 $X$ 为闭可定向 Riemann 四维流形, $\widetilde P$ 是 $X$ 上的自旋结构, $\partial \hspace{-5pt}/$ 为复旋量丛 $S_{\mathbb{C}}^+(\widetilde P)$ 到 $S_{\mathbb{C}}^-(\widetilde P)$ 的 [Dirac 算子](Dirac 算子.md), 由其<span class="link local"><a href="./象征.html" title="“象征” [象征]">象征</a></span>可计算其<span class="link local"><a href="./解析指标.html" title="“解析指标” [解析指标]">解析指标</a></span>如下.</p>
+<p>回忆对于 $\pi\colon T^*X\to X$, 象征是 $T^*X$ 上的向量丛 $\pi^* S^+$ 到 $\pi^* S^-$ 的丛同态. 这个丛同态在 $T^*X\setminus X$ (减去零截面) 上的限制是丛的同构. 因此, 象征给出了 $T^*X$ 相对于 $T^*X\setminus X$ 的[相对 K-群 (拓扑)](相对 K-群.md)的一个元素. Atiyah–Singer 指标定理即是说, 由这个相对 K-理论的元素可计算出解析指标.</p>
+</details></section><footer></footer></article>
+
+</div></body></html>

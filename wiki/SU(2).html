@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“SU(2)”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="SU(2)"><header><h1><span class="taxon">Wiki. </span>“SU(2)” <a class="slug" href="./SU(2).html">[SU(2)]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>$SU(2)$ 是行列式为 $1$ 的二阶酉矩阵的乘法群, 其元素形如
+$$
+\begin{pmatrix}
+\alpha &amp; \beta \\
+-\bar\beta &amp; \bar\alpha
+\end{pmatrix},
+|\alpha|^2 + |\beta|^2 = 1
+$$
+它也同构于单位四元数的乘法群; 有 Lie 群的同构 $SU(2)\simeq \text{Spin}(3)$ (见 <span class="link local"><a href="./自旋群.html" title="“自旋群” [自旋群]">自旋群</a></span>).</p>
+<p>$SU(2)$ 的一个<span class="link local"><a href="./极大环面.html" title="“极大环面” [极大环面]">极大环面</a></span>是由对角矩阵 $\begin{pmatrix}	\alpha&amp;\\&amp;\bar\alpha\end{pmatrix} (|\alpha|=1)$ 构成的同构于 $U(1)$ 的子群.</p>
+<h2>Lie 代数</h2>
+<p>$\mathfrak {su}(2)$ 的元素形如
+$$
+\begin{pmatrix}
+	iz &amp; x+iy \\
+	-x+iy &amp; -iz
+\end{pmatrix},
+x,y,z\in\mathbb{R}.
+$$</p>
+<p>有 Lie 代数的同构 $\mathfrak {sl}(2,\mathbb{C})\simeq\mathfrak {su}(2)\otimes_{\mathbb{R}}\mathbb{C}$.</p>
+<h2>表示</h2>
+<p>$SU(2)$ 的表示以自旋 $0,\dfrac{1}{2},1,\cdots$ 标记.</p>
+<p>见 <span class="link local"><a href="./sl2的表示.html" title="“sl2的表示” [sl2的表示]">sl2的表示</a></span></p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“McKay 对应” <a class="slug" href="./McKay 对应.html">[McKay 对应]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

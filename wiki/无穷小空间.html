@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“无穷小空间”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="无穷小空间"><header><h1><span class="taxon">Wiki. </span>“无穷小空间” <a class="slug" href="./无穷小空间.html">[无穷小空间]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<h2>定义</h2>
+<p>在<span class="link local"><a href="./综合微分几何.html" title="“综合微分几何” [综合微分几何]">综合微分几何</a></span>中, 最基本的无穷小空间是一阶无穷小对象 $D\subset R$ ($R$ 的定义见<span class="link local"><a href="./赋环意象.html" title="“赋环意象” [赋环意象]">赋环意象</a></span>),
+$$
+D = \{x\in R : x^2=0\}.
+$$
+一般地, $R^n$ 中的一阶无穷小对象 $D(n)\subset R^n$ 定义为
+$$
+D(n)=\{(x_1,\cdots,x_n)\in R^n : \forall i\forall j, x_ix_j = 0\}.
+$$
+有包含关系 $D(n)\subset D^n$.</p>
+<p>定义 $k$-阶无穷小对象
+$$
+D_k(n) = \{(x_1,\cdots,x_n)\in R^n: \forall i_1 \cdots \forall i_{k+1},x_{i_1}\cdots x_{i_{k+1}}=0 \}.
+$$
+则有 $\{0\} \subset D(n)\subset D_2(n)\subset D_3(n)\subset\cdots$. 定义
+$$
+D_\infty(n)=\bigcup_k D_k(n).
+$$</p>
+<blockquote>
+<p>我猜测 $D_k$ 可如下内蕴定义: $$D_k(V)=\{x\in V: x^{\otimes (k+1)}=0\in V^{\otimes (k+1)}\}.$$
+不过有一个细节没有想清楚: 对于 $x\in W$, 是否由 $\forall f\colon W\to R f(x)=0$ 可以推出 $x=0$.</p>
+</blockquote>
+<h2>性质</h2>
+<p>$D_k(n)$ 在数乘下封闭: 对 $x\in D_k(n), \lambda\in R$ 有 $\lambda x\in D_k(n)$.</p>
+<p>$D_k(n)$ 在加法下一般不封闭, 但有 $D_k(n) + D_\ell(n)\subset D_{k+\ell}(n)$. 因此, $D_{\infty}(n)$ 在加法下封闭.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“相邻” <a class="slug" href="./相邻.html">[相邻]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“综合微分几何” <a class="slug" href="./综合微分几何.html">[综合微分几何]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

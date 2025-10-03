@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“同调代数的历史”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="同调代数的历史"><header><h1><span class="taxon">Wiki. </span>“同调代数的历史” <a class="slug" href="./同调代数的历史.html">[同调代数的历史]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>张鼎新老师 2023 年 2 月 20 日的讲座.</p>
+<h2>Abel 群的扩张</h2>
+<p>Abel 群 $N$ 通过 $M$ 的扩张 (an extension of $N$ by $M$) 是如下的短正合列:
+$$
+\begin{aligned}
+	0\to N\to E \to M \to 0. &amp;&amp; (\star)
+\end{aligned}
+$$
+扩张的等价类 (等价是指两行交换图) 构成集合 $\operatorname{Ext}(M,N)$.</p>
+<p><strong>例</strong>. $\mathbb{Z}/2\to \text{?} \to \mathbb{Z}/2$, 除了平凡 (分裂) 的扩张, 还有 $\mathbb{Z}/4$.</p>
+<p>1934 年, 德国人 R. Baer 发现 $\operatorname{Ext}(M,N)$ 具有 Abel 群结构.</p>
+<p>Baer 的描述是这样的. 选择 $M$ 的生成元与关系, 用现代语言即正合列 $0\to R\to F\to M\to 0$, 其中 $R,F$ 是自由 Abel 群.</p>
+<p>这样, 对任意扩张 $(\star)$, 都可以得到正合列 $0\to R\to F\to M\to 0$ 到 $(\star)$ 的一个同态, 特别地我们有 “关系函数” $a\colon R\to N$. 反之, 任给 $a\colon R\to N$, 定义 $E(a)$ 是 $N\leftarrow R \to F$ 的推出, 则 $E(a)$ 是一个扩张.</p>
+<p>不同的关系函数 $a_1,a_2$ 对应等价的扩张, 当且仅当存在 $b\colon F\to N$ 使得 $b\circ\iota = a_1-a_2$. 于是,
+$$
+\operatorname{Ext}(M,N)\simeq \frac{\operatorname{Hom}(R,N)}{\operatorname{Hom}(F,N)}.
+$$
+问题: 选择另一组生成元 $F$ 和关系 $R$, 是否给出同样的群?</p>
+<p>1941 年, Mac Lane (用后来发现是 “第二个分量的内射消解” 的方法) 证明了
+$$
+\operatorname{Ext}\left(\mathbb{Z}\Big[\frac{1}{p}\Big],\mathbb{Z}\right)\simeq \mathbb{Z}_p / \mathbb{Z}.
+$$
+其中 $\mathbb{Z}_p$ 是 $p$ 进数. Eilenberg 发现 $\mathbb{Z}[1/p]$ 是某个空间 $\Sigma_p$ 的上同调, 其中 $\Sigma_p$ 是 $p$-adic solenoid
+$$
+\Sigma_p = \lim [S^1 \overset{p}{\leftarrow} S^1 \overset{p}{\leftarrow} \cdots].
+$$
+后来 (1943 年) 两人产生了万有系数定理. (这是一个纯粹的代数定理.)</p>
+<h2>群同调</h2>
+<p>Eilenberg–Mac Lane, Hopf, Freudenthal 同时定义了群同调.</p>
+<p>Eilenberg–Mac Lane 定义了空间 $K(\pi,1)$, 研究其同调.</p>
+<p>Hopf 定义了环 $\mathbb{Z}[\pi]$, 研究其上模的扩张.</p>
+<h2>Lie 代数上同调, 结合代数同调</h2>
+<h2>Cartan–Eilenberg 同调代数</h2>
+<p>1950 年 Cartan 的讨论班上, Eilenberg 总结了前人的工作, 后来 Cartan–Eilenberg 产生了一本书, 第一次系统性研究同调代数, 第一次提出了五引理, 蛇引理, 短正合列推出长正合列. 过去的很多概念被统一为一个概念, <span class="link local"><a href="./导出函子.html" title="“导出函子” [导出函子]">导出函子</a></span>.</p>
+<p>$\operatorname{Hom}(-,N)$ 是左正合 (反变) 函子, $\operatorname{Hom}(M,-)$ 是左正合函子, $N\otimes -$ 是右正合函子. (加上某些条件的话, 这就是全部的例子了.)</p>
+<p>使用投射/内射模的概念, 可定义投射/内射消解, 从而定义<span class="link local"><a href="./导出函子.html" title="“导出函子” [导出函子]">导出函子</a></span>: 设 $T$ 为左正合 (反变) 函子, $P_\bullet$ 是 $M$ 的投射消解, 则
+$$
+R^i T (M)= H^i (TP_\bullet).
+$$
+由此,
+$$
+\operatorname{Ext}=R^1\operatorname{Hom}.
+$$</p>
+<p><strong>定理</strong> (Baer). Abel 群 $M$ 是内射 $\mathbb{Z}$-模当且仅当它可除 (divisible).</p>
+<p>任何 Abel 群可嵌入一个可除 Abel 群.</p>
+<p><strong>定理</strong> (Baer). 设 $\Lambda$ 为环, $M$ 为 $\Lambda$-模, 则存在 $\Lambda$-模 $I$ 使得 $M$ 可嵌入 $I$.</p>
+<p>这个定理给出了内射消解的存在性.</p>
+<p>设 $T$ 为左正合函子, $I_\bullet$ 为 $M$ 的内射消解, 则
+$$
+R^i T(M) = H^i (TI_\bullet).
+$$
+<strong>定理</strong>. 对第一个分量作投射消解, 或对第二个分量作内射消解, 得到的 $\operatorname{Ext}$ 是一样的.</p>
+<h2>Tohoku</h2>
+<p>1958 年 Grothendieck 的文章提出了 Abel 范畴, 定义了投射/内射对象.</p>
+<p>Grothendieck Abel 范畴有小余极限, 有生成元 (即一个对象 $U$, 使得 $\operatorname{Hom}(U,-)$ 忠实), 且滤余极限 (filtered colimit) 正合.</p>
+<p><strong>例</strong>. $\Lambda$-模范畴是 Grothendieck Abel 范畴. <span class="link local"><a href="./赋环空间.html" title="“赋环空间” [赋环空间]">赋环空间</a></span> $X$ 上 $O_X$-模范畴也是 (其生成元为 $\bigoplus_{j\colon U\subset X\text{ open}} j_{!}\mathcal O_U$).</p>
+<p>对于层范畴, 对偶的条件 “余滤极限 (cofiltered limit) 正合” 不成立.</p>
+<p><strong>定理</strong> (Grothendieck). 设 $\mathsf C$ 为 Grothendieck Abel 范畴, 则 $\mathsf C$ 的每个对象都是内射对象的子对象.</p>
+<p>验证内射性只需验证对生成元的扩张性质 (extension property). (在模论中, 只需要验证对理想的扩张性质.)</p>
+</details></section><footer></footer></article>
+
+</div></body></html>

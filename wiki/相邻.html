@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“相邻”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="相邻"><header><h1><span class="taxon">Wiki. </span>“相邻” <a class="slug" href="./相邻.html">[相邻]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>在<span class="link local"><a href="./综合微分几何.html" title="“综合微分几何” [综合微分几何]">综合微分几何</a></span>中, 对给定的流形 $M$ 与非负整数 $k$, 其上的点有 $k$-阶相邻的关系. 几何学的许多概念可用相邻关系表述, 而不需要分析学.</p>
+<h2>定义</h2>
+<p>$R^n$ 中的两点 $x$, $y$ 称为 $k$-阶相邻 (记作 $x\sim_k y$) 是指 $x-y$ 属于<span class="link local"><a href="./无穷小空间.html" title="“无穷小空间” [无穷小空间]">无穷小空间</a></span> $D_k(n)$.</p>
+<h2>对角线的 k-阶邻域</h2>
+<p>流形 $M$ 上的 $k$-阶相邻关系给出了 “对角线的 $k$-阶邻域”
+$$
+M_{(k)} := \{(x,y)\in M\times M : x\sim_k y\}.
+$$
+($M_{(k)}$ 本身不是流形.)</p>
+<p>若 $M=V$ 为 $R$ 上的 $n$ 维向量空间, 则有典范同构
+$$
+M_{(k)}\overset{\simeq}{\to} M\times D_{k}(V),\ (x,y)\mapsto (x,y-x).
+$$</p>
+<h2>k-单子与射流</h2>
+<p>对 $x\in M$, 定义 $k$-单子 (monad) $\mathfrak{M}_k(x)$ 为与 $x$ $k$-阶相邻的点的集合.</p>
+<p>对任意空间 $P$, 映射 $\mathfrak M_k(x)\to P$ 称为 $x$ 处 “$M\to P$ 映射的” 一个<span class="link local"><a href="./射流.html" title="“射流” [射流]">射流</a></span> (jet). 我们可定义射流函子
+$$
+J^k \colon \mathcal E/M\to \mathcal E/M.
+$$</p>
+<h2>无穷小单形</h2>
+<p>此处我们所指的相邻都是一阶相邻.</p>
+<p>无穷小 $k$-单形是指 $k+1$ 个两两相邻的点. $M$ 上无穷小 $k$ 单形的空间
+$$
+M_{&lt;k&gt;}:=\{(x_0,\cdots,x_k)\in M^{k+1}: \forall i,j,x_i\sim x_j\}
+$$
+可视为 $M$ 上的纤维丛, 投影映射由第一个分量给出. $M_{&lt;k&gt;}$ 是微分形式的基本研究对象.</p>
+<p>$M_{&lt;1&gt;}$ 恰为 “对角线的 $1$ 阶邻域” $M_{(1)}$.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“射流” <a class="slug" href="./射流.html">[射流]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“综合微分几何” <a class="slug" href="./综合微分几何.html">[综合微分几何]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

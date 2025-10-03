@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“六函子”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="六函子"><header><h1><span class="taxon">Wiki. </span>“六函子” <a class="slug" href="./六函子.html">[六函子]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>对于空间 (拓扑空间, 概形, 等等) 的态射 $f\colon X\to Y$, 许多有关上同调的事实可由很少几条公理导出.</p>
+<h2>定义</h2>
+<p>Grothendieck 六函子是以下三对伴随:</p>
+<ul>
+<li>对于态射 $f\colon X\to Y$ 有<span class="link local"><a href="./逆像.html" title="“逆像” [逆像]">逆像</a></span> (inverse image) - <span class="link local"><a href="./直像.html" title="“直像” [直像]">直像</a></span> (direct image) 伴随 $f^* \dashv f_*$;</li>
+<li>对于分离态射 $f\colon X\to Y$ 有<span class="link local"><a href="./紧支集直像.html" title="“紧支集直像” [紧支集直像]">紧支集直像</a></span> (又叫紧支集前推, pushforward with compact support) - 紧支集逆像 (Verdier 对偶) 伴随 $f_! \vdash f^!$;</li>
+<li>张量积与内蕴 Hom 伴随 $-\otimes X \vdash [X,-]$.</li>
+</ul>
+<p>这些概念通常使用<span class="link local"><a href="./导出范畴.html" title="“导出范畴” [导出范畴]">导出范畴</a></span>来描述, 从而最后一对函子实际上是 Tor 和 Ext.</p>
+<p>导出范畴中的六函子为</p>
+<ul>
+<li>右<span class="link local"><a href="./导出前推.html" title="“导出前推” [导出前推]">导出前推</a></span> $Rf_*$ 和左导出拉回 $Lf^*$;</li>
+<li>$Rf_! \dashv f^!$ (后者是正合函子);</li>
+<li>右导出 Hom $R\mathcal{Hom}$ 和左导出张量积 $X\overset{L}{\otimes}-$.</li>
+</ul>
+<h2>性质</h2>
+<p>存在自然变换 $f_! \to f_*$, 且当 $f$ 为<span class="link local"><a href="./紧合映射.html" title="“紧合映射” [紧合映射]">紧合映射</a></span>时为自然同构.</p>
+<p>紧空间上的<span class="link local"><a href="./凝聚层.html" title="“凝聚层” [凝聚层]">凝聚层</a></span>范畴有良好的六函子.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Poincaré–Verdier 对偶” <a class="slug" href="./Poincaré--Verdier 对偶.html">[Poincaré--Verdier 对偶]</a></h1><div class="metadata"><ul><li class="meta-item">Poincaré 对偶</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“标量扩张” <a class="slug" href="./标量扩张.html">[标量扩张]</a></h1><div class="metadata"><ul><li class="meta-item">诱导模</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“标量限制” <a class="slug" href="./标量限制.html">[标量限制]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“直像” <a class="slug" href="./直像.html">[直像]</a></h1><div class="metadata"><ul><li class="meta-item">前推</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“紧支集直像” <a class="slug" href="./紧支集直像.html">[紧支集直像]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

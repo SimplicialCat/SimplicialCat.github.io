@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“示性类”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="示性类"><header><h1><span class="taxon">Wiki. </span>“示性类” <a class="slug" href="./示性类.html">[示性类]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<blockquote>
+<p>上同调的引进就是为了示性类. — Yau, 2023年3月2日于院长讨论班</p>
+</blockquote>
+<h2>极大环面</h2>
+<p><span class="link external"><a href="https://encyclopediaofmath.org/wiki/Characteristic_class" title="EoM 页面 [https://encyclopediaofmath.org/wiki/Characteristic_class]">EoM 页面</a></span></p>
+<p>设 $G$ 为紧 Lie 群, $T$ 为极大环面, 则有分类空间的映射 $BT \to BG$. 设 $T$ 的维数为 $n$, 则有 $BT\simeq \mathbb{C}P^\infty\times \cdots\times \mathbb{C} P^\infty$,
+$$
+H^{**}(BT)\simeq \mathbb Z[x_1,\cdots,x_n](x_1,\cdots,x_n.md),\ x_i\in H^2.
+$$
+Weyl 群 $\Phi=N(T)/T$ 作用在 $T$ 上, 从而也作用在 $BT$ 上. Borel 定理指出映射
+$$
+i^*\colon H^{**}(BG)\to H^{**}(BT)
+$$
+是单射, 且其像恰为 $\Phi$ 作用的不动点.</p>
+<h3>例</h3>
+<p>$H^{**}(BU_n)=\mathbb{Z}[c_1,\cdots,c_n](c_1,\cdots,c_n.md)$, 其中<span class="link local"><a href="./陈类.html" title="“陈类” [陈类]">陈类</a></span> $c_k$ 为 $x_1,\cdots,x_n\in H^{**}(BT)$ 的 $k$ 次基本对称多项式.</p>
+<p>$H^{**}(BSp_n)=\mathbb{Z}[\sigma_1,\cdots,\sigma_n](\sigma_1,\cdots,\sigma_n.md)$, 其中 $\sigma_k$ 为 $x_1^2,\cdots,x_n^2\in H^{**}(BT)$ 的 $k$ 次基本对称多项式.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Riemann–Roch 定理” <a class="slug" href="./Riemann--Roch 定理.html">[Riemann--Roch 定理]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“分类空间” <a class="slug" href="./分类空间.html">[分类空间]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“杨–Mills 联络” <a class="slug" href="./杨--Mills 联络.html">[杨--Mills 联络]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈特征” <a class="slug" href="./陈特征.html">[陈特征]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

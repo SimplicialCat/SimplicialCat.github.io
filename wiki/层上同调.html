@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“层上同调”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="层上同调"><header><h1><span class="taxon">Wiki. </span>“层上同调” <a class="slug" href="./层上同调.html">[层上同调]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<blockquote>
+<p>Before arriving at the full picture of higher topos theory … people had a pretty good guess about some aspects of this story, and this aspect they called sheaf cohomology. It turns out that sheaf cohomology is precisely the <em>abelian</em> part of general cohomology.</p>
+<p>Here is what “abelian part of general cohomology” means:
+For many sheaves that appear in practice, the topological space $X(U)$ assigned to any test space $U$ is not just a topological space, but happens to have the structure of an <strong>abelian group</strong>, too. In this case a cascade of simplifications kicks in: first of all, such topological spaces, by a special case of something called the <strong>homotopy hypothesis</strong> (which is now really a precise theorem) can be identified with simplicial abelian groups. Second, by another theorem called the <strong>Dold–Kan correspondence</strong>, simplicial abelian groups are equivalently encoded more simply in the collection of data given by (non-positively graded) <strong>chain complexes in abelian groups</strong>.</p>
+</blockquote>
+<h2>定义</h2>
+<p>拓扑空间 $X$ 上 Abel 群层的上同调 $H^i(X,-)$ 是<span class="link local"><a href="./整体截面.html" title="“整体截面” [整体截面]">整体截面</a></span> $\Gamma$ 的右<span class="link local"><a href="./导出函子.html" title="“导出函子” [导出函子]">导出函子</a></span>, 也即 $X\to *$ 的<span class="link local"><a href="./导出前推.html" title="“导出前推” [导出前推]">导出前推</a></span>.</p>
+<p>空间 $X$ 上的层上同调可视为 $X$ 上的 [∞-层 ∞-意象](∞-层 ∞-意象.md)中的映射同伦类:
+$$
+H^n(X,F)\simeq \pi_0\operatorname{Hom}_{\operatorname{Sh}(X,\infty \mathsf {Grpd})}(X,B^nF).
+$$</p>
+<p>具体地, 设有<span class="link local"><a href="./内射消解.html" title="“内射消解” [内射消解]">内射消解</a></span> $F\to I^\bullet$, 定义 $H^n(X,F) := H^n(\Gamma(X,I^\bullet))$.</p>
+<h2>例</h2>
+<h2>相关概念</h2>
+<p>[Čech 上同调](Čech 上同调.md), <span class="link local"><a href="./奇异上同调.html" title="“奇异上同调” [奇异上同调]">奇异上同调</a></span>.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Dolbeault 上同调” <a class="slug" href="./Dolbeault 上同调.html">[Dolbeault 上同调]</a></h1><div class="metadata"><ul><li class="meta-item">Dolbeault 算子, Dolbeault 定理</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“de Rham 定理” <a class="slug" href="./de Rham 定理.html">[de Rham 定理]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Čech 上同调” <a class="slug" href="./Čech 上同调.html">[Čech 上同调]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“凝聚层” <a class="slug" href="./凝聚层.html">[凝聚层]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“奇异上同调” <a class="slug" href="./奇异上同调.html">[奇异上同调]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“导出前推” <a class="slug" href="./导出前推.html">[导出前推]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“层” <a class="slug" href="./层.html">[层]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“整体截面” <a class="slug" href="./整体截面.html">[整体截面]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“细层” <a class="slug" href="./细层.html">[细层]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“连续上同调” <a class="slug" href="./连续上同调.html">[连续上同调]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

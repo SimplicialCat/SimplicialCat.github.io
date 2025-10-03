@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Hirzebruch–Riemann–Roch 定理”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Hirzebruch--Riemann--Roch 定理"><header><h1><span class="taxon">Wiki. </span>“Hirzebruch–Riemann–Roch 定理” <a class="slug" href="./Hirzebruch--Riemann--Roch 定理.html">[Hirzebruch--Riemann--Roch 定理]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>Hirzebruch–Riemann–Roch 定理是整体复 (代数) 几何中一个十分有用的定理. 它是 [Riemann–Roch 定理](Riemann–Roch 定理.md)的推广, 可视为 [Grothendieck–Riemann–Roch 定理](Grothendieck–Riemann–Roch 定理.md)中 $Y$ 为一个点且基域为 $\mathbb{C}$ 的情形.</p>
+<p>对于紧复流形 (或概形) 上的<span class="link local"><a href="./全纯向量丛.html" title="“全纯向量丛” [全纯向量丛]">全纯向量丛</a></span> (或一般的<span class="link local"><a href="./凝聚层.html" title="“凝聚层” [凝聚层]">凝聚层</a></span>), 其 [Euler 示性数](Euler 示性数.md), 即<span class="link local"><a href="./凝聚层上同调.html" title="“凝聚层上同调” [凝聚层上同调]">凝聚层上同调</a></span>的交错和 (对于平凡丛即 [Dolbeault 上同调](Dolbeault 算子.md)的<span class="link local"><a href="./指标.html" title=" [指标]">解析指标</a></span>), 等于 [Todd 类](Todd 类.md)与<span class="link local"><a href="./陈特征.html" title="“陈特征” [陈特征]">陈特征</a></span>之积:
+$$
+\chi(\mathcal F) =\int_M \operatorname{ch}(\mathcal F)\wedge \operatorname{td}(TM).
+$$
+(积分表示取最高维上同调)</p>
+<h2>曲线的情形</h2>
+<p>对于曲线 $X$ 上的除子 $D$,</p>
+<ul>
+<li><span class="link local"><a href="./可逆层.html" title="“可逆层” [可逆层]">可逆层</a></span> $\mathcal O(D)$ 的<span class="link local"><a href="./陈特征.html" title="“陈特征” [陈特征]">陈特征</a></span>是 $1+c_1(\mathcal O(D))$,</li>
+<li>曲线 $X$ 的 [Todd 类](Todd 类.md)是 $1+c_1(TX)/2$,</li>
+<li>$h^0(\mathcal O(D))$ 就是 $l(D)$,</li>
+<li>$h^1(\mathcal O(D))$ 由 [Serre 对偶](Serre 对偶.md)等于 $l(K-D)$, 其中 $K$ 是<span class="link local"><a href="./典范除子.html" title=" [典范除子]">典范除子</a></span>.</li>
+</ul>
+</details></section><footer></footer></article>
+
+</div></body></html>

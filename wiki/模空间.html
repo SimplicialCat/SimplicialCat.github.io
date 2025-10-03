@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“模空间”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="模空间"><header><h1><span class="taxon">Wiki. </span>“模空间” <a class="slug" href="./模空间.html">[模空间]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>模空间 (moduli space) 是参数化一类几何对象的空间, 例如带 $n$ 个标记点的 $g$ <span class="link local"><a href="./亏格.html" title="“亏格” [亏格]">亏格</a></span> [Riemann 面](Riemann 面.md)的模空间 $\mathcal M_{g,n}$. 模空间的点为对象的等价类, 模空间的一条曲线为对象的单参数族.</p>
+<p>底空间 $B$ 上的一族空间通常用<span class="link local"><a href="./平坦态射.html" title="“平坦态射” [平坦态射]">平坦态射</a></span> $X\to B$ 描述, 其纤维为我们关心的某一类空间.</p>
+<p>一般而言, <strong>模问题</strong> (moduli problem) 可视为函子
+$$
+\mathcal M\colon  \mathsf {Sch}^{\text{op}}\to \mathsf {Set},
+$$$\mathcal M(S)$ 为以 $S$ 参数化的空间族的集合. 从<span class="link local"><a href="./米田引理.html" title="“米田引理” [米田引理]">米田引理</a></span>的观点, $S$ 参数化的一族空间相当于 $S$ 到 $\mathcal M$ 的一个态射. 函子 $\mathcal M$ 不总是可表的. 当它可表时, 其表示对象称为<strong>细模空间</strong>.</p>
+<h3>细模空间</h3>
+<p><strong>细模空间</strong>是带有 “万有” 族的空间 (概形) $M$, 使得任意一组空间都是由唯一的一个映射 $B\to M$ 拉回得到. 于是我们有双射
+$$
+\{B\text{ 上族的等价类}\} \leftrightarrow \{B\to M\}
+$$
+“万有” 族总是重言的.</p>
+<h3>细模空间不存在的情况</h3>
+<p>然而, 细模空间并不总是存在. 例如一维向量空间的 “模空间” 应当是一个点 (因为一维向量空间在同构意义下唯一), 然而 $S^1$ 上有两个不同构的一维向量丛.</p>
+<p>一般而言, 对于有非平凡自同构的对象, 细模空间不存在. 这个问题一般有三种解决方法:</p>
+<ul>
+<li>增加结构, 使得自同构消失;</li>
+<li>考虑粗模空间;</li>
+<li>考虑模<span class="link local"><a href="./叠.html" title="“叠” [叠]">叠</a></span>或<span class="link local"><a href="./轨形.html" title="“轨形” [轨形]">轨形</a></span>.</li>
+</ul>
+<h2>例</h2>
+<h3>$\mathbb P^1$ 上四点组的模空间</h3>
+<p>我们讨论 $\mathbb P^1$ 上的四点组的<strong>射影等价</strong> (projective equivalence). 所谓射影等价是指 $\mathbb P^1$ 的自同构 (分式线性变换). 四点组是指 $\mathbb P^1=\mathbb{C}\cup\{\infty\}$ 上互不相同的四个点. 两个四点组等价当且仅当它们有相同的<strong>交比</strong> (cross ratio). 四点组 $(0,1,\infty,z)$ 的交比是 $z$. 因此, 所考虑的模空间是
+$$
+\mathcal M_{0,4}= \mathbb P^1 \setminus \{0,1,\infty\}.
+$$</p>
+<h3>主丛 (向量丛) 的模空间</h3>
+<p>设 $k$ 为域, $G$ 为 $k$ 上的约化代数群. $k$-概形 $X$ 上 $G$-<span class="link local"><a href="./主丛的模空间.html" title="“主丛的模空间” [主丛的模空间]">主丛的模空间</a></span>是函子 $\mathrm {Bun}_G \colon \mathsf {Sch}_k \to\mathsf {Grpd}$, 它将 $k$-概形 $S$ 映射到 $X\times S$ 上 $G$-主丛的群胚.</p>
+<p>在 $G=\mathrm {GL}_n$ 的情形, $G$-主丛等同于 $n$ 阶向量丛, $\mathrm {Bun}_G$ 等价于 $X$ 上 $n$ 阶向量丛的模空间 $\mathrm {Bun}_n$.</p>
+<h3>旗流形</h3>
+<p><span class="link local"><a href="./旗流形.html" title="“旗流形” [旗流形]">旗流形</a></span>是 Borel 子群的模空间.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Gromov–Witten 不变量” <a class="slug" href="./Gromov--Witten 不变量.html">[Gromov--Witten 不变量]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“J-全纯曲线” <a class="slug" href="./J-全纯曲线.html">[J-全纯曲线]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Shtuka” <a class="slug" href="./Shtuka.html">[Shtuka]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“仿射 Grassmann 空间” <a class="slug" href="./仿射 Grassmann 空间.html">[仿射 Grassmann 空间]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“复流形” <a class="slug" href="./复流形.html">[复流形]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“形变” <a class="slug" href="./形变.html">[形变]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“志村簇” <a class="slug" href="./志村簇.html">[志村簇]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“旗流形” <a class="slug" href="./旗流形.html">[旗流形]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“杨–Mills 泛函” <a class="slug" href="./杨--Mills 泛函.html">[杨--Mills 泛函]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

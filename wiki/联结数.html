@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“联结数”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="联结数"><header><h1><span class="taxon">Wiki. </span>“联结数” <a class="slug" href="./联结数.html">[联结数]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<h2>定义</h2>
+<p>(参考 Bott–Tu)</p>
+<p>设 $A,B$ 为 $S^3$ 中的圆圈 ($S^1$ 的嵌入像).</p>
+<h3>相交理论</h3>
+<p>取 $S^3$ 中的光滑圆盘 $D$ 使得 $A$ 为 $D$ 的边界, 且 $B$ 与 $D$ 横截相交. 定义 $A$ 与 $B$ 的联结数
+$$
+\operatorname{link}(A,B) = \sum_{D\cap B} \pm1,
+$$
+其中正负号由 $D$ 与 $B$ 相交处的定向决定.</p>
+<h3>微分形式</h3>
+<p>取 $A$, $B$ 的 [Poincaré–Verdier 对偶](Poincaré 对偶.md) $\eta_A, \eta_B$, 设存在 $1$-形式 $\omega_A,\omega_B$ 使得 $d\omega_A = \eta_A$, $d\omega_B = \eta_B$. 那么 $A$ 与 $B$ 的联结数等于
+$$
+\int_{S^3} \omega_A \wedge \eta_B.
+$$</p>
+<blockquote>
+<p>注. 若将 $\eta_A$ 视为支集在 $A$ 上的 “分布值微分形式” (current?), $\omega_A$ 视为圆盘 $D$ 上的分布值微分形式, 那么这个定义与上面相交理论的定义如出一辙. 因为两者的外积将是支集在 $D \cap B$ 上的 $3$ 形式, 也即 $D \cap B$ 的 Poincaré 对偶.</p>
+</blockquote>
+<h3>度数</h3>
+<p>任取一点 $p\in S^3 \setminus (A \cup B)$, 将 $S^3\setminus\{p\}$ 等同于 $\mathbb{R}^3$. 那么
+$$
+\operatorname{link}(A,B) = \deg\Big( L \colon A\times B \to S^2, (x,y) \mapsto \frac{x-y}{\|x-y\|}\Big).
+$$</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hopf 不变量” <a class="slug" href="./Hopf 不变量.html">[Hopf 不变量]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

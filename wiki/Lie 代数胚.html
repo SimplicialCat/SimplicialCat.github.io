@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Lie 代数胚”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Lie 代数胚"><header><h1><span class="taxon">Wiki. </span>“Lie 代数胚” <a class="slug" href="./Lie 代数胚.html">[Lie 代数胚]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>设 $M$ 是流形, 其上的实 Lie 代数胚是一个实向量丛 $A$, 带有 Lie 括号 $[-,-]_A$, 以及丛映射 $q_A \colon  A\to TM$, 满足对 $A$ 的截面 $X,Y$, 以及 $M$ 上的函数 $f$,
+$$
+[X,fY]_A = f [X,Y]_A + (q_A(X)f)Y.
+$$
+且 $q_A$ 定义了 $A$ 的截面到 $TM$ 的截面的 Lie 代数同态.</p>
+<p>设 $X$ 是概形, $L$ 是 $X$ 上的<span class="link local"><a href="./拟凝聚层.html" title="“拟凝聚层” [拟凝聚层]">拟凝聚层</a></span>, 带有 Lie 括号 $[-,-]\colon  \wedge^2 L \to L$,</p>
+<h2>例</h2>
+<p>设 $X$ 是概形, $T_X$ 上有自然的 Lie 括号.</p>
+<p>对于 Lie 代数 $\mathfrak g$ 在 $X$ 上的无穷小作用, $L = \mathfrak g\otimes \mathcal O_X$ (?)</p>
+<p>无穷小自同构: 设 $E\to X$ 是向量丛, $GL(E)\to X$ 为 $GL(n)$-<span class="link local"><a href="./主丛.html" title="“主丛” [主丛]">主丛</a></span>. (??)</p>
+<h2>Picard 代数胚</h2>
+<p>扭微分算子 (twisted differential operators) 是指 …</p>
+<p>拟凝聚代数 $D$ 带有滤结构, 满足 $m (F_i D, F_jD)\subset F_{i+j}D$, $\mathcal O_X \subset F_0 D$, $F_1 D/ F_0 D \simeq T_X$.</p>
+<p>扭微分算子对应 Picard 代数胚.</p>
+<h2>联络</h2>
+<p>Lie 代数胚上的联络是映射 $z\colon  L \to T_X$ 的截面 $\nabla\colon  T_X \to L$, 若 $\nabla$ 是 Lie 代数胚映射, 则称其为平坦联络.</p>
+<p>联络的曲率 $c(\nabla) \in \operatorname{Hom}_{\mathcal O_X} (\wedge^2 T_X, \ker z)$</p>
+<p>若 $L$ 为 Picard 代数胚, 则曲率 $c(\nabla) \in \Omega_X^2$.</p>
+<p>联络的空间是 $\Omega^1$ 的仿射空间. 对于 $\alpha\in \Omega^1$, $c(\nabla + \alpha) = c(\nabla) + d\alpha$.</p>
+</details></section><footer></footer></article>
+
+</div></body></html>

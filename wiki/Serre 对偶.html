@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Serre 对偶”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Serre 对偶"><header><h1><span class="taxon">Wiki. </span>“Serre 对偶” <a class="slug" href="./Serre 对偶.html">[Serre 对偶]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>Serre 对偶是 [Poincaré–Verdier 对偶](Poincaré 对偶.md)在<span class="link local"><a href="./凝聚层上同调.html" title="“凝聚层上同调” [凝聚层上同调]">凝聚层上同调</a></span>中的类比.</p>
+<blockquote>
+<p>李归农在<span class="link external"><a href="https://www.zhihu.com/question/268043432/answer/333423706" title="知乎回答 [https://www.zhihu.com/question/268043432/answer/333423706]">知乎回答</a></span>中指出 Serre 对偶完全是<span class="link local"><a href="./导出范畴.html" title="“导出范畴” [导出范畴]">导出范畴</a></span>的性质.</p>
+</blockquote>
+<blockquote>
+<p>Wiki: According to Grothendieck’s relative point of view, the theory of Jean-Pierre Serre was extended to a [紧合映射](proper morphism.md); Serre duality was recovered as the case of the morphism of a non-singular projective variety to a point.</p>
+</blockquote>
+<h2>初见</h2>
+<p>设 $X$ 是 $k$ 上的不可约光滑射影 $n$ 维代数簇, 则存在<span class="link local"><a href="./可逆层.html" title="“可逆层” [可逆层]">可逆层</a></span> $\omega_X$, 使得对任意局部自由有限秩层 $\mathcal F$,
+$$
+h^i(X,\mathcal F) = h^{n-i}(X,\omega_X\otimes \mathcal F^\vee).
+$$
+且有完美配对
+$$
+H^i(X,\mathcal F)\otimes H^{n-i}(X,\omega_X\otimes \mathcal F^\vee)\to H^n(X,\omega_X) = k.
+$$
+对于曲线 $C$ 有
+$$
+h^1(C,\mathscr L)=h^0(C,\omega_C\otimes\mathscr L^\vee),
+$$
+[Riemann–Roch 定理](Riemann–Roch 定理.md)可表达为
+$$
+h^0(C,\mathscr L)-h^0(C,\omega_C\otimes\mathscr L^\vee)=\deg\mathscr L - p_a(C) +1.
+$$</p>
+<p><strong>定理</strong> 设 $X$ 是射影概形, Cohen–Macauley, 则存在 $\omega_X$ (dualizing), 使得
+$$
+H^i(X,F)^* \simeq \operatorname{Ext}_{\mathcal O_X}^{n-i}(F,\omega_X).
+$$
+对于光滑的射影概形, $\omega_X$ 可定义为<span class="link local"><a href="./典范丛.html" title="“典范丛” [典范丛]">典范丛</a></span> $\wedge^n \Omega^1_{X/k}$.</p>
+<p>设 $\mathcal E$ 局部自由有限秩, 则
+$$
+H^i(X,\mathcal E)^* \simeq \operatorname{Ext}_{\mathcal O_X}^{n-i} (\mathcal E,\omega_X) \simeq \operatorname{Ext}_{\mathcal O_X}^{n-i}(\mathcal O_X,\mathcal E^*\otimes \omega_X) \simeq H^{n-i}(X,\mathcal E^*\otimes\omega_X).
+$$
+对于<span class="link local"><a href="./复向量丛.html" title="“复向量丛” [复向量丛]">复向量丛</a></span>, 考虑 [Dolbeault 上同调](Dolbeault 消解.md) $A^{0,\bullet}\mathcal E$,
+$$
+H^i(\mathcal E) = H^i\Gamma (A^{0,*},d'').
+$$
+$$
+\Gamma(A^{0,i})' = K_c^{n,n-i}(\mathcal E^*)
+$$
+$\Omega^n\otimes\mathcal E^*$ 被 $K^{n,*}_{\text{c}}$ (紧支集分布 ?) 消解.</p>
+<h2>一般结论</h2>
+<p>Grothendieck 的做法来源于对<span class="link local"><a href="./前推.html" title=" [前推]">直像</a></span> $f_*$ 的右伴随的探索 (它的左伴随是拉回).</p>
+<p>对于 $n$ 维光滑射影概形 $X$,</p>
+</details></section><footer></footer></article>
+
+</div></body></html>

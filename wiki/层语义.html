@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“层语义”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="层语义"><header><h1><span class="taxon">Wiki. </span>“层语义” <a class="slug" href="./层语义.html">[层语义]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>层语义 (sheaf semantics) 可用于解释层意象 (如概形上的 [Zariski 意象](Zariski 意象.md)) 的<span class="link local"><a href="./内蕴语言.html" title="“内蕴语言” [内蕴语言]">内蕴语言</a></span>. 它具有局部性.</p>
+<p>在概形上的层语义中, 结构层不过是内蕴语言中的一个局部环, 向量丛不过是一个自由模. 层语义可以给出代数几何中一些基本概念更简单的定义, 以及一些基本命题更精炼的证明.</p>
+<h2>Kripke–Joyal 语义</h2>
+<p>对语句 $\varphi$, 我们基于对 $\varphi$ 结构的归纳来定义 $U\models\varphi$ 的语义, 其直观是说 $\varphi$ 在 $U$ 上处处成立.
+$$
+\begin{array}
+	{l|l}
+	\text{内蕴} &amp; \text{外蕴} \\
+	\hline
+	U\models\top &amp; U=U\text{ (恒真)}\\
+	U\models\bot &amp; U=\varnothing \\
+	U\models s=t:\mathcal F &amp; s|_U = t|_U\in\Gamma(U,F);\\
+	U\models \bigwedge_{j\in J}\varphi_j &amp; 
+	\forall j,\,U\models\varphi_j;\\
+	U\models \bigvee_{j\in J}\varphi_j &amp; \text{存在开覆盖 }U=\bigcup_i U_i,\\&amp;\quad
+	\text{对任意 } i\text{ 存在 } j, U_i\models\varphi_j;\\
+	U\models \varphi\Rightarrow \psi &amp; \text{对任意开集 }V\subset U,
+	V\models\varphi \text{ 推出 } V\models\psi;\\
+	U\models\forall s:\mathcal F,\varphi(s) &amp; \text{对任意开集 }V\text{ 与 }s\in\Gamma(V,\mathcal F), V\models\varphi(s);\\
+	U\models\exists s:\mathcal F,\varphi(s) &amp; \text{存在开覆盖 }U=\bigcup_i U_i,\\ &amp;\quad\text{对任意 }i\text{ 存在 }s_i\in\Gamma(U_i,\mathcal F), U_i\models\varphi(s).
+\end{array}
+$$
+为了突出所考虑的子意象, 我们也将 $U\models \varphi$ 记作 $\operatorname{Sh}(U)\models \varphi$.</p>
+<h3>简化</h3>
+<p>有的语句如果完全按照上面的定义展开会过于复杂. 如下的语句可以简化.</p>
+<p>$U\models\forall s:\mathcal F. \forall t:\mathcal G. \varphi(s,t)$ 等价于对任意开集 $V\subset U$, 任意截面 $s\in\Gamma(V,\mathcal F), t\in\Gamma(V,\mathcal G)$, 都有 $V\models \varphi(s,t)$.</p>
+<p>$U\models\forall s:\mathcal F. \forall t:\mathcal G. \varphi(s)\Rightarrow \psi(s)$ 等价于对任意开集 $V\subset U$, 任意截面 $s\in\Gamma(V,\mathcal F)$, 都有 $V\models\varphi(s)$ 推出 $V\models \psi(s)$.</p>
+<p>$U\models\exists ! s:\mathcal F. \varphi(s)$ 等价于对任意开集 $V\subset U$, 存在唯一的截面 $s\in\Gamma(V,\mathcal F)$, $V\models \varphi(s)$.</p>
+<h3>局部性</h3>
+<p>层语义是局部的, 即若 $X=\bigcup_i U_i$ 为覆盖, 一条内蕴语句在每个 $\operatorname{Sh}(U_i)$ 的内蕴语言中都成立, 那么它在 $\operatorname{Sh}(X)$ 中也成立. 这有时是优点, 但也带来了一些局限, 我们无法讨论 “一个层由全局截面生成”, “层上同调消失” 等整体的结论.</p>
+<h3>可靠性</h3>
+<p>内蕴语言的可靠性 (soundness) 是指, 假若在<span class="link local"><a href="./直觉主义.html" title=" [直觉主义]">直觉主义</a></span>逻辑中一个公式 $\varphi$ 能推出 $\psi$, 那么 $U\models\varphi$ 就能推出 $U\models\psi$. 这个结论的证明也是基于对命题结构的归纳.</p>
+<h3>内蕴构造</h3>
+<p>使用内蕴语言可给出积, 余积, 幂集, 子集的构造, 使得这些构造在内蕴语言下满足直观的性质.</p>
+<p>例如, 若 $\mathcal F$ 为层, $\varphi(s)$ 为一个变量 $s:\mathcal F$ 的公式, 定义
+$$
+\left[\left[\left\{s:\mathcal F \mid \varphi(s)\right\}\right]\right]
+$$
+是由 $U\mapsto \{s\in\Gamma(U,\mathcal F)\mid U \models \varphi(s)\}$ 给出的子层. 例如, 公式 $\varphi$ 的<span class="link local"><a href="./真值.html" title=" [真值]">子对象分类器</a></span>是
+$$
+\{x:1 \mid \varphi\} = (U\mapsto \{x\in\Gamma(U,1)\mid U\models \varphi\}),
+$$
+其中 $x$ 是不含于 $\varphi$ 的自由变量.</p>
+<h2>相关概念</h2>
+<p><span class="link local"><a href="./叠语义.html" title="“叠语义” [叠语义]">叠语义</a></span></p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“内蕴语言” <a class="slug" href="./内蕴语言.html">[内蕴语言]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“叠语义” <a class="slug" href="./叠语义.html">[叠语义]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“层意象” <a class="slug" href="./层意象.html">[层意象]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Shtuka”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Shtuka"><header><h1><span class="taxon">Wiki. </span>“Shtuka” <a class="slug" href="./Shtuka.html">[Shtuka]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>Shtuka = Hecke 调整 + [Frobenius 态射](Frobenius 态射.md)</p>
+<blockquote>
+<p>General Shtukas can be thought of as a version of motives not defined in characteristic $p$ but whose coefficient field is of characteristic $p$. — 恽之伟, Introduction to Shtukas and their Moduli</p>
+</blockquote>
+<p>Shtuka 的<span class="link local"><a href="./模空间.html" title="“模空间” [模空间]">模空间</a></span>或模叠是<span class="link local"><a href="./志村簇.html" title="“志村簇” [志村簇]">志村簇</a></span>的<span class="link local"><a href="./函数域类比.html" title="“函数域类比” [函数域类比]">函数域类比</a></span>, 是<span class="link local"><a href="./函数域.html" title="“函数域” [函数域]">函数域</a></span> [Langlands 纲领](Langlands 对应.md)中的重要角色.</p>
+<blockquote>
+<p>L. Lafforgue used the moduli stack of rank $n$ Shtukas and their compactifications to prove the Ramanujan–Petersson conjecture and the Langlands conjecture for $\mathrm {GL}_n$ over a global function field for any $n\in\mathbb N$.</p>
+</blockquote>
+<h2>定义</h2>
+<p>Shtuka 的<span class="link local"><a href="./模叠.html" title=" [模叠]">模空间</a></span>定义为如下的拉回, 其中 $\mathrm {Hecke}^r$ 是 [Hecke 叠](Hecke 叠.md).
+$$
+\begin{array}
+	{ccc}
+	\mathrm {Sht}^r &amp; \to &amp; \mathrm {Bun}^r \\
+	\downarrow &amp;&amp; \downarrow \\
+	\mathrm {Hecke}^r &amp; \to &amp; \mathrm {Bun}^r\times\mathrm {Bun}^r
+\end{array}
+$$
+其中右边映射是 $\mathcal E\mapsto (\mathcal E,\mathcal E^\sigma)$, $\mathcal E^\sigma:=(\operatorname{id}_X\times\operatorname{Frob}_S)^*\mathcal E$ 是沿 $S$ 的 [Frobenius 态射](Frobenius 态射.md)的拉回.</p>
+<p>换言之, $\mathrm {Sht}^r(S)$ 的对象是如下资料,</p>
+<ul>
+<li>$X\times S$ 上的 $r$ 阶向量丛 $\mathcal E$,</li>
+<li>两个映射 $0,\infty \colon S \to X$,</li>
+<li>一个调整 $\mathcal E\hookrightarrow \mathcal E'\hookleftarrow\mathcal E''$, 满足 $\mathcal E'/\mathcal E$ 支在 $\Gamma_\infty$ (即映射 $\infty$ 的图像) 上, $\mathcal E'/\mathcal E''$ 支在 $\Gamma_0$ 上, 且这两个层在支集上为<span class="link local"><a href="./可逆层.html" title="“可逆层” [可逆层]">可逆层</a></span>,</li>
+<li>一个同构 $\mathcal E^\sigma\simeq\mathcal E''$.</li>
+</ul>
+<p>$r=1$ 时, 概形 $S$ 上的 $1$ 阶 Shtuka 相当于 $X\times S$ 上的线丛 $L$ 以及一个同构
+$$
+L^\sigma\otimes L^{-1}\simeq \mathcal O_{X\times S}(\Gamma_\infty - \Gamma_0).
+$$</p>
+<h2>性质</h2>
+<p>$\mathrm{Sht}$ 是 [Deligne–Mumford 叠](Deligne–Mumford 叠.md).</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hecke 叠” <a class="slug" href="./Hecke 叠.html">[Hecke 叠]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

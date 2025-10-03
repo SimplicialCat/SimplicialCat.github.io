@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Bismut 超联络”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Bismut 超联络"><header><h1><span class="taxon">Wiki. </span>“Bismut 超联络” <a class="slug" href="./Bismut 超联络.html">[Bismut 超联络]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>设 $S$ 是紧流形, $\pi\colon W\to S$ 是纤维丛, 纤维为紧可定向流形 $Z$.</p>
+<p>记 $TZ=\ker \pi_*$ 为相对切丛, 选取水平切丛 $T^HW$ 使得 $TW= T^HW \oplus TZ$. 记 $P^{TZ}$ 为 $TW$ 到 $TZ$ 的投影.</p>
+<p>设 $g^{TS},g^{TZ}$ 分别为 $TZ$, $TS$ 上的 Riemann 度量, 定义 $TW$ 上的 Riemann 度量
+$$
+g^{TW} := \pi^* g^{TS} \oplus g^{TZ}.
+$$
+考虑 [Levi-Civita 联络](Levi-Civita 联络.md) $\nabla^{TW}$ 和 $\nabla^{TS}$.</p>
+<p>定义
+$$
+\nabla^{TZ} = P^{TZ} \nabla^{TW} P^{TZ},
+$$
+那么 $\nabla^{TZ}$ 保持 $g^{TZ}$, 且在每个纤维 $Z_b$ 上 $\nabla^{TZ}$ 为 $Z_b$ 上的 Levi-Civita 联络.
+定义
+$$
+^0\nabla^{TW}:= \pi^* \nabla^{TS} \oplus \nabla^{TZ}.
+$$
+$^0\nabla^{TW}$ 保持度量, 但不是 Levi-Civita 联络, 也即有<span class="link local"><a href="./挠.html" title=" [挠]">挠</a></span>. 记
+$$
+T(A,B)= {^0\nabla_A^{TW}} B - {^0\nabla_B^{TW}} A - [A,B].
+$$</p>
+<p>记 $\mathsf S = \nabla^{TW}-{^0\nabla^{TW}}$ 为两个联络的差.</p>
+<p>设 $(\mathcal E,h^{\mathcal E},\nabla^{\mathcal E})$ 为 Clifford 代数丛 $\mathrm{Cl}(TZ)$ 的模. 设 $\{e_i\}$ 为 $TZ$ 的标准正交标架, 定义 [Dirac 算子](Dirac 算子.md)
+$$
+D^Z = \sum_i c(e_i) \nabla_{e_i}^{\mathcal E}
+$$
+研究 $\ker D_+$ 与 $\ker D_-$ 在 [K-群 (拓扑)](K-群 (拓扑).md)中的差.
+$$
+\operatorname{Ind}(D^Z) = \ker D_+ - \ker D_- \in K^0(S).
+$$</p>
+<p><strong>定理</strong> (族指标定理, family index theorem)
+$$
+\operatorname{ch}(\operatorname{Ind}(D^Z)) = \int_Z \widehat A (TZ) \operatorname{ch}(\mathcal E / S).
+$$</p>
+<p>Bismut 的想法: 考虑 $S$ 上的无穷维向量丛 $C^\infty (Z,\mathcal E)$ 的截面空间
+$$
+\mathscr E = C^\infty (S,C^\infty (Z,\mathcal E)).
+$$
+定义 $C^\infty (Z,\mathcal E)$ 上的 Riemann 度量: 对 $b$ 处的两个向量 $s_1,s_2\in C^\infty (Z_b,\mathcal E)$,
+$$
+\langle  s_1,s_2\rangle := \int_{Z_b} \langle  s_1(x), s_2(x)\rangle_{\mathcal E} dV_{Z}.
+$$</p>
+<p>定义 $C^\infty (Z,\mathcal E)$ 上的联络如下. 对 $h\in\mathscr E$ 以及 $S$ 上的向量场 $U$,
+$$
+\nabla^{\mathscr E}_U h = \nabla_{U^H}^{\mathcal E} h,
+$$
+其中 $U^H$ 表示 $U$ 在 $W$ 上的唯一水平提升.
+$$
+\nabla_U^{\mathscr E,U} := \nabla_U^{\mathscr E} - \frac{1}{2} \langle \mathsf S(e_i)e_i,U \rangle,
+$$
+则联络 $\nabla_U^{\mathscr E,H}$ 保持度量.</p>
+<p>令
+$$
+c(T):= \frac{1}{2} c(T (f_p^H, f_q^H)) f^p \wedge f^q \wedge,
+$$
+其中 $T$ 是 $^0\nabla^{TW}$ 的挠, $\{f_p\}$ 为 $TS$ 的正交标架, $\{f^p\}$ 是其对偶.</p>
+<p>可以证明 $T(f_p^H, f_q^H) \in TZ$. 联络 $\nabla^{\mathscr E,H}$ 可表示为 $\sum_p f^p \wedge \nabla_{f_p}^{\mathscr E,H}$.</p>
+<p>定义 <strong>Bismut 超联络</strong> $B\colon C^\infty (S,\mathscr E)\to C^\infty (S,  \wedge T^*S \otimes \mathscr E)$,
+$$
+B = D^Z + \nabla^{\mathscr E,U} -\frac{1}{4}c(T).
+$$</p>
+<h2>性质</h2>
+<p>Bismut 超联络的平方 $B^2$ 是沿着纤维的 $2$ 阶椭圆算子.</p>
+<h2>伸缩</h2>
+<p>考虑伸缩变换 (rescaling)
+$$
+\delta_t \colon \wedge T^*S \otimes \mathscr E \to\wedge T^*S\otimes \mathscr E,\quad
+\delta_t(\alpha)=t^{-k/2}\alpha\,(\alpha\in\wedge^k T^*S).
+$$
+定义
+$$
+B_t =\sqrt t \delta_t B \delta_t^{-1} =\sqrt t D^Z + \nabla^{\mathscr E,U} - \frac{1}{4\sqrt t}c(T),
+$$</p>
+</details></section><footer></footer></article>
+
+</div></body></html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“意象”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="意象"><header><h1><span class="taxon">Wiki. </span>“意象” <a class="slug" href="./意象.html">[意象]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>意象 (topos) 是集合范畴 $\mathsf{Set}$ 的某种推广. 一个意象可视为一个集合宇宙: 其中 “集合” 是意象的对象, 而意象中可进行许多集合论的操作. 例如, 给定 “集合” $X$ 与 $Y$, 可构造 $X$ 到 $Y$ 的函数的集合 $Y^X$, 幂集 $PX$, 它们均为 $\mathcal E$ 的对象.</p>
+<p>任何意象都带有<span class="link local"><a href="./内蕴语言.html" title="“内蕴语言” [内蕴语言]">内蕴语言</a></span>.</p>
+<h2>定义</h2>
+<p>意象是满足如下条件的范畴:</p>
+<ul>
+<li>存在所有有限极限和余极限;</li>
+<li>是 [Descartes 闭范畴](Descartes 闭范畴.md);</li>
+<li>存在<span class="link local"><a href="./子对象分类器.html" title="“子对象分类器” [子对象分类器]">子对象分类器</a></span> $\Omega$ 与运算 $P$, 满足 $\operatorname{Sub}A\simeq \operatorname{Hom}(A,\Omega)$, $\operatorname{Sub}(B\times A)\simeq \operatorname{Hom}(A,PB)$, 换言之 $\operatorname{Sub}$ 和 $\operatorname{Sub}(B\times -)$ 是可表的.</li>
+</ul>
+<p>意象中有如下的结构:</p>
+<p><strong>指数对象</strong> $Y^X$ 与<strong>赋值映射</strong> $\operatorname{ev}\colon Y^X\times X \to Y$, 具有形如 $Z\times X\to Y$ 的映射的万有性质 (即指数-乘积伴随);</p>
+<p><strong>注</strong>. 可定义 “余指数” (coexponential) 的概念, 但在集合范畴中不存在.</p>
+<h2>例</h2>
+<p>$\mathsf {Set}^{\mathbb N}$, “随时间变化的集合”;</p>
+<p>(??) 任何一个 Bool 代数, 其中的乘积是 “且” $X\wedge Y$, 指数 $Y^X$ 是 “蕴含” $X\Rightarrow Y$, 赋值映射是 “推理” $(X\Rightarrow Y)\wedge X \leq Y$;</p>
+<p>$\mathsf {FinOrd}$, 有限基数的范畴, 其中指数是通常的指数;</p>
+<p><span class="link local"><a href="./层意象.html" title="“层意象” [层意象]">层意象</a></span> $\operatorname{Sh}(X)$, “由 $X$ 连续参数化的一族集合”;</p>
+<p><span class="link local"><a href="./预层意象.html" title="“预层意象” [预层意象]">预层意象</a></span> $\mathsf {Set}^{C^{\mathrm{op}}}$, “由小范畴 $C$ 参数化的集合”.</p>
+<p>Grothendieck 将<span class="link local"><a href="./景.html" title="“景” [景]">景</a></span>上的层命名为 topos. 他认为,</p>
+<blockquote>
+<p>Il semble raisonnable et légitime aux auteurs du présent séminaire de considérer que l’objet de la Topologie est l’étude des topos (et non des seuls espaces topologiques).</p>
+</blockquote>
+<p>即拓扑学的目标是研究意象, 而不仅是拓扑空间.</p>
+<p>意象中的逻辑不一定是 <span class="link local"><a href="./Boole.html" title=" [Boole]">Boole 意象</a></span> 的. 例如, 一个层的子层的代数不一定是 [Boole 代数](Boole 代数.md). 在拓扑学中也有类似的现象: 开集的补集不一定是开集.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Boole 意象” <a class="slug" href="./Boole 意象.html">[Boole 意象]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“内蕴语言” <a class="slug" href="./内蕴语言.html">[内蕴语言]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“几何态射” <a class="slug" href="./几何态射.html">[几何态射]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“分离几何态射” <a class="slug" href="./分离几何态射.html">[分离几何态射]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“子对象分类器” <a class="slug" href="./子对象分类器.html">[子对象分类器]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“层意象” <a class="slug" href="./层意象.html">[层意象]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“紧合几何态射” <a class="slug" href="./紧合几何态射.html">[紧合几何态射]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“自然数对象” <a class="slug" href="./自然数对象.html">[自然数对象]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“赋环意象” <a class="slug" href="./赋环意象.html">[赋环意象]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

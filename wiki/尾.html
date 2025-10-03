@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“尾”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="尾"><header><h1><span class="taxon">Wiki. </span>“尾” <a class="slug" href="./尾.html">[尾]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>对于函子 $T\colon C^{\text{op}}\times C \to X$ (想象为某种 Hom), $T$ 的<strong>尾</strong> (end) 是一个对象 $e\in X$, 记作
+$$
+e = \int_{c\in C} T(c,c).
+$$</p>
+<h2>万有楔</h2>
+<p>尾可定义为万有<strong>楔</strong> (wedge). 函子 $T\colon C^{\text{op}}\times C \to X$ 的一个楔是一个对象 $e\in X$, 带有态射 $w_c\colon e\to T(c,c)$, 对任意态射 $f\colon c\to c'$ 满足如下交换图.
+$$
+\begin{array}
+	{ccc}
+	e &amp; \overset{w_c}{\to} &amp; T(c,c)\\
+	\downarrow &amp;&amp; \downarrow \\
+	T(c',c') &amp; \underset{T(f,1)}{\to} &amp; T(c,c')
+\end{array}
+$$
+<strong>注</strong>. 我认为这样定义的楔即是自然变换 $w\colon e\to T(-,-)$, 其中 $e$ 是常值函子.</p>
+<h2>作为右伴随</h2>
+<p>极限是对角函子的右伴随: 对于函子 $J\to C$, 考虑对角函子 $\Delta\colon  C\to C^J$, 则
+$$
+\operatorname{Hom}_{C^J}(\Delta -,-) \simeq \operatorname{Hom}_C(-,\lim_{\longleftarrow}-).
+$$
+类似地, 尾是如下定义的函子 $\operatorname{hom}\colon X\to \mathsf {Fun}(C^{\text{op}}\times C , X)$ 的右伴随.
+$$
+\operatorname{hom}(x)(c,c')= \coprod_{\operatorname{hom}(c,c')}x = \operatorname{hom}(c,c')\otimes x.
+$$
+$$
+\operatorname{Hom}_{\mathsf {Fun}(C^{\text{op}}\times C, X)} (\operatorname{hom}-,-)\simeq \operatorname{Hom}_X(-,\operatorname{end}-)
+$$</p>
+<h2>例</h2>
+<p>对于 $T=\operatorname{Hom}(F(-),G(-))$, 其尾为自然变换的集合 $\operatorname{Nat}(F,G)$.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“余尾” <a class="slug" href="./余尾.html">[余尾]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

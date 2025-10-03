@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“椭圆曲线”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="椭圆曲线"><header><h1><span class="taxon">Wiki. </span>“椭圆曲线” <a class="slug" href="./椭圆曲线.html">[椭圆曲线]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<h2>定义</h2>
+<p><strong>椭圆曲线</strong> (elliptic curve) 是<span class="link local"><a href="./亏格.html" title="“亏格” [亏格]">亏格</a></span>为 $1$ 且有有理点 $e\in X(k)$ 的<span class="link local"><a href="./曲线.html" title="“曲线” [曲线]">曲线</a></span>.</p>
+<p>一般的整系数椭圆曲线形如
+$$
+E \colon y^2 + a_1 xy + a_3 y = x^3 + a_2 x^2 + a_4 x + a_6.
+$$
+在坐标变换 $y=\frac{1}{2}(Y-a_1X-a_3)$, $x=X$ 之下, 上式变为
+$$
+Y^2 = 4X^3 + b_2 X^2 + 2 b_4 X + b_6.
+$$</p>
+<p><strong>定理</strong>. 任何椭圆曲线都可以写成
+$$
+X = \{ y^2 = x^3 + ax + b \} \cup \{\infty\}.
+$$</p>
+<h3>复数上的椭圆曲线</h3>
+<p>复数上的椭圆曲线可等价地定义为</p>
+<ul>
+<li>$\mathbb{C} / \Lambda$, 其中 $\Lambda$ 为格点;</li>
+<li>一维紧复 [Lie 群](Lie 群.md).</li>
+<li>亏格 $1$ 的 [Riemann 面](Riemann 面.md), 带有一个基点;</li>
+<li>$3$ 次代数曲线.</li>
+</ul>
+<h2>性质</h2>
+<p><strong>命题</strong>. 设 $P,Q$ 是椭圆曲线上两点, 若 $P,Q$ 作为<span class="link local"><a href="./除子.html" title="“除子” [除子]">除子</a></span>等价, 即 $P-Q=\operatorname{div}(f)$, 则 $P=Q$, 即 $f$ 为常数.</p>
+<h2>相关概念</h2>
+<p><span class="link local"><a href="./椭圆曲线的模叠.html" title="“椭圆曲线的模叠” [椭圆曲线的模叠]">椭圆曲线的模叠</a></span>, <span class="link local"><a href="./谷山–志村猜想.html" title="“谷山–志村猜想” [谷山–志村猜想]">谷山–志村猜想</a></span></p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Abel 簇” <a class="slug" href="./Abel 簇.html">[Abel 簇]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Abel 簇的模问题” <a class="slug" href="./Abel 簇的模问题.html">[Abel 簇的模问题]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Langlands 纲领” <a class="slug" href="./Langlands 纲领.html">[Langlands 纲领]</a></h1><div class="metadata"><ul><li class="meta-item">[]</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“ζ-函数” <a class="slug" href="./ζ-函数.html">[ζ-函数]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“全纯向量丛” <a class="slug" href="./全纯向量丛.html">[全纯向量丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“椭圆曲线的模叠” <a class="slug" href="./椭圆曲线的模叠.html">[椭圆曲线的模叠]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“谷山–志村猜想” <a class="slug" href="./谷山–志村猜想.html">[谷山–志村猜想]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

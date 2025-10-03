@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“几何态射”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="几何态射"><header><h1><span class="taxon">Wiki. </span>“几何态射” <a class="slug" href="./几何态射.html">[几何态射]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<h2>动机</h2>
+<p>几何态射模拟了拓扑空间的连续映射的<span class="link local"><a href="./直像-逆像伴随.html" title="“直像-逆像伴随” [直像-逆像伴随]">直像-逆像伴随</a></span>. 几何态射是一对<span class="link local"><a href="./伴随.html" title="“伴随” [伴随]">伴随</a></span>, 但要求左伴随同时是左正合函子; 这个条件在<span class="link local"><a href="./张量-同态伴随.html" title="“张量-同态伴随” [张量-同态伴随]">张量-同态伴随</a></span>中体现为平坦模.</p>
+<h2>定义</h2>
+<p><span class="link local"><a href="./意象.html" title="“意象” [意象]">意象</a></span>之间的几何态射 $f\colon \mathcal F \to \mathcal  E$ 由一对伴随函子 $f^*\colon \mathcal E\to\mathcal F$, $f_*\colon \mathcal F\to\mathcal E$ 构成, 满足 $f^*$ 是 $f_*$ 的左伴随, 且 $f^*$ 左正合 (即保持一切有限极限).</p>
+<h2>性质</h2>
+<p>当 $Y$ 为 Hausdorff 空间时, 几何映射 $\operatorname{Sh}(X)\to\operatorname{Sh}(Y)$ 唯一确定了 $f\colon X\to Y$.</p>
+<h2>例</h2>
+<p>一个意象 $\mathcal E$ 中的箭头 $k\colon B\to A$ 给出了 “换基” (change of base) 函子
+$$
+k^* \colon \mathcal E/A \to \mathcal E/B.
+$$
+它同时具有左伴随 $\sum_k$ 与右伴随 $\prod_k$. 于是, 它给出了几何态射
+$$
+\mathcal E/B\to\mathcal E/A,
+$$
+其中 $k_*=\prod_k$. 而 $k^*$ 左正合是由于它存在左伴随 $\sum_k$.</p>
+<h2>相关概念</h2>
+<p><span class="link local"><a href="./几何态射的性质.html" title="“几何态射的性质” [几何态射的性质]">几何态射的性质</a></span></p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“∞-意象的形” <a class="slug" href="./∞-意象的形.html">[∞-意象的形]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“凝聚意象” <a class="slug" href="./凝聚意象.html">[凝聚意象]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“几何态射的性质” <a class="slug" href="./几何态射的性质.html">[几何态射的性质]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“张量-同态伴随” <a class="slug" href="./张量-同态伴随.html">[张量-同态伴随]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“直像-逆像伴随” <a class="slug" href="./直像-逆像伴随.html">[直像-逆像伴随]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“自然数对象” <a class="slug" href="./自然数对象.html">[自然数对象]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

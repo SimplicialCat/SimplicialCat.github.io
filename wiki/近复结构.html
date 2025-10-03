@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“近复结构”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="近复结构"><header><h1><span class="taxon">Wiki. </span>“近复结构” <a class="slug" href="./近复结构.html">[近复结构]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>关于向量空间上的近复结构, 见<span class="link local"><a href="./复向量空间.html" title="“复向量空间” [复向量空间]">复向量空间</a></span>.</p>
+<h2>定义</h2>
+<p>实流形 $M$ 上的<strong>近复结构</strong> (almost complex structure) 是切丛 $TM$ 的自同构 $J$, 满足
+$$
+J^2 = -1.
+$$
+此时称 $(M,J)$ 为<strong>近复流形</strong>.</p>
+<p>实 $2n$ 维流形 $M$ 的切丛对应映射 $M \to BGL(2n,\mathbb{R})$, 而近复结构 $J$ 等同于提升 $M\to BGL(n,\mathbb{C}) \to BGL(2n,\mathbb{R})$.</p>
+<h2>性质</h2>
+<p>近复流形的实维数是偶数, 这是因为 $\det J^2 = (-1)^{\dim_{\mathbb{R}} M}$, 而 $\det J\in\mathbb{R}$.</p>
+<p>近复流形有<span class="link local"><a href="./结构群的约化.html" title="“结构群的约化” [结构群的约化]">结构群的约化</a></span> $GL(n,\mathbb{C})\to GL(2n,\mathbb{R})$, 其中 $2n=\dim_{\mathbb{R}} M$.</p>
+<h2>可积性</h2>
+<p>近复结构 $J$ 可积是指它来自一个复结构. 见<span class="link local"><a href="./复流形.html" title="“复流形” [复流形]">复流形</a></span>.</p>
+<p>可积条件与如下条件等价.</p>
+<ul>
+<li>$[T^{0,1}M,T^{0,1}M]\subset T^{0,1}M$;</li>
+<li>$d C^\infty (\wedge^{1,0}M) \subset C^\infty (\wedge^{2,0}M\oplus \wedge^{1,1}M)$.</li>
+</ul>
+<h2>全纯映射</h2>
+<p>近复流形的映射 $f\colon (M,J)\to (M',J')$ 称为 $(J,J')$-全纯映射是指, 对任意 $x\in M$ 有如下交换图:
+$$
+\begin{array}
+	{ccc}
+	T_xM&amp;\overset{df}{\to}&amp; T_{f(x)M'}\\
+	\hspace{-1em}J \downarrow&amp;&amp;\downarrow J\hspace{-1em}\\
+	T_xM&amp;\underset{df}{\to}&amp; T_{f(x)}M'
+\end{array}
+$$
+近复结构 $J$ 可积等价于存在 $(J,i)$-全纯的坐标卡.</p>
+<p>当 $(M,J)$ 不可积时, 通常没有 $(M,J)$ 到 $\mathbb{C}$ 的全纯映射.</p>
+<p>[Riemann 面](Riemann 面.md)到近复流形的全纯映射称为 <span class="link local"><a href="./J-全纯曲线.html" title="“J-全纯曲线” [J-全纯曲线]">J-全纯曲线</a></span>.</p>
+<h2>Riemann 流形</h2>
+<p>$$
+g(JX,JY)=g(X,Y)
+$$</p>
+<p>对于 [Levi-Civita 联络](Levi-Civita 联络.md) $\nabla$ 若有 $\nabla J = 0$ 则 $(M,g,J)$ 为 [Kähler 流形](Kähler 流形.md).</p>
+<h2>相容三元组</h2>
+<p>相容三元组是指 $M$ 上的 Riemann 度量 $g$, 近复结构 $J$ 与辛形式 $\omega$, 满足以下条件 (即三个结构中的任意一个可由另外两个表示):</p>
+<ul>
+<li>$g(X,Y)=\omega(X,JY)$;</li>
+<li>$\omega(X,Y)=g(JX,Y)$;</li>
+<li>$JX=g^{-1}(\omega(X,-))$.</li>
+</ul>
+<p>这与<span class="link local"><a href="./酉群的三选二性质.html" title="“酉群的三选二性质” [酉群的三选二性质]">酉群的三选二性质</a></span>有关.</p>
+<h2>实 2 维的情形</h2>
+<p>$2$ 维实流形上的任意近复结构都可积, 这是因为可积性等价于 $\bar\partial^2=0$, 而这在实 $2$ 维情形自动成立.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“G-结构” <a class="slug" href="./G-结构.html">[G-结构]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“J-全纯曲线” <a class="slug" href="./J-全纯曲线.html">[J-全纯曲线]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Kähler 流形” <a class="slug" href="./Kähler 流形.html">[Kähler 流形]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Nijenhuis 张量” <a class="slug" href="./Nijenhuis 张量.html">[Nijenhuis 张量]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“基本形式” <a class="slug" href="./基本形式.html">[基本形式]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“复流形” <a class="slug" href="./复流形.html">[复流形]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“超 Kähler 流形” <a class="slug" href="./超 Kähler 流形.html">[超 Kähler 流形]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“酉群的三选二性质” <a class="slug" href="./酉群的三选二性质.html">[酉群的三选二性质]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

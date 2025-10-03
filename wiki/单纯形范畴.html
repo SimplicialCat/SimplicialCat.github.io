@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“单纯形范畴”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="单纯形范畴"><header><h1><span class="taxon">Wiki. </span>“单纯形范畴” <a class="slug" href="./单纯形范畴.html">[单纯形范畴]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>单纯形范畴 $\Delta$ 是有限序数 (设想为标准单纯形) 的范畴. 它是代表所有<span class="link local"><a href="./高等结构.html" title=" [高等结构]">高等范畴</a></span>的最重要的几何图形.</p>
+<h2>几何单纯形</h2>
+<p>标准 $n$ 维几何单纯形是 $\mathbb{R}^{n+1}$ 的基向量 $e_0,e_1,\cdots,e_n$ 的凸包. 这定义了一个函子 $\Delta \to \mathsf {Top}$.</p>
+<h2>幺半范畴</h2>
+<p>单纯范畴 $\Delta$ 是一个幺半对象生成的自由<span class="link local"><a href="./幺半范畴.html" title="“幺半范畴” [幺半范畴]">幺半范畴</a></span>, 也即
+$$
+\begin{aligned}
+	 &amp;\overset{1\otimes i}{\to}\\
+	1 \overset{i}{\to} a &amp;\overset{i\otimes 1}{\to} a\otimes a\to\cdots\\
+	&amp;\overset{m}{\leftarrow}\\
+\end{aligned}
+$$
+(注. 这里对象 $1$ 在拓扑版本的单纯范畴中没有出现) 这意味着, 任意幺半范畴 $M$ 中的幺半对象都对应着函子 $\Delta \to M$, 也即 $M^{\text{op}}$ 中的<span class="link local"><a href="./单纯对象.html" title="“单纯对象” [单纯对象]">单纯对象</a></span>.</p>
+<h2>伴随生成单纯对象</h2>
+<p>设 $L\dashv R\colon \mathsf C\leftrightarrows \mathsf D$ 是一对伴随, 有自然变换
+$$
+\begin{aligned}
+e &amp;\colon LR \Rightarrow 1_{\mathsf D},\</p>
+<p>\end{aligned}
+$$</p>
+<p>见<span class="link local"><a href="./单子.html" title="“单子” [单子]">单子</a></span>, <span class="link local"><a href="./余单子.html" title="“余单子” [余单子]">余单子</a></span>.</p>
+<h2>相关概念</h2>
+<p><span class="link local"><a href="./单纯对象.html" title="“单纯对象” [单纯对象]">单纯对象</a></span>, <span class="link local"><a href="./单纯范畴.html" title="“单纯范畴” [单纯范畴]">单纯范畴</a></span></p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“余单子” <a class="slug" href="./余单子.html">[余单子]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“几何实现” <a class="slug" href="./几何实现.html">[几何实现]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“单纯集” <a class="slug" href="./单纯集.html">[单纯集]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

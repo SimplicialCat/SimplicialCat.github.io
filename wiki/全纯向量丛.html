@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“全纯向量丛”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="全纯向量丛"><header><h1><span class="taxon">Wiki. </span>“全纯向量丛” <a class="slug" href="./全纯向量丛.html">[全纯向量丛]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>$n$ 维<strong>全纯向量丛</strong> (holomorphic vector bundle) 是<span class="link local"><a href="./复流形.html" title="“复流形” [复流形]">复流形</a></span>上以<strong>全纯映射</strong> $U_{ij}\to GL(n,\mathbb{C})$ 为转移函数的<span class="link local"><a href="./复向量丛.html" title="“复向量丛” [复向量丛]">复向量丛</a></span>. 全纯向量丛也可等价地定义为投影映射 $E\to X$ 是复流形全纯映射的复向量丛.</p>
+<p><strong>注</strong>. 复向量丛可在一般的空间上定义, 而全纯向量丛依赖于底流形的复结构, 即全纯向量丛只能在<strong>复流形</strong>上定义.</p>
+<h2>度数</h2>
+<p><span class="link local"><a href="./全纯线丛.html" title="“全纯线丛” [全纯线丛]">全纯线丛</a></span>的度数是除子的 “系数之和”, 与第一<span class="link local"><a href="./陈类.html" title="“陈类” [陈类]">陈类</a></span>有关.</p>
+<p>全纯向量丛 $E$ 的<strong>度数</strong> (degree) 定义为其行列式丛 $\wedge^r E$ 的度数.</p>
+<p><strong>命题</strong>. 对两个全纯向量丛 $E_1,E_2$,
+$$
+\deg (E_1\otimes E_2) = \deg(E_1)\operatorname{rank}(E_2) + \operatorname{rank}(E_1)\deg(E_2).
+$$</p>
+<h2>全纯截面</h2>
+<p>全纯向量丛 $E$ 上的<strong>全纯截面</strong> (holomorphic section) 是指局部 (在某个平凡化中) 全纯的截面. 全纯截面构成一个<span class="link local"><a href="./层.html" title="“层” [层]">层</a></span> $\mathcal O(E)$. 有时人们不区分全纯向量丛与其对应的层.</p>
+<h2>$\bar\partial$ 算子</h2>
+<p>全纯向量丛上的<strong>光滑截面</strong>上可定义算子
+$$\bar\partial_E \colon
+C^\infty(M,E)\to C^\infty(M,E\otimes {T^*}''M).
+$$
+具体地, 给定局部的全纯截面 $\sigma_i$, 对光滑截面 $s= f^i \sigma_i$ 有 $\bar\partial_E s = (\bar\partial f^i) \sigma_i.$ 由于转移函数是全纯的, 这个表达式不依赖于 $\sigma_i$ 的选取.</p>
+<p>例如复流形上的微分形式有算子
+$$
+\bar\partial \colon C^\infty (\wedge^{p,q}M)\to C^\infty(\wedge^{p,q+1}M).
+$$</p>
+<h2>等价定义</h2>
+<p>(待补充)</p>
+<h2>联络</h2>
+<p>见<span class="link local"><a href="./陈联络.html" title="“陈联络” [陈联络]">陈联络</a></span>.</p>
+<h2>分类</h2>
+<p><strong>定理</strong> 设 $X$ 是 $\mathbb P^1$ 或 <span class="link local"><a href="./椭圆曲线.html" title="“椭圆曲线” [椭圆曲线]">椭圆曲线</a></span>, 则 $X$ 上的全纯向量丛等同于代数向量丛, 也即局部自由层. 参见 <span class="link local"><a href="./GAGA.html" title="“GAGA” [GAGA]">GAGA</a></span>.</p>
+<p><strong>定理</strong> (Grothendieck) $\mathbb P^1$ 上的全纯向量丛都可写成
+$$
+\mathcal O(d_1)^{n_1}\oplus \cdots \oplus \mathcal O(d_k)^{n_k}.
+$$</p>
+<p><strong>定理</strong>. <span class="link local"><a href="./椭圆曲线.html" title="“椭圆曲线” [椭圆曲线]">椭圆曲线</a></span> $X$ 的 [Picard 群](Picard 群.md)同构于 $X$ 本身.</p>
+<h2>例</h2>
+<p>复流形的切丛是全纯向量丛.</p>
+<p>另见 [Hermite 向量丛](Hermite 向量丛.md), <span class="link local"><a href="./线丛.html" title="“线丛” [线丛]">线丛</a></span>.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Dolbeault 上同调” <a class="slug" href="./Dolbeault 上同调.html">[Dolbeault 上同调]</a></h1><div class="metadata"><ul><li class="meta-item">Dolbeault 算子, Dolbeault 定理</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hermite 向量丛” <a class="slug" href="./Hermite 向量丛.html">[Hermite 向量丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hirzebruch–Riemann–Roch 定理” <a class="slug" href="./Hirzebruch--Riemann--Roch 定理.html">[Hirzebruch--Riemann--Roch 定理]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hodge 理论” <a class="slug" href="./Hodge 理论.html">[Hodge 理论]</a></h1><div class="metadata"><ul><li class="meta-item">Hodge 分解定理, Hodge 定理</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Kodaira–Serre 对偶” <a class="slug" href="./Kodaira--Serre 对偶.html">[Kodaira--Serre 对偶]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“全纯线丛” <a class="slug" href="./全纯线丛.html">[全纯线丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“杨–Mills 泛函” <a class="slug" href="./杨--Mills 泛函.html">[杨--Mills 泛函]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈联络” <a class="slug" href="./陈联络.html">[陈联络]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

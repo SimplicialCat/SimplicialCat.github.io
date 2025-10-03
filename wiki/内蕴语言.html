@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“内蕴语言”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="内蕴语言"><header><h1><span class="taxon">Wiki. </span>“内蕴语言” <a class="slug" href="./内蕴语言.html">[内蕴语言]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>任何<span class="link local"><a href="./意象.html" title="“意象” [意象]">意象</a></span> $\mathcal E$ 都带有一种<strong>内蕴语言</strong> (internal language). 直观地说, 使用这种语言, 我们可以<strong>假装</strong> $\mathcal E$ 的对象是集合, 态射是集合的映射, 并且像对待集合一样对 $\mathcal E$ 的命题进行推理. 例如, 满态射 (epimorphism) $\alpha\colon X\to Y$ 的概念可使用内蕴语言表达为
+$$
+\mathcal E \models \forall y:Y. \exists x:X . \alpha(x)=y.
+$$
+其中 $X,Y$ 是 $\mathcal E$ 的对象. 对于集合, 满射的复合是满射; 那么在抽象的意象中我们也有满态射的复合是满态射.</p>
+<p>有一条<strong>元定理</strong> (metatheorem) 是说, 若语句 $\varphi$ 在意象 $\mathcal E$ 的内蕴语言中成立, 且逻辑上 $\varphi$ 推出 $\psi$, 则 $\psi$ 也在这一内蕴语言中成立.</p>
+<p>需要注意的是, 意象的内蕴语言通常是<strong>直觉主义</strong> (intuitionistic), 而非<strong>经典</strong> (classical) 的. 这意味着不能使用排中律, 且一个命题 $P$ 的否定之否定不能推出 $P$ 本身.</p>
+<h2>应用</h2>
+<h3>概形上的层语义</h3>
+<p>概形上的<span class="link local"><a href="./层意象.html" title="“层意象” [层意象]">层意象</a></span>的<span class="link local"><a href="./层语义.html" title="“层语义” [层语义]">层语义</a></span>简化了代数几何中的许多概念和命题.</p>
+<h3>物理</h3>
+<p>一个量子力学系统可赋予一个 [Bohr 意象](Bohr 意象.md).</p>
+<h3>其他</h3>
+<p>另见 [Newton–Puiseux 定理](Newton–Puiseux 定理.md)</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Bohr 意象” <a class="slug" href="./Bohr 意象.html">[Bohr 意象]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“层意象” <a class="slug" href="./层意象.html">[层意象]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“层语义” <a class="slug" href="./层语义.html">[层语义]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“意象” <a class="slug" href="./意象.html">[意象]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“既约概形” <a class="slug" href="./既约概形.html">[既约概形]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

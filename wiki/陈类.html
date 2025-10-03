@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“陈类”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="陈类"><header><h1><span class="taxon">Wiki. </span>“陈类” <a class="slug" href="./陈类.html">[陈类]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>陈省身 1945 年在 Annals 上的文章用</p>
+<ul>
+<li>$\operatorname{exp}$ 正合列,</li>
+<li>曲率,</li>
+<li>阻碍</li>
+</ul>
+<p>三种方式定义了陈类.</p>
+<blockquote>
+<p>历史: 1933 年 Kähler 第一次写下 “陈形式”, 证明其与度量无关.</p>
+</blockquote>
+<h2>联络与曲率</h2>
+<p>(有问题, 重写)</p>
+<p>给定流形 $X$ 上的向量丛 $E\to X$, 其上一个 (线性) <span class="link local"><a href="./联络.html" title="“联络” [联络]">联络</a></span>可视为微分同胚群的提升, 即群正合列
+$$
+1 \to \operatorname{Aut}(E) \to \operatorname{Diffeo}(E) \to \operatorname{Diffeo}(M) \to 1
+$$
+的无穷小版本
+$$
+0 \to \operatorname{aut}(E) \to \operatorname{Lie}(E)\to \operatorname{Lie}(M) \to 0
+$$
+的截面
+$$
+A\colon \operatorname{Lie}(M)\to \operatorname{Lie}(E).
+$$</p>
+<h2>阻碍</h2>
+<p>陈类是 $GL_n(\mathbb{C})$-主丛的整体截面的阻碍.</p>
+<p>陈类 $c_k(E)$ (在 [Poincaré–Verdier 对偶](Poincaré 对偶.md)的意义下) 对应于 $E$ 的 $k$ 个整体截面线性相关的那些点确定的同调类.</p>
+<p><strong>例</strong>. 复流形的最高陈类对应于一般向量场的零点.</p>
+<h2>分类空间</h2>
+<p>陈类是<span class="link local"><a href="./分类空间.html" title="“分类空间” [分类空间]">分类空间</a></span> $BU(n)=BGL_n(\mathbb{C})$ 的上同调类.</p>
+<h2>线丛的陈类</h2>
+<p><span class="link local"><a href="./线丛.html" title="“线丛” [线丛]">线丛</a></span> (复 $1$ 维向量丛) 只有一个非平凡的陈类 $c_1$, 它也等于线丛的 [Euler 类](Euler 类.md). 对于比较好的空间 $X$ (例如CW复形), $c_1$ 给出了 $X$ 上线丛的同构类与 $H^2(X;\mathbb Z)$ 的元素的一一对应, 且有
+$$
+c_1(L\otimes L')=c_1(L)+c_1(L').
+$$</p>
+<p>线丛的第一陈类等于<span class="link local"><a href="./指数序列.html" title="“指数序列” [指数序列]">指数序列</a></span>
+$$
+0\to \mathbb{Z} \to \mathcal O_X \overset{\exp(2\pi i -)}{\longrightarrow} \mathcal O_X^\times \to 0
+$$
+给出的长正合列中的同态
+$$
+H^1(X,\mathcal O_X^\times) \overset{c_1}{\to} H^2(X,\mathbb{Z}),
+$$
+$$
+(U_{ij},f_{ij})\mapsto \Big(U_{ijk}, \frac{1}{2\pi i}(\log f_{ij}-\log f_{ik}+ \log f_{jk})\Big).
+$$</p>
+<p>这个陈类与曲率通过如下同态相联系:
+$$
+H^2(M;\mathbb{Z}) \to H^2(M;\mathbb{R}) \to H^2_{dR}(M),
+$$
+$$
+c_1(L) \to \cdots \to \Big[\frac{i}{2\pi}\Omega\Big]
+$$</p>
+<h2>归纳定义</h2>
+<p>(见 Milnor–Stasheff)</p>
+<h2>周环</h2>
+<p>在抽象情形可使用<span class="link local"><a href="./周环.html" title="“周环” [周环]">周环</a></span>代替上同调构造陈类. 设 $E$ 为光滑代数簇 $X$ 上秩为 $r$ 的局部自由层, 考虑射影丛 $\pi\colon \mathbb P(E)\to X$ 与 $\mathbb P(E)$ 上的可逆层 $\mathcal O(1)$. 令 $\xi$ 为 $A^1(\mathbb P(E))$ 中由 $\mathcal O(1)$ 定义的<span class="link local"><a href="./除子.html" title="“除子” [除子]">除子</a></span>类. 我们知道 $A(\mathbb P(E))$ 是由 $1,\xi,\cdots,\xi^{r-1}$ 生成的自由 $A(X)$-模, 于是有
+$$
+\xi^r -c_1\xi^{r-1}+\cdots+ (-1)^r c_r\xi^0 = 0.
+$$
+其中的系数 $c_i$ 定义为 $E$ 的陈类. 总陈类 $c(E):= 1+c_1(E)+\cdots + c_r(E)$ 满足 Whitney 条件: 对任意短正合列 $0\to c(E')\to c(E)\to c(E'')\to 0$ 有 $c(E)= c(E')c(E'')$.</p>
+<p>对 $X$ 上的除子 $D$, 有 $c(\mathcal O_X(D))=1+D$.</p>
+<p>若 $E$ 为可逆层 $\mathcal O(D_1),\cdots,\mathcal O(D_r)$ 的直和, 那么 $c(E)=\prod_i (1+D_i)$.</p>
+<h2>陈–Weil 理论</h2>
+<p>陈类可表示为<span class="link local"><a href="./曲率形式.html" title="“曲率形式” [曲率形式]">曲率形式</a></span>的特征多项式:
+$$
+\det\left(I + \frac{it}{2\pi}\Omega\right) = \sum_k c_k t^k.
+$$
+见[陈–Weil 理论](陈–Weil 理论.md).</p>
+<h2>全纯丛</h2>
+<p><span class="link local"><a href="./全纯线丛.html" title="“全纯线丛” [全纯线丛]">全纯线丛</a></span>的陈类</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Calabi–丘流形” <a class="slug" href="./Calabi--丘流形.html">[Calabi--丘流形]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Euler 示性数” <a class="slug" href="./Euler 示性数.html">[Euler 示性数]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Euler 类” <a class="slug" href="./Euler 类.html">[Euler 类]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Fubini–Study 度量” <a class="slug" href="./Fubini--Study 度量.html">[Fubini--Study 度量]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“K3 曲面” <a class="slug" href="./K3 曲面.html">[K3 曲面]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Picard 群” <a class="slug" href="./Picard 群.html">[Picard 群]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Pontryagin 类” <a class="slug" href="./Pontryagin 类.html">[Pontryagin 类]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“乘性序列” <a class="slug" href="./乘性序列.html">[乘性序列]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“全纯向量丛” <a class="slug" href="./全纯向量丛.html">[全纯向量丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“全纯线丛” <a class="slug" href="./全纯线丛.html">[全纯线丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“典范丛” <a class="slug" href="./典范丛.html">[典范丛]</a></h1><div class="metadata"><ul><li class="meta-item">典范线丛</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“分类空间” <a class="slug" href="./分类空间.html">[分类空间]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“复定向上同调理论” <a class="slug" href="./复定向上同调理论.html">[复定向上同调理论]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“小平消失定理” <a class="slug" href="./小平消失定理.html">[小平消失定理]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“指数序列” <a class="slug" href="./指数序列.html">[指数序列]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“示性类” <a class="slug" href="./示性类.html">[示性类]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“线丛” <a class="slug" href="./线丛.html">[线丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“超平面丛” <a class="slug" href="./超平面丛.html">[超平面丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈–Weil 理论” <a class="slug" href="./陈--Weil 理论.html">[陈--Weil 理论]</a></h1><div class="metadata"><ul><li class="meta-item">陈–Weil 同态</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈特征” <a class="slug" href="./陈特征.html">[陈特征]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈联络” <a class="slug" href="./陈联络.html">[陈联络]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

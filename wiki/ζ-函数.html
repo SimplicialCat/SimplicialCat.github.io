@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“ζ-函数”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="ζ-函数"><header><h1><span class="taxon">Wiki. </span>“ζ-函数” <a class="slug" href="./ζ-函数.html">[ζ-函数]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<h2>定义</h2>
+<h3>复代数簇</h3>
+<p>对于光滑复<span class="link local"><a href="./射影簇.html" title="“射影簇” [射影簇]">射影簇</a></span> $X$ 与映射 $f\colon X\to X$, 定义关于 $t$ 的形式幂级数
+$$
+	Z(X,f,t) = \prod_i \det(1-f^*|_{H^i(X,\mathbb{C})} t) ^{(-1)^{i+1}},
+$$</p>
+<h3>有限域上的代数簇</h3>
+<p>对于有限域 $\mathbb F_q$ 上的拟射影代数簇 $X$, 定义
+$$
+Z(X,T) = \exp \left(\sum_{r=1}^{\infty}\frac{T^r}{r}\# X(\mathbb F_{q^r})\right),
+$$
+定义 $\zeta(s) = Z(X,q^{-s})$.</p>
+<h3>函数域</h3>
+<p>设 $K$ 为<span class="link local"><a href="./函数域.html" title="“函数域” [函数域]">函数域</a></span>, $\mathcal O_K$ 为其整数环, 几何上意味着将 $\mathbb A^1=\operatorname{Spec}\mathbb F_q[t]$ <span class="link local"><a href="./正规化.html" title=" [正规化]">正规化</a></span>为光滑仿射曲线 $\mathcal U=\operatorname{Spec}\mathcal O_K$.
+$$
+\zeta(s) = \prod_{\mathfrak p}\frac{1}{1-|\mathcal O_K / \mathfrak p|^{-s}},
+$$
+它是 $T=q^{-s}$ 的形式幂级数. 几何上 $\mathfrak p$ 对应曲线 $U$ 的闭点. 可以证明
+$$
+\zeta(s)=\exp\Bigg(
+	\sum_{n=1}^\infty \frac{q^{-ns}}{n}|U(\mathbb F_{q^n})|
+\Bigg).
+$$
+(取对数, 这是一个好的练习.)</p>
+<p>曲线上的无穷<span class="link local"><a href="./位.html" title="“位” [位]">位</a></span>和其余的位是相似的, 不应区分. 这就是说应该考虑 $\mathbb P^1$ 在曲线中的正规化, 作为射影曲线.</p>
+<p>[Weil 猜想](Weil 猜想.md)</p>
+<h3>数域</h3>
+<p>设 $K$ 为<span class="link local"><a href="./数域.html" title="“数域” [数域]">数域</a></span>, $\mathcal O_K$ 为其整数环. 定义 [Dedekind ζ-函数](Dedekind ζ-函数.md)
+$$
+\zeta(s) = \sum_{\mathfrak a\subset\mathcal O_K}\frac{1}{(\# \mathcal O_K / \mathfrak a)^s} = \prod_{\mathfrak p\subset\mathcal O_K\,\text{prime}}\left(1-\frac{1}{(\#\mathcal O_K / \mathfrak p)^s}\right)^{-1}.
+$$
+特别地, 当 $\mathcal O_K=\mathbb{Z}$ 时这是 [Riemann ζ-函数](Riemann ζ-函数.md).</p>
+<h3>椭圆算子</h3>
+<p>对于椭圆算子 $H$, 其 ζ-函数是如下函数的解析延拓:
+$$
+\zeta(s) = \operatorname{tr}\Big(\frac{1}{H}\Big)^s = \text{``}\,\sum_\lambda \lambda ^{-s}\,\text{''}.
+$$
+当 $H$ 是 [Riemann 面](Riemann 面.md)上的 [Laplace 算子](Laplace 算子.md)时, 这称为 Selberg ζ-函数.</p>
+<h2>例</h2>
+<p>$$
+Z(\mathbb A^n,T) = \frac{1}{1-q^n T}.
+$$
+$$
+Z(\mathbb P^n,T) = \frac{1}{(1-T)(1-qT)\cdots (1-q^n T)}.
+$$</p>
+<p><span class="link local"><a href="./椭圆曲线.html" title="“椭圆曲线” [椭圆曲线]">椭圆曲线</a></span> $E_{/\mathbb F_q}$ 的 [Frobenius 态射](Frobenius 态射.md)的 $n$ 次方的不动点为 $\# E(\mathbb F_{q^n})$, 也即 $\deg (\mathrm{id}-\mathrm{Frob}^n)$ (?).</p>
+<blockquote>
+<p>Frob act on Tate modules?</p>
+</blockquote>
+<blockquote>
+<p>Generalize to abelian varieties?</p>
+</blockquote>
+<h2>相关概念</h2>
+<p><span class="link local"><a href="./函数域类比.html" title="“函数域类比” [函数域类比]">函数域类比</a></span></p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Dedekind ζ-函数” <a class="slug" href="./Dedekind ζ-函数.html">[Dedekind ζ-函数]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Riemann ζ-函数” <a class="slug" href="./Riemann ζ-函数.html">[Riemann ζ-函数]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“函数域类比” <a class="slug" href="./函数域类比.html">[函数域类比]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Kähler–Ricci 曲率”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Kähler--Ricci 曲率"><header><h1><span class="taxon">Wiki. </span>“Kähler–Ricci 曲率” <a class="slug" href="./Kähler--Ricci 曲率.html">[Kähler--Ricci 曲率]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>Kähler–Ricci 曲率 (用 Futaki 老师的记号) 定义为
+$$
+R_{i\bar j} = g^{k \bar \ell} R_{i\bar\ell \bar j k} = {{R_i}^k}_{\bar j k} = - {R_{i\bar j k}}^k = {R^k}_{ki\bar j} \in C^\infty (\operatorname{End}(E)\otimes \wedge^2 M).
+$$
+相比之下, Riemann–Ricci 曲率为
+$$
+R_{ij} = {{R_i}^k}_{jk}.
+$$</p>
+<p>此时的 [Bianchi 恒等式](Bianchi 恒等式.md)为
+$$
+{{R_i}^k}_{\bar j k} + {R_{i\bar j k}}^k + {{R_{ik}}^k}_{\bar j} = 0.
+$$</p>
+<p>$R_{i\bar j}$ 由 $g_{k\bar\ell}$ 及其导数表示:
+$$
+R_{i\bar j} = - g^{k\bar\ell} \Big(
+\frac{\partial^2}{\partial z^i \partial \bar z^j}</p>
+<ul>
+<li>g^{p\bar q}\frac{\partial g_{k\bar q}}{\partial z^i}
+\frac{\partial g_{p\bar \ell}}{\partial \bar z^j}
+\Big)
+= - \frac{\partial^2}{\partial z^i \partial \bar z^j}
+\log\det (g_{k\bar\ell}).
+$$</li>
+</ul>
+<h2>与陈类的关系</h2>
+<p>$$
+\sqrt{-1} R_{i\bar j} dz^i \wedge d\bar z^j = \sqrt{-1}\operatorname{tr}R = 2\pi c_1(M).
+$$</p>
+<h2>Ricci 流</h2>
+<p>[Ricci 流](Ricci 流.md)的方程为
+$$
+\frac{\partial g_{i\bar j}}{\partial  t} = - R_{i \bar j}.
+$$</p>
+</details></section><footer></footer></article>
+
+</div></body></html>

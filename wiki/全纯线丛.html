@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“全纯线丛”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="全纯线丛"><header><h1><span class="taxon">Wiki. </span>“全纯线丛” <a class="slug" href="./全纯线丛.html">[全纯线丛]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>复一维<span class="link local"><a href="./全纯向量丛.html" title="“全纯向量丛” [全纯向量丛]">全纯向量丛</a></span>.</p>
+<p>另见<span class="link local"><a href="./线丛.html" title="“线丛” [线丛]">线丛</a></span>.</p>
+<h2>陈类</h2>
+<p><strong>定理</strong>. 设 $L\to M$ 为全纯线丛, 带有 Hermite 结构 $h$, 则有 (不依赖于平凡化!)
+$$
+\Omega = - \partial \bar\partial \log h.
+$$
+<strong>推论</strong>. 全纯线丛的第一<span class="link local"><a href="./陈类.html" title="“陈类” [陈类]">陈类</a></span>
+$$
+c_1 = \frac{i}{2\pi}\Omega = - \frac{i}{2\pi} \partial \bar\partial  \log h.
+$$
+见<span class="link local"><a href="./陈联络.html" title="“陈联络” [陈联络]">陈联络</a></span>.</p>
+<h2>Picard 群</h2>
+<p>复几何中, 复流形 $X$ 的 [Picard 群](Picard 群.md) $\operatorname{Pic}(X)$ 是 $X$ 上全纯线丛的同构类在张量积下构成的群, 也等同于<span class="link local"><a href="./除子.html" title="“除子” [除子]">除子</a></span>的等价类构成的群.</p>
+<p>全纯线丛的分类见<span class="link local"><a href="./全纯向量丛.html" title="“全纯向量丛” [全纯向量丛]">全纯向量丛</a></span>.</p>
+<h2>例</h2>
+<h3>射影空间</h3>
+<p><strong>命题</strong>. $\mathbb P^1(\mathbb{C})$ 的<span class="link local"><a href="./全纯切丛.html" title=" [全纯切丛]">全纯(余)切丛</a></span> $T'\mathbb P^1(\mathbb{C}) = \mathcal O(2) = [2H]$, 其中 $H$ 是超平面 (即一个点) 对应的除子.</p>
+<p><strong>证明</strong>. 考虑开集 $U_\lambda = \{x_\lambda\neq 0\}$. 考虑 $T'\mathbb P^1(\mathbb{C})$ 在 $U_0$ (坐标函数为 $s$) 上的截面 $\frac{\partial}{\partial s}$, $U_1$ (坐标函数为 $t$) 上的截面 $-\frac{\partial}{\partial t}$, 在 $U_0\cap U_1$ 上有 $s=1/t$,
+$$
+-\frac{\partial}{\partial t}=\frac{1}{t^2}\frac{\partial}{\partial s}=s^2\frac{\partial}{\partial s}.
+$$
+这说明 $T'\mathbb P^1(\mathbb{C})=\mathcal O(2)$.</p>
+<p><strong>命题</strong>. 对于 $k\in\mathbb{Z}_+$, $\mathbb{CP}^n$ 上的线丛 $\mathcal O(k)$ 的截面是 $k$ 次齐次多项式.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Picard 群” <a class="slug" href="./Picard 群.html">[Picard 群]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“全纯向量丛” <a class="slug" href="./全纯向量丛.html">[全纯向量丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“小平消失定理” <a class="slug" href="./小平消失定理.html">[小平消失定理]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“正线丛” <a class="slug" href="./正线丛.html">[正线丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“线丛” <a class="slug" href="./线丛.html">[线丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈类” <a class="slug" href="./陈类.html">[陈类]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈联络” <a class="slug" href="./陈联络.html">[陈联络]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“除子” <a class="slug" href="./除子.html">[除子]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

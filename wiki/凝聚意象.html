@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“凝聚意象”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="凝聚意象"><header><h1><span class="taxon">Wiki. </span>“凝聚意象” <a class="slug" href="./凝聚意象.html">[凝聚意象]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<h2>动机</h2>
+<p><span class="link external"><a href="https://ncatlab.org/nlab/show/motivation+for+cohesive+toposes" title="nLab 页面 [https://ncatlab.org/nlab/show/motivation+for+cohesive+toposes]">nLab 页面</a></span></p>
+<p>一类空间 $H$ 中的所谓<strong>凝聚</strong> (cohesion) 的概念是描述空间 $X\in H$ 的<strong>点</strong>如何聚集在一起的方法, 类似于化学上液体聚成小滴.</p>
+<p>一个例子是, 微分流形中的开球就是 “液滴” (droplet) 是开球.</p>
+<p>William Lawvere 指出了如下公理.</p>
+<ul>
+<li>对 $H$ 中的每个空间 $X$ 指定了<strong>凝聚连通分支</strong> (cohesively connected components) 的集合 $\Pi(X)$;</li>
+<li>每个集合 $S$ 都可以两种方式视为<strong>凝聚空间</strong> (cohesive space):
+<ul>
+<li>将 $S$ 每个点分别视为一个液滴, 称为<strong>离散凝聚空间</strong> (discrete cohesive space);</li>
+<li>将 $S$ 的所有点共同视为一个液滴, 称为<strong>余离散凝聚空间</strong> (codiscrete cohesive space).</li>
+</ul>
+</li>
+<li>离散与余离散的凝聚空间与其他凝聚空间满足一些符合直觉的关系. 例如, 两个离散凝聚空间之间的映射就是底层集合的映射.</li>
+</ul>
+<p>凝聚空间总是局部可缩 (局部 $\infty$-连通) 的.</p>
+<p>有一个典范的<span class="link local"><a href="./几何态射.html" title="“几何态射” [几何态射]">几何态射</a></span>, 即全局截面 $\Gamma\colon \mathcal E\to\mathsf {Set}$, 将空间 $X$ 对应到其点集 $\Gamma(X)$, 即 $X$ “遗忘所有凝聚”. 离散和余离散分别是 $\Gamma$ 的左右伴随:
+$$
+\begin{aligned}
+	\operatorname{Hom}(\operatorname{Disc}(X),Y)&amp;=\operatorname{Hom}(X,\Gamma(Y));\\
+	\operatorname{Hom}(\Gamma(X),Y)&amp;=\operatorname{Hom}(X,\operatorname{coDisc}(Y)).
+\end{aligned}
+$$</p>
+<p>$\Pi_0\colon \mathcal E\to\mathsf {Set}$ 将空间 $X$ 对应到其连通分支的集合, 是 $\operatorname{Disc}$ 的左伴随:
+$$
+\operatorname{Hom}(\Pi_0(X),Y)=\operatorname{Hom}(X,\operatorname{Disc}(Y)).
+$$</p>
+<h2>定义</h2>
+<p><span class="link external"><a href="https://ncatlab.org/nlab/show/cohesive+topos" title="nLab 页面 [https://ncatlab.org/nlab/show/cohesive+topos]">nLab 页面</a></span></p>
+<p>设 $\mathcal E$ 是基意象 $\mathcal S$ 上的意象, 即具有<span class="link local"><a href="./几何态射.html" title="“几何态射” [几何态射]">几何态射</a></span> $(f^*\dashv f_*)\colon \mathcal E \to\mathcal S$. 若如下条件成立, 则称其为<strong>凝聚意象</strong>:</p>
+<ul>
+<li>它是局部连通意象, 即进一步存在满足适当条件的左伴随 $f_! \dashv f^*$;</li>
+<li>它是连通意象, 即 $f_!$ 保持终对象, 或 $f^*$ 全忠实;</li>
+<li>它强连通, 即 $f_!$ 保持所有有限积;</li>
+<li>它是局部意象, 即进一步存在右伴随 $f_*\dashv f^!$;</li>
+</ul>
+<p>总结起来, 我们有伴随四元组
+$$
+(f_!\dashv f^* \dashv f_* \dashv f^!)\colon \mathcal E
+\begin{array}
+	{ccc}
+	&amp; \overset{f_!}{\longrightarrow} &amp;\\
+	&amp; \overset{f^*}{\longleftarrow} &amp;\\
+	&amp; \overset{f_*}{\longrightarrow} &amp;\\
+	&amp; \overset{f^!}{\longleftarrow} &amp;\\
+\end{array}
+\mathcal S.
+$$
+其几何解释为
+$$
+(\Pi_0 \dashv \operatorname{Disc} \dashv \Gamma \dashv \operatorname{coDisc})\colon \mathcal E
+\begin{array}
+	{ccc}
+	&amp; \overset{\Pi_0}{\longrightarrow} &amp;\\
+	&amp; \overset{\operatorname{Disc}}{\longleftarrow} &amp;\\
+	&amp; \overset{\Gamma}{\longrightarrow} &amp;\\
+	&amp; \overset{\operatorname{coDisc}}{\longleftarrow} &amp;\\
+\end{array}
+\mathcal S.
+$$</p>
+</details></section><footer></footer></article>
+
+</div></body></html>

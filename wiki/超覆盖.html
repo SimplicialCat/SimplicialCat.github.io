@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“超覆盖”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="超覆盖"><header><h1><span class="taxon">Wiki. </span>“超覆盖” <a class="slug" href="./超覆盖.html">[超覆盖]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>超覆盖是覆盖的推广.</p>
+<h2>定义</h2>
+<h3>∞-意象中的超覆盖</h3>
+<p>设 $\mathcal X$ 为 <span class="link local"><a href="./∞-意象.html" title="“∞-意象” [∞-意象]">∞-意象</a></span>, $U_\bullet$ 为 $\mathcal X$ 的单纯对象. 若对所有 $n\geq 0$,
+$$
+U_n \to ({\operatorname{cosk}_{n-1}U_\bullet})_n
+$$
+为<span class="link local"><a href="./有效满射.html" title=" [有效满射]">有效满射</a></span> (见<span class="link local"><a href="./余骨架.html" title="“余骨架” [余骨架]">余骨架</a></span>), 则称之为 $\mathcal X$ 的超覆盖 (hypercover). 进一步, 若 $\operatorname{colim}U_\bullet =1$, 则称之为有效超覆盖.</p>
+<p>例如, 对于超覆盖 $U_\bullet$, 有</p>
+<ul>
+<li>$U_0 \to 1$ 为有效满射,</li>
+<li>$U_1\to U_0\times U_0$ 为有效满射.</li>
+</ul>
+<h2>性质</h2>
+<p><strong>引理</strong>. 对于 ∞-意象中的 $\infty$-连通对象 $U$ (在[超完备 ∞-意象](超完备 ∞-意象.md)中就是终对象 $1$), 常值单纯对象 $U_\bullet$ 是超覆盖.</p>
+<p><strong>引理</strong>. ∞-意象中的 $n$-<span class="link local"><a href="./余骨架.html" title="“余骨架” [余骨架]">余骨架</a></span>超覆盖是有效的.</p>
+<p><strong>引理</strong>. ∞-意象中的超覆盖的几何实现 (即余极限) 是 $\infty$-连通的.</p>
+<p><strong>定理</strong>. 对于 ∞-意象 $\mathcal X$, 如下条件等价,</p>
+<ul>
+<li>对任意 $X\in\mathcal X$, $\mathcal X_{/X}$ 的超覆盖 $U_\bullet$ 都是有效超覆盖;</li>
+<li>$\mathcal X$ 是[超完备 ∞-意象](超完备 ∞-意象.md).</li>
+</ul>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“平展同伦论” <a class="slug" href="./平展同伦论.html">[平展同伦论]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“超完备 ∞-意象” <a class="slug" href="./超完备 ∞-意象.html">[超完备 ∞-意象]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

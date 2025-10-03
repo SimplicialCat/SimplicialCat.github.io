@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Bochner 技巧”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Bochner 技巧"><header><h1><span class="taxon">Wiki. </span>“Bochner 技巧” <a class="slug" href="./Bochner 技巧.html">[Bochner 技巧]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<h2>应用</h2>
+<p><strong>命题</strong>. 设 $M$ 是紧 Riemann 流形, Ricci 曲率张量满足 $\operatorname{Ric}&lt;0$ ($\operatorname{Ric}_k{}^\ell$ 是负定矩阵), 则 $M$ 上不存在非零 [Killing 向量场](Killing 向量场.md).</p>
+<p><strong>证明</strong>. $X$ 为 Killing 向量场的条件是 (见 [Killing 向量场](Killing 向量场.md))
+$$
+\nabla_i X_j + \nabla_j X_i = 0.
+$$
+注意到
+$$
+g^{ik}\nabla_k X_i = 0
+$$
+(因为 $g^{ik}$ 关于 $k,i$ 对称而 $\nabla_k X_i$ 关于 $k,i$ 反对称),
+从而
+$$
+\begin{aligned}
+	0&amp;\leq\int_M |\nabla X|^2 \,dV_g\\ &amp;= \int g^{ik}g^{j\ell} (\nabla_i X_j) (\nabla_k X_\ell) \,dV_g\\
+	&amp;= - \int_M g^{ik}g^{j\ell}(\nabla_k\nabla_i X_j) X_\ell \,dV_g\\
+	&amp;= \int_M g^{ik}g^{j\ell}(\nabla_k\nabla_j X_i) X_\ell \,dV_g\\
+	&amp;= \int_M \underbrace{g^{ik}g^{j\ell}(\nabla_j\nabla_k X_i}_{=0} + R_{kj}{}^p{}_i X_p) X_\ell \,dV_g\\
+	&amp;=\int_M \operatorname{Ric}_{j}{}^p X_p X^j\, dV_g \leq 0,
+\end{aligned}
+$$
+(使用了 [Ricci 恒等式](Ricci 恒等式.md)) 这说明 $X$ 恒等于 $0$.</p>
+<p><strong>命题</strong>. 设 $M$ 是紧 Riemann 流形, Ricci 曲率张量满足 $\operatorname{Ric}&gt;0$, 则 $M$ 上的调和 $1$-形式必为 $0$.</p>
+<p><strong>证明</strong>. $\alpha$ 调和的条件是 $d\alpha = 0, d^*\alpha = 0$, 也即
+$$
+\nabla_j \alpha^j = 0,\quad \nabla_j \alpha_i - \nabla_i \alpha_j = 0.
+$$
+$$
+\begin{aligned}
+	0 &amp;\leq \int_M |\nabla \alpha|^2\, dV_g\\
+	&amp;=\int_M g^{ij}g^{k\ell}\nabla_i \alpha_k \nabla_k \alpha_\ell\, dV_g\\
+	&amp;=-\int_M g^{ij} g^{k\ell} (\nabla_j\nabla_i \alpha_k) \alpha_\ell\, dV_g\\
+	&amp;=-\int_M g^{ij} g^{k\ell} (\nabla_j\nabla_k \alpha_i) \alpha_\ell\, dV_g\\
+		&amp;=-\int_M \underbrace{g^{ij} g^{k\ell} (\nabla_k\nabla_j \alpha_i}_{=0} - R_{jk}{}^p{}_i \alpha_p) \alpha_\ell\, dV_g\\
+	&amp;= - \int_M g^{k\ell} \operatorname{Ric}_k{}^p \alpha_p \alpha_\ell \leq 0,
+\end{aligned}
+$$
+这说明 $\alpha$ 恒等于 $0$.</p>
+<h3>Kähler 情形</h3>
+<p>记 $\omega$ 为 Kähler 形式 (见<span class="link local"><a href="./基本形式.html" title="“基本形式” [基本形式]">基本形式</a></span>),</p>
+</details></section><footer></footer></article>
+
+</div></body></html>

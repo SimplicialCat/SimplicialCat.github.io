@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“算畴”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="算畴"><header><h1><span class="taxon">Wiki. </span>“算畴” <a class="slug" href="./算畴.html">[算畴]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>算畴 $C$ 表达了一族多元运算, $C(n)$ 是其中 $n$ 元运算的参数空间.</p>
+<h2>定义</h2>
+<h3>作为对称序列</h3>
+<p>算畴最常用的定义是对称序列 (symmetric sequence), 这样定义的算畴也称对称算畴 (symmetric operad).</p>
+<p>设 $(S,\otimes,1)$ 为<span class="link local"><a href="./对称幺半范畴.html" title="“对称幺半范畴” [对称幺半范畴]">对称幺半范畴</a></span>, 如带基点空间范畴. 其上的一个算畴 (operad) $\mathcal C$ 由如下信息构成:</p>
+<ul>
+<li>“$n$ 元运算的参数空间”, 对象 $\mathcal C(n)$,</li>
+<li>“恒等运算”, 态射 $1\to \mathcal C(1)$,</li>
+<li>“运算的复合”, 即态射 $\mathcal C(k)\otimes \mathcal C(j_1)\otimes\cdots\otimes \mathcal C(j_k)\to \mathcal C(j_1+\cdots+j_k)$,</li>
+<li>$\mathcal C(n)$ 上对称群 $\Sigma_n$ 的作用,</li>
+</ul>
+<p>满足</p>
+<ul>
+<li>结合律, 幺元律,</li>
+<li>与对称群作用相容.</li>
+</ul>
+<p>给定算畴 $\mathcal C$, 一个 $\mathcal C$-代数是指一个对象 $A$, 以及 $\Sigma_j$-等变的态射 $\mathcal C(j)\otimes A^{\otimes j}\to A$, 满足适当的结合律, 幺元律.</p>
+<h2>例</h2>
+<h3>交换算畴与 E∞-算畴</h3>
+<p>带基点空间范畴中, 交换算畴 $\mathcal N$ 的每个部分 $\mathcal N(j)$ 都是单点集. 这是因为, 交换性意味着任何 $j$ 个元素有唯一的结合方式.</p>
+<p>称算畴 $\mathcal C$ 为 $E_\infty$-算畴, 是指存在态射 $\mathcal C\to\mathcal N$, 使得每个 $\mathcal C(j)\to\mathcal N(j)$ 为同伦等价.</p>
+<p>见 <span class="link local"><a href="./E∞-算畴.html" title="“E∞-算畴” [E∞-算畴]">E∞-算畴</a></span>, [小 n-方块算畴](小 n-方块算畴.md).</p>
+<h3>结合算畴与 A∞-算畴</h3>
+<p>结合算畴 $\mathcal M$ 满足 $\mathcal M(j)=\Sigma_j$. 结合性意味着 $j$ 个元素的结合由一个排列完全确定.</p>
+<p>称算畴 $\mathcal C$ 为 $A_\infty$-算畴, 是指存在态射 $\mathcal C\to\mathcal M$, 使得每个 $\mathcal C(j)\to\mathcal M(j)$ 为 $\Sigma_j$-等变同伦等价. 这个条件也说明 $\mathcal C$ 是 $\Sigma$-自由的.</p>
+<p>见 <span class="link local"><a href="./A∞-算畴.html" title="“A∞-算畴” [A∞-算畴]">A∞-算畴</a></span>.</p>
+<h3>自同态算畴</h3>
+<p>任何一个对象 $X$ 上都有一个自同态算畴 $\mathcal {E}_X$, 且 $X$ 是 $\mathcal {E}_X$-代数.</p>
+<p>对于算畴 $\mathcal P$, 一个对象 $X$ 上的 $\mathcal P$-代数结构等同于算畴的态射 $\mathcal P\to\mathcal {E}_X$.</p>
+<h2>与单子的关系</h2>
+<p>假设对称幺半范畴 $S$ 是余完备的. 给定算畴 $\mathcal C$, 定义如下的<span class="link local"><a href="./单子.html" title="“单子” [单子]">单子</a></span> $C$, 称为 “自由 $\mathcal C$-代数” 单子.
+$$
+CX=\coprod_{j\geq 0} \mathcal C(j)\otimes_{\Sigma_j}X^j\big/\sim,
+$$
+其中 $\sim$ 是一个等价关系, 以带基点空间范畴为例: 记 $\sigma_i\colon \mathcal C(j)\to\mathcal C(j-1)$ 为 “在第 $i$ 位代入基点” 的操作, $s_i\colon X^{j-1}\to X^j$ 为 “插入一个位于第 $i$ 位的基点” 的操作, 那么等价关系 $\sim$ 满足
+$$
+(\sigma_i c,x) \sim (c,s_ix).
+$$</p>
+<p>这个构造类似于<span class="link local"><a href="./几何实现.html" title="“几何实现” [几何实现]">几何实现</a></span>.</p>
+<p>态射 $X\to CX$ 由 $1\otimes X\to \mathcal C(1)\otimes X$ 给出.</p>
+<h2>算畴作用 (算畴对)</h2>
+<p>设所考虑的对称幺半范畴是不带基点的空间范畴.</p>
+<p>设有一对算畴 $(\mathcal C,\mathcal G)$, 记 $\mathcal C(0)=\{0\}$, $\mathcal G(0)=\{1\}$. 算畴 $\mathcal G$ 在算畴 $\mathcal C$ 上的作用是指映射
+$$
+\xi\colon \mathcal G(k)\times \mathcal C(j_1)\times\cdots\times \mathcal C(j_k) \to\mathcal C(j_1\cdot\cdots\cdot j_k),
+$$
+满足分配律, 幺元律, 以及等变条件. 注意右边括号内是 $k$ 个数的乘积. 这样两个算畴叫做算畴对 (operad pair).</p>
+<p>直观: $\mathcal C$ 参数化加法, $\mathcal G$ 参数化乘法, 映射 $\xi$ 是分配律.</p>
+<p>设空间 $X$ 带两个基点 $0,1$. 算畴对 $(\mathcal C,\mathcal G)$ 在 $X$ 上的作用包含 $\mathcal C$ 在 $(X,0)$ 上的作用与 $\mathcal G$ 在 $(X,1)$ 上的作用, 使得由 $\xi$ 给出的 “分配” 映射
+$$
+\xi_k\colon \mathcal G(k)\times \mathcal C(j_1)\times X^{j_1}\times\cdots\to \mathcal C(j_1\cdots j_k)\times X^{j_1\cdots j_k}
+$$
+满足分配律.</p>
+<p>等价地, $(\mathcal C,\mathcal G)$-空间是 $\mathcal C$-空间范畴中的 $\mathcal G$-代数.</p>
+<h2>算子范畴</h2>
+<p>一个算畴 $\mathcal C$ 决定了一个算子范畴 (category of operators) $\widehat {\mathcal C}$. 它的对象为颜色的序列, 态射为 “算子”, 该算畴中的一个 $k$ 元运算给出 $k$ 个颜色的序列到一个颜色的态射. 这个范畴类似于 (一阶理论的) <span class="link local"><a href="./语法范畴.html" title=" [语法范畴]">语法范畴</a></span>, 是万有的具有 $\mathcal C$-代数的某种范畴 (“semi-cartesian monoidal category”).</p>
+<p><span class="link external"><a href="https://ncatlab.org/nlab/show/category+of+operators" title="nLab [https://ncatlab.org/nlab/show/category+of+operators]">nLab</a></span></p>
+<blockquote>
+<p>参考 May, The construction of E∞ ring spaces from bipermutative categories.</p>
+</blockquote>
+<p>记 $\mathcal F$ 为有限带基点集合 $\mathbf n=\{0,1,\cdots,n\}$ 和保基点映射构成的范畴. 范畴 $\widehat {\mathcal C}$ 以这些 $\mathbf n$ 为对象, 态射空间为
+$$
+\widehat {\mathcal C}(\mathbf m,\mathbf n) :=\coprod_{\phi\in\mathcal F (\mathbf m,\mathbf n)}\prod_{j=1}^n\mathcal C(|\phi^{-1}(j)|).
+$$
+这个范畴到 $\mathsf{Fin}_*$ 有自然的投影函子, 由此可以恢复出原本的算畴 (对称序列).</p>
+<h2>相关概念</h2>
+<p><span class="link local"><a href="./A∞-空间.html" title="“A∞-空间” [A∞-空间]">A∞-空间</a></span>, [Abel ∞-群](Abel ∞-群.md)</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“E∞-算畴” <a class="slug" href="./E∞-算畴.html">[E∞-算畴]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“单子” <a class="slug" href="./单子.html">[单子]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

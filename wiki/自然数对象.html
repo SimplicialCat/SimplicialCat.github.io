@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“自然数对象”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="自然数对象"><header><h1><span class="taxon">Wiki. </span>“自然数对象” <a class="slug" href="./自然数对象.html">[自然数对象]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>对于<span class="link local"><a href="./意象.html" title="“意象” [意象]">意象</a></span> $\mathcal E$, 若存在对象 $\mathbb N$, 以及两个箭头
+$$
+1\overset{0}{\longrightarrow} \mathbb N \overset{s}{\longrightarrow} \mathbb N,
+$$
+使得此图为所有形如 $1\to X\to X$ 的图中的始对象, 则称 $\mathbb N$ 为 $\mathcal E$ 的<strong>自然数对象</strong> (n. n. o.)</p>
+<p>自然数对象是<span class="link local"><a href="./集合意象.html" title=" [集合意象]">集合意象</a></span>中自然数集 $\mathbb N$ 的推广. 自然数对象的存在性又叫<strong>无穷公理</strong> (axiom of infinity).</p>
+<h2>性质</h2>
+<p>设意象 $\mathcal E$ 有自然数对象 $\mathbb N$, $\mathcal F$ 为另一意象, 有一对伴随函子
+$$
+g_*\colon \mathcal F \to \mathcal E,\quad g^*\colon \mathcal E\to\mathcal F,\quad g^*\dashv g_*,
+$$
+且满足 $g^* 1 =1$, (特别地, <span class="link local"><a href="./几何态射.html" title="“几何态射” [几何态射]">几何态射</a></span> $g\colon \mathcal F\to\mathcal E$ 满足上述性质), 则 $g^*\mathbb N$ 为 $\mathcal F$ 的自然数对象.</p>
+<p>例如, 由 $\mathsf {Set}^{C^{\mathrm{op}}}$ 与 $\mathsf {Set}$ 之间的全局截面 $\Gamma$ 与常值预层 $\Delta$ 的伴随, 可得 $\mathsf {Set}^{C^{\mathrm{op}}}$ 的自然数对象是常值预层 $\Delta(\mathbb N)$.</p>
+</details></section><footer></footer></article>
+
+</div></body></html>

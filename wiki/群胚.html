@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“群胚”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="群胚"><header><h1><span class="taxon">Wiki. </span>“群胚” <a class="slug" href="./群胚.html">[群胚]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<h2>定义</h2>
+<p>群胚是所有态射均为同构的范畴.</p>
+<p>等价地, 群胚可由集合 $G_1,G_0$, 映射 $s,t\colon G_1\to G_0$ (起点和终点), $e\colon G_0\to G_1$ (单位), $i\colon G_1\to G_1$ (逆), $m\colon G_1{_s\times_t} G_1 \to G_1$ (纤维积上定义的乘法, 注意 “先走第二个箭头, 再走第一个箭头”) 给出, 满足如下条件.</p>
+<ul>
+<li>(乘法的起止) $s\circ m = s\circ \text{pr}_2$, $t\circ m = t\circ \text{pr}_1$;</li>
+<li>(结合律) …;</li>
+<li>(逆的起止) $s\circ i = t$, $t\circ i = s$;</li>
+<li>(逆的性质) $m\circ (\operatorname{id}_{G_1}\times i)= e\circ t$, $m\circ (i\times \operatorname{id}_{G_1})= e\circ s$;</li>
+<li>(单位的起止) $s\circ e= t\circ e = \operatorname{id}_{G_0}$;</li>
+<li>(单位的性质) $m\circ (e\circ t\times \operatorname{id}_{G_1})=m\circ (\operatorname{id}_{G_1}\times e\circ s)=\operatorname{id}_{G_1}$;</li>
+</ul>
+<p>这种定义可方便地推广为任意 (具有拉回的) 范畴中<strong>内蕴群胚</strong> (甚至内蕴范畴) 的定义.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“代数 K-理论谱” <a class="slug" href="./代数 K-理论谱.html">[代数 K-理论谱]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“轨形” <a class="slug" href="./轨形.html">[轨形]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

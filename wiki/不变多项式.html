@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“不变多项式”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="不变多项式"><header><h1><span class="taxon">Wiki. </span>“不变多项式” <a class="slug" href="./不变多项式.html">[不变多项式]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<h2>定义</h2>
+<p>考虑 Lie 群 $G$ 在 [Lie 代数](Lie 代数.md) $\mathfrak g$ 上的伴随作用, 它诱导 $\mathfrak g^*$ 上对偶的作用, 称为余伴随作用. 余伴随作用自然地延拓到对称代数 $\operatorname{Sym}(\mathfrak g^*)$ 上. <strong>不变多项式</strong>是指 $\operatorname{Sym}(\mathfrak g^*)$ 中在余伴随作用下不变的元素. 不变多项式环记作 $\operatorname{Sym}(\mathfrak g^*)^G$, 或 $\mathbb{C}[\mathfrak g]^G$.</p>
+<h2>不变多项式环的谱</h2>
+<p>$\operatorname{Spec}(\mathbb{C}[\mathfrak g]^G)$ 是所谓 “良好的商空间” (good quotient) $\mathfrak g // G$ (见<span class="link local"><a href="./轨形.html" title="“轨形” [轨形]">轨形</a></span>). 其中的点对应于 $\mathfrak g$ 的 (闭) $G$-轨道, 对应于共轭类中半单的元素 (由一个矩阵的特征值构成的 “对角矩阵”). 于是有
+$$
+\mathfrak g // G \simeq \mathfrak h / W (=\mathbb{C}^n / S_n).
+$$</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Chevalley 同构” <a class="slug" href="./Chevalley 同构.html">[Chevalley 同构]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“分类空间” <a class="slug" href="./分类空间.html">[分类空间]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈–Weil 理论” <a class="slug" href="./陈--Weil 理论.html">[陈--Weil 理论]</a></h1><div class="metadata"><ul><li class="meta-item">陈–Weil 同态</li></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

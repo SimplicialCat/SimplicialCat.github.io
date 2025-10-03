@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“凝聚层”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="凝聚层"><header><h1><span class="taxon">Wiki. </span>“凝聚层” <a class="slug" href="./凝聚层.html">[凝聚层]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>Serre 的 “代数凝聚层” <span class="link local"><a href="./FAC.html" title=" [FAC]">FAC.pdf</a></span> 被称为 “20世纪代数几何最重要的文章”.</p>
+<p>凝聚性将“点“的性质组织成为“局部“的性质. 粗略地说, 对于凝聚层, 当我们知道了一个点 $a$ 处的茎的信息, 我们就能获知与 $a$ 足够接近的点 $x$ 处茎的信息. 例如, 设凝聚层的序列 $\mathscr{F}'\to \mathscr{F} \to \mathscr{F}''$ 在一点 $a$ 处的茎是正合列, 则当 $x$ 足够接近 $a$ 时, 序列在 $x$ 处也是正合的.</p>
+<p><span class="link local"><a href="./凝聚层上同调.html" title="“凝聚层上同调” [凝聚层上同调]">凝聚层上同调</a></span>是强有力的<span class="link local"><a href="./层上同调.html" title="“层上同调” [层上同调]">层上同调</a></span>理论.</p>
+<p>另见<span class="link local"><a href="./(拟)凝聚层范畴.html" title="“(拟)凝聚层范畴” [(拟)凝聚层范畴]">(拟)凝聚层范畴</a></span>.</p>
+<h2>定义</h2>
+<p>设 $X$ 为<span class="link local"><a href="./赋环空间.html" title="“赋环空间” [赋环空间]">赋环空间</a></span>. $\mathcal O_X$-模 $F$ 称为有限型 (of finite type) 是指存在 $X$ 开覆盖, 在每个局部 $U$ 上存在满射 $\mathcal O_U^{\oplus N} \to F\big|_U$. 称其为<strong>凝聚层</strong>, 是指对任意映射 $u\colon \mathcal O_U^{\oplus N}\to F$, $\ker u$ 是有限型的. 称其为<strong>拟凝聚层</strong>, 是指存在开覆盖, 每个局部 $F\big|_U$ 有表现 $\mathcal O_{U}^{(B)}\to \mathcal O_U^{(A)} \to F$.</p>
+<p><strong>定理</strong> (Oka). 复解析空间上凝聚层等价于有限型.</p>
+<p><strong>命题</strong>. 若 $X$ 为 [Noether 概形](Noether 概形.md), 则凝聚层等价于有限型.</p>
+<h2>性质</h2>
+<p>凝聚层的重要性质是: 组成短正合列的三个层, 若其中两个是凝聚层, 则第三个也是凝聚层.</p>
+<p>岡潔 (Oka Kiyoshi) 证明了一个深刻的结论: 复流形上的全纯函数层是凝聚层.</p>
+<p>凝聚性的力量亦体现于 Cartan 定理 A 和定理 B.</p>
+<h2>例子</h2>
+<h3>结构层</h3>
+<p>凝聚层最简单的例子是结构层 $\mathcal O_X$, 对应平凡<span class="link local"><a href="./线丛.html" title="“线丛” [线丛]">线丛</a></span>. 对于 $X=\operatorname{Spec}A$ 的情形, 这就是将 $A$ 视为 $A$-模.</p>
+<h3>1-形式层</h3>
+<p>设 $X$ 为 $k$ 上的非奇异仿射代数簇 (nonsingular affine algebraic variety), 其坐标环为 $A=k[X]$. 定义 $X$ 上的正则 1-形式 (regular differential 1-form) 是这样的 1-形式: 在每个局部 $U$ 上, 它都属于由 $df$ ($f\in k[U]$) 生成的 $k[U]$-子模. $X$ 上正则 1-形式构成的 $k[X]$-模记为 $\Omega[X]$.</p>
+<p>可以证明, 若 $u_1,\cdots,u_n$ 是代数簇 $X$ 上 $x$ 附近的局部坐标, 那么存在仿射邻域 $U$, 使得 $\Omega[U]$ 作为 $k[U]$-模由 $du_1,\cdots ,du_n$ 生成.</p>
+<p>定义 $X$ 的微分模 (module of differentials) $\Omega=\Omega[X]$. 可以证明 $\Omega$ 由 $df$ ($f$ 是 $X$ 上的正则函数) 生成.</p>
+<p>记 $\Omega_X^1$ 为 $X$ 上的正则 $1$-形式层.</p>
+<p>对于 $k$ 上的有限型 (finite type) 概形 $X$, 我们可类似地定义 $\Omega_X^1$.</p>
+<h3>闭子簇</h3>
+<p>对于闭子簇 $i\colon Y\to X$, $Y$ 上的向量丛 $E$ 的<span class="link local"><a href="./直像.html" title="“直像” [直像]">直像</a></span> $i_* E$ 是 $X$ 上的凝聚层. 这样, 一些关于闭子簇的问题可用凝聚层表达.</p>
+<p>另见<span class="link local"><a href="./理想层.html" title="“理想层” [理想层]">理想层</a></span>.</p>
+<h3>重言层</h3>
+<p><span class="link local"><a href="./射影空间.html" title="“射影空间” [射影空间]">射影空间</a></span> $\mathbb P=\mathbb P(V)$ 上的可逆层 $\mathcal O_{\mathbb P}(1)$ 是<span class="link local"><a href="./重言线丛.html" title=" [重言线丛]">重言丛</a></span> (tautological line bundle) 上线性形式 (linear form) 的层. 其全局截面 $H^0(\mathbb P,\mathcal O_{\mathbb P}(1))$ 为 $V$ 上的线性形式的空间 $V^*$.</p>
+<blockquote>
+<p>注. 重言丛的截面层为什么是 $\mathcal O(-1)$: 以 $V=\mathbb{C}^{n+1}$ 为例. 分次模 $\mathbb{C}[x_0,\cdots,x_n](1)$ 以 $x_0,\cdots,x_n$ 为 $0$ 阶元素, 对应的 $\mathcal O(1)$ 以 $x_0,\cdots,x_n$ 为全局截面, 它们是 $V$ 上的线性函数. 故重言丛是 $\mathcal O(1)$ 的对偶, 即 $\mathcal O(-1)$.</p>
+</blockquote>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Euler 示性数” <a class="slug" href="./Euler 示性数.html">[Euler 示性数]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“GAGA” <a class="slug" href="./GAGA.html">[GAGA]</a></h1><div class="metadata"><ul><li class="meta-item">解析化</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Grothendieck–Riemann–Roch 定理” <a class="slug" href="./Grothendieck--Riemann--Roch 定理.html">[Grothendieck--Riemann--Roch 定理]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hirzebruch–Riemann–Roch 定理” <a class="slug" href="./Hirzebruch--Riemann--Roch 定理.html">[Hirzebruch--Riemann--Roch 定理]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“六函子” <a class="slug" href="./六函子.html">[六函子]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“凝聚层上同调” <a class="slug" href="./凝聚层上同调.html">[凝聚层上同调]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“凝聚层的导出范畴” <a class="slug" href="./凝聚层的导出范畴.html">[凝聚层的导出范畴]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“层” <a class="slug" href="./层.html">[层]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“理想层” <a class="slug" href="./理想层.html">[理想层]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“直像” <a class="slug" href="./直像.html">[直像]</a></h1><div class="metadata"><ul><li class="meta-item">前推</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“稳定丛” <a class="slug" href="./稳定丛.html">[稳定丛]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“紧合映射” <a class="slug" href="./紧合映射.html">[紧合映射]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈特征” <a class="slug" href="./陈特征.html">[陈特征]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

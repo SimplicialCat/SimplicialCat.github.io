@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“p-进 Hodge 理论”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="p-进 Hodge 理论"><header><h1><span class="taxon">Wiki. </span>“p-进 Hodge 理论” <a class="slug" href="./p-进 Hodge 理论.html">[p-进 Hodge 理论]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>记号. $K$ 为 $p$-进域, 有完美<span class="link local"><a href="./剩余域.html" title="“剩余域” [剩余域]">剩余域</a></span> $k$</p>
+<p>比较 $p$-进上同调理论</p>
+<ul>
+<li>$p$-进<span class="link local"><a href="./平展上同调.html" title="“平展上同调” [平展上同调]">平展上同调</a></span> $H^n_{\text{\'et}}(X_{\bar K},\mathbb{Q}_p)$</li>
+<li>代数 de Rham 上同调</li>
+<li>(对数) 晶体上同调</li>
+</ul>
+<p>Faltings: 张量积上一个周期环 $B_{\text{HT}},B_{\text{dR}},B_{\text{crys}},B_{\text{st}}$ 后可以比较这些上同调理论</p>
+<p><strong>例</strong> (de Rham 比较).
+$$
+H^n_{\text{\'et}}(X_{\bar K},\mathbb{Q}_p)\otimes_{\mathbb{Q}_p}B_{\text{dR}} \simeq H^n_{\text{dR}}(X/K)\otimes_K B_{\text{dR}}
+$$
+(与[绝对 Galois 群](绝对 Galois 群.md) $G_K$ 的作用相容)</p>
+<p>如今 $p$-进 Hodge 理论推广为研究一切 $p$-进 Galois 表示, 不仅是上述来自几何的表示 $H^n_{\text{\'et}}$.</p>
+<p><strong>定义</strong>. $\mathsf{Rep}_{\mathbb{Q}_p}(G_K)$ 为 $G_K$ 在有限维 $\mathbb{Q}_p$ 向量空间上的连续表示的范畴.</p>
+<p>子范畴: Hodge-Tate 表示, de Rham 表示, semistable, 晶体. 它们关于张量积, 对偶, 子商封闭.</p>
+<p>$H^n_{\text{\'et}}$ 都是 de Rham 表示.</p>
+<p>在每种情形 $\text{?}\in\{\text{HT, dR, st, crys}\}$, 有函子 $D_{\text{?}}\colon \mathsf {Rep}^{\text{?}}(G_K) \to \text{\{semi linear algebra objects\}}$, $V\mapsto (V\otimes_{\mathbb{Q}_p} B_{\text{?}})^{G_K}$ 将 $G_K$ 表示转化为 semi linear algebra. 这个函子正合, 忠实, 保持张量积和对偶.</p>
+<p>$B$ 为周期环, $B^{G_K}$ 为域. $D_B$ 将 $G_K$-表示转化为 $B^{G_K}$-向量空间.</p>
+<p>$B$-admissible representations:
+$$
+D_B(V)\otimes_{B^{G_K}}B \overset{\simeq}{\longrightarrow} V\otimes_{\mathbb{Q}_p}B
+$$</p>
+<p>Hodge-Tate 表示
+…</p>
+</details></section><footer></footer></article>
+
+</div></body></html>

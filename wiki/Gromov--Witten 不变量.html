@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Gromov–Witten 不变量”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Gromov--Witten 不变量"><header><h1><span class="taxon">Wiki. </span>“Gromov–Witten 不变量” <a class="slug" href="./Gromov--Witten 不变量.html">[Gromov--Witten 不变量]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>一种来自量子物理的曲线计数 (curve counting) 理论.</p>
+<h2>物理图景</h2>
+<blockquote>
+<p>以下是 Artan Sheshmani 的 BIMSA 公开课的笔记.</p>
+</blockquote>
+<p>远大愿景: 将量子力学与 Einstein 引力理论融合起来, 建立一个严格的数学模型.</p>
+<p>弦论构造的宇宙是 $4$ 维时空上附着的 $6$ 维 (<span class="link local"><a href="./Calabi--丘流形.html" title="“Calabi–丘流形” [Calabi--丘流形]">Calabi–丘流形</a></span>) 纤维丛. 微观粒子向 $6$ 维的纤维方向的扩张 (extension) 由 $1$ 维的曲线即 “弦” 给出, 不同粒子对应的弦的振动方式不同.</p>
+<p>我们需要研究弦的量子相互作用 (quantum interaction). [Feynmann 图](Feynmann 图.md)和 [Feynmann 路径积分](Feynmann 路径积分.md)描述了粒子的量子相互作用. 而在弦论中, 弦的移动给出管状的 $2$-维曲面 (“世界面”), 其上有 Riemann 度量, 事实上是一个 [Riemann 面](Riemann 面.md). 此时的 [Feynmann 路径积分](Feynmann 路径积分.md)是在所有 (<span class="link local"><a href="./Calabi--丘流形.html" title="“Calabi–丘流形” [Calabi--丘流形]">Calabi–丘流形</a></span>中的) [Riemann 面](Riemann 面.md)的<span class="link local"><a href="./模空间.html" title="“模空间” [模空间]">模空间</a></span>上进行的. 不幸的是, 这个积分不良定义, 因为其中与路径的几何性质 (引力) 相关的一个测度会在有奇点的路径 (如 Riemann 面生出一个无穷长细圆柱) 处爆炸. 补救的方法是研究弦论的拓扑版本, 即允许路径的 (保持拓扑性质的) 光滑化, 又称<span class="link local"><a href="./重整化.html" title="“重整化” [重整化]">重整化</a></span> (renormalizing). 背景的 <span class="link local"><a href="./Calabi--丘流形.html" title="“Calabi–丘流形” [Calabi--丘流形]">Calabi–丘流形</a></span>的几何 (复结构, [Kähler 流形](Kähler 结构.md)) 经历着不断的 (引力) 形变 (deformations, fluctuations). 我们希望路径积分在形变之下不变, 这便是 <strong>Gromov–Witten 不变量</strong>.</p>
+<h2>稳定性</h2>
+<p>稳定性是指自同构群有限.</p>
+<p><strong>事实.</strong> 设 $C$ 为光滑复不可约射影曲线, <span class="link local"><a href="./亏格.html" title="“亏格” [亏格]">亏格</a></span>为 $g$,</p>
+<ul>
+<li>若 $g=0$, 则 $C\simeq \mathbb P^1$, $\operatorname{Aut}(\mathbb P^1)\simeq PGL_2(\mathbb{C})$, 自同构太多了, 我们不喜欢;</li>
+<li></li>
+</ul>
+</details></section><footer></footer></article>
+
+</div></body></html>

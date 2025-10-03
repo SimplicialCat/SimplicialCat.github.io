@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“微分层”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="微分层"><header><h1><span class="taxon">Wiki. </span>“微分层” <a class="slug" href="./微分层.html">[微分层]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<h2>仿射情形</h2>
+<p>设 $k$ 为域, $A$ 为 $k$-代数, $X=\operatorname{Spec}A$.</p>
+<p>参见 [Kähler 微分](Kähler 微分.md).</p>
+<h3>光滑性</h3>
+<p>称 $X$ 光滑, 是指 $\Omega^1$ 是有限生成投射 $\mathcal O_X$-模 (参见<span class="link local"><a href="./投射对象.html" title="“投射对象” [投射对象]">投射对象</a></span>) , 即它是局部自由有限秩的.</p>
+<h3>微分算子</h3>
+<p>定义 $D_A$ 为 $A$ 和 $\operatorname{Der}A$ 在 $\operatorname{End}A$ 中共同生成的代数.</p>
+<p><strong>命题</strong>. 对任意 $p\in X$ 存在邻域 $U$ 以及函数 $x_i\in\mathcal O_U\,(1\leq i \leq n)$ 使得
+$$
+D(U) \simeq \bigoplus_\alpha \mathcal O_U \partial_1^{\alpha_1}\cdots \partial_n^{\alpha_n}
+$$
+其中 $[\partial _i, \partial _j]=0$, $[\partial _i, x_j]=\delta_{ij}$.</p>
+<p>设 $I$ 是 $\Delta\colon X\to X\times X=\operatorname{Spec}(A\otimes A)$ 对应的 $A\otimes A$ 的理想.</p>
+<p>考虑 $\mathcal E=\operatorname{End}A$ 作为 $A$-双模, 即为 $X\times X$ 上的层.</p>
+<p>令
+$$
+F_n = \{P\in \mathcal E: I^{n+1}P = 0\}.
+$$
+<strong>例</strong>.</p>
+<p>$IP=0$ 等价于
+$$
+(1\otimes a - a \otimes 1)P= [P,a]=0\, \forall a\in A.
+$$
+即 $P(b)=bP(1)$.</p>
+<p>$F_n$ 给出了 $D$ 的滤过:
+$$
+D = \bigcup_0^\infty F_n.
+$$
+且有
+$$
+F_{n+1}=\{P: [P,a]\in F_n\forall a\in A\}.
+$$
+因为 $P\in F_n$ 完全由 $A/\mathfrak m^{n+1}$ 上的限制决定, $\mathfrak m$ 为 $P$ 的极大理想 (?).</p>
+<h2>例</h2>
+<p>$\mathbb P^1 = \mathbb A^1_1 \cup \mathbb A^1_2$, 两个直线分别为 $\operatorname{Spec}\mathbb{C}[x]$ 与 $\operatorname{Spec}\mathbb{C}[y]$, $x=y^{-1}$. 微分层在两个直线上的取值分别为 $\Omega^1 |_{\mathbb A^1_1} = \mathbb{C}[x] dx$, $\Omega^1|_{\mathbb A^1_2} = \mathbb{C}[y] dy$.</p>
+<p>两个截面有关系 $dx=-y^{-2}dy$, 这说明 $\Omega^1 \simeq \mathcal O(-2)$, 而 $\partial _x = -y^2 \partial _y$, 说明  $T_{\mathbb P^1} \simeq \mathcal O(2)$.</p>
+<p>记 $S^n$ 为对称积, 则局部上有 (不典范的) 同构
+$$
+D|_{\mathbb A^1} = \bigoplus_{n\geq 0} S^n T_{\mathbb A}
+$$</p>
+<p>$D$ 的滤过
+$$
+F_0 D \subset F_1 D \subset \cdots \subset D
+$$
+$F_1 D|_{\mathbb A} = \mathbb{C}[x] \oplus \mathbb{C}[x] \partial _x$,</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Kähler 微分” <a class="slug" href="./Kähler 微分.html">[Kähler 微分]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

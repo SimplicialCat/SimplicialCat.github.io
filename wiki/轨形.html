@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“轨形”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="轨形"><header><h1><span class="taxon">Wiki. </span>“轨形” <a class="slug" href="./轨形.html">[轨形]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>轨形是局部上像欧氏空间在<strong>有限群</strong>作用下的<strong>商</strong>的空间. 范畴论中的<span class="link local"><a href="./群胚.html" title="“群胚” [群胚]">群胚</a></span>概念自然体现出了轨形.</p>
+<h2>定义</h2>
+<p>首先引入群作用的一些术语.</p>
+<p><strong>定义</strong>. 称拓扑群 $G$ 在空间 $M$ 上的作用为</p>
+<ul>
+<li><strong>紧合</strong>作用 (proper action), 是指映射 $G\times M\to M\times M, (g,m)\mapsto (g\cdot m,m)$ 紧合;</li>
+<li><strong>有效</strong> (effective) 作用, 是指每个 $g\in G\setminus\{e\}$ 在 $M$ 上的作用都非平凡 (即恒等映射);</li>
+<li><strong>几乎自由</strong> (almost free) 的作用, 是指每个 $x\in M$ 的固定子群 $G_x$ 都是<strong>有限群</strong>.</li>
+</ul>
+<p>设 $X$ 为仿紧 (paracompact) Hausdorff 空间, 给定正整数 $n$. $X$ 上的 $n$ 维光滑<strong>轨形</strong> (smooth orbifold) 结构由一个<strong>轨形图册</strong> (orbifold atlas) 的等价类给出.</p>
+<p>所谓轨形图册是一族坐标卡 $(U,H,\phi)$, 其中 $U\subset \mathbb{R}^n$ 是开集, $H$ 是<strong>有限群</strong>, $H$ 光滑地作用于 $U$ 上, $\phi\colon U\to \text{im}\phi\subset X$ 是 $H$-<strong>不变</strong>的连续映射 (即 $\phi(x)=\phi(hx),\forall h\in H$), 诱导了同胚 $U/H \to \text{im}\phi$.</p>
+<p>注. 人们在早期的定义中要求这个作用是<strong>有效的</strong>, 但后来去掉了这个限制.</p>
+<p>定义坐标卡的<strong>嵌入</strong> (embedding) $\lambda  \colon (U_1,H_1,\phi_1)\to (U_2,H_2,\phi_2)$ 为满足 $\phi_2\circ\lambda  =\phi_1$ 的映射.</p>
+<p>轨形的现代定义是由轨形群胚表示的<span class="link local"><a href="./叠.html" title="“叠” [叠]">叠</a></span>.</p>
+<h2>例</h2>
+<h3>商轨形</h3>
+<p><strong>命题</strong>. 设 <strong>Lie 群</strong> $G$ 紧合, 有效, 几乎自由地作用于流形 $M$ 上. 那么商空间 $M/G$ 具有自然的轨形结构. 称为<strong>商轨形</strong> (quotient orbifold) $M//G$.</p>
+<p><strong>证明</strong>. 先证 $M/G$ 是 Hausdorff 空间. 令 $R=\{(x,y)\in M\times M: Gx=Gy\}$, 即映射 $G\times M\to M\times M,(g,x)\mapsto (gx,x)$ 的像集. 由于局部紧空间之间的紧合映射是闭映射, 知 $R$ 是闭集. 因为商映射 $\pi\colon M\to M/G$ 是开映射, 所以 $\pi((M\times M) \setminus R)$ 是开集. 而后者是 $M/G \times M/G$ 的对角线的补集. 这说明 $M/G$ 是 Hausdorff 空间.</p>
+<p>下面给出 $X/G$ 上的轨形图册. 对于 $x\in M$ 考虑邻域: $S_x := \exp(B_\varepsilon  (0))$, 则 $(B_\varepsilon  (0),G_x,\pi\circ \exp)$ 构成一个轨形局部坐标.</p>
+<p>(下略)</p>
+<p>当一个轨形可表示为 $M//G$ 且 $G$ <strong>离散</strong>时, 称其为良好的 (good) 轨形; 否则称为坏的 (bad) 轨形.</p>
+<h2>分类空间</h2>
+<p>轨形态射 $B\to [\text{pt}/G]$ 对应于 $B$ 上的 $G$-<span class="link local"><a href="./主丛.html" title="“主丛” [主丛]">主丛</a></span>. 因此 $[\text{pt}/G]$ 是 $G$-主丛的<span class="link local"><a href="./分类叠.html" title="“分类叠” [分类叠]">分类叠</a></span>.</p>
+<h2>相关概念</h2>
+<p>[ADE 奇点](ADE 奇点.md)</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“McKay 对应” <a class="slug" href="./McKay 对应.html">[McKay 对应]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“不变多项式” <a class="slug" href="./不变多项式.html">[不变多项式]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“模空间” <a class="slug" href="./模空间.html">[模空间]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

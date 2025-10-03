@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“否定”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="否定"><header><h1><span class="taxon">Wiki. </span>“否定” <a class="slug" href="./否定.html">[否定]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>在 [Heyting 代数](Heyting 代数.md)中, 定义否定算子为
+$$
+\neg x = (x\Rightarrow 0).
+$$
+即 $x$ 的否定等同于说 $x$ 蕴含矛盾. 由 $\Rightarrow$ 的定义,
+$$
+y\leq \neg x\quad \text{iff}\quad y\wedge x = 0.
+$$
+在<span class="link local"><a href="./完备格.html" title="“完备格” [完备格]">完备格</a></span>中, $\neg x$ 是所有与 $x$ 之相遇 (meet) 为 $0$ 的元素 $y$ 之并.</p>
+<h2>性质</h2>
+<p>在任意 Heyting 代数中,</p>
+<ul>
+<li>$x\leq \neg\neg x$;</li>
+<li>若 $x\leq y$, 则 $\neg y\leq \neg x$; (这说明 $\neg$ 是这个 Heyting 代数到其反范畴的函子.)</li>
+<li>$\neg x = \neg\neg\neg x$;</li>
+<li>$\neg\neg(x\wedge y) = \neg\neg x \wedge \neg\neg y$.</li>
+</ul>
+<p><strong>命题</strong>. 若 $x$ 有补元素 (即满足 $x\vee a = 1$, $x\wedge a = 0$ 的元素 $a$), 则补元素必为 $\neg x$.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Boole 意象” <a class="slug" href="./Boole 意象.html">[Boole 意象]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>
