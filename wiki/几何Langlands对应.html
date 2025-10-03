@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“几何 Langlands 对应”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="几何Langlands对应"><header><h1><span class="taxon">Wiki. </span>“几何 Langlands 对应” <a class="slug" href="./几何Langlands对应.html">[几何Langlands对应]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<blockquote>
+<p>Recently, in a groundbreaking advance, Kapustin and Witten have linked the geometric Langlands correspondence and the S-duality of 4D supersymmetric gauge theories. This and subsequent works have already led to striking new insights into the geometric Langlands Program, which in particular involve the Homological Mirror Symmetry of the Hitchin moduli spaces of Higgs bundles on algebraic curves associated to two Langlands dual Lie groups.</p>
+</blockquote>
+<p><span class="link local"><a href="./Hitchin模叠.html" title="“Hitchin 模叠” [Hitchin模叠]">Hitchin 模叠</a></span></p>
+<p><span class="link local"><a href="./Galois表示.html" title=" [Galois表示]">Galois 表示</a></span>理解为 <span class="link local"><a href="./l-进局部系统.html" title=" [l-进局部系统]">l-进层</a></span>.</p>
+<p>非分歧<span class="link local"><a href="./自守表示.html" title="“自守表示” [自守表示]">自守表示</a></span>给出 $\mathrm{GL}_n(F) \backslash \mathrm{GL}_n(\mathbb A) / \mathrm{GL}_n(\mathcal O)$ 上的函数 $f_\pi$ (差一个常数), 它是 <span class="link local"><a href="./Hecke代数.html" title=" [Hecke代数]">Hecke 代数</a></span> $\mathcal H_x, x\in X$ 的特征函数. 使用 <span class="link local"><a href="./Grothendieck函数–层字典.html" title="“Grothendieck 函数–层字典” [Grothendieck函数–层字典]">Grothendieck 函数–层字典</a></span>,</p>
+<h2>范畴式几何 Langlands 对应</h2>
+<p>范畴式几何 Langlands 对应的主旨是两个 <span class="link local"><a href="./DG范畴.html" title="“DG 范畴” [DG范畴]">DG 范畴</a></span>的比较:</p>
+<ul>
+<li>几何 (“自守”) 侧, 即 $X$ 上 $G$-丛的<span class="link local"><a href="./模叠.html" title=" [模叠]">模空间</a></span>上的 <span class="link local"><a href="./D-模.html" title="“D-模” [D-模]">D-模</a></span>;</li>
+<li>谱 (“Galois”) 侧, 即 $X$ 上 $\check G$-<span class="link local"><a href="./局部系统.html" title="“局部系统” [局部系统]">局部系统</a></span>的叠上的<span class="link local"><a href="./拟凝聚层.html" title="“拟凝聚层” [拟凝聚层]">拟凝聚层</a></span>.</li>
+</ul>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Langlands 对应” <a class="slug" href="./Langlands对应.html">[Langlands对应]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Langlands 纲领” <a class="slug" href="./Langlands纲领.html">[Langlands纲领]</a></h1><div class="metadata"><ul><li class="meta-item">[]</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“l-进层” <a class="slug" href="./l-进层.html">[l-进层]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“函数域类比” <a class="slug" href="./函数域类比.html">[函数域类比]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Atiyah–Bott 不动点定理”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Atiyah–Bott不动点定理"><header><h1><span class="taxon">Wiki. </span>“Atiyah–Bott 不动点定理” <a class="slug" href="./Atiyah–Bott不动点定理.html">[Atiyah–Bott不动点定理]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>Atiyah–Bott 不动点定理是 <span class="link local"><a href="./Lefschetz不动点定理.html" title=" [Lefschetz不动点定理]">Lefschetz 不动点定理</a></span>在<span class="link local"><a href="./椭圆复形.html" title="“椭圆复形” [椭圆复形]">椭圆复形</a></span>上的推广. 其 <span class="link local"><a href="./deRham复形.html" title=" [deRham复形]">de Rham 复形</a></span>的特例是 <span class="link local"><a href="./Lefschetz不动点定理.html" title=" [Lefschetz不动点定理]">Lefschetz 不动点定理</a></span>.</p>
+<p>$f\colon M\to M$ 是光滑映射, 满足 $f$ 的图像与 $M\times M$ 中的对角线<span class="link local"><a href="./横截.html" title=" [横截]">横截</a></span>. 设 $E_j$ 为<span class="link local"><a href="./椭圆复形.html" title="“椭圆复形” [椭圆复形]">椭圆复形</a></span>, $\varphi_j\colon f^*E_j\to E_j$ 诱导其自同态 $T$,
+$$
+T_i =\Gamma(E_i) \overset{-\circ f}{\to}\Gamma(f^*E_i)\overset{\varphi_i}{\to}\Gamma(E_i).
+$$
+那么 Atiyah–Bott 不动点定理表明
+$$
+L(T) = \sum_{x\,\text{fixed}}\frac{1}{\det (1-Df)}\sum_j(-1)^j\operatorname{tr}_x(\varphi_j),
+$$
+其中
+$$
+L(T)=\sum_i (-1)^i\operatorname{tr}(T_i^*\colon H^i\to H^i)
+$$
+是推广的 <span class="link local"><a href="./Lefschetz数.html" title=" [Lefschetz数]">Lefschetz 数</a></span>.</p>
+</details></section><footer></footer></article>
+
+</div></body></html>

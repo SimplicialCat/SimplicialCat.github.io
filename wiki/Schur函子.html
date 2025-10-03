@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Schur 函子”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Schur函子"><header><h1><span class="taxon">Wiki. </span>“Schur 函子” <a class="slug" href="./Schur函子.html">[Schur函子]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p><span class="link external"><a href="https://en.wikipedia.org/wiki/Schur_functor" title="Wiki [https://en.wikipedia.org/wiki/Schur_functor]">Wiki</a></span></p>
+<p>Schur 函子是一系列函子 $S^\lambda\colon R\mathsf {-Mod}\to R\mathsf {-Mod}$, 它将 $R$ 模 $X$ 对应到其 $n$ 次张量积中 $S_n$ 作用下以一定规律 (即<span class="link local"><a href="./对称群的表示.html" title="“对称群的表示” [对称群的表示]">对称群的表示</a></span>) 变换的子模. 例如对称幂 $\operatorname{Sym}^n X$ 和交错幂 $\wedge^n X$ 都是 Schur 函子.</p>
+<h2>定义</h2>
+<h3>nLab 的定义: 具体版本</h3>
+<p>设 $X$ 是向量空间, $\lambda$ 是 <span class="link local"><a href="./Young图.html" title=" [Young图]">Young 图(表)</a></span>.</p>
+<p>考虑 $X^{\otimes n}$, 每个部分对应 Young 图的一个方块.</p>
+<p>首先取出其中交换同一<strong>行</strong>的任何两部分都<strong>不变</strong>的<strong>子空间</strong>;</p>
+<p>然后投影到其中交换同一<strong>列</strong>的任何两部分都<strong>变号</strong>的<strong>商空间</strong>;</p>
+<p>所得的就是 $S^\lambda X$.</p>
+<h3>nLab 的定义: 抽象版本</h3>
+<p>使用群代数 $\mathbb{C}[S_n]$, 我们可以更抽象地给出 $S^\lambda$ 的定义.</p>
+<p>我们可以将 “对每一<strong>行对称化</strong>” 的操作视为元素 $p_\lambda^S \in \mathbb{C}[S_n]$, “对每一<strong>列反称化</strong>” 的操作视为元素 $p_\lambda^A\in\mathbb{C}[S_n]$. 定义 <strong>Young 对称化子</strong>
+$$
+p_\lambda = p_\lambda^A p_\lambda^S\in\mathbb{C}[S_n],
+$$
+于是
+$$
+S^\lambda X = p_\lambda (X^{\otimes n}).
+$$
+注意 $p_\lambda^A$ 和 $p_\lambda^S$ 都是幂等算子, 但它们<strong>不交换</strong>. 令人惊讶的是, $p_\lambda$ 只差一个常数就是幂等算子.</p>
+<p>进一步, 由于 $p_\lambda$ 作用在 $\mathbb{C}[S_n]$ 上给出 $S_n$ 的不可约表示 $V_\lambda$ (见<span class="link local"><a href="./对称群的表示.html" title="“对称群的表示” [对称群的表示]">对称群的表示</a></span>), 故 Schur 函子可写为
+$$
+S^\lambda X = V_\lambda \otimes_{\mathbb{C}[S_n]} X^{\otimes n}.
+$$
+甚至我们可以对 $S_n$ 的任何表示 $V$ 定义函子 $S_V$.</p>
+<h3>Wikipedia 的定义</h3>
+<p>固定交换环 $R$, 设 $E$ 是 $R$-模, $\lambda$ 是正整数 $n$ 的划分, $T$ 是形状为 $\lambda$ 的一个 <span class="link local"><a href="./Young表.html" title=" [Young表]">Young 图(表)</a></span>.</p>
+<p>我们将用一个万有性质来定义 $R$-模 $S^\lambda E$. 考虑满足如下条件的多线性 $R$-模同态 $\varphi\colon E^n\to M$.</p>
+<ul>
+<li>对于 $T$ 的每一列, $\varphi$ 都是交错的;</li>
+<li>对于 $T$ 的每一列的子集, $\varphi$ 满足某种 “交换” 性质. (看不懂…)</li>
+</ul>
+<h2>例</h2>
+<p>对于 $\lambda = (n)$, 即又矮又扁的 Young 图, $S^\lambda E = \operatorname{Sym}^n E$;</p>
+<p>对于 $\lambda = (1,\cdots,1)$, 即又高又细的 Young 图, $S^\lambda E = \wedge^n E$;</p>
+</details></section><footer></footer></article>
+
+</div></body></html>

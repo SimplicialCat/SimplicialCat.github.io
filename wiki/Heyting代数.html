@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Heyting 代数”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Heyting代数"><header><h1><span class="taxon">Wiki. </span>“Heyting 代数” <a class="slug" href="./Heyting代数.html">[Heyting代数]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>Heyting 代数是一个偏序集, 存在所有有限的积和余积, 且构成<span class="link local"><a href="./积闭范畴.html" title=" [积闭范畴]">Descartes 闭范畴</a></span>. 换言之, Heyting 代数中有 $0$, $1$, 指数对象 $y^x$ (通常记作 $x\Rightarrow y$), 而指数对象由如下的伴随关系刻画:
+$$
+z\leq (x\Rightarrow y) \quad \text{iff} \quad z\wedge x \leq y.
+$$</p>
+<h2>性质</h2>
+<p>由基本伴随关系, 可得 (实际上是伴随的单位和余单位态射)
+$$
+x\leq \big( y\Rightarrow (x\wedge y) \big),\quad y\wedge (y\Rightarrow x) \leq x.
+$$
+而由 $1^x\simeq 1$, $x^1\simeq x$ 可得
+$$
+(x\Rightarrow 1) =1,\quad (1\Rightarrow x) =x.
+$$
+由于函子 $x\Rightarrow -$ 有右伴随, 它保持极限, 即
+$$
+(x\Rightarrow (y\wedge z)) = \big( (x\Rightarrow y) \wedge (x \Rightarrow z)\big).
+$$
+等式 $x^{y\times z}\simeq (x^y)^z$ 成为
+$$
+((y\wedge z)\Rightarrow x) = (z\Rightarrow (y\Rightarrow x)).
+$$</p>
+<h2>例</h2>
+<p>对拓扑空间 $X$, 其上开集构成的偏序集为 Heyting 代数. 对于开集 $U, V$,
+$$
+(U \Rightarrow V) = \bigcup_{W\cap U\subset V} W.
+$$
+每个 <span class="link local"><a href="./Boole代数.html" title="“Boole 代数” [Boole代数]">Boole 代数</a></span>都是 Heyting 代数, 反之则不然.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Boole 意象” <a class="slug" href="./Boole意象.html">[Boole意象]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“否定” <a class="slug" href="./否定.html">[否定]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

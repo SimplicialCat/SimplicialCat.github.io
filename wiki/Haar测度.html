@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Haar 测度”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Haar测度"><header><h1><span class="taxon">Wiki. </span>“Haar 测度” <a class="slug" href="./Haar测度.html">[Haar测度]</a></h1><div class="metadata"><ul></ul></div></header></summary>
+<p>在任何 Lie 群上存在一个左不变的体积形式 (处处非零的最高形式), 且在差一个常数的意义下唯一. 它对应的测度称为<strong>左 Haar 测度</strong>. 在紧 Lie 群上, 我们可进一步要求全空间的测度为 $1$, 称之为<strong>归一化左 Haar 测度</strong>. 类似地可定义右 Haar 测度. 当左右两者相等时, 我们称之为 <strong>Haar 测度</strong>.</p>
+<p>一般, 左 Haar 测度与右 Haar 测度未必相同. 例如 $\displaystyle G= \Big\{ \begin{pmatrix} y &amp; x \\ 0 &amp; 1 \end{pmatrix}\colon x,y\in\mathbb{R},y&gt;0\Big\}$ 的左 Haar 测度是 $y^{-2}\,dxdy$, 而右 Haar 测度是 $y^{-1}\,dxdy$. 两者通过取逆映射相联系.</p>
+<h2>模函数</h2>
+<p>设 $\omega$ 是 Lie 群 $G$ 上的左 Haar 测度. 那么存在函数 $\Delta\colon G\to \mathbb{R}^+$, 满足
+$$
+\omega = \Delta(g) R_g^* \omega.
+$$
+称 $\Delta$ 为 $G$ 的<strong>模函数</strong>. 容易说明 $\Delta$ 是 Lie 群同态.</p>
+<p>若 $\Delta$ 恒等于 $1$, 则称 Lie 群 $G$ 是幺模 (unimodular) 的; 这等价于存在 (双不变的) Haar 测度.</p>
+<p><strong>定理</strong>. 紧 Lie 群是幺模的.</p>
+<p><strong>证明</strong>. 若 $G$ 是紧的, 则 $\Delta(G)$ 是 $\mathbb{R}^+$ 的紧子群, 它只能是平凡群. $\square$</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“指数映射 (Lie 群)” <a class="slug" href="./指数映射(Lie群).html">[指数映射(Lie群)]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

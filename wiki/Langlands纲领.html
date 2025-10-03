@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Langlands 纲领”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Langlands纲领"><header><h1><span class="taxon">Wiki. </span>“Langlands 纲领” <a class="slug" href="./Langlands纲领.html">[Langlands纲领]</a></h1><div class="metadata"><ul><li class="meta-item">[]</li></ul></div></header></summary>
+
+<table><thead><tr><th></th><th></th><th></th><th></th><th></th></tr></thead><tbody>
+<tr><td><span class="link local"><a href="./椭圆曲线.html" title="“椭圆曲线” [椭圆曲线]">椭圆曲线</a></span></td><td>←</td><td>Ramanujan</td><td>→</td><td><span class="link local"><a href="./自守形式.html" title="“自守形式” [自守形式]">自守形式</a></span></td></tr>
+<tr><td>↓</td><td></td><td></td><td></td><td>↓</td></tr>
+<tr><td>$\operatorname{Gal}(\overline{F}/F) \to {^LG}$, Frobenius</td><td>←</td><td>原始 <span class="link local"><a href="./Langlands对应.html" title="“Langlands 对应” [Langlands对应]">Langlands 对应</a></span></td><td>→</td><td>$\mathbb G(\mathbb A_F)$ 的<span class="link local"><a href="./自守表示.html" title="“自守表示” [自守表示]">自守表示</a></span>, Hecke</td></tr>
+<tr><td>↓</td><td></td><td></td><td></td><td>↓</td></tr>
+<tr><td>曲线上的平坦 ${^LG}$-丛</td><td>←</td><td><span class="link local"><a href="./几何Langlands对应.html" title="“几何 Langlands 对应” [几何Langlands对应]">几何 Langlands 对应</a></span></td><td>→</td><td><span class="link local"><a href="./主丛的模空间.html" title="“主丛的模空间” [主丛的模空间]">主丛的模空间</a></span> $\mathrm {Bun}_G$ 上的 Hecke 特征层</td></tr>
+<tr><td>↓</td><td></td><td></td><td></td><td>↓</td></tr>
+<tr><td>$\mathrm {Loc}_{^LG}$ 上的导出范畴</td><td>←</td><td>范畴 Langlands 对应</td><td>→</td><td>$\mathrm {Bun}_G$ 上的 <span class="link local"><a href="./D-模.html" title="“D-模” [D-模]">D-模</a></span>导出范畴</td></tr>
+</tbody></table>
+<p>故事从 Euler 开始. Euler 用不严格的方法算出了自然数的 $s$ 次方的倒数和 ($s\geq 2$ 为自然数), 这个数后来叫做 <span class="link local"><a href="./Riemannζ-函数.html" title="“Riemann ζ-函数” [Riemannζ-函数]">Riemann ζ-函数</a></span> $\zeta(s)$. 除此之外, Euler 还指出 $\zeta(s)$ 可写成所谓 “<strong>Euler 因子</strong>” $1/(1-p^{-s})$ 对素数 $p$ 的乘积, 由此可以推出素数分布的一些信息. Riemann 发现 $\zeta(s)$ 是全纯函数, 从而自然地寻求其解析延拓. 这件事可以用 Euler 的乘积公式以及 $\zeta(s)$ 满足的<strong>函数方程</strong>
+$$
+\Lambda(1-s)=\Lambda(s),\ \Lambda(s)=\pi^{-s/2}\Gamma(s/2)\zeta(s)
+$$
+来做到. (奇妙的是, Euler 使用他的发散级数发现了 $\zeta(s)$ 的函数方程.) 这个函数方程中的 $\Gamma$ 项直到 Tate 才获得完全的理解: 它是 $\mathbb{Q}$ 的 Archimedes <span class="link local"><a href="./位.html" title="“位” [位]">位</a></span>的 Euler 因子.</p>
+<p>后来, Riemann 建立了一个显式的公式, 将素数和 $\zeta$ 函数的零点关联起来. 由此他猜想 $\zeta$ 的零点的实部为 $1/2$, 这相当于素数分布的一个极好的性质.</p>
+<p>Dirichlet 在研究模 $q$ 余 $a$ 素数的分布时用到了所谓 Dirichlet <span class="link local"><a href="./L-函数.html" title="“L-函数” [L-函数]">L-函数</a></span>. 他的方法可理解为 $\mathbb{Z}/q$ 上的调和分析. 设 $\chi\colon (\mathbb{Z}/q)^\times \to\mathbb{C}^\times$ 为 <span class="link local"><a href="./Dirichlet特征.html" title="“Dirichlet 特征” [Dirichlet特征]">Dirichlet 特征</a></span>, 定义
+$$
+L(\chi,s)=\sum_{n}\chi(n)n^{-s} = \prod_p 1/(1-\chi(p)p^{-s}).
+$$</p>
+<h2>相关概念</h2>
+<p><span class="link local"><a href="./Weil罗塞塔石碑.html" title="“Weil 罗塞塔石碑” [Weil罗塞塔石碑]">Weil 罗塞塔石碑</a></span>, <span class="link local"><a href="./函数域类比.html" title="“函数域类比” [函数域类比]">函数域类比</a></span></p>
+<p><span class="link local"><a href="./局部几何Langlands对应.html" title="“局部几何 Langlands 对应” [局部几何Langlands对应]">局部几何 Langlands 对应</a></span></p>
+<p><span class="link local"><a href="./镜对称.html" title="“镜对称” [镜对称]">镜对称</a></span></p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Langlands 对偶” <a class="slug" href="./Langlands对偶.html">[Langlands对偶]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Langlands 对应” <a class="slug" href="./Langlands对应.html">[Langlands对应]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“局部几何 Langlands 对应” <a class="slug" href="./局部几何Langlands对应.html">[局部几何Langlands对应]</a></h1><div class="metadata"><ul></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“自守表示” <a class="slug" href="./自守表示.html">[自守表示]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

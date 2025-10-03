@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>“Dolbeault 上同调”</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="index">« index</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Dolbeault上同调"><header><h1><span class="taxon">Wiki. </span>“Dolbeault 上同调” <a class="slug" href="./Dolbeault上同调.html">[Dolbeault上同调]</a></h1><div class="metadata"><ul><li class="meta-item">Dolbeault 算子, Dolbeault 定理</li></ul></div></header></summary>
+
+<h2>记号</h2>
+<p>设 $E$ 为<span class="link local"><a href="./全纯向量丛.html" title="“全纯向量丛” [全纯向量丛]">全纯向量丛</a></span>. $\mathcal A^{p,q}(E)$ 表示取值于 $E$ 的<strong>光滑</strong>复 $(p,q)$-微分形式的丛 (层), 也即 $E\otimes \wedge^{p,q}M$ (的截面芽的层), $\mathcal A^n(E)=\sum_{p+q=n}\mathcal A^{p,q}(E)$ 表示取值于 $E$ 的<strong>光滑</strong> $n$-形式丛(层).</p>
+<p>$\Omega^{p,q}(E):= \Gamma(E\otimes \wedge^{p,q}M)$ 是 $\mathcal A^{p,q}(E)$ 的<span class="link local"><a href="./整体截面.html" title="“整体截面” [整体截面]">整体截面</a></span>的空间, 即 $M$ 上 $E$-取值的全局<strong>光滑</strong> $(p,q)$-形式的<strong>空间</strong>. <strong>Dolbeault 上同调</strong>定义为
+$$
+H^{p,\bullet}_{\bar\partial} (M,E):= H^\bullet(\Omega^{p,\bullet}(E)).
+$$</p>
+<p>注意, 与 $\Omega^{p,q}(E)$ 不同的是, $\Omega^p(E)$ 表示取值于 $E$ 的<strong>全纯</strong> $p$-形式丛(层).</p>
+<h2>与 de Rham 上同调的类比</h2>
+<p>Dolbeault 上同调是 de Rham 上同调在复流形上的类比.</p>
+<p>对于光滑流形有 de Rham 层复形 ($\mathbb R$ 的消解)
+$$
+0\to\mathbb R \to \mathcal{A}^0\to \mathcal{A}^1\to \cdots.
+$$
+由 Poincaré 引理, 此序列正合. <span class="link local"><a href="./deRham定理.html" title="“de Rham 定理” [deRham定理]">de Rham 定理</a></span>是说
+$$
+H_{\mathrm{dR}}^\bullet (M)\simeq H^\bullet(M,\mathbb R).
+$$
+类似地, 对于复流形有层复形 ($\Omega^p$ 的消解)
+$$
+0\to \Omega^p \to \mathcal{A}^{p,0}\to \mathcal{A}^{p,1} \to\cdots,
+$$
+注意此处 $\Omega^p$ 是<strong>全纯</strong> $p$-形式层, $\mathcal A^{p,q}$ 是<strong>光滑</strong> $(p,q)$-形式层. 由 $\bar{\partial}$-<span class="link local"><a href="./Poincaré引理.html" title="“Poincaré 引理” [Poincaré引理]">Poincaré 引理</a></span>, 此序列正合. Dolbeault 定理是说 Dolbeault 上同调同构于<span class="link local"><a href="./层上同调.html" title="“层上同调” [层上同调]">层上同调</a></span>
+$$
+H^{p,\bullet}_{\bar{\partial}}(M) \simeq H^\bullet (M, \Omega^p).
+$$</p>
+<h2>向量丛的 Dolbeault 上同调</h2>
+<h3>Dolbeault 算子</h3>
+<p><strong>定义</strong>. <span class="link local"><a href="./复向量丛.html" title="“复向量丛” [复向量丛]">复向量丛</a></span> $E\to M$ 上的 <strong>Dolbeault 算子</strong>是一个<span class="link local"><a href="./微分算子.html" title="“微分算子” [微分算子]">微分算子</a></span> $\bar\partial\colon  \Gamma(E) \to \Omega^{0,1}(M)\otimes \Gamma(E)$, 满足</p>
+<ul>
+<li>${\bar\partial}^2 =0$ (Cauchy–Riemann 方程, 也称<strong>可积性条件</strong>);</li>
+<li>(Leibniz 法则) $\bar\partial (fs) = (\bar\partial f)\otimes s + f(\bar\partial s)$.</li>
+</ul>
+<p><strong>定理</strong>. 给定复向量丛 $E$ 上的 Dolbeault 算子 $\bar\partial$, 存在唯一的<span class="link local"><a href="./全纯向量丛.html" title="“全纯向量丛” [全纯向量丛]">全纯向量丛</a></span>结构对应于 $\bar\partial$.</p>
+<p>这说明 Dolbeault 算子只能在全纯向量丛上定义.</p>
+<h3>消解与 Dolbeault 上同调</h3>
+<p><span class="link local"><a href="./全纯向量丛.html" title="“全纯向量丛” [全纯向量丛]">全纯向量丛</a></span> $E$ (的结构层) 有无圈消解
+$$
+0\to \Omega^p(E) \to \mathcal A^{p,0}(E) \to \mathcal A^{p,1}(E)\to\cdots,
+$$
+这给出 <strong>Dolbeault 定理</strong>
+$$
+H^{p,\bullet}(M,E) \simeq H^\bullet(M, \Omega^p \otimes E).
+$$</p>
+<p>全纯向量丛 $E$ 上的 Dolbeault 算子 $\bar{\partial}_E\colon \Gamma(E)\to \mathcal A^{0,1}(E)$, 又称 $(0,1)$-<span class="link local"><a href="./联络.html" title="“联络” [联络]">联络</a></span>, 类似于普通的联络, 可延拓为
+$$
+\bar{\partial}_E\colon \mathcal A^{p,\bullet}(E) \to \mathcal A^{p,\bullet+1}(E),
+$$
+满足 $\bar{\partial}_E^2=0$, 且对于 $\alpha\in\Omega^{p,q}(M)$ 与 $s\in\Gamma(E)$,
+$$
+\bar{\partial}_E (\alpha\otimes s) = (\bar{\partial}_E\alpha)\otimes s + (-1)^{p+q} \alpha\wedge \bar{\partial}_E s.
+$$</p>
+<h2>与自旋结构的联系</h2>
+<p>见 <span class="link local"><a href="./Dolbeault--Dirac算子.html" title="“Dolbeault–Dirac 算子” [Dolbeault--Dirac算子]">Dolbeault–Dirac 算子</a></span>.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hodge 理论” <a class="slug" href="./Hodge理论.html">[Hodge理论]</a></h1><div class="metadata"><ul><li class="meta-item">Hodge 分解定理, Hodge 定理</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“de Rham 定理” <a class="slug" href="./deRham定理.html">[deRham定理]</a></h1><div class="metadata"><ul></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>
