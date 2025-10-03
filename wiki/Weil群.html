@@ -59,6 +59,16 @@
 
 <p>Weil 群是<span class="link local"><a href="./局部域.html" title="“局部域” [局部域]">局部域</a></span>或<span class="link local"><a href="./整体域.html" title="“整体域” [整体域]">整体域</a></span>的<span class="link local"><a href="./绝对Galois群.html" title="绝对 Galois 群 [绝对Galois群]">绝对 Galois 群</a></span>的一个变体.</p>
 <h2>定义</h2>
+<p><span class="link local"><a href="./局部域.html" title="“局部域” [局部域]">局部域</a></span> $F$ 的 Weil 群 $W_F$ 是如下拉回:
+$$
+\begin{array}
+{ccc}
+W_F &amp; \to &amp; \mathbb{Z} \\
+\downarrow &amp;&amp; \downarrow \\
+\operatorname{Gal}(\overline{F}/F) &amp; \to &amp; \operatorname{Gal}(\overline{k}/k)=\widehat {\mathbb{Z}}.
+\end{array}
+$$</p>
+<h3>Tate 的定义</h3>
 <blockquote>
 <p>Tate, <em>Number Theoretic Background</em></p>
 </blockquote>
@@ -71,11 +81,13 @@
 </ul>
 <p>定义 Weil 群为三元组 $(W_F, \varphi, \{r_E\})$, 其中</p>
 <ul>
-<li>$W_F$ 为拓扑群, $\varphi \colon W_F \to G_F$ 为连续同态, 其像稠密 ($\varphi$ 连续意味着 $W_E := \varphi^{-1}(G_E)$ 是 $W_F$ 的开子集);</li>
+<li>$W_F$ 为拓扑群, $\varphi \colon W_F \to G_F$ 为连续同态, 其像稠密 ($\varphi$ 连续意味着 $W_E := \varphi^{-1}(G_E)$ 是 $W_F$ 的开子集, 而其像稠密意味着 $\varphi$ 给出的映射 $W_F/ W_E \simeq G_F / G_E = \operatorname{Hom}_F(E,\overline{F})$ 是双射);</li>
 <li>对每个 $E$ 有同构 $r_E \colon C_E \to W_E^{\mathrm{ab}}$, 满足如下条件.
 <ul>
 <li>复合 $C_E \to W_E^{\mathrm{ab}} \overset{\varphi}{\to} G_E^{\mathrm{ab}}$ 是类域论中的互反律同态;</li>
-<li>$\sigma = \varphi$</li>
+<li>对于 $w\in W_F$, 记 $\sigma = \varphi(w) \in G_F$, 则 $\sigma \colon C_E \to C_{E^\sigma}$ 与 $w$ 的共轭 $W_E^{\mathrm{ab}} \to W_{E^\sigma}^{\mathrm{ab}}$ 相容;</li>
+<li>对于 $E' \subset E$, 含入映射 $C_{E'} \subset C_{E}$ 与 “转移” 映射 $W_{E'}^{\mathrm{ab}} \to W_{E}^{\mathrm{ab}}$ 相容;</li>
+<li>$W_F \simeq \operatorname{lim}_E W_{E/F}$, 其中 $W_{E/F} := W_F / W_E^c$ 称为<strong>相对 Weil 群</strong>.</li>
 </ul>
 </li>
 </ul>
