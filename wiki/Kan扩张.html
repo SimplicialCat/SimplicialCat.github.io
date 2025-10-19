@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“Kan 扩张”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>Kan 扩张</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,19 +55,19 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Kan扩张"><header><h1><span class="taxon">Wiki. </span>“Kan 扩张” <a class="slug" href="./Kan扩张.html">[Kan扩张]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Kan扩张"><header><h1><span class="taxon">Wiki. </span>Kan 扩张 <a class="slug" href="./Kan扩张.html">[Kan扩张]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>定义</h2>
-<p>对于函子 $f\colon \mathsf A \to \mathsf B$ 以及范畴 $\mathsf C$, 有拉回函子 $f^*\colon \mathsf {Fun}(\mathsf B,\mathsf C)\to\mathsf {Fun}(\mathsf A,\mathsf C)$. 左右 Kan 扩张即是这个函子的左右伴随.</p>
+<p>对于函子 $f\colon \mathcal A \to \mathcal B$ 以及范畴 $\mathcal C$, 有拉回函子 $f^*\colon \mathsf {Fun}(\mathcal B,\mathcal C)\to \mathsf {Fun}(\mathcal A,\mathcal C)$. 左右 Kan 扩张即是这个函子的左右伴随.</p>
 <h2>例</h2>
 <table><thead><tr><th>左</th><th>右</th></tr></thead><tbody>
-<tr><td>$\otimes$</td><td>Hom</td></tr>
-<tr><td>colim</td><td>lim</td></tr>
-<tr><td>realization</td><td>totalization</td></tr>
+<tr><td>张量积 $\otimes$</td><td>Hom</td></tr>
+<tr><td>余极限</td><td>极限</td></tr>
+<tr><td>几何实现 (realization)</td><td>全体 (totalization)</td></tr>
 </tbody></table>
 <h3>极限</h3>
-<p>$\mathsf B$ 为终范畴 $1$ 时, 左右 Kan 扩张 $\mathsf {Fun}(\mathsf A,\mathsf C)\to\mathsf C$ 分别为 $\mathsf A\to\mathsf C$ 的余极限和极限.</p>
+<p>$\mathcal B$ 为终范畴 $1$ 时, 沿 $\mathcal A\to 1$ 的左右 Kan 扩张 $\mathsf {Fun}(\mathcal A,\mathcal C)\to\mathcal C$ (若存在) 分别为余极限和极限.</p>
 <h3>几何实现</h3>
-<p>当 $\mathsf A\to\mathsf B$ 为<span class="link local"><a href="./米田嵌入.html" title=" [米田嵌入]">米田嵌入</a></span> $\Delta\to\mathsf {sSet}$ 时, 函子 $\Delta\to\mathsf {Top}$ 的左 Kan 扩张 $\mathsf {sSet}\to\mathsf {Top}$ 为单纯集的<span class="link local"><a href="./几何实现.html" title="“几何实现” [几何实现]">几何实现</a></span>.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“几何实现” <a class="slug" href="./几何实现.html">[几何实现]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<p>$\Delta\to\mathsf {Top}$ 沿<span class="link local"><a href="./米田嵌入.html" title=" [米田嵌入]">米田嵌入</a></span> $\Delta\to\mathsf {sSet}$ 的左 Kan 扩张 $\mathsf {sSet}\to\mathsf {Top}$ 为单纯集的<span class="link local"><a href="./几何实现.html" title="“几何实现” [几何实现]">几何实现</a></span>.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“几何实现” <a class="slug" href="./几何实现.html">[几何实现]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>逆像 <a class="slug" href="./逆像.html">[逆像]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
