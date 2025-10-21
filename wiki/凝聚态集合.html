@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“凝聚态集合”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>凝聚态集合</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,8 +55,7 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="凝聚态集合"><header><h1><span class="taxon">Wiki. </span>“凝聚态集合” <a class="slug" href="./凝聚态集合.html">[凝聚态集合]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>#凝聚态数学</p>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="凝聚态集合"><header><h1><span class="taxon">Wiki. </span>凝聚态集合 <a class="slug" href="./凝聚态集合.html">[凝聚态集合]</a></h1><div class="metadata"><ul><li class="meta-item">凝聚态数学</li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>定义</h2>
 <p>凝聚态集合是 <span class="link local"><a href="./pro-有限集.html" title="“pro-有限集” [pro-有限集]">pro-有限集</a></span>范畴 $\mathsf{ProFin}$ 上的层, 即函子 $X\colon\mathsf{ProFin}^{\mathrm{op}} \to \mathsf{Set}$, 满足</p>
 <ul>
@@ -64,14 +63,24 @@
 <li>$X(S_1\sqcup S_2)\simeq X(S_1)\times X(S_2)$;</li>
 <li>设 $f\colon S'\to S$ 为满射, 则 $\mathrm{im}X(f)=\{x\in X(S')\mid X(p_1)(x)=X(p_2)(x)\}$.</li>
 </ul>
+<p>等价的定义是<span class="link local"><a href="./极不连通空间.html" title="极不连通空间 [极不连通空间]">极不连通空间</a></span>范畴 $\mathsf{ExDisc}$ 上的层, 即函子 $X \colon \mathsf{ExDisc}^{\mathrm{op}} \to \mathsf{Set}$, 满足</p>
+<ul>
+<li>$X(S_1 \sqcup S_2) \simeq X(S_1) \times X(S_2)$.</li>
+</ul>
+<h3>集合论问题</h3>
 <p>为了集合论上的严谨性需要定义
 $$
 \mathsf{Cond}(\mathsf{Set}) := \operatorname{colim}_\kappa \mathsf{Cond}_\kappa (\mathsf{Set}).
 $$</p>
-<p>凝聚态集合 $T$ 的底层集合是 $|T|:=T(*)$.</p>
-<p>凝聚态集合 $T$ 的底层拓扑空间是 $|T|$ 上满足如下条件的最细拓扑: 对所有 <span class="link local"><a href="./pro-有限集.html" title="“pro-有限集” [pro-有限集]">pro-有限集</a></span> $S$ 到 $T$ 的映射, $|S|\to |T|$ 都连续.</p>
+<h3>底层集合与底层拓扑空间</h3>
+<p>凝聚态集合 $T$ 的<strong>底层集合</strong> (underlying set) 是 $|T|:=T(*)$.</p>
+<p>凝聚态集合 $T$ 的<strong>底层拓扑空间</strong>是 $|T|$ 带上满足如下条件的最细拓扑: 对所有 <span class="link local"><a href="./pro-有限集.html" title="“pro-有限集” [pro-有限集]">pro-有限集</a></span> $S$ 到 $T$ 的映射, $|S|\to |T|$ 都连续.</p>
 <h2>性质</h2>
+<h3>极限与余极限</h3>
+<h3>与拓扑空间的关系</h3>
 <p>T1 拓扑空间可视为凝聚态集合. 其中, 可度量化拓扑空间范畴到凝聚态集合范畴有全忠实的嵌入.</p>
+<h3>与 Abel 范畴的关系</h3>
+<p>凝聚态集合范畴中的 Abel 群 (即<span class="link local"><a href="./凝聚态Abel群.html" title="凝聚态 Abel 群 [凝聚态Abel群]">凝聚态 Abel 群</a></span>) 构成 <span class="link local"><a href="./Abel范畴.html" title="“Abel 范畴” [Abel范畴]">Abel 范畴</a></span>.</p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“pro-有限集” <a class="slug" href="./pro-有限集.html">[pro-有限集]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“凝聚态数学” <a class="slug" href="./凝聚态数学.html">[凝聚态数学]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

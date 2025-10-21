@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“Hopf 代数”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>Hopf 代数</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,9 +55,20 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Hopf代数"><header><h1><span class="taxon">Wiki. </span>“Hopf 代数” <a class="slug" href="./Hopf代数.html">[Hopf代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Hopf代数"><header><h1><span class="taxon">Wiki. </span>Hopf 代数 <a class="slug" href="./Hopf代数.html">[Hopf代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>定义</h2>
+<h3>传统定义</h3>
+<p><span class="link local"><a href="./对称幺半范畴.html" title="“对称幺半范畴” [对称幺半范畴]">对称幺半 $1$-范畴</a></span>中的 Hopf 代数是<span class="link local"><a href="./双代数.html" title="双代数 [双代数]">双代数</a></span> $(A,m,\eta,\epsilon,\Delta)$ 带有对径映射 $S\colon A\to A$, 满足
+$$
+m (\mathrm{id} \otimes S) \Delta = m (S \otimes \mathrm{id}) \Delta = \eta\epsilon,
+$$</p>
+<p>若 Hopf 代数满足 $S^2=\mathrm{id}$, 则称之为<strong>对合 Hopf 代数</strong> (involutive Hopf algebra). 有时我们默认这个条件成立.</p>
+<h2>性质</h2>
+<p>Hopf 代数的对偶也是 Hopf 代数.</p>
 <h2>例</h2>
+<h3>群代数</h3>
+<p>对于交换环 $k$ 与群 $G$, 群代数 $k[G]$ 是 Hopf 代数; 其对偶为群 $G$ 上的 $k$-值函数空间 $\operatorname{Hom}(k[G],k)$ 在卷积下构成的代数.</p>
+<p>类似地, 对于有限型代数群 $G$, 其上 <span class="link local"><a href="./D-模.html" title="“D-模” [D-模]">D-模</a></span>的范畴 $D\text{-}\mathsf{Mod}(G)$ 是 <span class="link local"><a href="./微分分次范畴.html" title="微分分次范畴 [微分分次范畴]">$\mathsf{DGCat}$</a></span> 中的 Hopf 代数.</p>
 <h3>泛包络代数</h3>
 <p>Lie 代数 $\mathfrak g$ 的<span class="link local"><a href="./泛包络代数.html" title="“泛包络代数” [泛包络代数]">泛包络代数</a></span> $\mathcal U\mathfrak g$ 是 Hopf 代数:</p>
 <ul>

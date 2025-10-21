@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>特征向量</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="特征向量"><header><h1><span class="taxon">Wiki. </span>特征向量 <a class="slug" href="./特征向量.html">[特征向量]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<p>设<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span> $A$ 作用于另一对象 $V$. 定义一个<strong>特征值</strong>为一个代数同态 $\sigma\colon A \to 1$. 定义对应于特征值 $\sigma$ 的<strong>特征向量</strong>为元素 $v \colon 1\to V$, 满足
+$$
+a(v) = \sigma(a)v\,(a\in A),
+$$
+也即下图交换 (记 $\rho\colon A\otimes V\to V$ 为 $A$ 在 $V$ 上的作用):
+$$
+\begin{array}{ccc}
+    A &amp; \overset{\sigma}{\to} &amp; 1\\
+    \!\!\!\!v\downarrow&amp;&amp;\downarrow v\!\!\!\!\\
+    A\otimes V&amp;\underset{\rho}{\to} &amp; V
+\end{array}
+$$</p>
+<p>在高阶范畴的语境中也有类似概念, 只不过是将上述条件推广为单纯对象的同态
+$$
+\begin{array}{cccccc}
+    \cdots &amp; A\otimes A \otimes 1 &amp; \rightrightarrows &amp; A\otimes 1 &amp; \overset{\sigma}{\to} &amp; 1\\
+    &amp;\downarrow &amp;&amp;\!\!\!\!v\downarrow&amp;&amp;\downarrow v\!\!\!\!\\
+    \cdots &amp; A\otimes A\otimes V &amp; \rightrightarrows&amp;A\otimes V&amp;\underset{\rho}{\to} &amp; V.
+\end{array}
+$$</p>
+<h2>例</h2>
+<p>在<span class="link local"><a href="./几何Langlands对应.html" title="几何 Langlands 对应 [几何Langlands对应]">几何 Langlands 对应</a></span>中,
+$A = \operatorname{Rep}(\check{G})$ 作用在 $V= D(D\text{-}\mathsf{Mod}(\mathrm{Bun}_G))$ 上, 特征向量称为 <span class="link local"><a href="./Hecke特征层.html" title="Hecke 特征层 [Hecke特征层]">Hecke 特征层</a></span>.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Hecke 特征层 <a class="slug" href="./Hecke特征层.html">[Hecke特征层]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

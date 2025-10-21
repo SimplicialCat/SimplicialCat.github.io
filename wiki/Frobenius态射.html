@@ -57,13 +57,26 @@
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Frobenius态射"><header><h1><span class="taxon">Wiki. </span>Frobenius 态射 <a class="slug" href="./Frobenius态射.html">[Frobenius态射]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>定义</h2>
-<h3>$p$ 特征域</h3>
-<p>设 $k$ 为 $p$ 特征域, 其 Frobenius 态射为自同态 $F\colon k\to k$, $F(a)=a^p$.</p>
-<p>一般地, 对于 $\mathbb F_p$-代数 $A$, 都有 $\mathbb F_p$-代数同态 $F\colon A\to A$, $F(a)=a^p$.</p>
-<p>对于 $\mathbb F_q$-代数 $A$, Frobenius 态射是指 $a\mapsto a^q$.</p>
-<h3>$p$ 特征域上的概形</h3>
-<p>设 $X$ 为 $S$-概形, $S$ 为 $k$-概形.</p>
-<p>$X$ 的绝对 Frobenius 态射 $F^{\mathrm {ab}}\colon X\to X$ 是拓扑空间上的恒等与结构层上的 $p$ 次方映射 $\mathcal O_X\to\mathcal O_X$. 绝对 Frobenius 态射一般不是 $X$ 作为 $S$-概形的自同态, 因为如下交换图的底边不是恒等态射.
+<h3>$\mathbb F_p$-代数的 Frobenius 映射</h3>
+<p>对于 $\mathbb F_p$-代数 (又叫 $p$ 特征环) $A$, 其 Frobenius 态射是 $A$ 的自同态 $\operatorname{Frob}_A \colon A \to A$, $a\mapsto a^p$.</p>
+<p>对于 $\mathbb F_p$-代数同态 $A\to B$, 有交换图
+$$
+\begin{array}
+	{ccc}
+	A &amp; \overset{\operatorname{Frob}_A}{\to} &amp; A \\
+	\downarrow &amp;&amp; \downarrow\\
+	B &amp; \overset{\operatorname{Frob}_B}{\to} &amp; B.
+\end{array}
+$$
+因此 Frobenius 态射是 $\mathbb F_p$-代数范畴 $\mathsf{Alg}_{\mathbb{F}_p}$ 上恒等函子的一个自同态:
+$$
+\operatorname{Frob} \colon \mathrm{id}_{\mathsf{Alg}_{\mathbb{F}_p}} \to \mathrm{id}_{\mathsf{Alg}_{\mathbb{F}_p}}.
+$$</p>
+<p>上述概念也可以推广到 $\mathbb F_q$-代数, $q=p^n$. 对于 $\mathbb F_q$-代数 $A$, Frobenius 态射是指 $a\mapsto a^q$. 它是 $A$ 作为 $\mathbb F_p$-代数的 Frobenius 态射的 $n$ 次迭代.</p>
+<h3>$\mathbb F_p$-概形的 Frobenius 映射</h3>
+<p>设 $S$ 为 $\mathbb F_p$-概形, 而 $X$ 为 $S$-概形.</p>
+<p>定义 $X$ 的<strong>绝对 Frobenius 态射</strong> $F^{\mathrm {ab}}\colon X\to X$ 为其结构层 $\mathcal O_X$ 上的 $p$ 次方映射 $\mathcal O_X\to\mathcal O_X$.</p>
+<p>绝对 Frobenius 态射一般不是 $X$ 作为 $S$-概形的自同态, 因为如下交换图的底边不是恒等态射.
 $$
 \begin{array}
 	{ccc}
@@ -71,20 +84,11 @@ $$
 	\downarrow &amp;&amp; \downarrow\\
 	S&amp;\overset{F^{\mathrm ab}}{\to} &amp;S.
 \end{array}
-$$
-当 $S=\operatorname{Spec}\mathbb F_p$ 时, $F^{\mathrm {ab}}$ 是概形 $S$ 上的恒等态射, 故给出 $X$ 作为 $S$-概形的自同态.</p>
-<p>定义 $X^{(p)}=X\times_S S$, 得到 $X$ 的相对 Frobenius 态射 $F^{\mathrm {rel}}\colon X\to X^{(p)}$.</p>
-<h3>$p$ 特征域上的代数范畴上的函子</h3>
-<p>对于 $k$-代数 $A$, 定义如下两个 $k$-代数.</p>
-<ul>
-<li>定义 $A_f$ 为 $A$ 沿 $f_k\colon k\to k$ <span class="link local"><a href="./标量限制.html" title="“标量限制” [标量限制]">标量限制</a></span>得到的 $k$-代数, 即环同态的复合 $k\overset{f_k}{\to}k \to A$. 有自然的 $k$-代数同态 $f_A\colon A\to A_f$, $a\mapsto a^p$.</li>
-<li>定义 $A^{(p)}$ 为 $A$ 沿 $f_k\colon k\to k$ <span class="link local"><a href="./标量扩张.html" title="“标量扩张” [标量扩张]">标量扩张</a></span>得到的 $k$-代数, 即张量积 $A\otimes_{k,f_k} k$. 有自然的 $k$-代数同态 $A^{(p)}\to A$, $a\otimes \lambda\mapsto a^p\lambda$.
-由定义有伴随
-$$
-\operatorname{Hom}_{k\text{-}\mathsf{Alg}}(A^{(p)},B)\simeq\operatorname{Hom}_{k\text{-}\mathsf{Alg}}(A,B_f).
-$$</li>
-</ul>
-<p>对于函子 $X\colon k\text{-}\mathsf {Alg}\to\mathsf {Set}$, 定义 $X^{(p)}=X\times_{\operatorname{Spec}_k,f_k}\operatorname{Spec}k$, 有
+$$</p>
+<p>一个特殊情形: 当 $S=\operatorname{Spec}\mathbb F_p$ 时, $F^{\mathrm {ab}}$ 是概形 $S$ 上的恒等态射, 故给出 $X$ 作为 $S$-概形的自同态.</p>
+<p>在一般情形, 考虑 $X$ 沿 $F^{\mathrm{ab}}\colon S\to S$ 的基变换 $X^{(p)}=X\times_S S$, 我们就得到 $X$ 作为 $S$-概形的一个自同态, 称为<strong>相对 Frobenius 态射</strong> $F^{\mathrm {rel}}\colon X\to X^{(p)}$.</p>
+<h3>函子式代数几何中的定义</h3>
+<p>这里所谓 $k$ 上的空间是指函子 $X\colon k\text{-}\mathsf {Alg}\to\mathsf {Set}$, 定义 $X^{(p)}=X\times_{\operatorname{Spec}_k,f_k}\operatorname{Spec}k$, 有
 $$
 X^{(p)}(A)\simeq X(A_f),
 $$
@@ -95,7 +99,7 @@ $$</p>
 <p>$X$ 的 Frobenius 态射 $X \to X^{(p)}$ 由映射 $X(A) \to X(A_f)\simeq X^{(p)}(A)$ 给出.</p>
 <h3>数域</h3>
 <p>数域 $F$ 的 Galois 群 $\operatorname{Gal}(\overline{F}/F)$ 与有限域的 Galois 群有些联系, 可以由此将 Frobenius 自同构转移到 $\operatorname{Gal}(\overline{F}/F)$ 上.</p>
-<p>设 $K/F$ 是数域的扩张, $v$ 为<span class="link local"><a href="./非分歧素理想.html" title="“非分歧素理想” [非分歧素理想]">非分歧素理想</a></span>, 记 $v$ 分裂成的素理想之一为 $w$. 注意 $\mathcal O_F/v$ 为有限域, 而 $\mathcal O_K/w$ 是它的 $n$ 阶有限扩张, $\operatorname{Gal}(\mathcal O_K/w , \mathcal O_F/v)$ 是 Frobenius 态射生成的 $n$ 阶循环群. 进一步, 可给出 $\operatorname{Gal}(K,F)$ 中的一个 <span class="link local"><a href="./Frobenius共轭类.html" title="“Frobenius 共轭类” [Frobenius共轭类]">Frobenius 共轭类</a></span> $\mathrm{Fr}(v)$.</p>
+<p>设 $K/F$ 是数域的扩张, $v$ 为<span class="link local"><a href="./非分歧素理想.html" title="“非分歧素理想” [非分歧素理想]">非分歧素理想</a></span>, 记 $v$ 分裂成的素理想之一为 $w$. 注意 $\mathcal O_F/v$ 为有限域, 而 $\mathcal O_K/w$ 是它的 $n$ 阶有限扩张, $\operatorname{Gal}(\mathcal O_K/w , \mathcal O_F/v)$ 是 Frobenius 态射生成的 $n$ 阶循环群. 进一步, 可给出 $\operatorname{Gal}(K,F)$ 中的一个 <span class="link local"><a href="./Frobenius共轭类.html" title="Frobenius 共轭类 [Frobenius共轭类]">Frobenius 共轭类</a></span> $\mathrm{Fr}(v)$.</p>
 <p><strong>例</strong>. $F = \mathbb{Q}$, $K = \mathbb{Q}(\zeta_N)$, $\operatorname{Gal}(K/F)\simeq (\mathbb{Z}/N)^\times$ (注意它是 Abel 群), $\mathcal O_F=\mathbb{Z}$, $\mathcal O_K=\mathbb{Z}[\zeta_N]$. 考虑素理想 $v=(p)$, 其非分歧当且仅当 $p$ 不整除 $N$. 此时 Frobenius 元素将 $\zeta_N$ 映射到 $\zeta_N^p$.</p>
 <p>对于 $\mathcal O_F$ 的素理想 $v$, 选取一个由所有 $F$ 的有限扩张的素理想构成的相容系统, 其中每个元素都出现在 $v$ 的分解中. 这个系统可视为 $\overline{F}$ 的整数环中的一个关联于 $v$ 的素理想 $\bar v$.</p>
 <h3>函数域</h3>
@@ -104,9 +108,9 @@ $$</p>
 <p>$\operatorname{Gal}(\overline{\kappa(v)}/\kappa(v))\simeq\widehat {\mathbb{Z}}$ 中有一个 Frobenius 元素 $x\mapsto x^{q^{\deg(v)}}$, 考虑其在 $\operatorname{Gal}(\overline{F_v}/F_v)$ 中的提升在 $\operatorname{Gal}(\overline{F}/F)$ 的像, 称之为 $\operatorname{Gal}(\overline{F}/F)$ 在 $v$ 处的 Frobenius 元素 $\mathrm{Frob}_v$.</p>
 <h2>性质</h2>
 <p>$\mathbb F_p$ 的代数闭包的 Frobenius 同态是<span class="link local"><a href="./绝对Galois群.html" title="绝对 Galois 群 [绝对Galois群]">绝对 Galois 群</a></span> $\operatorname{Gal}(\overline{\mathbb F_p}/\mathbb F_p)$ 的拓扑生成元.</p>
+<p>设 $k$ 为 $p$ 特征域 (视为 $\mathbb F_p$-代数). 若 $k$ 的 Frobenius 态射 $x\mapsto x^p$ 为同构, 则 $k$ 为<span class="link local"><a href="./完美域.html" title="完美域 [完美域]">完美域</a></span>.</p>
 <h2>相关概念</h2>
 <p><span class="link local"><a href="./Langlands对应.html" title="“Langlands 对应” [Langlands对应]">Langlands 对应</a></span></p>
-<p><span class="link local"><a href="./完美域.html" title="完美域 [完美域]">完美域</a></span></p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Galois 群” <a class="slug" href="./Galois群.html">[Galois群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Gauss 互反律” <a class="slug" href="./Gauss互反律.html">[Gauss互反律]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Shtuka” <a class="slug" href="./Shtuka.html">[Shtuka]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Weil 猜想” <a class="slug" href="./Weil猜想.html">[Weil猜想]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>ζ-函数 <a class="slug" href="./ζ-函数.html">[ζ-函数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“函数域” <a class="slug" href="./函数域.html">[函数域]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>域 <a class="slug" href="./域.html">[域]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>完美域 <a class="slug" href="./完美域.html">[完美域]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>绝对 Galois 群 <a class="slug" href="./绝对Galois群.html">[绝对Galois群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“非分歧素理想” <a class="slug" href="./非分歧素理想.html">[非分歧素理想]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
