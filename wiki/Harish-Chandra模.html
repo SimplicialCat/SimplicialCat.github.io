@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“Harish-Chandra 模”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>Harish-Chandra 模</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,9 +55,17 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Harish-Chandra模"><header><h1><span class="taxon">Wiki. </span>“Harish-Chandra 模” <a class="slug" href="./Harish-Chandra模.html">[Harish-Chandra模]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>#几何表示论</p>
-<p>设 $H\subset G$ 是代数子群, $H$ 连通, $\mathfrak g$ 是 $G$ 的 <span class="link local"><a href="./Lie代数.html" title="“Lie 代数” [Lie代数]">Lie 代数</a></span>. 一个 $\mathfrak g$-模称为 Harish-Chandra 模 (又称 $(\mathfrak g,H)$-模) 是指其 $\mathfrak h$-作用可积为 $H$-作用. (这是一个性质而非额外结构.)</p>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Harish-Chandra模"><header><h1><span class="taxon">Wiki. </span>Harish-Chandra 模 <a class="slug" href="./Harish-Chandra模.html">[Harish-Chandra模]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li><li class="meta-item">几何表示论</li></ul></div></header></summary>
+<h2>定义</h2>
+<p>设 $H\subset G$ 是代数子群, $\mathfrak g$ 是 $G$ 的 <span class="link local"><a href="./Lie代数.html" title="Lie 代数 [Lie代数]">Lie 代数</a></span>. 一个 $\mathfrak g$-模称为 Harish-Chandra 模 (又称 $(\mathfrak g,H)$-模) 是指其 $\mathfrak h$-作用可积为 $H$-作用. (这是一个性质而非额外结构.)</p>
+<p>更一般地, 设代数群 $K$ 作用于 Lie 代数 $\mathfrak g$ 上, 且有 Lie 代数的嵌入 $\mathfrak{k} \to \mathfrak g$, 满足</p>
+<ul>
+<li>$K$ 在 $\mathfrak k$ 上的伴随作用与 $K$ 在 $\mathfrak g$ 上的作用相容;</li>
+<li>$\mathfrak k$ 在 $\mathfrak g$ 上的伴随作用与诱导自 $K$ 的作用相同.</li>
+</ul>
+<p>一个 Harish-Chandra $(\mathfrak g,K)$-模是一个 $\mathfrak g$-模和 $K$-模 $M$, 两者诱导的 $\mathfrak k$-模结构相同, 且 $\mathfrak g\otimes M\to M$ 是 $K$-模同态.</p>
+<h3>作为形式群概形的表示</h3>
+<p>Harish-Chandra 二元组 $(\mathfrak g,K)$ 给出一个<span class="link local"><a href="./形式概形.html" title="形式概形 [形式概形]">形式群概形</a></span> $\exp (\mathfrak g,K)$, Harish-Chandra $(\mathfrak g,K)$-模等同于 $\exp(\mathfrak g,K)$-表示.</p>
 <h2>例</h2>
 <p>若 $\mathfrak g$ 半单, 则中心商 $U_0\mathfrak g:= U\mathfrak g\otimes_{Z(\mathfrak g)}k_{\chi}$ ($\chi\colon Z(\mathfrak g)\to k$ 是 $Z(\mathfrak g)$ 作用在平凡 $\mathfrak g$-表示上给出的特征) 只是平凡子群的 Harish-Chandra 模.</p>
 <p>平凡模 $k$ 是 $G$ 自身的 Harish-Chandra 模.</p>

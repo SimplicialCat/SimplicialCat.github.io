@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“算畴”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>算畴</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,24 +55,34 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="算畴"><header><h1><span class="taxon">Wiki. </span>“算畴” <a class="slug" href="./算畴.html">[算畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>算畴 $C$ 表达了一族多元运算, $C(n)$ 是其中 $n$ 元运算的参数空间.</p>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="算畴"><header><h1><span class="taxon">Wiki. </span>算畴 <a class="slug" href="./算畴.html">[算畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>一个算畴表达了<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半范畴</a></span>中一个抽象的对象上具有的一族多元运算.</p>
 <h2>定义</h2>
 <h3>作为对称序列</h3>
-<p>算畴最常用的定义是对称序列 (symmetric sequence), 这样定义的算畴也称对称算畴 (symmetric operad).</p>
-<p>设 $(S,\otimes,1)$ 为<span class="link local"><a href="./对称幺半范畴.html" title="“对称幺半范畴” [对称幺半范畴]">对称幺半范畴</a></span>, 如带基点空间范畴. 其上的一个算畴 (operad) $\mathcal C$ 由如下信息构成:</p>
+<p>算畴最常用的定义是<span class="link local"><a href="./对称序列.html" title="对称序列 [对称序列]">对称序列</a></span> (symmetric sequence) 的范畴中的 (含幺) <span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span>, 这样定义的算畴也称<strong>对称算畴</strong> (symmetric operad).</p>
+<p>具体地, 给定<span class="link local"><a href="./对称幺半∞-范畴.html" title="对称幺半 ∞-范畴 [对称幺半∞-范畴]">对称幺半范畴</a></span> $(\mathcal V,\otimes,1)$, 一个 $\mathcal V$-值的 (对称) 算畴 $C$ 为如下资料:</p>
 <ul>
-<li>“$n$ 元运算的参数空间”, 对象 $\mathcal C(n)$,</li>
-<li>“恒等运算”, 态射 $1\to \mathcal C(1)$,</li>
-<li>“运算的复合”, 即态射 $\mathcal C(k)\otimes \mathcal C(j_1)\otimes\cdots\otimes \mathcal C(j_k)\to \mathcal C(j_1+\cdots+j_k)$,</li>
-<li>$\mathcal C(n)$ 上对称群 $\Sigma_n$ 的作用,</li>
+<li>“$n$ 元运算的参数空间”, 对象 $C(n) \in \mathcal V$,</li>
+<li>“恒等运算”, 态射 $1\to C(1)$,</li>
+<li>“运算的复合”, 即态射 $C(k)\otimes C(j_1)\otimes\cdots\otimes  C(j_k)\to  C(j_1+\cdots+j_k)$,</li>
+<li>$C(n)$ 上对称群 $\Sigma_n$ 的作用,</li>
 </ul>
 <p>满足</p>
 <ul>
 <li>结合律, 幺元律,</li>
 <li>与对称群作用相容.</li>
 </ul>
-<p>给定算畴 $\mathcal C$, 一个 $\mathcal C$-代数是指一个对象 $A$, 以及 $\Sigma_j$-等变的态射 $\mathcal C(j)\otimes A^{\otimes j}\to A$, 满足适当的结合律, 幺元律.</p>
+<p>给定算畴 $C$, 一个 $C$-代数是指一个对象 $A$, 以及 $\Sigma_j$-等变的态射 $C(j)\otimes A^{\otimes j}\to A$, 满足适当的结合律, 幺元律.</p>
+<h4>线性空间的对称序列</h4>
+<p>$k$-线性空间的对称序列构成的范畴是
+$$
+\mathsf{Vect}^\Sigma:= \mathsf{Fun}(\mathsf{Fin}^{\simeq},\mathsf{Vect}) \simeq \prod_{n\geq 1} \mathsf{Rep}(\Sigma_n).
+$$
+它也是由一个对象生成的自由<span class="link local"><a href="./对称幺半∞-范畴.html" title="对称幺半 ∞-范畴 [对称幺半∞-范畴]">对称幺半</a></span> <span class="link local"><a href="./微分分次范畴.html" title="微分分次范畴 [微分分次范畴]">DG 范畴</a></span>. 见 <span class="link local"><a href="./Gaitsgory–RozenblyumDAG.html" title="A Study in Derived Algebraic Geometry [Gaitsgory–RozenblyumDAG]">Gaitsgory–Rozenblyum 导出代数几何讲义</a></span> (关于 Lie 代数与 Koszul 对偶的一节). 换言之, 它是遗忘函子 $U\colon \mathsf{DGCat}^{\text{SymMon}} \to \mathsf{Cat}$ 的表示对象. 因此由 $(\infty,2)$-范畴版本的<span class="link local"><a href="./米田引理.html" title="米田引理 [米田引理]">米田引理</a></span>,
+$$
+\mathsf{Vect}^\Sigma \simeq \mathsf{Fun}^{\text{SymMon}}(\mathsf{Vect}^\Sigma,\mathsf{Vect}^\Sigma) \simeq \operatorname{End}(U).
+$$</p>
 <h2>例</h2>
 <h3>交换算畴与 E∞-算畴</h3>
 <p>带基点空间范畴中, 交换算畴 $\mathcal N$ 的每个部分 $\mathcal N(j)$ 都是单点集. 这是因为, 交换性意味着任何 $j$ 个元素有唯一的结合方式.</p>
@@ -123,6 +133,6 @@ $$
 这个范畴到 $\mathsf{Fin}_*$ 有自然的投影函子, 由此可以恢复出原本的算畴 (对称序列).</p>
 <h2>相关概念</h2>
 <p><span class="link local"><a href="./A∞-空间.html" title="“A∞-空间” [A∞-空间]">A∞-空间</a></span>, <span class="link local"><a href="./Abel∞-群.html" title="“Abel ∞-群” [Abel∞-群]">Abel ∞-群</a></span></p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“E∞-算畴” <a class="slug" href="./E∞-算畴.html">[E∞-算畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“单子” <a class="slug" href="./单子.html">[单子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“E∞-算畴” <a class="slug" href="./E∞-算畴.html">[E∞-算畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“单子” <a class="slug" href="./单子.html">[单子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>对称序列 <a class="slug" href="./对称序列.html">[对称序列]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

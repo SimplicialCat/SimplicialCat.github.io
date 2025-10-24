@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“旗流形”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>旗流形</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,30 +55,31 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="旗流形"><header><h1><span class="taxon">Wiki. </span>“旗流形” <a class="slug" href="./旗流形.html">[旗流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="旗流形"><header><h1><span class="taxon">Wiki. </span>旗流形 <a class="slug" href="./旗流形.html">[旗流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>定义</h2>
 <h3>$\mathrm{GL}_n$</h3>
-<p>$\mathrm{GL}_n$ 的旗簇的元素是嵌套子空间
+<p>$n$ 维线性空间 $V$ 中的一个旗即一列子空间
 $$
 V_\bullet = (0\subset V_1 \subset\cdots\subset V_n=V),
 $$
-其中每个 $V_i$ 是 $n$ 维线性空间 $V$ 的 $i$ 维子空间.</p>
+其中 $\dim V_i = i$.</p>
+<p>令 $G=\mathrm{GL}_n(\mathbb{R})$, $B$ 为上三角矩阵的子群, 那么 $\mathbb{R}^n$ 的旗等同于陪集空间 $G/B$ 的元素.</p>
 <h3>代数群</h3>
 <p>对于代数群 $G$,</p>
 <ul>
-<li>旗簇 $\mathrm{Fl}$ 同构于任何一个 <span class="link local"><a href="./Borel子群.html" title="“Borel 子群” [Borel子群]">Borel 子群</a></span> $B$ 的陪集空间 $G/B$.</li>
-<li>旗簇 $\mathrm{Fl}$ 可视为 $G$ 的 <span class="link local"><a href="./Borel子群.html" title="“Borel 子群” [Borel子群]">Borel 子群</a></span>的<span class="link local"><a href="./模空间.html" title="“模空间” [模空间]">模空间</a></span>, 这就是说 $\mathrm{Fl}$ 的点一一对应于 $G$ 的 Borel 子群.</li>
+<li>旗簇 $\mathrm{Fl}$ 同构于任何一个 <span class="link local"><a href="./Borel子群.html" title="Borel 子群 [Borel子群]">Borel 子群</a></span> $B$ 的<span class="link local"><a href="./陪集空间.html" title="陪集空间 [陪集空间]">陪集空间</a></span> $G/B$.</li>
+<li>旗簇 $\mathrm{Fl}$ 可视为 $G$ 的 <span class="link local"><a href="./Borel子群.html" title="Borel 子群 [Borel子群]">Borel 子群</a></span>的<span class="link local"><a href="./模空间.html" title="“模空间” [模空间]">模空间</a></span>, 这就是说 $\mathrm{Fl}$ 的点一一对应于 $G$ 的 Borel 子群.</li>
 <li>群 $G$ 作用于旗簇 $\mathrm{Fl}$ 上,
 <ul>
-<li>一种看法将 $\mathrm{Fl}$ 的一个点视为一面旗子 (在 $\mathrm{GL}_n$ 的情形就是完整的旗子), 则一面旗子的稳定子群是一个 <span class="link local"><a href="./Borel子群.html" title="“Borel 子群” [Borel子群]">Borel 子群</a></span>.</li>
+<li>一种看法将 $\mathrm{Fl}$ 的一个点视为一面旗子 (在 $\mathrm{GL}_n$ 的情形就是完整的旗子), 则一面旗子的稳定子群是一个 <span class="link local"><a href="./Borel子群.html" title="Borel 子群 [Borel子群]">Borel 子群</a></span>.</li>
 <li>另一种看法是 $G$ 共轭作用于 Borel 子群的模空间上.</li>
 </ul>
 </li>
 <li>固定一个 Borel 子群 $B$, 有一个同构 $G/B\to \mathrm{Fl}$, $x \mapsto xBx^{-1}$.</li>
 </ul>
-<p>对于 <span class="link local"><a href="./Weyl群.html" title="“Weyl 群” [Weyl群]">Weyl 群</a></span>的元素 $w$ 有一个局部闭子簇 $BwB$, 即 $w$ (提升后视为中心化子 $N_G(T)$ 的元素) 在 $(B, B)$-作用下的轨道.</p>
+<p>对于 <span class="link local"><a href="./Weyl群.html" title="Weyl 群 [Weyl群]">Weyl 群</a></span>的元素 $w$ 有一个局部闭子簇 $BwB$, 即 $w$ (提升后视为中心化子 $N_G(T)$ 的元素) 在 $(B, B)$-作用下的轨道.</p>
 <h2>相关概念</h2>
 <p><span class="link local"><a href="./Bruhat分解.html" title="“Bruhat 分解” [Bruhat分解]">Bruhat 分解</a></span></p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Beilinson–Bernstein 局部化” <a class="slug" href="./Beilinson–Bernstein局部化.html">[Beilinson–Bernstein局部化]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Springer 纤维” <a class="slug" href="./Springer纤维.html">[Springer纤维]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“可解 Lie 代数” <a class="slug" href="./可解Lie代数.html">[可解Lie代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“模空间” <a class="slug" href="./模空间.html">[模空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Beilinson–Bernstein 局部化” <a class="slug" href="./Beilinson–Bernstein局部化.html">[Beilinson–Bernstein局部化]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Springer 纤维” <a class="slug" href="./Springer纤维.html">[Springer纤维]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>可解 Lie 代数 <a class="slug" href="./可解Lie代数.html">[可解Lie代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“模空间” <a class="slug" href="./模空间.html">[模空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>相对位置 <a class="slug" href="./相对位置.html">[相对位置]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
