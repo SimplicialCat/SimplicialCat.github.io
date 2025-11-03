@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“动量映射”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>动量映射</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,22 +55,41 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="动量映射"><header><h1><span class="taxon">Wiki. </span>“动量映射” <a class="slug" href="./动量映射.html">[动量映射]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="动量映射"><header><h1><span class="taxon">Wiki. </span>动量映射 <a class="slug" href="./动量映射.html">[动量映射]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <p>使用动量映射, 我们可以根据群作用的<strong>守恒量</strong> (conserved quantities) 得到<strong>可观测量</strong> (observables).</p>
 <h2>定义</h2>
-<p>对 $\xi\in\mathfrak g$ 记 $\xi^\#$ 为对应的 $M$ 上的向量场.</p>
-<p>动量映射 $\Phi\colon M\to\mathfrak g^*$ 满足对任意 $\xi\in\mathfrak g$,
+<h3>Poisson 流形上的作用</h3>
+<p>设 Lie 群 $G$ 在 <span class="link local"><a href="./Poisson流形.html" title="Poisson 流形 [Poisson流形]">Poisson 流形</a></span> $M$ 上有一 Hamilton 作用, 即存在 Lie 代数同态 $h_{-} \colon \mathfrak{g} \to C^\infty(M)$, 满足 $x\in \mathfrak{g}$ 在作用之下对应的 $M$ 上的向量场等同于 $h_x$ 在 <span class="link local"><a href="./Poisson流形.html" title="Poisson 流形 [Poisson流形]">Poisson 括号</a></span>下对应的<span class="link local"><a href="./导子.html" title="导子 [导子]">导子</a></span> $\{-,h_x\}$.</p>
+<p>此时, 映射 $h_{-}$ 也给出一个映射 $\mu \colon M\to\mathfrak g^*$, 称之为<strong>动量映射</strong> (moment map, 或 momentum map).</p>
+<h3>Poisson 代数上的作用</h3>
+<p>动量映射可以绕过流形, 直接在代数层面谈论. 设代数群 $G$ 作用于 <span class="link local"><a href="./Poisson代数.html" title="Poisson 代数 [Poisson代数]">Poisson 代数</a></span> $P$, 且存在 Lie 代数同态 $h\colon \mathfrak{g} \to P$ 满足 $x\in \mathfrak{g}$ 对应的 $P$ 上的<span class="link local"><a href="./导子.html" title="导子 [导子]">导子</a></span>恰为 $\{-,h_x\}$. 那么映射 $h$ 本身即是动量映射 (在<span class="link local"><a href="./代数-几何对偶.html" title="代数–几何对偶 [代数-几何对偶]">代数–几何对偶</a></span>另一侧的对应物).</p>
+<p>这种观点与<span class="link local"><a href="./量子动量映射.html" title="量子动量映射 [量子动量映射]">量子动量映射</a></span>直接相关.</p>
+<h2>性质</h2>
+<p>Lie 代数同态 $h_{-} \colon \mathfrak{g} \to C^\infty(M)$ 给出 <span class="link local"><a href="./Poisson代数.html" title="Poisson 代数 [Poisson代数]">Poisson 代数</a></span>同态
+$\operatorname{Sym}\mathfrak{g} \to C^\infty(M)$.</p>
+<h3>等变</h3>
+<p><strong>命题</strong>. 设 $G$ 为连通 Lie 群. 考虑 $G$ 在 $\mathfrak{g}^*$ 上的余伴随作用 $\operatorname{Ad}^*$, 则动量映射 $\mu \colon M \to \mathfrak{g}^*$ 是 $G$-等变映射.</p>
+<p>证明. 由连通性, 只需证明无穷小版本的结论. 记 $x\in\mathfrak{g}$ 对应的 $M$ 上的向量场为 $\xi_x$, 而余伴随作用 $\operatorname{Ad}^*$ 对应的 $\mathfrak{g}$ 在 $\mathfrak{g}^*$ 上的作用为 $\operatorname{ad}^*$,
 $$
-i_{\xi^{\#}}\omega = d \left&lt;\Phi(x),\xi\right&gt;.
+\langle\operatorname{ad}^*_x(\alpha),y\rangle = -\alpha([x,y])\,(x,y\in\mathfrak{g},\alpha\in\mathfrak{g}^*).
+$$
+我们要证明的结论是
+$$
+d_m\mu (\xi_x) = \operatorname{ad}_x^*(\mu(m))\,(m\in M).
+$$
+而这只需将两边与 $y\in\mathfrak{g}$ 配对, 使用 $h_{-}$ 的性质计算
+$$
+\begin{aligned}
+    \langle d_m \mu (\xi_x),y\rangle &amp;=
+    d_m h_y (\xi_x)\\
+    &amp;= -\{h_x,h_y\}(m)\\
+    &amp;= -h_{[x,y]}(m)\\
+    &amp;= -\mu(m)([x,y])= \langle \operatorname{ad}_x^*(\mu(m)),y \rangle.
+\end{aligned}
 $$</p>
-<h3>使用 Lie 代数同态的定义</h3>
-<p>设 $(M,\omega)$ 是具有 Lie 群 $G$ 的 Hamilton 作用的<span class="link local"><a href="./辛流形.html" title="“辛流形” [辛流形]">辛流形</a></span>. Hamilton 作用给出 Lie 代数 $\mathfrak g$ 到流形上 <span class="link local"><a href="./Hamilton向量场.html" title="“Hamilton 向量场” [Hamilton向量场]">Hamilton 向量场</a></span>的同态 $\mathfrak g \to \mathrm{HamVect}(M,\omega)$. 回忆有 Lie 代数的中心扩张
-$$
-0\to \mathbb{R} \to (C^\infty(M),\{-,-\}) \to \mathrm{HamVect}(M,\omega) \to 0,
-$$
-若同态 $\mathfrak g \to \mathrm{HamVect}(M,\omega)$ 可进一步提升为同态 $\mathfrak g \to (C^\infty(M), \{-,-\})$, 那么对偶地, 我们就得到<strong>动量映射</strong> $\mu\colon M \to \mathfrak g^*.$</p>
 <h2>相关概念</h2>
+<p><span class="link local"><a href="./量子动量映射.html" title="量子动量映射 [量子动量映射]">量子动量映射</a></span></p>
 <p><span class="link local"><a href="./Delzant多面体.html" title="“Delzant 多面体” [Delzant多面体]">Delzant 多面体</a></span></p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Delzant 多面体” <a class="slug" href="./Delzant多面体.html">[Delzant多面体]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hamilton 向量场” <a class="slug" href="./Hamilton向量场.html">[Hamilton向量场]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“杨–Mills 泛函” <a class="slug" href="./杨--Mills泛函.html">[杨--Mills泛函]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“环面簇” <a class="slug" href="./环面簇.html">[环面簇]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“辛流形” <a class="slug" href="./辛流形.html">[辛流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Delzant 多面体” <a class="slug" href="./Delzant多面体.html">[Delzant多面体]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hamilton 向量场” <a class="slug" href="./Hamilton向量场.html">[Hamilton向量场]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“杨–Mills 泛函” <a class="slug" href="./杨--Mills泛函.html">[杨--Mills泛函]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“环面簇” <a class="slug" href="./环面簇.html">[环面簇]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>辛流形 <a class="slug" href="./辛流形.html">[辛流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

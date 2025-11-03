@@ -61,13 +61,31 @@
 <p>注意 Poisson 代数 $A$ 要求是含幺结合代数, 但有时不要求交换.</p>
 <p>流形 $M$ 配备其光滑函数环 $C^\infty(M)$ 的 Poisson 结构, 称为 <span class="link local"><a href="./Poisson流形.html" title="Poisson 流形 [Poisson流形]">Poisson 流形</a></span>.</p>
 <h2>例</h2>
-<p><span class="link local"><a href="./辛流形.html" title="“辛流形” [辛流形]">辛流形</a></span> $(X,\omega)$ 上的光滑函数层 $\mathcal O_X$ 具有 Poisson $\mathbb{R}$-代数结构
+<p><span class="link local"><a href="./辛流形.html" title="辛流形 [辛流形]">辛流形</a></span> $(X,\omega)$ 上的光滑函数层 $\mathcal O_X$ 具有 Poisson $\mathbb{R}$-代数结构
 $$
 \{f,g\} = \omega(df,dg).
 $$
 这是因为, 辛结构 $\omega$ 是一个同构 $\Omega_X \simeq T_X$, 而映射 $\Omega_X \to T_X = \operatorname{Der}(\mathcal O_X,\mathcal O_X)$ 相当于导子 $\mathcal O_X \to \operatorname{Der}(\mathcal O_X,\mathcal O_X)$, 也即双导子 $\mathcal O_X\otimes\mathcal O_X \to \mathcal O_X$.</p>
 <p><span class="link local"><a href="./Lie代数.html" title="Lie 代数 [Lie代数]">Lie 代数</a></span> $\mathfrak{g}$ 的对称代数 $\operatorname{Sym} \mathfrak{g}$ 具有交换 Poisson 代数结构, 使得生成元 (即 $\mathfrak{g}$ 的元素) Poisson 括号恰为 Lie 括号. 见 <span class="link local"><a href="./KKSPoisson结构.html" title="Kirillov–Kostant–Souriau Poisson 结构 [KKSPoisson结构]">Kirillov–Kostant–Souriau Poisson 结构</a></span>.</p>
-<p>类似地, Lie 代数 $\mathfrak{g}$ 的<span class="link local"><a href="./泛包络代数.html" title="泛包络代数 [泛包络代数]">泛包络代数</a></span> $U\mathfrak{g}$ 具有非交换 Poisson 代数结构, 在生成元上限制为 Lie 括号.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Kirillov–Kostant–Souriau Poisson 结构 <a class="slug" href="./KKSPoisson结构.html">[KKSPoisson结构]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Poisson 流形 <a class="slug" href="./Poisson流形.html">[Poisson流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“辛流形” <a class="slug" href="./辛流形.html">[辛流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<p>类似地, Lie 代数 $\mathfrak{g}$ 的<span class="link local"><a href="./泛包络代数.html" title="泛包络代数 [泛包络代数]">泛包络代数</a></span> $U\mathfrak{g}$ 具有非交换 Poisson 代数结构, 在生成元上限制为 Lie 括号. 这是下面介绍的几乎交换代数的例子, 其<span class="link local"><a href="./关联分次代数.html" title="关联分次对象 [关联分次代数]">关联分次代数</a></span>同构于 $\operatorname{Sym}\mathfrak{g}$.</p>
+<h3>(几乎) 交换代数</h3>
+<p>几乎交换代数 (almost commutative algebra) 是指有交换的<span class="link local"><a href="./关联分次代数.html" title="关联分次对象 [关联分次代数]">关联分次代数</a></span>的<span class="link local"><a href="./滤代数.html" title="滤代数 [滤代数]">滤代数</a></span>. 几乎交换代数 $F^\bullet A$ 的<span class="link local"><a href="./关联分次代数.html" title="关联分次对象 [关联分次代数]">关联分次代数</a></span> $\operatorname{Gr}^\bullet A$ 上有 Poisson 结构: 对 $x \in \operatorname{Gr}^i A$, $y\in\operatorname{Gr}^j A$,
+分别取 $x,y$ 的代表元 $\tilde{x}\in F^i A$, $\tilde y\in F^j A$, 定义
+$$
+\{x,y\} := [\tilde{x},\tilde{y}].
+$$</p>
+<p>例如 Weyl 代数
+$$
+W =\mathbb{Z}\langle x_1,\cdots,x_n,\partial_1,\cdots,\partial_n\rangle,
+$$
+满足关系 $[x_i,x_j]=[\partial_i,\partial_j]=0$, $[\partial_i,x_j]=\delta_{ij}$, 其关联分次代数即为多项式代数
+$$
+\operatorname{Gr}^\bullet W \simeq \mathbb{Z}[x_1,\cdots,x_n,y_1,\cdots,y_n].
+$$
+这个多项式代数上的 Poisson 结构可表示为
+$$
+\{f,g\} = \sum_i \Big(\frac{\partial f}{\partial x_i}\frac{\partial g}{\partial y_i} - \frac{\partial f}{\partial y_i}\frac{\partial g}{\partial x_i}\Big).
+$$</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Kirillov–Kostant–Souriau Poisson 结构 <a class="slug" href="./KKSPoisson结构.html">[KKSPoisson结构]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Poisson 流形 <a class="slug" href="./Poisson流形.html">[Poisson流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>动量映射 <a class="slug" href="./动量映射.html">[动量映射]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>辛流形 <a class="slug" href="./辛流形.html">[辛流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

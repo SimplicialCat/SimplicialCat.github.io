@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“辛流形”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>辛流形</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,18 +55,18 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="辛流形"><header><h1><span class="taxon">Wiki. </span>“辛流形” <a class="slug" href="./辛流形.html">[辛流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>辛流形是经典力学 (特别是 Hamilton 力学) 的几何背景.</p>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="辛流形"><header><h1><span class="taxon">Wiki. </span>辛流形 <a class="slug" href="./辛流形.html">[辛流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<p>辛流形是经典力学 (特别是 Hamilton 力学) 常用的几何背景.</p>
 <h2>定义</h2>
-<p>辛流形是 $2n$ 维流形, 其上有非退化的 $2$ 形式 $\omega$, 满足 $d\omega=0$, $\omega^n\neq 0$.</p>
+<p>辛流形是偶数维实流形, 其上有非退化的 $2$-形式 $\omega$, 满足 $d\omega=0$, $\omega^n\neq 0$.</p>
 <h2>性质</h2>
 <p>紧辛流形 $M$ 满足 $H^2(M;\mathbb{R})\neq 0$.</p>
-<h2>乘积辛形式</h2>
+<h3>乘积辛形式</h3>
 <p>辛流形 $M,N$ 的乘积上的辛形式定义为
 $$
 \omega_{M\times N} = \pi_M^*\omega_M - \pi_N^*\omega_N.
 $$</p>
-<h2>辛映射</h2>
+<h3>辛映射</h3>
 <p>光滑映射 $f\colon M\to N$ 为辛映射当且仅当 $\Gamma f \subset M\times N$ 为 <span class="link local"><a href="./Lagrange子流形.html" title="“Lagrange 子流形” [Lagrange子流形]">Lagrange 子流形</a></span>.</p>
 <h2>Hamilton 向量场</h2>
 <p>给定函数 $H$ (称为 Hamilton 函数), 满足
@@ -103,7 +103,7 @@ $$</p>
 $$
 \mathfrak g \to \operatorname{Vect}(M),\quad \xi \mapsto \xi^{\#}.
 $$
-假设存在<span class="link local"><a href="./动量映射.html" title="“动量映射” [动量映射]">动量映射</a></span> $\Phi\colon M\to\mathfrak g^*$, 满足
+假设存在<span class="link local"><a href="./动量映射.html" title="动量映射 [动量映射]">动量映射</a></span> $\Phi\colon M\to\mathfrak g^*$, 满足
 $$
 i_{\xi^{\#}}\omega = - d \left&lt;\Phi(x),\xi\right&gt;.
 $$
@@ -112,17 +112,17 @@ $$
 \Phi\circ g = \operatorname{Ad}^*_{g^{-1}}\circ\Phi.
 $$</p>
 <h3>Kirillov–Kostant 辛形式</h3>
-<p>考虑余伴随轨道 $\mathcal O$, 其上有辛形式与<span class="link local"><a href="./动量映射.html" title="“动量映射” [动量映射]">动量映射</a></span>.</p>
+<p>考虑余伴随轨道 $\mathcal O$, 其上有辛形式与<span class="link local"><a href="./动量映射.html" title="动量映射 [动量映射]">动量映射</a></span>.</p>
 <p>对于 $\xi,\eta\in\mathfrak g$, $\mu\in\mathcal O$,
 $$
 \omega(\mu) (\xi (\mu), \eta(\mu)) = \left&lt;\mu,[\xi,\eta]\right&gt;
 $$</p>
-<p>$\mathfrak g^*$ 上有 Poisson 结构:
+<p>$\mathfrak g^*$ 上有 <span class="link local"><a href="./Poisson代数.html" title="Poisson 代数 [Poisson代数]">Poisson 结构</a></span>:
 $$
 \{f_1,f_2\}(\mu) := \left&lt; \mu, [df_1,df_2]\right&gt;.
 $$</p>
 <h2>可积系统</h2>
-<p>$2n$ 维辛流形上有 $n$ 个相互交换的 Hamilton 向量场, 即有 $n$ 维圆环作用的情形.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Delzant 多面体” <a class="slug" href="./Delzant多面体.html">[Delzant多面体]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hamilton 向量场” <a class="slug" href="./Hamilton向量场.html">[Hamilton向量场]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“J-全纯曲线” <a class="slug" href="./J-全纯曲线.html">[J-全纯曲线]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Lagrange 子流形” <a class="slug" href="./Lagrange子流形.html">[Lagrange子流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Poisson 代数 <a class="slug" href="./Poisson代数.html">[Poisson代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“几何量子化” <a class="slug" href="./几何量子化.html">[几何量子化]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“动量映射” <a class="slug" href="./动量映射.html">[动量映射]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“量子上同调” <a class="slug" href="./量子上同调.html">[量子上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“镜对称” <a class="slug" href="./镜对称.html">[镜对称]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<p><span class="link local"><a href="./可积系统.html" title="可积系统 [可积系统]">可积系统</a></span>是 $2n$ 维辛流形上有 $n$ 个相互交换的 Hamilton 向量场, 即有 $n$ 维圆环的作用.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Delzant 多面体” <a class="slug" href="./Delzant多面体.html">[Delzant多面体]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hamilton 向量场” <a class="slug" href="./Hamilton向量场.html">[Hamilton向量场]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“J-全纯曲线” <a class="slug" href="./J-全纯曲线.html">[J-全纯曲线]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Lagrange 子流形” <a class="slug" href="./Lagrange子流形.html">[Lagrange子流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Poisson 代数 <a class="slug" href="./Poisson代数.html">[Poisson代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>几何量子化 <a class="slug" href="./几何量子化.html">[几何量子化]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“量子上同调” <a class="slug" href="./量子上同调.html">[量子上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“镜对称” <a class="slug" href="./镜对称.html">[镜对称]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
