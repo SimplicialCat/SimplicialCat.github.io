@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>语法–语义对偶</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Notion"><details open><summary id="语法–语义对偶"><header><h1><span class="taxon">Notion. </span>语法–语义对偶 <a class="slug" href="./语法–语义对偶.html">[语法–语义对偶]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<p>常常, 一种数学结构可以表示为一个映射
+$$
+\text{语法} \to \text{语义},
+$$
+其中</p>
+<ul>
+<li>“语法” 是由少量信息<span class="link local"><a href="./数学对象的表现.html" title="数学对象的表现 [数学对象的表现]">表现</a></span>的一个较为抽象的结构, 通常是一个代数或一个范畴, 其中的元素或对象记录了某种语言;</li>
+<li>“语义” 是某一类较为具体的, 或在实践中自然出现的对象;</li>
+<li>这个函子表达的是一个指定的结构相当于<strong>给语法的每个对象赋予一个具体的意义</strong>的过程.</li>
+</ul>
+<h2>例</h2>
+<h3>代数方程组的解</h3>
+<p>多项式方程 $f(x)=0$ 在环 $A$ 中的解可以表示为环同态
+$$
+\mathbb{Z}[x]/(f) \to A,
+$$
+其中 $x$ 在 $A$ 中的像即是这个解. 当然, 本例也可推广到多个变量, 多个方程构成的方程组. 在<span class="link local"><a href="./代数-几何对偶.html" title="代数–几何对偶 [代数-几何对偶]">代数–几何对偶</a></span>之下这个环同态对应<span class="link local"><a href="./仿射概形.html" title="仿射概形 [仿射概形]">仿射概形</a></span>的映射
+$$
+\operatorname{Spec} A \to \operatorname{Spec}\mathbb{Z}[x]/(f) = \{x\in \mathbb A^1 \mid f(x) = 0\}.
+$$</p>
+<p>类似地, 微分方程组的解可表示为 <span class="link local"><a href="./D-模.html" title="D-模 [D-模]">D-模</a></span>的同态.</p>
+<h3>交换半群</h3>
+<p>考虑有限集关于无交并构成的<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半范畴</a></span> $\mathsf{Fin}^{\sqcup}$,
+以及集合关于乘积构成的对称幺半范畴 $\mathsf{Set}^\times$.
+那么一个对称幺半函子
+$$
+	\mathsf{Fin}^{\sqcup} \to \mathsf{Set}^\times
+$$
+等同于一个交换半群.
+具体地, 交换半群 $A$ 给出函子
+$$
+\{1,\cdots,n\} \mapsto A^n,\quad
+\varnothing\mapsto \{*\},
+$$
+其中映射 $\{1,2\} \to \{1\}$ 对应的映射 $A^2\to A$ 正是 $A$ 上的运算; 映射 $\varnothing\to\{1\}$ 对应的映射 $\{*\}\to A$ 正是其单位元.</p>
+<p>在本例中, $\mathsf{Set}^\times$ 可以替换为任何对称幺半范畴 $\mathcal D$, 称对称幺半函子 $\mathsf{Fin}^\sqcup \to \mathcal D$ 为 $\mathcal D$ 中的<span class="link local"><a href="./交换代数.html" title="交换代数 [交换代数]">交换代数</a></span>. 例如交换环 $R$ 上的模关于张量积构成的范畴 $\mathsf{Mod}_R^\otimes$ 中的交换代数就是通常说的交换 $R$-代数.
+因此我们借用范畴逻辑学的术语, 称 $\mathsf{Fin}^\sqcup$ 记录了交换代数的<strong>语法</strong> (syntax), 而种种具体的交换代数都是这个范畴到其它对称幺半范畴的函子, 称之为<strong>语义</strong> (semantics).</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Notion" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Notion. </span>代数–几何对偶 <a class="slug" href="./代数-几何对偶.html">[代数-几何对偶]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>
