@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“充实范畴”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>充实范畴</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,12 +55,23 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="充实范畴"><header><h1><span class="taxon">Wiki. </span>“充实范畴” <a class="slug" href="./充实范畴.html">[充实范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="充实范畴"><header><h1><span class="taxon">Wiki. </span>充实范畴 <a class="slug" href="./充实范畴.html">[充实范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>充实范畴是范畴的推广, 其对象之间的 “态射集” 不是集合, 而是更一般的幺半范畴的对象.</p>
+<ul>
+<li>$n$-范畴可视为充实于 $(n-1)$-范畴的范畴. 这里, $n$-范畴指的是 $(\infty,n)$-范畴.</li>
+<li>充实于 <span class="link local"><a href="./生象.html" title="生象 [生象]">$\mathsf{Ani}$</a></span> 的范畴就是 $(\infty ,1)$-范畴.</li>
+<li>充实于 $k$-模谱范畴 $\mathsf{Vect}_k$ 的范畴即是 <span class="link local"><a href="./微分分次范畴.html" title="微分分次范畴 [微分分次范畴]">DG 范畴</a></span>.</li>
+</ul>
 <h2>定义</h2>
+<h3>传统</h3>
 <p>设 $\mathsf K$ 为<span class="link local"><a href="./幺半范畴.html" title="幺半范畴 [幺半范畴]">幺半范畴</a></span>, 定义 $\mathsf K$-充实范畴 $\mathsf C$ 为如下结构: 一族对象 $\operatorname{ob}(\mathsf C)$, 每两个对象之间有一个态射对象 $\operatorname{Hom}(x,y)\in\operatorname{ob}(\mathsf K)$, 每三个对象之间有一个复合态射
 $$
 \circ\colon \operatorname{Hom}(y,z)\otimes \operatorname{Hom}(x,y) \to \operatorname{Hom}(x,z).
 $$</p>
+<h3>使用代数胚</h3>
+<p>充实范畴是<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span>的推广, 是一种<span class="link local"><a href="./代数胚.html" title="代数胚 [代数胚]">代数胚</a></span>.</p>
+<p>参考 <span class="link local"><a href="./GepnerHaugsengEnrichedCategories.html" title="Enriched ∞-categories via non-symmetric ∞-operads [GepnerHaugsengEnrichedCategories]">Gepner–Haugseng</a></span>, <span class="link local"><a href="./HinichYonedaEnriched.html" title="Yoneda lemma for enriched infinity categories [HinichYonedaEnriched]">Hinich</a></span>, <span class="link local"><a href="./StefanichHigherQCoh.html" title="Higher Quasicoherent Sheaves [StefanichHigherQCoh]">Stefanich</a></span>.</p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Ab-范畴” <a class="slug" href="./Ab-范畴.html">[Ab-范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Day 卷积 <a class="slug" href="./Day卷积.html">[Day卷积]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“加性范畴” <a class="slug" href="./加性范畴.html">[加性范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
