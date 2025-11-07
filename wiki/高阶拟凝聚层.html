@@ -56,6 +56,10 @@
     });
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="高阶拟凝聚层"><header><h1><span class="taxon">Wiki. </span>高阶拟凝聚层 <a class="slug" href="./高阶拟凝聚层.html">[高阶拟凝聚层]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>高阶拟凝聚层是<span class="link local"><a href="./拟凝聚层.html" title="拟凝聚层 [拟凝聚层]">拟凝聚层</a></span>的<span class="link local"><a href="./范畴化.html" title="范畴化 [范畴化]">范畴化</a></span>.</p>
+<p><span class="link local"><a href="./StefanichHigherQCoh.html" title="Higher Quasicoherent Sheaves [StefanichHigherQCoh]">Germán Stefanich 的博士论文</a></span>发展了高阶拟凝聚层的理论.</p>
+<h2>定义</h2>
 <p>定义预叠上的 “拟凝聚 $(n-1)$-范畴层” 构成的 $n$-范畴
 $$
 n\mathsf{QCoh} \colon \mathsf{PreStk}^{\mathrm{op}} \to n\mathsf{Pr}_{\mathrm{st}}^{\mathrm{L}}
@@ -64,14 +68,26 @@ $$
 $$
 \mathrm{Mod}^n \colon \mathsf{Aff}^{\mathrm{op}}=\mathsf{CAlg}(\mathsf{Sp})_{\mathrm{conn}} \to n\mathsf{Pr}_{\mathrm{st}}^{\mathrm{L}}
 $$
-沿米田嵌入 $\mathsf{Aff}\to \mathsf{PreStk}$ 的右 <span class="link local"><a href="./Kan扩张.html" title="Kan 扩张 [Kan扩张]">Kan 扩张</a></span>.</p>
-<p><span class="link local"><a href="./StefanichHigherQCoh.html" title="Higher Quasicoherent Sheaves [StefanichHigherQCoh]">Germán Stefanich 的博士论文</a></span>发展了高阶拟凝聚层的理论.</p>
-<p><strong>定理</strong>.
-$n\mathsf{QCoh}$ 升级为对称幺半函子
+沿米田嵌入 $\mathsf{Aff}\to \mathsf{PreStk}$ 的右 <span class="link local"><a href="./Kan扩张.html" title="Kan 扩张 [Kan扩张]">Kan 扩张</a></span>, 从而
 $$
-(n+1)\mathsf{Corr}(\mathsf{Aff}) \to (n\mathsf{Pr}_{\mathrm{st}}^{\mathrm{L}})^{(n+1)\text{-}\mathrm{op}},
+n\mathsf{QCoh}(X) = \operatorname{lim}_{S\in\mathsf{Aff}_{/X}}n\mathsf{QCoh}(S)
+$$</p>
+<h2>性质</h2>
+<h3>拉回与推前</h3>
+<p>高阶拟凝聚层的拉回, 推前等等操作可体现为<span class="link local"><a href="./高阶关系范畴.html" title="高阶关系范畴 [高阶关系范畴]">关系 $n$-范畴</a></span> $n\mathsf{Corr}(\mathsf{Aff})$, $n\mathsf{Corr}(\mathsf{PreStk})$ 出发的函子.</p>
+<p><strong>定理</strong>.</p>
+<ol>
+<li>(仿射概形的情形) 函子 $n\mathsf{QCoh}\colon \mathsf{Aff}^{\mathrm{op}} \to n\mathsf{Pr}_{\mathrm{st}}^{\mathrm{L}}$ 升级为对称幺半函子 $(n+1)\mathsf{Corr}(\mathsf{Aff}) \to (n\mathsf{Pr}_{\mathrm{st}}^{\mathrm{L}})^{(n+1)\text{-}\mathrm{op}}$.</li>
+<li>()</li>
+</ol>
+<h3>下降</h3>
+<p><strong>定理</strong>. 对于 $n\geq 1$, 函子 $n\mathsf{QCoh} \colon \mathsf{Aff}^{\mathrm{op}} \to n\mathsf{Pr}_{\mathrm{st}}^{\mathrm{L}}$ 是<span class="link local"><a href="./平展景.html" title="平展景 [平展景]">平展拓扑</a></span>的层.</p>
+<h3>整体截面</h3>
+<p>对仿射概形 $X$, 沿其到终对象的映射 $X\to \operatorname{Spec}(\mathbb S)$ 的推前称为 “整体截面” 函子
 $$
-其中 $(n+1)\mathsf{Corr}(\mathsf{Aff})$ 是仿射概形的<span class="link local"><a href="./高阶关系范畴.html" title="高阶关系范畴 [高阶关系范畴]">关系 $(n+1)$-范畴</a></span>.</p>
+\Gamma(X,-) \colon n\mathsf{QCoh}(X) \to (n-1)\mathsf{Pr}_{\mathrm{st}}^{\mathrm{L}}
+$$</p>
+<p><span class="link local"><a href="./高阶仿射性.html" title=" [高阶仿射性]">$n$-仿射</a></span></p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Gestalt <a class="slug" href="./Gestalt.html">[Gestalt]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>单纯百科 Simplopedia <a class="slug" href="./index.html">[index]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>拟凝聚层 <a class="slug" href="./拟凝聚层.html">[拟凝聚层]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

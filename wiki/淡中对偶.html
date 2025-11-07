@@ -57,11 +57,25 @@
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="淡中对偶"><header><h1><span class="taxon">Wiki. </span>淡中对偶 <a class="slug" href="./淡中对偶.html">[淡中对偶]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>陈述</h2>
-<p>固定代数闭域 $k$ 作为基域, 定义<strong>淡中范畴</strong> (Tannakian category) 为<span class="link local"><a href="./紧生成范畴.html" title="紧生成范畴 [紧生成范畴]">紧生成</a></span>的<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半</a></span> $k$-线性 <span class="link local"><a href="./Abel范畴.html" title="“Abel 范畴” [Abel范畴]">Abel 范畴</a></span>, 那么仿射群概形 (的分类叠) 对偶于淡中范畴:</p>
+<h3>对称幺半线性范畴</h3>
+<p>固定代数闭域 $k$ 作为基域, 定义<strong>淡中范畴</strong> (Tannakian category) 为<span class="link local"><a href="./紧生成范畴.html" title="紧生成范畴 [紧生成范畴]">紧生成</a></span>的<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半</a></span> $k$-线性 <span class="link local"><a href="./Abel范畴.html" title="“Abel 范畴” [Abel范畴]">Abel 范畴</a></span>, 满足 $\operatorname{End}(1)\simeq k$. 那么仿射群概形 (的分类叠) 对偶于淡中范畴:</p>
 <ul>
 <li>对于仿射群概形 $G$ 的<span class="link local"><a href="./分类叠.html" title="分类叠 (模叠) [分类叠]">分类叠</a></span> $X = * / G$, 其上<span class="link local"><a href="./拟凝聚层.html" title="拟凝聚层 [拟凝聚层]">拟凝聚层</a></span>的范畴 $\mathsf{QCoh}(X) = \mathsf{Rep}(G)$ 为淡中范畴;</li>
 <li>对于淡中范畴 $(\mathcal C,\otimes)$, 叠 $A \mapsto \mathsf{Fun}^{\otimes, \mathrm{colim}} (\mathcal C,\mathsf{Mod}(A))$ 为某代数群的分类叠.</li>
 </ul>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Gestalt <a class="slug" href="./Gestalt.html">[Gestalt]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Notion" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Notion. </span>代数–几何对偶 <a class="slug" href="./代数-几何对偶.html">[代数-几何对偶]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<h3>充实范畴</h3>
+<p>设 $\mathcal V$ 为<span class="link local"><a href="./闭范畴.html" title="“闭范畴” [闭范畴]">闭</a></span><span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半范畴</a></span>, $A$ 为其中的<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">幺半群</a></span>, 其对应一个 $\mathcal V$-<span class="link local"><a href="./充实范畴.html" title="充实范畴 [充实范畴]">充实范畴</a></span> $\mathbf{B}A$; 记 $A$-模范畴为
+$$
+\mathsf{Mod}(A) := [\mathbf{B}A, \mathcal V].
+$$
+将 $\mathcal V$-充实函子 $\mathbf{B}A\to\mathcal V$ 取值于 $\mathbf{B}A$ 的唯一对象, 给出遗忘函子 (即所谓<strong>纤维函子</strong>)
+$$
+F \colon \mathsf{Mod}(A)\to\mathcal V.
+$$</p>
+<p><strong>定理</strong>. 由函子 $F$ 可重构出代数 $A$:
+$$
+\operatorname{End}(F) \simeq A.
+$$</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Gestalt <a class="slug" href="./Gestalt.html">[Gestalt]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notion" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notion.html" title="观念 [notion]">notion</a></span></span>代数–几何对偶 <a class="slug" href="./代数-几何对偶.html">[代数-几何对偶]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

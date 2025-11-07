@@ -56,11 +56,28 @@
     });
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="可表现范畴"><header><h1><span class="taxon">Wiki. </span>可表现范畴 <a class="slug" href="./可表现范畴.html">[可表现范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>可表现范畴 $\mathcal C$ 是一个可能很大的范畴, 却能由较小的一族对象 $\mathcal S\hookrightarrow\mathcal C$ 控制.
+此时, $\mathcal C$ 可<span class="link local"><a href="./数学对象的表现.html" title="数学对象的表现 [数学对象的表现]">表现</a></span>为预层范畴 $\mathsf{Psh}(\mathcal S)$ 的<span class="link local"><a href="./局部化.html" title="局部化 [局部化]">局部化</a></span>.</p>
+<h2>定义</h2>
 <p>对于<span class="link local"><a href="./正则基数.html" title=" [正则基数]">正则基数</a></span> $\kappa$ (通常取为 $\aleph_0$, 见<span class="link local"><a href="./紧生成范畴.html" title="紧生成范畴 [紧生成范畴]">紧生成范畴</a></span>), 称满足如下等价条件的范畴 $\mathcal C$ 为 $\kappa$-可表现范畴:</p>
 <ul>
 <li>$\mathcal C$ 余完备, 且有一族 <span class="link local"><a href="./可表现对象.html" title=" [可表现对象]">$\kappa$-可表现对象</a></span>构成的集合, 在 <span class="link local"><a href="./滤余极限.html" title="滤余极限 [滤余极限]">$\kappa$-滤余极限</a></span>下生成整个范畴.</li>
 <li>$\mathcal C$ 等价于一个小范畴的 <span class="link local"><a href="./Ind范畴.html" title=" [Ind范畴]">$\kappa$-Ind 范畴</a></span>.</li>
 </ul>
+<p>称 $\mathcal C$ 为可表现范畴是指存在一个基数 $\kappa$, $\mathcal C$ 为 $\kappa$-可表现范畴.</p>
+<p>等价的定义是: 有一个小范畴到 $\mathcal C$ 的函子 $j\colon \mathcal S\hookrightarrow\mathcal C$, 使得米田扩张 $\mathsf{Psh}(\mathcal S) \to \mathcal C$ 是预层范畴 $\mathsf{Psh}(\mathcal S)$ 关于某个小态射族 $W \subset \mathsf{Fun}([1],\mathsf{Psh}(\mathcal S))$ 的局部化.</p>
+<p>可表现范畴以及保持余极限的函子构成的范畴记为 $\mathsf{Pr}^{\mathrm{L}}$, 其中 $\mathrm{L}$ 的含义是这些函子是左伴随 (<span class="link local"><a href="./伴随函子定理.html" title="伴随函子定理 [伴随函子定理]">伴随函子定理</a></span>).</p>
+<h2>性质</h2>
+<p>由<span class="link local"><a href="./景.html" title="“景” [景]">景</a></span>表现的<span class="link local"><a href="./意象.html" title="“意象” [意象]">意象</a></span>是可表现范畴.</p>
+<h2>高阶可表现范畴</h2>
+<p>粗略地说 (忽略所有基数大小问题), 高阶可表现范畴 (即可表现 $(\infty ,n)$-范畴) 的定义是 “取模范畴” 操作的迭代.
+对于可表现<span class="link local"><a href="./幺半范畴.html" title="幺半范畴 [幺半范畴]">幺半范畴</a></span> $\mathcal M$, 可定义其 (在余完备范畴的范畴 $\mathsf{Cat}_{\mathrm{cocomp}}$ 中的) “模范畴” $\mathsf{Mod}(\mathcal M)$. “可表现 $n$-范畴的范畴” $n\mathsf{Pr}$ 由下式归纳定义:</p>
+<ul>
+<li>$1\mathsf{Pr} = \mathsf{Mod}(\mathsf{Ani}) = \mathsf{Pr}$,</li>
+<li>$n\mathsf{Pr} = \mathsf{Mod}((n-1)\mathsf{Pr})$.</li>
+</ul>
+<p>按上述方法定义的范畴 $n\mathsf{Pr}$ 是 $(\infty ,1)$-范畴, 但可以升级为 $(\infty ,n+1)$-范畴, 参考 <span class="link local"><a href="./StefanichHigherQCoh.html" title="Higher Quasicoherent Sheaves [StefanichHigherQCoh]">Stefanich</a></span>.</p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Gestalt <a class="slug" href="./Gestalt.html">[Gestalt]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>拟凝聚层 <a class="slug" href="./拟凝聚层.html">[拟凝聚层]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>紧生成范畴 <a class="slug" href="./紧生成范畴.html">[紧生成范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
