@@ -73,24 +73,33 @@
 <p>Gestalt 的定义是基于一个称为 <strong>Stefanich 环</strong>的代数对象.</p>
 <p>一个 Stefanich 环 $A$ 是如下资料:</p>
 <ul>
-<li>一个越来越高阶的[可表现范畴]的[交换代数]的塔
+<li>一个越来越高阶的<span class="link local"><a href="./可表现范畴.html" title="可表现范畴 [可表现范畴]">可表现范畴</a></span>的<span class="link local"><a href="./交换代数.html" title="交换代数 [交换代数]">交换代数</a></span>的塔
 $$
-      (A_n\in \mathsf{CAlg}(n\mathsf{Pr}_{\mathbb S})),
+      (A_0,A_1,A_2,\cdots),A_n\in \mathsf{CAlg}(n\mathsf{Pr}),
 $$</li>
-<li>一连串等价
+<li>每个部分 $A_n$ 等价于高一阶的部分 $A_{n+1}$ 的 “环路空间”:
 $$
-      A_n \simeq \operatorname{End}_{A_{n+1}}(1).
+      A_n \simeq \operatorname{End}_{A_{n+1}}(1) \in \mathsf{CAlg}(n\mathsf{Pr}).
 $$</li>
 </ul>
-<h2>例</h2>
-<p>对于交换环 $A$, 定义 “$A$-线性<span class="link local"><a href="./可表现范畴.html" title="可表现范畴 [可表现范畴]">可表现范畴</a></span>” 构成的 $2$-范畴
+<p>换言之, Stefanich 环构成的 $(\infty,1)$-范畴为
 $$
-1\mathsf{Pr}_A = \mathsf{Mod}_{D(A)}(\mathsf{Pr}_{\mathrm{st}}) \in 2\mathsf{Pr},
+\mathsf{StRing} = \operatorname{lim}_{\operatorname{End}_{-}(1)} \mathsf{CAlg}(n\mathsf{Pr}).
 $$
-归纳地定义 “$A$-线性可表现 $n$-范畴” 构成的 $(n+1)$-范畴
+(忽略这些范畴的高阶不可逆态射, 仅考虑其 $(\infty ,1)$-范畴结构.)</p>
+<p><strong>注</strong>. 由定义中的第二个条件, Stefanich 环 $A=(A_0,A_1,A_2,\cdots)$ 的每个部分 $A_n$ 的交换代数结构实际上被高一阶的部分 $A_{n+1}$ 决定了. 进一步, 我们可以在定义中仅要求 $A_n\in n\mathsf{Pr}$, 且有等价 $A_n \simeq \operatorname{End}_{A_{n+1}}(*)$ ($A_n$ 的基点为恒等). 这样 (由 <span class="link local"><a href="./Eckmann--Hilton论证.html" title="Eckmann–Hilton 论证 [Eckmann--Hilton论证]">Eckmann–Hilton论证</a></span>) 交换代数的结构就来自于一连串等价
 $$
-n\mathsf{Pr}_A = \mathsf{Mod}_{(n-1)\mathsf{Pr}_A}(n\mathsf{Pr})\in (n+1)\mathsf{Pr}.
+A_n = \operatorname{End}_{A_{n+1}}(*) = \operatorname{End}_{\operatorname{End}_{A_{n+2}}(*)}(*) = \cdots.
 $$</p>
+<p><strong>定义</strong>. Gestalt 为 Stefanich 环的对偶: $\mathsf{Gest} = \mathsf{StRing}^{\mathrm{op}}$.</p>
+<h2>性质</h2>
+<p><strong>定理</strong> (<span class="link local"><a href="./ScholzeStefanichGestalten.html" title="Geometry and Higher Category Theory [ScholzeStefanichGestalten]">Scholze–Stefanich</a></span>). $\mathsf{Gest}$ 是一个 <span class="link local"><a href="./∞-意象.html" title="“∞-意象” [∞-意象]">$\infty$-意象</a></span>.</p>
+<h2>例</h2>
+<p>普通的交换环 $A$ 给出一个 Stefanich 环
+$$
+(A,\mathsf{Mod}(A),1\mathsf{Pr}_A,2\mathsf{Pr}_A,\cdots).
+$$</p>
+<p>对于仿射概形范畴上适当的 Grothendieck 拓扑, 该构造即延拓至适当的叠.</p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>单纯百科 Simplopedia <a class="slug" href="./index.html">[index]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
