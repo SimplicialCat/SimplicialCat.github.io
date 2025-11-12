@@ -57,10 +57,18 @@
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="算畴"><header><h1><span class="taxon">Wiki. </span>算畴 <a class="slug" href="./算畴.html">[算畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>观念</h2>
-<p>一个算畴表达了<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半范畴</a></span>中一个抽象的对象上具有的一族多元运算.</p>
+<p>一个算畴表达了<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半范畴</a></span>的对象上可能具有的一族多元运算, 以及运算之间的关系. 将一个算畴中记录的运算, 按照规定的关系, 实现 (解读) 到某个具体范畴中的方法称为<span class="link local"><a href="./算畴上的代数.html" title="算畴上的代数 [算畴上的代数]">算畴上的代数</a></span>.</p>
 <h2>定义</h2>
+<h3>作为多重范畴</h3>
+<p><strong>有色算畴</strong> (colored operad) 等同于<strong>多重范畴</strong> (multicategory). 所谓多重范畴就是一族对象之间带有 “多个对象到一个对象的态射”
+$$
+\operatorname{Hom}(X_1,X_2,\cdots,X_n ; Y).
+$$</p>
+<p>算畴种的 “颜色” 即是多重范畴中的对象. 当多重范畴仅有一个对象时, 称之为<strong>单色算畴</strong>. 不同文献中对算畴是否默认为单色有不同的约定.</p>
+<p><strong>对称算畴</strong> (symmetric operad) 是指多重范畴中的 $\operatorname{Hom}$ 带有对称群的作用, 即对 $\sigma\in S_n$ 有相容的同构 $\operatorname{Hom}(X_1,\cdots,X_n ; Y) \simeq \operatorname{Hom}(X_{\sigma(1),\cdots,\sigma(n)};Y)$.</p>
+<p>上面定义的是 <span class="link local"><a href="./生象.html" title="生象 [生象]">$\mathsf{Ani}$</a></span> 上的算畴. 对于一般<span class="link local"><a href="./对称幺半∞-范畴.html" title="对称幺半 ∞-范畴 [对称幺半∞-范畴]">对称幺半范畴</a></span> $\mathcal C$, 也可定义相应的 “<span class="link local"><a href="./充实范畴.html" title="充实范畴 [充实范畴]">充实</a></span>多重范畴” 作为 $\mathcal C$ 上的算畴的概念.</p>
 <h3>作为对称序列</h3>
-<p>算畴最常用的定义是<span class="link local"><a href="./对称序列.html" title="对称序列 [对称序列]">对称序列</a></span> (symmetric sequence) 的范畴中的 (含幺) <span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span>, 这样定义的算畴也称<strong>对称算畴</strong> (symmetric operad).</p>
+<p>单色对称算畴作为多重范畴, 其包含的信息等同于一个带对称群作用的序列, 称为<span class="link local"><a href="./对称序列.html" title="对称序列 [对称序列]">对称序列</a></span> (symmetric sequence). 事实上, 单色对称算畴是对称序列的范畴中的<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span>.</p>
 <p>具体地, 给定<span class="link local"><a href="./对称幺半∞-范畴.html" title="对称幺半 ∞-范畴 [对称幺半∞-范畴]">对称幺半范畴</a></span> $(\mathcal V,\otimes,1)$, 一个 $\mathcal V$-值的 (对称) 算畴 $C$ 为如下资料:</p>
 <ul>
 <li>“$n$ 元运算的参数空间”, 对象 $C(n) \in \mathcal V$,</li>
@@ -83,18 +91,76 @@ $$
 $$
 \mathsf{Vect}^\Sigma \simeq \mathsf{Fun}^{\text{SymMon}}(\mathsf{Vect}^\Sigma,\mathsf{Vect}^\Sigma) \simeq \operatorname{End}(U).
 $$</p>
+<h3>作为算子范畴</h3>
+<p>算畴 $\mathcal C$ 也可定义为其<strong>算子范畴</strong> (category of operators) $\mathcal C^\otimes$. 它的对象为颜色的序列, 态射为 “算子”, 该算畴中的一个 $k$ 元运算给出 $k$ 个颜色的序列到一个颜色的态射. 这个范畴类似于 (一阶理论的) <span class="link local"><a href="./语法–语义对偶.html" title="语法–语义对偶 [语法–语义对偶]">语法范畴</a></span>, 具有万有 $\mathcal C$-代数.</p>
+<p>记 $\mathsf{Fin}_{*}$
+为有限带基点集合
+$\langle n \rangle := \{*,1,\cdots,n\}$
+和保基点映射构成的范畴.
+设 $\mathcal C$ 为算畴,
+定义 $\mathsf{Fin}_*$ 上的一个范畴 $\mathcal C^{\otimes}$,</p>
+<ul>
+<li>$\mathcal C^{\otimes}$ 在 $\langle n \rangle$ 上的对象为颜色的 $n$ 元组 $(X_1,\cdots,X_n)$;</li>
+<li>态射 $(X_1,\cdots,X_n) \to (Y_1,\cdots,Y_m)$ 是一个保基点映射 $\phi\colon \langle n \rangle \to \langle m\rangle$, 以及多重范畴 $\mathcal C$ 中的多重映射
+$$
+f_i \in \operatorname{Hom}((X_j)_{j\in\phi^{-1}(i)}; Y_i)\,(1\leq i\leq m).
+$$</li>
+</ul>
+<p>如下条件刻画了一个 $\mathsf{Fin}_*$ 上的范畴 $p \colon \mathcal O^\otimes\to\mathsf{Fin}_*$ 何时来自一个算畴. 记 $\mathcal O^\otimes_{\langle n\rangle}$ 为 $p$ 在 $\langle n\rangle\in\mathsf{Fin}_*$ 上的纤维, 即想象中的 “颜色 $n$ 元组”.</p>
+<ol>
+<li>$\mathsf{Fin}_*$ 中的<strong>惰性映射</strong> $f \colon \langle n\rangle \to\langle m\rangle$ (惰性是指除 $*$ 以外, 每个点的原像均为单点) 总能提升为<span class="link local"><a href="./推前.html" title="推前, 拉回 [推前]">推前</a></span>, 给出函子 $f_!\colon \mathcal O^\otimes_{\langle n\rangle} \to \mathcal O^\otimes_{\langle m\rangle}$.</li>
+<li>对任意 $f\colon \langle n\rangle \to \langle m\rangle$, 如下映射为等价:
+$$
+     \mathcal O^\otimes_{f}(X,Y)\to\prod_{k=1}^m \mathcal O^\otimes_{\rho_i f}(X,(\rho_i)_! Y),
+ $$
+其中 $\rho_i\colon \langle m\rangle\to\langle 1\rangle$ 将 $i$ 映射到 $1$, 其它元素映射到 $*$.</li>
+<li>$(\rho_i)_!\colon \mathcal O^\otimes_{\langle n\rangle} \to \mathcal O^\otimes_{\langle 1\rangle}$ 给出的映射 $\mathcal O^\otimes_{\langle n\rangle} \to  \big(\mathcal O^\otimes_{\langle 1\rangle}\big)^n$ 为等价.</li>
+</ol>
 <h2>例</h2>
-<h3>交换算畴与 E∞-算畴</h3>
-<p>带基点空间范畴中, 交换算畴 $\mathcal N$ 的每个部分 $\mathcal N(j)$ 都是单点集. 这是因为, 交换性意味着任何 $j$ 个元素有唯一的结合方式.</p>
-<p>称算畴 $\mathcal C$ 为 $E_\infty$-算畴, 是指存在态射 $\mathcal C\to\mathcal N$, 使得每个 $\mathcal C(j)\to\mathcal N(j)$ 为同伦等价.</p>
-<p>见 <span class="link local"><a href="./E∞-算畴.html" title="“E∞-算畴” [E∞-算畴]">E∞-算畴</a></span>, <span class="link local"><a href="./小n-方块算畴.html" title="“小 n-方块算畴” [小n-方块算畴]">小 n-方块算畴</a></span>.</p>
-<h3>结合算畴与 A∞-算畴</h3>
-<p>结合算畴 $\mathcal M$ 满足 $\mathcal M(j)=\Sigma_j$. 结合性意味着 $j$ 个元素的结合由一个排列完全确定.</p>
-<p>称算畴 $\mathcal C$ 为 $A_\infty$-算畴, 是指存在态射 $\mathcal C\to\mathcal M$, 使得每个 $\mathcal C(j)\to\mathcal M(j)$ 为 $\Sigma_j$-等变同伦等价. 这个条件也说明 $\mathcal C$ 是 $\Sigma$-自由的.</p>
-<p>见 <span class="link local"><a href="./A∞-算畴.html" title="“A∞-算畴” [A∞-算畴]">A∞-算畴</a></span>.</p>
+<h3>交换算畴</h3>
+<p>交换算畴 $\mathsf{Comm}$ 作为多重范畴仅有一个对象 $*$, 且 $\operatorname{Hom}(*^n,*) = 1$. 交换性意味着任何 $n$ 个元素有唯一的结合方式.</p>
+<p>交换算畴的算子范畴 $\mathsf{Comm}^\otimes \to \mathsf{Fin}_*$ 就是 $\mathsf{Fin}_*$ 到自身的恒等.</p>
+<p>交换算畴又称 <span class="link local"><a href="./E∞-算畴.html" title="E∞-算畴 [E∞-算畴]">E∞-算畴</a></span>.</p>
+<h3>$\mathbb{E}_n$-算畴</h3>
+<p>…</p>
+<p>$\mathbb {E}_n$-算畴的一种<span class="link local"><a href="./数学对象的表现.html" title="数学对象的表现 [数学对象的表现]">表现</a></span>为<span class="link local"><a href="./小n-方块算畴.html" title="小方块算畴 [小n-方块算畴]">小 $n$-方块算畴</a></span>.</p>
+<h3>结合算畴</h3>
+<p><span class="link local"><a href="./A∞-算畴.html" title="A∞-算畴 [A∞-算畴]">结合算畴</a></span> $\mathsf{Assoc}$ 作为多重范畴仅有一个对象, 且
+$$
+    \operatorname{Hom}_{\mathsf{Assoc}}(*^n,*) = S_n,
+$$
+带有 $S_n$ 的自由作用. 结合性意味着 $n$ 个元素的结合由一个排列完全确定.</p>
 <h3>自同态算畴</h3>
 <p>任何一个对象 $X$ 上都有一个自同态算畴 $\mathcal {E}_X$, 且 $X$ 是 $\mathcal {E}_X$-代数.</p>
 <p>对于算畴 $\mathcal P$, 一个对象 $X$ 上的 $\mathcal P$-代数结构等同于算畴的态射 $\mathcal P\to\mathcal {E}_X$.</p>
+<h3>模算畴</h3>
+<p>模算畴是表达 (交换, 结合等) 代数上的模的算畴.</p>
+<p>“交换代数上的模” 算畴 $\mathsf{CM}$ 作为多重范畴有两个对象 $a,m$, 且有</p>
+<ul>
+<li>$\operatorname{Hom}_{\mathsf{CM}}(a^n,a) = 1$,</li>
+<li>$\operatorname{Hom}_{\mathsf{CM}}(a^{n}m,m) = 1$ (包括 $a^n m$ 的所有排列),</li>
+<li>其它 $\operatorname{Hom}$ 为空.</li>
+</ul>
+<p>“两个结合代数上的双模” 算畴 $\mathsf{BM}$ 作为多重范畴有三个对象 $l,m,r$, 且有</p>
+<ul>
+<li>$\operatorname{Hom}_{\mathsf{BM}}(l^n,l) = 1$,</li>
+<li>$\operatorname{Hom}_{\mathsf{BM}}(r^n,r) = 1$,</li>
+<li>$\operatorname{Hom}_{\mathsf{BM}}(l^p m r^q,m) = 1$ (包括 $l^p m r^q$ 的所有排列),</li>
+<li>其它 $\operatorname{Hom}$ 为空.</li>
+</ul>
+<h3>对称幺半范畴</h3>
+<p>设 $(\mathcal C,\otimes)$ 为<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半范畴</a></span>, 则其给出一个算畴, 不妨仍记为 $\mathcal C$. 作为多重范畴,
+$$
+\operatorname{Hom}_{\mathcal C}(X_1,\cdots,X_n; Y) := \operatorname{Hom}_{\mathcal C}(X_1\otimes\cdots\otimes X_n, Y).
+$$</p>
+<p>将对称幺半范畴视为算畴的这种观点可以方便地定义<span class="link local"><a href="./算畴上的代数.html" title="算畴上的代数 [算畴上的代数]">算畴上的代数</a></span>.</p>
+<p>另外, 若将对称幺半范畴视为多重范畴, 那么它们之间的函子就是<span class="link local"><a href="./松幺半函子.html" title="松幺半函子 [松幺半函子]">松对称幺半函子</a></span>.</p>
+<h3>模拟余积幺半范畴</h3>
+<p>设 $\mathcal C$ 为任意范畴, 定义多重范畴 $\mathcal C^{\sqcup}$,
+$$
+\operatorname{Hom}_{\mathcal C^{\sqcup}}(X_1,\cdots,X_n;Y) := \prod_{i=1}^{n}\operatorname{Hom}_{\mathcal C}(X_i,Y).
+$$
+当 $\mathcal C$ 具有余积时, 这就是 $\mathcal C$ 上的余积给出的对称幺半范畴; 但它作为多重范畴的存在不需要 $\mathcal C$ 具有余积.</p>
 <h2>与单子的关系</h2>
 <p>假设对称幺半范畴 $S$ 是余完备的. 给定算畴 $\mathcal C$, 定义如下的<span class="link local"><a href="./单子.html" title="单子 [单子]">单子</a></span> $C$, 称为 “自由 $\mathcal C$-代数” 单子.
 $$
@@ -120,19 +186,6 @@ $$
 $$
 满足分配律.</p>
 <p>等价地, $(\mathcal C,\mathcal G)$-空间是 $\mathcal C$-空间范畴中的 $\mathcal G$-代数.</p>
-<h2>算子范畴</h2>
-<p>一个算畴 $\mathcal C$ 决定了一个算子范畴 (category of operators) $\widehat {\mathcal C}$. 它的对象为颜色的序列, 态射为 “算子”, 该算畴中的一个 $k$ 元运算给出 $k$ 个颜色的序列到一个颜色的态射. 这个范畴类似于 (一阶理论的) <span class="link local"><a href="./语法范畴.html" title=" [语法范畴]">语法范畴</a></span>, 是万有的具有 $\mathcal C$-代数的某种范畴 (“semi-cartesian monoidal category”).</p>
-<p><span class="link external"><a href="https://ncatlab.org/nlab/show/category+of+operators" title="nLab [https://ncatlab.org/nlab/show/category+of+operators]">nLab</a></span></p>
-<blockquote>
-<p>参考 May, The construction of E∞ ring spaces from bipermutative categories.</p>
-</blockquote>
-<p>记 $\mathcal F$ 为有限带基点集合 $\mathbf n=\{0,1,\cdots,n\}$ 和保基点映射构成的范畴. 范畴 $\widehat {\mathcal C}$ 以这些 $\mathbf n$ 为对象, 态射空间为
-$$
-\widehat {\mathcal C}(\mathbf m,\mathbf n) :=\coprod_{\phi\in\mathcal F (\mathbf m,\mathbf n)}\prod_{j=1}^n\mathcal C(|\phi^{-1}(j)|).
-$$
-这个范畴到 $\mathsf{Fin}_*$ 有自然的投影函子, 由此可以恢复出原本的算畴 (对称序列).</p>
-<h2>相关概念</h2>
-<p><span class="link local"><a href="./A∞-空间.html" title="“A∞-空间” [A∞-空间]">A∞-空间</a></span>, <span class="link local"><a href="./Abel∞-群.html" title="“Abel ∞-群” [Abel∞-群]">Abel ∞-群</a></span></p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“E∞-算畴” <a class="slug" href="./E∞-算畴.html">[E∞-算畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>单子 <a class="slug" href="./单子.html">[单子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>对称序列 <a class="slug" href="./对称序列.html">[对称序列]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>E∞-算畴 <a class="slug" href="./E∞-算畴.html">[E∞-算畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>单子 <a class="slug" href="./单子.html">[单子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>对称序列 <a class="slug" href="./对称序列.html">[对称序列]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>算畴上的代数 <a class="slug" href="./算畴上的代数.html">[算畴上的代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
