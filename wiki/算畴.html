@@ -116,14 +116,38 @@ $$
 其中 $\rho_i\colon \langle m\rangle\to\langle 1\rangle$ 将 $i$ 映射到 $1$, 其它元素映射到 $*$.</li>
 <li>$(\rho_i)_!\colon \mathcal O^\otimes_{\langle n\rangle} \to \mathcal O^\otimes_{\langle 1\rangle}$ 给出的映射 $\mathcal O^\otimes_{\langle n\rangle} \to  \big(\mathcal O^\otimes_{\langle 1\rangle}\big)^n$ 为等价.</li>
 </ol>
+<h2>性质</h2>
+<h3>代数范畴作为算畴</h3>
+<p>算畴之间的态射也称为一个算畴 $\mathcal O$ 在另一个算畴 $\mathcal P$ 中的<span class="link local"><a href="./算畴上的代数.html" title="算畴上的代数 [算畴上的代数]">代数</a></span>, 其构成的范畴记为 $\mathsf{Alg}_{\mathcal O}(\mathcal P)$. 如同范畴之间的态射空间可升级为范畴一样, 算畴之间的态射空间也可升级为算畴: 多重映射 $(A_i) \to B$ 是对每个对象 $X \in \mathcal O$ 指定 $\mathcal P$ 中一个多重映射 $(A_i(X)) \to B(X)$, 且对 $\mathcal O$ 中任意多重映射 $(X_i) \to Y$ 有如下交换图.
+$$
+\begin{array}
+    {ccc}
+    (A_i(X_j)) &amp; \to &amp; (A_i(Y)) \\
+    \downarrow &amp; &amp; \downarrow \\
+    (B(X_j)) &amp; \to &amp; B(Y).
+\end{array}
+$$</p>
+<h3>Boardman–Vogt 张量积</h3>
+<p>$\mathsf{Alg}_{\mathcal P}(-)$ 的左伴随是 <strong>Boardman–Vogt 张量积</strong> $(-)\otimes \mathcal P$.</p>
+<h3>算畴 Kan 扩张</h3>
+<p><span class="link local"><a href="./Kan扩张.html" title="Kan 扩张 [Kan扩张]">Kan 扩张</a></span> 是函子范畴之间拉回的左右伴随. 类似地, 对于余完备<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半范畴</a></span> $\mathcal C$ 以及算畴的态射 $f\colon \mathcal O\to\mathcal P$, 在代数范畴之间也有拉回 $f^*\colon \mathsf{Alg}_{\mathcal P}(\mathcal C)\to\mathsf{Alg}_{\mathcal O}(\mathcal C)$ 的左伴随
+$$
+    f_! \colon \mathsf{Alg}_{\mathcal O}(\mathcal C)\to\mathsf{Alg}_{\mathcal P}(\mathcal C),
+$$
+称为<strong>算畴左 Kan 扩张</strong> (operadic left Kan extension). 对于 $A\in\mathsf{Alg}_{\mathcal O}(\mathcal C)$, $P\in\mathcal P$,
+$$
+    (f_!A)(P) = \operatorname{colim}_{\alpha\colon f(O)\to P\text{活性}} \pi(\alpha)_! A(O),
+$$
+其中 $O\in\mathcal O^\otimes$, $\pi\colon \mathcal P^\otimes\to\mathsf{Fin}_*$.</p>
+<p>代数范畴之间的拉回可视为遗忘函子, 而算畴左 Kan 扩张给出<strong>自由代数</strong>.</p>
 <h2>例</h2>
 <h3>交换算畴</h3>
 <p>交换算畴 $\mathsf{Comm}$ 作为多重范畴仅有一个对象 $*$, 且 $\operatorname{Hom}(*^n,*) = 1$. 交换性意味着任何 $n$ 个元素有唯一的结合方式.</p>
 <p>交换算畴的算子范畴 $\mathsf{Comm}^\otimes \to \mathsf{Fin}_*$ 就是 $\mathsf{Fin}_*$ 到自身的恒等.</p>
 <p>交换算畴又称 <span class="link local"><a href="./E∞-算畴.html" title="E∞-算畴 [E∞-算畴]">E∞-算畴</a></span>.</p>
 <h3>$\mathbb{E}_n$-算畴</h3>
-<p>…</p>
-<p>$\mathbb {E}_n$-算畴的一种<span class="link local"><a href="./数学对象的表现.html" title="数学对象的表现 [数学对象的表现]">表现</a></span>为<span class="link local"><a href="./小n-方块算畴.html" title="小方块算畴 [小n-方块算畴]">小 $n$-方块算畴</a></span>.</p>
+<p>算畴 $\mathbb {E}_n$ 是 $\mathbb {E}_1$ 的 $n$ 次 Boardman–Vogt 张量积.</p>
+<p>算畴 $\mathbb {E}_n$ 的一种<span class="link local"><a href="./数学对象的表现.html" title="数学对象的表现 [数学对象的表现]">表现</a></span>为<span class="link local"><a href="./小n-方块算畴.html" title="小方块算畴 [小n-方块算畴]">小 $n$-方块算畴</a></span>.</p>
 <h3>结合算畴</h3>
 <p><span class="link local"><a href="./A∞-算畴.html" title="A∞-算畴 [A∞-算畴]">结合算畴</a></span> $\mathsf{Assoc}$ 作为多重范畴仅有一个对象, 且
 $$
@@ -170,7 +194,7 @@ $$
 $$
 (\sigma_i c,x) \sim (c,s_ix).
 $$</p>
-<p>这个构造类似于<span class="link local"><a href="./几何实现.html" title="几何实现 [几何实现]">几何实现</a></span>.</p>
+<p>这个构造类似于<span class="link local"><a href="./几何实现.html" title="几何实现 (作为米田扩张) [几何实现]">几何实现</a></span>.</p>
 <p>态射 $X\to CX$ 由 $1\otimes X\to \mathcal C(1)\otimes X$ 给出.</p>
 <h2>算畴作用 (算畴对)</h2>
 <p>设所考虑的对称幺半范畴是不带基点的空间范畴.</p>
@@ -186,6 +210,6 @@ $$
 $$
 满足分配律.</p>
 <p>等价地, $(\mathcal C,\mathcal G)$-空间是 $\mathcal C$-空间范畴中的 $\mathcal G$-代数.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>E∞-算畴 <a class="slug" href="./E∞-算畴.html">[E∞-算畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>单子 <a class="slug" href="./单子.html">[单子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>对称序列 <a class="slug" href="./对称序列.html">[对称序列]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>算畴上的代数 <a class="slug" href="./算畴上的代数.html">[算畴上的代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Day 卷积 <a class="slug" href="./Day卷积.html">[Day卷积]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>E∞-算畴 <a class="slug" href="./E∞-算畴.html">[E∞-算畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>单子 <a class="slug" href="./单子.html">[单子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>对称序列 <a class="slug" href="./对称序列.html">[对称序列]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>算畴上的代数 <a class="slug" href="./算畴上的代数.html">[算畴上的代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

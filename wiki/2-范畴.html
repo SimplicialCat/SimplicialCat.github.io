@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“2-范畴”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>2-范畴</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,16 +55,13 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="2-范畴"><header><h1><span class="taxon">Wiki. </span>“2-范畴” <a class="slug" href="./2-范畴.html">[2-范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>这里 $2$-范畴是所谓弱 $2$-范畴 (weak $2$-category) 而非<span class="link local"><a href="./严格2-范畴.html" title="“严格 2-范畴” [严格2-范畴]">严格 2-范畴</a></span> (strict $2$-category). 弱 $2$-范畴与严格 $2$-范畴的区别是, 其中态射的结合律和幺元律只在一个融贯 (coherent) 可逆 $2$-态射的意义下成立.</p>
-<blockquote>
-<p>弱 $2$-范畴更有用些, 也更适合推广.</p>
-</blockquote>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="2-范畴"><header><h1><span class="taxon">Wiki. </span>2-范畴 <a class="slug" href="./2-范畴.html">[2-范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>$2$-范畴是允许至多 $2$ 阶不可逆态射的<span class="link local"><a href="./高阶范畴.html" title=" [高阶范畴]">高阶范畴</a></span>.</p>
+<p>$2$-范畴的概念在文献中也称为 “弱 $2$-范畴 (weak $2$-category)”, 这是为了区分 2-范畴与<span class="link local"><a href="./严格2-范畴.html" title="严格 2-范畴 [严格2-范畴]">严格 2-范畴</a></span> (strict $2$-category). 两者的区别是, 2-范畴中态射复合的结合律和幺元律是由一个可逆 $2$-态射给出, 是<span class="link local"><a href="./结构.html" title="结构, 性质 [结构]">结构而非性质</a></span>.</p>
 <p>另一个不同的概念是<span class="link local"><a href="./双范畴.html" title="“双范畴” [双范畴]">双范畴</a></span> (double category).</p>
 <h2>定义</h2>
-<blockquote>
-<p>以下的定义又叫 bicategory, 它可以视为抽象的 $2$-范畴概念的一个模型.</p>
-</blockquote>
+<h3>传统</h3>
 <p>$2$-范畴 $\mathcal C$ 由如下信息组成:</p>
 <ul>
 <li>一个类 $\operatorname{Ob}(\mathcal C)$, 其中元素称为 $\mathcal C$ 的对象;</li>
@@ -73,17 +70,17 @@
 <li>自然同构 $l_{x,y} \colon (1_y\circ{-}) \Rightarrow \operatorname{id}_{\mathcal C(x,y)}$, $r_{x,y}\colon ({-}\circ 1_x)\Rightarrow\operatorname{id}_{\mathcal C(x,y)}$, 称作左右单位子;</li>
 <li>结合子.</li>
 </ul>
-<p>这些结构需满足如下条件:</p>
+<p>这些结构需满足如下<span class="link local"><a href="./融贯.html" title="融贯 [融贯]">融贯</a></span>条件:</p>
 <ul>
 <li>三角形公理 ($g\circ 1\circ f$ 的结合);</li>
 <li>五边形公理 (四个态射的结合).</li>
 </ul>
 <p>所有态射都是等价的 $2$-范畴称为 $2$-群胚.</p>
 <h3>作为弱充实范畴</h3>
-<p>$2$-范畴是<span class="link local"><a href="./弱充实.html" title=" [弱充实]">弱充实范畴</a></span>于 $\mathsf{Cat}$ 的范畴.</p>
+<p>$2$-范畴是<span class="link local"><a href="./充实范畴.html" title="充实范畴 [充实范畴]">充实</a></span>于 $\mathsf{Cat}$ 的范畴.</p>
 <h2>例</h2>
-<p>范畴的范畴 $\mathsf{Cat}$ 是 $2$-范畴, 而且是严格 $2$-范畴.</p>
-<p>拓扑空间的基本 $2$-群胚是弱 $2$-群胚, 但也可以适当定义 (模去道路的细同伦) 使得它成为严格 $2$-群胚.</p>
+<p>范畴的范畴 $\mathsf{Cat}$ 是 $2$-范畴.</p>
+<p>拓扑空间的基本 $2$-群胚是 $2$-群胚.</p>
 <h2>性质</h2>
 <h3>与幺半范畴的联系</h3>
 <p>在 $2$-范畴 $\mathcal C$ 中, 一个对象 $a$ 到自身的态射构成一个<span class="link local"><a href="./幺半范畴.html" title="幺半范畴 [幺半范畴]">幺半范畴</a></span> $\mathcal C(a,a)$, 其中的 “张量积” 为 $\mathcal C$ 的横向复合.</p>

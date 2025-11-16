@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“∞-意象的形”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>意象的形</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,15 +55,67 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="∞-意象的形"><header><h1><span class="taxon">Wiki. </span>“∞-意象的形” <a class="slug" href="./∞-意象的形.html">[∞-意象的形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p><span class="link local"><a href="./∞-意象.html" title="“∞-意象” [∞-意象]">∞-意象</a></span>的形是其终对象的 “同伦型”.</p>
-<p>对于 ∞-意象 $X$, 有唯一的<span class="link local"><a href="./几何态射.html" title="“几何态射” [几何态射]">几何态射</a></span> $\pi\colon X\to\mathsf{Grpd}_\infty$. 定义 $X$ 的形为 pro-∞-群胚 $\pi_!(1)$, 也即函子 $\pi_*\pi^*\colon \mathsf{Grpd}_\infty \to \mathsf{Grpd}_\infty$.</p>
-<p>直观:
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="∞-意象的形"><header><h1><span class="taxon">Wiki. </span>意象的形 <a class="slug" href="./∞-意象的形.html">[∞-意象的形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>意象的<strong>形</strong> (shape) 是一个<span class="link local"><a href="./生象.html" title="生象 [生象]">生象</a></span>; 对此有两种看法.</p>
+<ul>
+<li>我们知道<span class="link local"><a href="./生象.html" title="生象 [生象]">生象</a></span>可视为<span class="link local"><a href="./∞-意象.html" title="∞-意象 [∞-意象]">意象</a></span>. 反过来, 对于一个<span class="link local"><a href="./∞-意象.html" title="∞-意象 [∞-意象]">意象</a></span>, 我们想找一个与它 “尽可能接近” 的生象, 这就是它的<strong>形</strong>.</li>
+<li><span class="link local"><a href="./∞-意象.html" title="∞-意象 [∞-意象]">意象</a></span>的形是其终对象的 “同伦型”.</li>
+</ul>
+<h2>定义</h2>
+<p>对于 $\infty$-意象 $\mathcal X$, 有唯一的<span class="link local"><a href="./几何态射.html" title="“几何态射” [几何态射]">几何态射</a></span>
 $$
-\operatorname{Hom}_{\mathsf{Grpd}_\infty}(\pi_!(1),-)\simeq\operatorname{Hom}_{X}(1,\pi^*-)\simeq\operatorname{Hom}_{\mathsf{Grpd}_\infty}(1,\pi_*\pi^*-)\simeq\pi_*\pi^*.
+    \pi=(\pi^*\dashv \pi_*)\colon \mathcal X\to\mathsf{Ani}.
+$$
+由于<span class="link local"><a href="./常值层.html" title="常值层 [常值层]">常值层</a></span>函子 $\pi^*\colon \mathsf{Ani}\to\mathcal X$ 保持有限极限, 其有<span class="link local"><a href="./形式伴随.html" title="形式伴随 [形式伴随]">形式左伴随</a></span>
+$$
+\pi_!\colon \mathcal X \to \mathsf{Pro}\mathsf{Ani} = \mathsf{Fun}^{\mathrm{lex}}(\mathsf{Ani},\mathsf{Ani})^{\mathrm{op}}.
+$$
+定义 $\mathcal X$ 的<strong>形</strong> (shape) $\Pi \mathcal X$ 为 pro-生象
+$$
+\Pi\mathcal X := \pi_!(1).
+$$</p>
+<p>更具体地, 作为 $\mathsf{Fun}(\mathsf{Ani},\mathsf{Ani})^{\mathrm{op}}$ 的对象, $\Pi \mathcal X$ 是左正合函子
+$$
+    \pi_*\pi^*\colon \mathsf{Ani} \to \mathsf{Ani}.
+$$
+(注意 $\pi_*$, $\pi^*$ 均保持有限极限.)</p>
+<h2>性质</h2>
+<p><strong>命题</strong>. 若 $\Pi\mathcal X = \pi_!(1)$ 是生象, 那么
+$$
+\operatorname{Hom}_{\mathsf{Ani}}(\Pi\mathcal X,A)\simeq\operatorname{Hom}_{\mathcal X}(1,\pi^* A)\simeq\operatorname{Hom}_{\mathsf{Ani}}(1,\pi_*\pi^* A)\simeq\pi_*\pi^* A.
+$$</p>
+<p><strong>命题</strong>. 对于<span class="link local"><a href="./生象.html" title="生象 [生象]">生象</a></span> $A$, 有 $\Pi (\mathsf{Ani}_{/A}) = A$.</p>
+<p><strong>命题</strong>. 形函子 $\Pi \colon \mathsf{Topos}\to\mathsf{ProAni}$ 是嵌入 $\mathsf{Ani}_{/-} \colon \mathsf{Ani}\to\mathsf{Topos}$ 的形式左伴随:
+$$
+\operatorname{Hom}_{\mathsf{Topos}}(\mathcal X,\mathsf{Ani}_{/A})\simeq\operatorname{Hom}_{\mathcal X}(1,\pi^* A) \simeq \pi_*\pi^* A.
+$$</p>
+<p>特别地, 当 $\Pi\mathcal X \in\mathsf{Ani}$ 时,
+$$
+\operatorname{Hom}_{\mathsf{Topos}}(\mathcal X,\mathsf{Ani}_{/A})
+\simeq
+\operatorname{Hom}_{\mathsf{Ani}}(\Pi\mathcal X,A).
+$$</p>
+<p><em>证明</em>. 事实上下图为 $\mathsf{Topos}$ 中的拉回,
+$$
+\begin{array}
+    {ccc}
+    \mathcal X_{/\pi^* A} &amp; \to &amp; \mathsf{Ani}_{/A}\\
+    \downarrow &amp; &amp; \downarrow \\
+    \mathcal X &amp; \underset{\pi}{\to} &amp; \mathsf{Ani}
+\end{array}
+$$
+因而
+$$
+\begin{aligned}
+    &amp;\operatorname{Hom}_{\mathsf{Topos}}(\mathcal X,\mathsf{Ani}_{/A})\\
+    &amp;\simeq
+    \operatorname{Hom}_{\mathsf{Topos}_{/\mathcal X}}(\mathcal X,\mathcal X_{/\pi^* A})\\
+    &amp;\simeq \operatorname{Hom}_{\mathcal X}(1,\pi^* A).
+\end{aligned}
 $$</p>
 <h2>相关概念</h2>
 <p><span class="link local"><a href="./平展同伦论.html" title="“平展同伦论” [平展同伦论]">平展同伦论</a></span></p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“平展同伦论” <a class="slug" href="./平展同伦论.html">[平展同伦论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“平展同伦论” <a class="slug" href="./平展同伦论.html">[平展同伦论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>形式伴随 <a class="slug" href="./形式伴随.html">[形式伴随]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

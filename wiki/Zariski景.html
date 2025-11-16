@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“Zariski 景”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>Zariski 景</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,22 +55,20 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Zariski景"><header><h1><span class="taxon">Wiki. </span>“Zariski 景” <a class="slug" href="./Zariski景.html">[Zariski景]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>Zariski 景体现了 <span class="link local"><a href="./Grothendieck拓扑.html" title="“Grothendieck 拓扑” [Grothendieck拓扑]">Grothendieck 拓扑</a></span>在代数几何中的作用.</p>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Zariski景"><header><h1><span class="taxon">Wiki. </span>Zariski 景 <a class="slug" href="./Zariski景.html">[Zariski景]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>Zariski 景是<span class="link local"><a href="./仿射概形.html" title="仿射概形 [仿射概形]">仿射概形</a></span>的范畴上配备 “单位分解” 给出的 <span class="link local"><a href="./Grothendieck拓扑.html" title="“Grothendieck 拓扑” [Grothendieck拓扑]">Grothendieck 拓扑</a></span>.
+仿射概形的单位分解, 是对应的环中生成单位理想的一族元素.</p>
 <h2>定义</h2>
-<p>设 $k$ 为交换环, Zariski 景可定义在 $k$-代数的范畴上.</p>
-<blockquote>
-<p>我们考虑的对象由点集变成了代数. 由于没有 Hilbert 零点定理, 代数簇可能没有足够的 “点”, 我们转而考虑其对应的商环 $k[x_1,\cdots,x_n]/I$. 另外, 含幂零元的 $k$-代数可描述 “形变”, 例如我们会区分 $x-y=0$ 与 $(x-y)^2=0$.</p>
-<p>为了在代数范畴上定义 “覆盖”, 我们需要模仿 $\mathbb{C}^n$ 上的 Zariski 开集的覆盖. 一个 $k$-代数 $A$ 的覆盖由其一系列元素 $a_1,\cdots,a_n\in A$ 给出, 使得 $1$ 包含在理想 $(a_1,\cdots,a_n)$ 中.</p>
-</blockquote>
-<p>考虑有限表现 (finitely-presented) 的, 即形如 $k[x_1,\cdots,x_n]/(f_1,\cdots,f_m)$ 的 $k$-代数范畴 $k-\mathsf{Alg}_{\text{fp}}$.</p>
-<p>一个 $A$ 代数的<strong>覆盖</strong>是一族态射
+<p>设 $k$ 为交换环, 记 $\mathsf{Alg}_k$ 为 $k$-代数的范畴; 对于 $A\in\mathsf{Alg}_k$ 记对偶范畴中相应的对象为 $\operatorname{Spec} A$.</p>
+<p>定义 $k$ 上的 <strong>Zariski 景</strong>为 $\mathsf{Alg}_k^{\mathrm{op}}$ 配备如下 <span class="link local"><a href="./Grothendieck拓扑.html" title="“Grothendieck 拓扑” [Grothendieck拓扑]">Grothendieck 拓扑</a></span>: $\operatorname{Spec} A$ 的覆盖是一族态射
 $$
-A\to A[a_i^{-1}]\simeq A[x]/(xa_i - 1),
+\operatorname{Spec} A[a_i^{-1}] \to \operatorname{Spec} A,
 $$
 满足 $1\in (a_1,\cdots,a_n)$.</p>
-<h2>结构层</h2>
+<h2>性质</h2>
+<h3>结构层</h3>
 <p>Zariski 景上有典范的结构<span class="link local"><a href="./层.html" title="拓扑空间上的层 [层]">层</a></span>, 它是局部环层.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Čech 上同调” <a class="slug" href="./Čech上同调.html">[Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“景” <a class="slug" href="./景.html">[景]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Čech 上同调 <a class="slug" href="./Čech上同调.html">[Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“景” <a class="slug" href="./景.html">[景]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>概形 <a class="slug" href="./概形.html">[概形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
