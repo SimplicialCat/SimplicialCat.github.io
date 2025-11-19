@@ -56,10 +56,32 @@
     });
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="仿射概形"><header><h1><span class="taxon">Wiki. </span>仿射概形 <a class="slug" href="./仿射概形.html">[仿射概形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>仿射概形是同构于某个环 $A$ 的谱 $\operatorname{spec}(A)$ 的<span class="link local"><a href="./局部环化空间.html" title="“局部环化空间” [局部环化空间]">局部环化空间</a></span>.</p>
+<p>仿射概形是同构于某个环 $A$ 的谱 $\operatorname{spec}(A)$ 的<span class="link local"><a href="./局部环化空间.html" title="“局部环化空间” [局部环化空间]">局部环化空间</a></span>. 它的特点是它的几何信息完全由整体函数环决定.</p>
 <p>仿射概形的范畴等价于环范畴的对偶, 这是<span class="link local"><a href="./代数-几何对偶.html" title="代数–几何对偶 [代数-几何对偶]">代数–几何对偶</a></span>的一例.</p>
+<h2>定义</h2>
+<h3>通过局部环化空间</h3>
+<p>…</p>
+<h3>函子式</h3>
+<p>函子式代数几何中, 仿射概形的范畴 $\mathsf{Aff}$ 就定义为环范畴 $\mathsf{Ring}$ 的对偶.</p>
+<h2>性质</h2>
+<h3>仿射化</h3>
+<p>仿射概形范畴到概形范畴的嵌入 $\mathsf{Aff} \to \mathsf{Sch}$ 有左伴随 $X\mapsto \operatorname{Spec}\Gamma(X,\mathcal O_X)$:
+$$
+\begin{aligned}
+    \operatorname{Hom}_{\mathsf{Sch}}(X,\operatorname{Spec}A)
+    &amp;\simeq\operatorname{Hom}_{\mathsf{Ring}}(A,\Gamma(X,\mathcal O_X))
+    \\&amp;\simeq\operatorname{Hom}_{\mathsf{Aff}}(\operatorname{Spec}\Gamma(X,\mathcal O_X),\operatorname{Spec}A).
+\end{aligned}
+$$</p>
+<h3>Serre 判别法</h3>
+<p><strong>命题</strong>. 设 $X$ 为拟紧拟分离概形, 则 $X$ 为仿射概形当且仅当<span class="link local"><a href="./整体截面.html" title="“整体截面” [整体截面]">整体截面</a></span>函子
+$$
+\Gamma (X,-) \colon \mathsf{QCoh}(X) \to \mathsf{Ab}
+$$
+正合.</p>
 <h2>相关概念</h2>
 <p><span class="link local"><a href="./概形.html" title="概形 [概形]">概形</a></span></p>
+<p><span class="link local"><a href="./高阶仿射性.html" title="高阶仿射性 [高阶仿射性]">高阶仿射性</a></span></p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Zariski 景 <a class="slug" href="./Zariski景.html">[Zariski景]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notion" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notion.html" title="观念 [notion]">notion</a></span></span>代数–几何对偶 <a class="slug" href="./代数-几何对偶.html">[代数-几何对偶]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>忠实平坦环同态 <a class="slug" href="./忠实平坦环同态.html">[忠实平坦环同态]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“标量扩张” <a class="slug" href="./标量扩张.html">[标量扩张]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li><li class="meta-item">诱导模</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“标量限制” <a class="slug" href="./标量限制.html">[标量限制]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>概形 <a class="slug" href="./概形.html">[概形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notion" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notion.html" title="观念 [notion]">notion</a></span></span>语法–语义对偶 <a class="slug" href="./语法–语义对偶.html">[语法–语义对偶]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>高阶仿射性 <a class="slug" href="./高阶仿射性.html">[高阶仿射性]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
