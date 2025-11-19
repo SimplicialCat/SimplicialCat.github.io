@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>线性偏微分方程</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="线性偏微分方程"><header><h1><span class="taxon">Wiki. </span>线性偏微分方程 <a class="slug" href="./线性偏微分方程.html">[线性偏微分方程]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>定义</h2>
+<h3>朴素定义</h3>
+<p><strong>线性偏微分方程</strong> (linear PDE) 是如下形式的方程 (组):
+$$
+\sum_{j=1}^p R_{ij} u_j =0,\quad 1\leq i \leq q,
+$$
+其中 $R_{ij}$ 为<span class="link local"><a href="./微分算子.html" title=" [微分算子]">线性微分算子</a></span>, $u_j$ 为变量 $x_1,\cdots,x_n$ 的函数. 名称中 “线性” 的意思是, 方程的若干个解的 (常系数) 线性组合仍是一个解.</p>
+<h3>抽象定义</h3>
+<p>设 $D$ 是某种<span class="link local"><a href="./线性微分算子.html" title="线性微分算子 [线性微分算子]">线性微分算子</a></span>构成的<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span>. 定义<strong>线性偏微分方程组</strong>为左 <span class="link local"><a href="./D-模.html" title="D-模 [D-模]">$D$-模</a></span>同态
+$$
+R\colon D^p \to D^q.
+$$
+这相当于 $D$ 上的一个矩阵 $(R_{ij})$. 注意在同态 $R$ 中, $R_{ij}$ 是<strong>右乘</strong>在 $D^p$ 的分量上.</p>
+<p>对于左 $D$-模 $N$, 定义上述的 $R$ 在 $N$ 中的<strong>解</strong>为左 $D$-模同态 $u\colon D^q\to N$, 满足
+$$
+u\circ R = 0.
+$$
+这相当于选取 $N$ 的 $q$ 个元素 $u_i\,(1\leq i\leq q)$ 满足
+$$
+\sum_{j=1}^p R_{ij} u_j =0,\quad 1\leq i \leq q,
+$$
+即得到朴素的定义.</p>
+<p>换言之, 线性偏微分方程组 $R$ 在 $N$ 中的<strong>解空间</strong>就是
+$$
+\operatorname{Hom}_{D}(\operatorname{coker}R,N).
+$$</p>
+<p>于是我们得到线性偏微分方程组的代数定义: 它就是<strong>有限表现</strong>的左 $D$-模.</p>
+<p>我们需要处理微分方程局部的解; 而一个解沿闭合路径一周的解析延拓可能与原来不同, 这种现象称作<strong>单值</strong> (monodromy). 因此我们需要研究局部的解如何连接起来成为整体的解. 这时<span class="link local"><a href="./层.html" title="拓扑空间上的层 [层]">层</a></span>论是处理这种问题最合适的语言. 将环 $A$ 与模 $\mathcal D$ “变为层”, 就得到 $X$ 上的微分算子层 $D_X$.</p>
+<p>我们研究的主要对象是<strong>局部有限表现</strong>的 $D_X$-模, 也即<span class="link local"><a href="./凝聚.html" title="“凝聚” [凝聚]">凝聚层</a></span> $D_X$-模. 我们最关心的函子是
+$$
+\mathcal Hom_{D_X}(-,\mathcal O_X)\colon \mathsf {Mod}_{\text{coh}}(D_X) \to \mathsf {Mod}(\mathbb{C}_X),
+$$
+而它不是正合函子; 故我们需考虑它的<span class="link local"><a href="./导出函子.html" title="“导出函子” [导出函子]">导出函子</a></span>即 “高阶解” $\mathcal Ext^\bullet_{D_X}(-,\mathcal O_X)$.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>D-模 <a class="slug" href="./D-模.html">[D-模]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

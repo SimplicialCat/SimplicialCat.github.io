@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“象征”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>象征</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,10 +55,14 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="象征"><header><h1><span class="taxon">Wiki. </span>“象征” <a class="slug" href="./象征.html">[象征]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>对于 $M$ 上的<span class="link local"><a href="./微分算子.html" title="“微分算子” [微分算子]">微分算子</a></span> $D\colon \Gamma(E)\to \Gamma(F)$, 其象征 $\sigma(D)$ 对每个余切向量 $w\in T_p^*M$ 指定线性映射 $\sigma(D)(w)\colon E_p\to F_p$. 换言之, $\sigma(D)$ 可视为 $\pi^*\operatorname{Hom}(E,F)$ 的截面, 其中 $\pi\colon T^*M\to M$ 为投影. 这里定义的象征又称<strong>主象征</strong> (principal symbol), 因为它只与微分算子中的最高阶导数有关.</p>
-<h2>定义 1</h2>
-<p>设 $g$ 是 $p$ 附近的函数, 满足 $g(p)=0$, $d_pg=w$. 设 $f$ 是 $E$ 的截面, $f(p)=v$. 设 $D$ 为 $d$ 阶微分算子, 定义
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="象征"><header><h1><span class="taxon">Wiki. </span>象征 <a class="slug" href="./象征.html">[象征]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<p>对于流形 $M$ 上的<span class="link local"><a href="./线性微分算子.html" title="线性微分算子 [线性微分算子]">线性微分算子</a></span> $D\colon \Gamma(E)\to \Gamma(F)$, 其<span class="link local"><a href="./象征.html" title="象征 [象征]">象征</a></span> $\sigma(D)$ 对每个余切向量 $w\in T_p^*M$ 指定线性映射
+$$
+\sigma(D)(w)\colon E_p\to F_p.
+$$
+换言之, $\sigma(D)$ 可视为 $\pi^*\operatorname{Hom}(E,F)$ 的截面, 其中 $\pi\colon T^*M\to M$ 为投影. 这里定义的象征又称<strong>主象征</strong> (principal symbol), 因为它只与微分算子中的最高阶导数有关.</p>
+<h2>定义</h2>
+<p>设 $g$ 是一点 $p$ 附近的函数, 满足 $g(p)=0$, $d_pg=w$. 设 $f$ 是向量丛 $E$ 的截面, $f(p)=v$. 设 $D$ 为 $d$ 阶<span class="link local"><a href="./线性微分算子.html" title="线性微分算子 [线性微分算子]">微分算子</a></span>, 定义
 $$
 \sigma(D)(w)(v)=\frac{1}{d!}D(g^d f)_P.
 $$
@@ -75,7 +79,7 @@ $$
 \sigma(D)(w)(v)=\frac{1}{d!}D(g^d f)_P=\sum_{|\alpha|=d}A_\alpha(v) w^\alpha.
 $$</p>
 <h2>定义 2</h2>
-<p>在<span class="link local"><a href="./微分算子.html" title="“微分算子” [微分算子]">微分算子</a></span>的代数上, 根据阶数有自然的滤过结构. 记 $\mathscr{D}_k(E)$ 为 $E$ 到自身不超过 $k$ 阶算子的空间, 考虑<span class="link local"><a href="./关联分次代数.html" title="关联分次对象 [关联分次代数]">关联分次代数</a></span>
+<p>在<span class="link local"><a href="./微分算子.html" title=" [微分算子]">微分算子</a></span>的代数上, 根据阶数有自然的滤过结构. 记 $\mathscr{D}_k(E)$ 为 $E$ 到自身不超过 $k$ 阶算子的空间, 考虑<span class="link local"><a href="./关联分次代数.html" title="关联分次对象 [关联分次代数]">关联分次代数</a></span>
 $$
 \operatorname{gr}\mathscr{D}(E)=\bigoplus_{k} \mathscr{D}_k(E) \big/ \mathscr{D}_{k-1}(E).
 $$
@@ -117,6 +121,6 @@ $$
 $$</p>
 <h2>无穷小对象</h2>
 <p>象征可看作与 $D$ 相关的无穷小对象.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Atiyah–Singer 指标定理” <a class="slug" href="./Atiyah--Singer指标定理.html">[Atiyah--Singer指标定理]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“广义 Laplace 算子” <a class="slug" href="./广义Laplace算子.html">[广义Laplace算子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“拓扑指标” <a class="slug" href="./拓扑指标.html">[拓扑指标]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“椭圆复形” <a class="slug" href="./椭圆复形.html">[椭圆复形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“椭圆算子” <a class="slug" href="./椭圆算子.html">[椭圆算子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Atiyah–Singer 指标定理 <a class="slug" href="./Atiyah--Singer指标定理.html">[Atiyah--Singer指标定理]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“广义 Laplace 算子” <a class="slug" href="./广义Laplace算子.html">[广义Laplace算子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>拓扑指标 <a class="slug" href="./拓扑指标.html">[拓扑指标]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“椭圆复形” <a class="slug" href="./椭圆复形.html">[椭圆复形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>椭圆算子 <a class="slug" href="./椭圆算子.html">[椭圆算子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“解析指标”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>解析指标</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,19 +55,22 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="解析指标"><header><h1><span class="taxon">Wiki. </span>“解析指标” <a class="slug" href="./解析指标.html">[解析指标]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="解析指标"><header><h1><span class="taxon">Wiki. </span>解析指标 <a class="slug" href="./解析指标.html">[解析指标]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p><span class="link local"><a href="./线性微分算子.html" title="线性微分算子 [线性微分算子]">微分算子</a></span>的解析指标是一个同伦不变量.</p>
+<h2>定义</h2>
 <p><span class="link local"><a href="./Fredholm算子.html" title="“Fredholm 算子” [Fredholm算子]">Fredholm 算子</a></span> $F$ 的解析指标定义为其核的维数与余核的维数之差 (假设二者均有限), 即
 $$
 \operatorname{ind}F=\dim\ker F - \dim \operatorname{coker}F.
 $$
-解析指标可视为将核的维数修正为一个同伦不变量.</p>
-<p>Fredholm 算子 $F$ 的解析指标也可视为复形
+也即复形
 $$
 \cdots\to 0 \to H \overset{F}{\to} H \to 0 \to \cdots
 $$
-的 Euler 数.</p>
-<p><span class="link local"><a href="./椭圆算子.html" title="“椭圆算子” [椭圆算子]">椭圆算子</a></span>是 <span class="link local"><a href="./Fredholm算子.html" title="“Fredholm 算子” [Fredholm算子]">Fredholm 算子</a></span>, 其核与余核均为有限维空间, 从而可定义解析指标. 更一般地, 设 $(E_p,D_p)$ 为<span class="link local"><a href="./椭圆复形.html" title="“椭圆复形” [椭圆复形]">椭圆复形</a></span>, 其解析指标为 $\displaystyle \sum_p (-1)^p \dim\ker D_p$.</p>
-<h2>蛇引理</h2>
+的 <span class="link local"><a href="./Euler示性数.html" title="Euler 示性数 [Euler示性数]">Euler 数</a></span>.</p>
+<p><span class="link local"><a href="./椭圆算子.html" title="椭圆算子 [椭圆算子]">椭圆算子</a></span>是 <span class="link local"><a href="./Fredholm算子.html" title="“Fredholm 算子” [Fredholm算子]">Fredholm 算子</a></span>, 其核与余核均为有限维空间, 从而可定义解析指标. 更一般地, 设 $(E_p,D_p)$ 为<span class="link local"><a href="./椭圆复形.html" title="“椭圆复形” [椭圆复形]">椭圆复形</a></span>, 其解析指标为 $\displaystyle \sum_p (-1)^p \dim\ker D_p$.</p>
+<h2>性质</h2>
+<h3>蛇引理</h3>
 <p><strong>定理.</strong> (蛇引理) 设有如下短正合列的态射, 其中 $F,F',F''$ 均为 Fredholm 算子.
 $$
 \begin{array}{ccccccccc}
@@ -83,8 +86,9 @@ $$
 下面给出上述定理的应用.</p>
 <p><strong>命题</strong>. 对于有限秩算子 $K\colon H\to H$ (即 $\dim\operatorname{im}K$ 有限) 有 $\operatorname{id}+K$ 是 Fredholm 算子且其指标为 $0$.</p>
 <p><strong>证明</strong>. 对短正合列 $0\to \operatorname{im}K \to H \to \operatorname{coker}K\to 0$ 到自身的态射 $\operatorname{id}+K$ 使用蛇引理, 可得三个指标的关系; 左边的指标等于 $0$ 是因为 $\operatorname{im}K$ 为有限维空间, 右边的指标等于 $0$ 是因为 $\operatorname{id}+K$ 在 $\operatorname{coker}K$ 上等于恒等算子.</p>
-<h2>同伦不变性</h2>
-<p><span class="link local"><a href="./Dirac算子.html" title="“Dirac 算子” [Dirac算子]">Dirac 算子</a></span>的指标性质很好.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Atiyah–Singer 指标定理” <a class="slug" href="./Atiyah--Singer指标定理.html">[Atiyah--Singer指标定理]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Dolbeault–Dirac 算子” <a class="slug" href="./Dolbeault--Dirac算子.html">[Dolbeault--Dirac算子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Fredholm 算子” <a class="slug" href="./Fredholm算子.html">[Fredholm算子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hodge 理论” <a class="slug" href="./Hodge理论.html">[Hodge理论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li><li class="meta-item">Hodge 分解定理, Hodge 定理</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Todd 类” <a class="slug" href="./Todd类.html">[Todd类]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“椭圆复形” <a class="slug" href="./椭圆复形.html">[椭圆复形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<h3>同伦不变性</h3>
+<h2>相关概念</h2>
+<p><span class="link local"><a href="./Dirac算子.html" title="Dirac 算子 [Dirac算子]">Dirac 算子</a></span></p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Atiyah–Singer 指标定理 <a class="slug" href="./Atiyah--Singer指标定理.html">[Atiyah--Singer指标定理]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Dolbeault–Dirac 算子” <a class="slug" href="./Dolbeault--Dirac算子.html">[Dolbeault--Dirac算子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Fredholm 算子” <a class="slug" href="./Fredholm算子.html">[Fredholm算子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Hodge 理论” <a class="slug" href="./Hodge理论.html">[Hodge理论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li><li class="meta-item">Hodge 分解定理, Hodge 定理</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“Todd 类” <a class="slug" href="./Todd类.html">[Todd类]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“椭圆复形” <a class="slug" href="./椭圆复形.html">[椭圆复形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
