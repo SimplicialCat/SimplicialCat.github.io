@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>Hochschild 上同调</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Hochschild上同调"><header><h1><span class="taxon">Wiki. </span>Hochschild 上同调 <a class="slug" href="./Hochschild上同调.html">[Hochschild上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>Hochschild 同调</p>
+<h2>定义</h2>
+<h3>结合代数</h3>
+<p>固定基环 $k$, 定义<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合 $k$-代数</a></span> $A$ 的 <strong>Hochschild 同调</strong>为
+$$
+\operatorname{HH}(A) := A \otimes_{A\otimes A^{\mathrm{op}}} A.
+$$
+在 $A \otimes_{A\otimes A^{\mathrm{op}}} A$ 中,</p>
+<ul>
+<li>$A\otimes A^{\mathrm{op}}$ 是结合代数,</li>
+<li>最左边的 $A$ 是 $A^{\mathrm{op}}\otimes A^{\mathrm{op}}$</li>
+</ul>
+<p>在 $A$ 是交换环的情形, 记 $X = \operatorname{Spec} A$, 那么作为<span class="link local"><a href="./导出概形.html" title="导出概形 [导出概形]">导出概形</a></span>有
+$$
+\operatorname{Spec}(\operatorname{HH}(A)) = X\times_{X\times X} X = X^{S^1}.
+$$</p>
+<h3>范畴</h3>
+<p>范畴 $\mathcal C$ 的 Hochschild 上同调 (又叫<span class="link local"><a href="./中心.html" title="中心 [中心]">中心</a></span>) 为
+$$
+\operatorname{HH}\mathcal C :=\operatorname{End}_{\operatorname{End}(\mathcal C)}(\mathrm{id}).
+$$</p>
+<h3>可对偶可表现范畴</h3>
+<p>固定一个基环 $k$. 设 $\mathcal C$ 是 <span class="link local"><a href="./高阶模.html" title="高阶模 [高阶模]">$\mathsf{Pr}_{k}$</a></span> 的<span class="link local"><a href="./可对偶对象.html" title="对偶 [可对偶对象]">可对偶对象</a></span>, 记其对偶为 $\mathcal C^\vee$, 定义 $\mathcal C$ 的 Hochschild 同调 $\operatorname{HH}(\mathcal C)\in\mathsf{Mod}_k$ 为如下复合函子的表示对象:
+$$
+\mathsf{Mod}(k) \overset{\mathrm{coev}}{\longrightarrow}\mathcal C\otimes_k\mathcal C^{\vee} \overset{\mathrm{ev}}{\longrightarrow} \mathsf{Mod}(k).
+$$
+更一般地, 对于函子 $f\colon \mathcal C \to \mathcal C$, 定义
+$\operatorname{HH}(\mathcal C,f)\in\mathsf{Mod}_k$ 为如下复合函子的表示对象:
+$$
+\mathsf{Mod}(k) \overset{\mathrm{coev}}{\longrightarrow}\mathcal C\otimes_k\mathcal C^{\vee} \overset{f\otimes\mathrm{id}}{\longrightarrow} \mathcal C\otimes_k\mathcal C^{\vee} \overset{\mathrm{ev}}{\longrightarrow} \mathsf{Mod}(k).
+$$</p>
+<p>特别地, 当 $\mathcal C = \mathsf{LMod}(A)$ 是 $k$-代数 $A$ 上的左模范畴时, $\operatorname{HH}(\mathcal C) = A\otimes_{A\otimes A^{}}$</p>
+<h3>传统定义</h3>
+<p>设 $k$ 为域, $R$ 为 $k$-代数, $M$ 为 $R$ 双模. 考虑<span class="link local"><a href="./单纯对象.html" title="单纯对象 [单纯对象]">单纯</a></span> $R$-模 $C_\bullet(R,M):= M\otimes_k R^{\otimes \bullet}$, 其面映射具体为
+$$
+d_0\colon (m\otimes r_1\otimes \cdots \otimes r_n) \mapsto (m r_1\otimes r_2\otimes\cdots\otimes r_n),
+$$
+$$
+d_i\colon (m\otimes r_1\otimes \cdots \otimes r_n) \mapsto (m\otimes r_1\otimes\cdots\otimes r_ir_{i+1}\otimes\cdots\otimes r_n),
+$$
+$$
+d_n\colon (m\otimes r_1\otimes \cdots \otimes r_n) \mapsto (r_nm\otimes r_1\otimes\cdots\otimes r_{n-1}).
+$$</p>
+<p>对于 $M=R$, 记 $C_n(R)=C_n(R,R)$.
+<strong>Hochschild 同调</strong> $H_\bullet(R,M)$ 即是上述<span class="link local"><a href="./单纯对象.html" title="单纯对象 [单纯对象]">单纯</a></span>模的同调; 对于 $M=R$, 记 $HH_n(R) = H_n(R,R)$.</p>
+<p>类似地定义 <strong>Hochschild 上同调</strong> $H^\bullet (R,M)$ 为复形 $\operatorname{Hom}(R^{\otimes n},M)$ 的上同调, 其中 $\delta=\sum_i (-1)^i \delta_i$, $\delta_i$ 定义为
+$$
+(\delta_0 f)(r_1\otimes\cdots\otimes r_n) =r_1 f(r_2\otimes\cdots\otimes r_n),
+$$
+$$
+(\delta_i f) (r_1\otimes \cdots\otimes r_n) = f(r_1\otimes\cdots\otimes r_ir_{i+1}\otimes\cdots\otimes r_n),
+$$
+$$
+(\delta_n f)(r_1\otimes\cdots\otimes r_n) = f(r_1\otimes\cdots \otimes r_{n-1})r_n.
+$$
+对于 $M=R$, 记 $HH^n(R)=H^n(R,R)$.</p>
+<h2>性质</h2>
+<p>考虑 $R$ 的中心 $Z(R)$, 可以证明 $H_*(R,M)$ 上有 $Z(R)$-双模结构.</p>
+<h2>与 Tor, Ext 的关系</h2>
+<h2>相关概念</h2>
+<p><span class="link local"><a href="./Hochschild同调.html" title="Hochschild 同调 [Hochschild同调]">Hochschild 同调</a></span></p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Hochschild 同调 <a class="slug" href="./Hochschild同调.html">[Hochschild同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>中心 <a class="slug" href="./中心.html">[中心]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

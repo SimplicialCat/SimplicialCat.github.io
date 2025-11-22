@@ -56,50 +56,46 @@
     });
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="切结构"><header><h1><span class="taxon">Wiki. </span>切结构 <a class="slug" href="./切结构.html">[切结构]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p><strong>切结构</strong>是基于流形的切丛的一大类<span class="link local"><a href="./结构.html" title="结构, 性质 [结构]">结构</a></span>的统称, 包括<strong>定向</strong>, <strong>Riemann 度量</strong>, <strong>近复结构</strong>等. 它是流形的切丛对应的 $\mathrm{GL}_n$-<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span>的<span class="link local"><a href="./主丛的约化.html" title="主丛的约化 [主丛的约化]">约化</a></span>.</p>
 <h2>定义</h2>
-<p>一个 $n$-维切结构是一个拓扑空间 $\chi(n)$ 与一个<span class="link local"><a href="./纤维化.html" title="纤维化 [纤维化]">纤维化</a></span> $\chi(n)\to BO(n)$.</p>
-<p>一个 $n$-维稳定切结构是一个拓扑空间 $\chi$ 与一个纤维化 $\chi\to BO$.</p>
-<p>设 $M$ 为 $m$ 维流形, 其上的一个 $\chi(n)$-结构是 $TM\oplus\mathbb{R}^{n-m}$ 的分类映射 $M\to BO(n)$ 的一个提升 $M\to\chi(n)$.</p>
-<p>参加 <span class="link local"><a href="./G-结构.html" title="“G-结构” [G-结构]">G-结构</a></span>.</p>
-<h2>例</h2>
-<h3>万有结构</h3>
-<p>$\chi(n)$ 上有一个万有 $\chi(n)$-结构, 即 $BO(n)$ 上的万有 $n$ 维向量丛沿着 $\chi(n)\to BO(n)$ 的拉回, 记之为 $S(n)\to \chi(n)$.</p>
-<p>$$
-\begin{array}
-	{cc}
-	S(n) &amp; \to &amp; EO(n)\\
-	\downarrow&amp;&amp;\downarrow\\
-	\chi(n) &amp; \to &amp; BO(n).
-\end{array}
-$$</p>
-<p>那么, 任何 $M$ 上的 $\chi(n)$-结构等同于拉回图
+<p>设 $p \colon G\to \mathrm{GL}_n$ 为<span class="link local"><a href="./群.html" title="群 [群]">群</a></span>的同态. (这里的 $\mathrm{GL}_n$ 可以是离散群, 也可以是 Lie 群, 甚至可以是<span class="link local"><a href="./生象.html" title="生象 [生象]">生象</a></span>群, 依实际需要决定)</p>
+<p>对于 $m\leq n$, 定义 $m$ 维流形 $M$ 上的一个 $p$-结构是 $TM\oplus\mathbb{R}^{n-m}$ 的分类映射 $M\to \mathbf{B}\mathrm{GL}_n$ 的一个提升
 $$
 \begin{array}
-	{cc}
-	\widetilde {TM} &amp; \to &amp; S(n)\\
-	\downarrow&amp;&amp;\downarrow\\
-	M &amp; \to &amp; \chi(n).
+	{ccc}
+	&amp;&amp; \mathbf{B}G\\
+	&amp;\nearrow&amp;\downarrow {\scriptsize \mathbf{B}p}\!\!\!\!\\
+	M&amp;\to &amp;\mathbf{B}\mathrm{GL}_n.
 \end{array}
-$$</p>
-<h3>定向与自旋</h3>
-<p>定向 $BSO \to BO$ 是一种切结构.</p>
-<p>自旋 $BSpin\to BO$ 也是一种切结构.</p>
+$$
+那么 $p$-结构的集合是<span class="link local"><a href="./上同调.html" title="上同调 [上同调]">非 Abel 上同调</a></span>的映射 $H^1(M,G) \to H^1(M,\mathrm{GL}_n)$ 之下, 切丛 $TM$ 对应的元素的原像.</p>
+<p>当群同态 $p\colon G\to \mathrm{GL}_n$ 没有歧义, 或有一个公认的选取 (比如 $G$ 是 $\mathrm{GL}_n$ 的 Lie 子群) 时, 也称 $p$-结构为 $G$-结构.</p>
+<h2>例</h2>
+<ul>
+<li>平凡群 $1$ 对应的结构即为切丛的平凡化, 称为<strong>标架</strong>.</li>
+<li>$\mathrm{id}_{\mathrm{GL}_n}$-结构等于没有结构.</li>
+<li>$\mathrm{GL}_n^+$-结构就是<strong>定向</strong>.</li>
+<li>$\mathrm{SL}_n$-结构称为<strong>体积形式</strong>.</li>
+<li>$\mathrm{O}_n$-结构相当于 <strong>Riemann 度量</strong>.</li>
+<li>$\mathrm{GL}_n(\mathbb{C})\hookrightarrow\mathrm{GL}_{2n}(\mathbb{R})$-结构就是<span class="link local"><a href="./近复结构.html" title="“近复结构” [近复结构]">近复结构</a></span>.</li>
+<li>$\mathrm{U}_n$-结构又叫<strong>近 Hermite 结构</strong>.</li>
+<li><span class="link local"><a href="./自旋群.html" title="自旋群 [自旋群]">$\mathrm{Spin}_n$</a></span>-结构称为<span class="link local"><a href="./自旋流形.html" title="自旋流形 [自旋流形]">自旋结构</a></span>.</li>
+</ul>
 <h2>性质</h2>
 <h3>正合列</h3>
-<p><span class="link local"><a href="./纤维列.html" title="纤维列 [纤维列]">纤维列</a></span>
+<p>设 $M$ 为定向 Riemann 流形, 即有一个 $\mathrm{SO}_n$-结构 $M \to \mathbf{B}\mathrm{SO}_n$. 现在问 $M$ 是否具有 $\mathrm{Spin}_n$-结构. 考虑<span class="link local"><a href="./纤维列.html" title="纤维列 [纤维列]">纤维列</a></span>
 $$
-\begin{array}
-	{cc}
-	BSpin\\
-	\downarrow\\
-	BSO&amp;\to &amp;K(\mathbb{Z}/2,2)
-\end{array}
+\mathbf{B}\mathbb{Z}/2 \to \mathbf{B}\mathrm{Spin}_n \to \mathbf{B}\mathrm{SO}_n \to \mathbf{B}^2\mathbb{Z}/2,
 $$
-给出正合列
+它给出<span class="link local"><a href="./上同调.html" title="上同调 [上同调]">非 Abel 上同调</a></span>的正合列
 $$
-[M,BSpin]\to [M,BSO] \to [M,K(\mathbb{Z}/2,2)],
+H^1(M,\mathbb{Z}/2) \to H^1(M,\mathrm{Spin}_n)\to H^1(M,\mathrm{SO}_n) \to H^2(M,\mathbb{Z}/2),
 $$
-故提升 $M\to BSpin$ 存在当且仅当复合映射 $M\to BSO\to K(\mathbb{Z}/2,2)$ (第二 <span class="link local"><a href="./Stiefel--Whitney类.html" title="Stiefel–Whitney 类 [Stiefel--Whitney类]">Stiefel–Whitney 类</a></span>) 为零.</p>
-</details></section><footer></footer></article>
+而复合映射 $M \to \mathbf{B}\mathrm{SO}_n \to \mathbf{B}^2\mathbb{Z}/2$ 对应的 $H^2(M,\mathbb{Z}/2)$ 的元素恰为第二 <span class="link local"><a href="./Stiefel--Whitney类.html" title="Stiefel–Whitney 类 [Stiefel--Whitney类]">Stiefel–Whitney 类</a></span> $w_2(M)$.
+故 $M$ 有<span class="link local"><a href="./自旋流形.html" title="自旋流形 [自旋流形]">自旋结构</a></span>当且仅当 $w_2(M)=0$.</p>
+<h3>可积性</h3>
+<p>一些重要的结构如复结构, 辛结构, <span class="link local"><a href="./Kähler结构.html" title=" [Kähler结构]">Kähler 流形</a></span>, 是由 $G$-结构附加某些可积性条件得到的.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>分解同调 <a class="slug" href="./分解同调.html">[分解同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>挠率 <a class="slug" href="./挠率.html">[挠率]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>自旋流形 <a class="slug" href="./自旋流形.html">[自旋流形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

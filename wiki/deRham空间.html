@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“de Rham 空间”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>de Rham 空间</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,13 +55,18 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="deRham空间"><header><h1><span class="taxon">Wiki. </span>“de Rham 空间” <a class="slug" href="./deRham空间.html">[deRham空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>$X$ 的 de Rham 空间是将 $X$ 上 “<span class="link local"><a href="./无穷接近的点.html" title="“无穷接近的点” [无穷接近的点]">无穷接近的点</a></span>等同起来” 得到的空间. 以<span class="link local"><a href="./点函子.html" title="“点函子” [点函子]">点函子</a></span>表达,
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="deRham空间"><header><h1><span class="taxon">Wiki. </span>de Rham 空间 <a class="slug" href="./deRham空间.html">[deRham空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>$X$ 的 de Rham 空间是将 $X$ 上 “<span class="link local"><a href="./无穷接近的点.html" title="无穷接近的点 [无穷接近的点]">无穷接近的点</a></span>等同起来” 得到的空间.</p>
+<h2>定义</h2>
+<h3>函子式</h3>
+<p>以<span class="link local"><a href="./点函子.html" title="“点函子” [点函子]">点函子</a></span>表达, 概形 $X$ 的 <strong>de Rham 空间</strong> 是如下函子 $X_{\mathrm{dR}}\colon \mathsf{Ring} \to \mathsf{Set}$,
 $$
 X_{\text{dR}}(R) := X(R/I),
 $$
 其中 $I$ 是 $R$ 的幂零根 (nilpotent radical).</p>
-<p>$X_{\text{dR}}$ 也可表示为 $X$ 的商. 定义 $X_{\text{inf}}$ 为对角线的形式邻域, 则
+<h3>其他表现</h3>
+<p>$X_{\text{dR}}$ 也可表示为 $X$ 的商. 定义 $X_{\text{inf}}\to X\times X$ 为对角线的<span class="link local"><a href="./形式邻域.html" title="形式邻域 [形式邻域]">形式邻域</a></span>, 则
 $$
 X_{\text{dR}} = \operatorname{coeq}(X_{\text{inf}}\rightrightarrows X).
 $$</p>

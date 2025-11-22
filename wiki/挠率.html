@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“挠率”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>挠率</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,28 +55,28 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="挠率"><header><h1><span class="taxon">Wiki. </span>“挠率” <a class="slug" href="./挠率.html">[挠率]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>挠率是与<span class="link local"><a href="./联络.html" title="“联络” [联络]">联络</a></span>有关的一个张量.</p>
-<h2>流形上的 <span class="link local"><a href="./G-结构.html" title="“G-结构” [G-结构]">G-结构</a></span></h2>
-<p><span class="link external"><a href="https://mathoverflow.net/a/20506/493731" title="MSE 回答 [https://mathoverflow.net/a/20506/493731]">MSE 回答</a></span></p>
-<p>设 $V$ 是 $n$ 为实或复向量空间, $G\subset GL(V)$ 为 Lie 子群. 设流形 $M$ 上有 <span class="link local"><a href="./G-结构.html" title="“G-结构” [G-结构]">G-结构</a></span> $P$.</p>
-<p>考虑嵌入 $\mathfrak g\to V\otimes V^*$. 定义
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="挠率"><header><h1><span class="taxon">Wiki. </span>挠率 <a class="slug" href="./挠率.html">[挠率]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<p>一个<span class="link local"><a href="./联络.html" title="联络 [联络]">联络</a></span>的<strong>挠率</strong>是一个<span class="link local"><a href="./张量.html" title="张量 [张量]">张量</a></span>.</p>
+<h2>定义</h2>
+<h3></h3>
+<p>设 $V$ 为 $n$ 维线性空间, $G \to \mathrm{GL}(V)$ 为 Lie 群同态, 给出 Lie 代数同态
 $$
-\sigma\colon \mathfrak g\otimes V^* \to V\otimes V^*\otimes V^* \overset{\operatorname{id}_V\otimes (\wedge)}{\longrightarrow} V\otimes \wedge^2 V^*.
+\mathfrak g\to \mathfrak{gl}(V) \simeq V\otimes V^*.
 $$
-$\sigma$ 的核与余核构成正合列
+设流形 $M$ 上有 <span class="link local"><a href="./切结构.html" title="切结构 [切结构]">$G$-结构</a></span>, 即标架丛<span class="link local"><a href="./主丛的约化.html" title="主丛的约化 [主丛的约化]">约化</a></span>为 $G$-主丛 $P$. 那么 $P$ 两个<span class="link local"><a href="./联络.html" title="联络 [联络]">联络</a></span>的差是<span class="link local"><a href="./关联丛.html" title="“关联丛” [关联丛]">关联丛</a></span> $(\mathfrak g\otimes V^*)_P$ 的截面.</p>
+<p>考虑 $G$-表示的同态
 $$
-0\to \ker(\sigma) \to \mathfrak g\otimes V^* \overset\sigma\to V\otimes \wedge^2 V^* \to \operatorname{coker}(\sigma) \to 0,
+\sigma\colon \mathfrak g\otimes V^* \to V\otimes V^*\otimes V^* \overset{\wedge}{\longrightarrow} V\otimes \wedge^2 V^*,
 $$
-其中每一项作为 $G$ 的表示, 则有 $P$ 的关联向量丛
+其中 $\wedge$ 为反对称化, 则有<span class="link local"><a href="./关联丛.html" title="“关联丛” [关联丛]">关联丛</a></span>的映射
 $$
-0\to \rho_1 P \to \rho_2 P \to \rho_3 P \to \rho_4 P \to 0,
+(\mathfrak g\otimes V^*)_P \to (V\otimes\wedge^2 V^*)_P,
 $$
-其中 $\rho_2 P = \operatorname{ad}(P)\otimes T^*M$, $\rho_3 P = TM \otimes \wedge^2 T^*M$.</p>
-<blockquote>
-<p>$\sigma$ 将 $\mathfrak g$-值 $1$-形式变为 $V$-值 $2$-形式.</p>
-</blockquote>
-<p>两个<span class="link local"><a href="./联络.html" title="“联络” [联络]">联络</a></span>的差是 $\rho_2 P$ 的截面; 联络的挠率是 $\rho_3 P$ 的截面, 其在 $\rho_4 P$ 中的像不依赖于联络的选取, 它是无挠联络存在的阻碍.</p>
+也即
+$$
+\operatorname{ad}(P)\otimes T^*M\to TM \otimes \wedge^2 T^*M.
+$$
+联络的挠率是 $TM \otimes \wedge^2 T^*M$ 的截面, 其在上述映射的余核中的像不依赖于联络的选取, 它是无挠联络存在的阻碍.</p>
 <h2>仿射群取值的曲率</h2>
 <p>对于流形 $M$ 线性联络 设想 $TM$ 的<span class="link local"><a href="./结构群.html" title="“结构群” [结构群]">结构群</a></span>为比 $GL_n(\mathbb{R})$ 更大的仿射变换群 $\operatorname{Aff}(\mathbb{R}^n)$. 曲率是取值于 $\operatorname{Aff}(\mathbb{R}^n)$ 的 Lie 代数的 $2$-形式. $\operatorname{Aff}(\mathbb{R}^n)$ 的 Lie 代数可分解为一个 (无穷小) 平移与一个 (无穷小) 线性变换, 而无挠性相当于曲率不含有平移项.</p>
 <h2>恒等算子的协变外微分</h2>

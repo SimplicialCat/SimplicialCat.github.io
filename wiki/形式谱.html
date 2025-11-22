@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“形式谱”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>形式谱</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,16 +55,23 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="形式谱"><header><h1><span class="taxon">Wiki. </span>“形式谱” <a class="slug" href="./形式谱.html">[形式谱]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="形式谱"><header><h1><span class="taxon">Wiki. </span>形式谱 <a class="slug" href="./形式谱.html">[形式谱]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>形式谱是某种带有拓扑的环对应的几何对象, 是一个<span class="link local"><a href="./形式概形.html" title="形式概形 [形式概形]">形式概形</a></span>.</p>
+<h2>定义</h2>
+<h3>带理想的环</h3>
 <p>定义进制环 (adic ring) 为环 $A$ 带有一个理想 $I$. 定义进制环 $(A,I)$ 的形式谱为
 $$
 \operatorname{Spf}A = \operatorname{colim}_n\operatorname{Spec}(A/I^n).
-$$</p>
-<p>另一种定义. 对于交换环 $R$, 定义进制 $R$-代数 (adic $R$-algebra) 为 $R$-代数 $A$ 带有一个同态 $A\to R$, 此时那个理想是这个同态的核; 考虑进制 $R$-代数的范畴 $\mathsf {AdicAlg}_R$, 形式谱是这个范畴上的可表函子
+$$
+其中余极限在<span class="link local"><a href="./函子式代数几何.html" title="函子式代数几何 [函子式代数几何]">函子</a></span>范畴 $\mathsf{Fun}(\mathsf{Ring},\mathsf{Set})$ 中取.</p>
+<h3>进制代数</h3>
+<p>对于交换环 $R$, 定义进制 $R$-代数 (adic $R$-algebra) 为 $R$-代数 $A$ 带有一个同态 $A\to R$, 此时那个理想是这个同态的核; 考虑进制 $R$-代数的范畴 $\mathsf {AdicAlg}_R$, 形式谱是这个范畴上的可表函子
 $$
 \operatorname{Spf}A=\operatorname{Hom}_{\mathsf {AdicAlg}_R}(A,-).
 $$</p>
-<p>另一种定义. 定义环上的线性拓扑为一些理想及其陪集作为开集基生成的拓扑. 带有线性拓扑的环以及连续同态构成范畴 $\mathsf {LRing}$. 不带拓扑的环视为离散环, 构成满子范畴 $\mathsf {Ring}\hookrightarrow \mathsf {LRing}$. 定义 $\operatorname{Spf}A\colon \mathsf {Ring}\hookrightarrow\mathsf {LRing}\to\mathsf {Set}$,
+<h3>带线性拓扑的环</h3>
+<p>定义环上的线性拓扑为一些理想及其陪集作为开集基生成的拓扑. 带有线性拓扑的环以及连续同态构成范畴 $\mathsf {LRing}$. 不带拓扑的环视为离散环, 构成满子范畴 $\mathsf {Ring}\hookrightarrow \mathsf {LRing}$. 定义 $\operatorname{Spf}A\colon \mathsf {Ring}\hookrightarrow\mathsf {LRing}\to\mathsf {Set}$,
 $$
 \operatorname{Spf}A=\operatorname{Hom}_{\mathsf {LRing}}(A,-).
 $$
@@ -82,6 +89,6 @@ $$
 $$</p>
 <h2>相关概念</h2>
 <p><span class="link local"><a href="./形式群律.html" title="“形式群律” [形式群律]">形式群律</a></span></p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“完备化 (环)” <a class="slug" href="./完备化(环).html">[完备化(环)]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>形式概形 <a class="slug" href="./形式概形.html">[形式概形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“形式群律” <a class="slug" href="./形式群律.html">[形式群律]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>完备化 (环) <a class="slug" href="./完备化(环).html">[完备化(环)]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>形式概形 <a class="slug" href="./形式概形.html">[形式概形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“形式群律” <a class="slug" href="./形式群律.html">[形式群律]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>形式邻域 <a class="slug" href="./形式邻域.html">[形式邻域]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
