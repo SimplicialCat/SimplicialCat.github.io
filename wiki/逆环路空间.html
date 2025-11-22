@@ -77,8 +77,38 @@ $$
 $$</p>
 <h2>例</h2>
 <ul>
+<li>$\mathbf{B}\mathbb{Z} \simeq S^1$.</li>
 <li>$\mathbf{B}\mathbb{Z}/2 \simeq \mathbb RP^\infty$.</li>
+<li>$\mathbf{B}S^1 \simeq \mathbb{C}P^{\infty}$.</li>
+<li>$\mathbf{B}\mathrm{O}(n)\simeq\mathbf{B}\mathrm{GL}_n(\mathbb{R})=\text{Gr}_n(\mathbb{R}^{\infty})$ 是 <span class="link local"><a href="./Grassmann流形.html" title=" [Grassmann流形]">Grassmann 流形</a></span>, 其 $\mathbb{Z}_2$ 系数上同调类为 <span class="link local"><a href="./Stiefel--Whitney类.html" title="Stiefel–Whitney 类 [Stiefel--Whitney类]">Stiefel–Whitney 类</a></span>:
+$$
+      H^*(\mathbf{B}\mathrm{O}(n);\mathbb{Z}_2)=\mathbb{Z}_2[w_1,\cdots,w_n],
+  $$
+其中 $w_k\in H^k$.</li>
+<li>$\mathbf{B}\mathrm{U}(n)\simeq\mathbf{B}\mathrm{GL}_n(\mathbb{C})=\text{Gr}_n(\mathbb{C}^{\infty})$ 是复 <span class="link local"><a href="./Grassmann流形.html" title=" [Grassmann流形]">Grassmann 流形</a></span>, 其 $\mathbb{Z}$ 系数上同调为<span class="link local"><a href="./陈类.html" title="“陈类” [陈类]">陈类</a></span>:
+$$
+      H^*(\mathbf{B}\mathrm{U}(n);\mathbb{Z})=\mathbb{Z}[c_1,\cdots,c_n],
+  $$
+其中 $c_k\in H^{2k}$.</li>
 </ul>
+<h2>性质</h2>
+<h3>函子性与关联丛</h3>
+<p>对于<span class="link local"><a href="./群.html" title="群 [群]">群</a></span>同态 $\varphi\colon H\to G$, 有 $H$ 通过 $\varphi$ 在 $G$ 上的左乘<span class="link local"><a href="./群作用.html" title="群作用 [群作用]">作用</a></span>.
+映射 $\mathbf{B}\varphi\colon \mathbf{B}H\to \mathbf{B}G$ 是 $\mathbf{B}H$ 上的万有 $H$-<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span>通过该作用<span class="link local"><a href="./关联丛.html" title="“关联丛” [关联丛]">关联</a></span>的 $G$-<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span>的分类映射.</p>
+<h3>与 Eilenberg–Maclane 空间的关系</h3>
+<p>对于离散群 $G$, 其分类空间 $\mathbf{B}G$ 是 <span class="link local"><a href="./Eilenberg--Maclane空间.html" title=" [Eilenberg--Maclane空间]">Eilenberg–Maclane 空间</a></span> $K(G,1)$.</p>
+<h3>上同调</h3>
+<p>若 $G$ 紧或半单, <span class="link local"><a href="./陈--Weil理论.html" title="“陈–Weil 理论” [陈--Weil理论]">陈–Weil 理论</a></span>给出同构
+$$
+H^*(\mathbf{B}G;\mathbb{C})\simeq \mathbb{C}[\mathfrak g]^G.
+$$
+其中 $\mathbb{C}[\mathfrak g]^G$ 称为<span class="link local"><a href="./不变多项式.html" title="“不变多项式” [不变多项式]">不变多项式</a></span>代数, 从而由不变多项式可以给出<span class="link local"><a href="./示性类.html" title="“示性类” [示性类]">示性类</a></span>.</p>
+<h2>模型</h2>
+<h3>Milnor 构造</h3>
+<p>Milnor 将分类空间 $BG$ 构造为 $n$ 重连接 $G * G * \cdots * G$ 的余极限. (这个构造关于 $G$ 有函子性.)</p>
+<p>等价地, $BG$ 可构造为单对象范畴 $G$ 的<span class="link local"><a href="./脉.html" title="脉 [脉]">脉</a></span>的<span class="link local"><a href="./几何实现.html" title="几何实现 (作为米田扩张) [几何实现]">几何实现</a></span>.</p>
+<h3>有限群</h3>
+<p>对任意有限群 $G$, 取 $G$ 的酉表示, 则可得 $G$ 在 $S^\infty\subset \mathbb{C}^{\infty}$ 上的自由作用, 从而构造 $\mathbf{B}G$.</p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“J-同态” <a class="slug" href="./J-同态.html">[J-同态]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notion" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notion.html" title="观念 [notion]">notion</a></span></span>上同调 <a class="slug" href="./上同调.html">[上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>主齐性空间, 主丛 <a class="slug" href="./主丛.html">[主丛]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>稳定范畴 <a class="slug" href="./稳定无穷范畴.html">[稳定无穷范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“群上同调” <a class="slug" href="./群上同调.html">[群上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>高阶仿射性 <a class="slug" href="./高阶仿射性.html">[高阶仿射性]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

@@ -55,11 +55,13 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="分类空间"><header><h1><span class="taxon">Wiki. </span>分类空间 <a class="slug" href="./分类空间.html">[分类空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="notion"><details open><summary id="分类空间"><header><h1><span class="taxon"><span class="link local"><a href="./notion.html" title="观念 [notion]">notion</a></span></span>分类空间 <a class="slug" href="./分类空间.html">[分类空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <p>一种结构 $P$ 的分类空间 $B$ 是这样一个空间: 任何空间 $X$ 上的结构 $P$ 对应于 $X$ 到 $B$ 的映射.</p>
-<p>在范畴论上, 设 $X$ 是一群胚, $X$ 上的 Grothendieck 纤维化对应于伪函子 $X^{\text{op}}\to \mathsf{Set}$. 若限制纤维为集合 $F$, 则这样一个伪函子的像是集合 $F$ 与其自同构构成的单对象范畴.</p>
+<h2>例</h2>
+<h3>纤维范畴</h3>
+<p>范畴 $X$ 上的<span class="link local"><a href="./纤维范畴.html" title="纤维范畴 [纤维范畴]">纤维范畴</a></span>对应于函子 $X^{\text{op}}\to \mathsf{Cat}$. 这可以理解为 $\mathsf{Cat}$ 是范畴的分类空间. 若要求每个纤维均等价于某个固定的纤维 $F$, 则这样一个函子 $X^{\text{op}}\to \mathsf{Cat}$ 的像落在 $\mathbf{B}{\operatorname{Aut}(F)}$ 中.</p>
 <p>另见<span class="link local"><a href="./分类意象.html" title="“分类意象” [分类意象]">分类意象</a></span>, <span class="link local"><a href="./分类叠.html" title="分类叠 (模叠) [分类叠]">分类叠</a></span>.</p>
-<h2>定义</h2>
+<h3>主丛</h3>
 <p>群 $G$ 的<strong>分类空间</strong> (classifying space) 是连通空间 $BG$, 以及 $G$-<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span> $EG\to BG$, 称作<strong>万有主丛</strong>, 满足对任意仿紧 (paracompact) 空间 $X$, $X$ 上 $G$-主丛的等价类与 $X$ 到 $BG$ 的映射的同伦类一一对应, 也即
 $$\operatorname{Prin}_G(X)_0 \simeq \pi_0 \mathsf {Top}(X,BG).$$</p>
 <p>由上述定义可以证明 $BG$ 在同伦等价的意义下唯一.</p>
@@ -77,7 +79,7 @@ $$
 <h3>Eilenberg–Maclane 空间</h3>
 <p>对于离散群 $G$, 其分类空间 $BG$ 又称为 <span class="link local"><a href="./Eilenberg--Maclane空间.html" title=" [Eilenberg--Maclane空间]">Eilenberg–Maclane 空间</a></span> $K(G,1)$.</p>
 <h3>同伦假设</h3>
-<p>在<span class="link local"><a href="./同伦假设.html" title="“同伦假设” [同伦假设]">同伦假设</a></span>之下, 群胚对应于<span class="link local"><a href="./同伦1-类型.html" title=" [同伦1-类型]">同伦 1-类型</a></span>, 群 $G$ 作为单对象范畴对应拓扑上的分类空间 $BG$.</p>
+<p>在<span class="link local"><a href="./同伦假设.html" title="同伦假设 [同伦假设]">同伦假设</a></span>之下, 群胚对应于<span class="link local"><a href="./同伦1-类型.html" title=" [同伦1-类型]">同伦 1-类型</a></span>, 群 $G$ 作为单对象范畴对应拓扑上的分类空间 $BG$.</p>
 <h3>同伦群</h3>
 <p>由于 $EG$ 可缩, 同伦群的长正合列给出
 $$
