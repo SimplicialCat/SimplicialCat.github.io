@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="notes"><details open><summary id="EC-H1-H2"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<p>这是 2025 年秋季平展上同调讨论班的一篇讲稿. 参考 <span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span>.</p>
+<ul>
+<li>第一部分 (主齐性空间与 $H^1$) 是第 III.4 节,</li>
+<li>第二部分 (Brauer 群与 $H^2$) 是第 IV 章.</li>
+</ul>
+<h1>一阶上同调</h1>
+<p>本节的目标是</p>
+<ul>
+<li>说明一般的 $1$ 阶<span class="link local"><a href="./非Abel上同调.html" title="非 Abel 上同调 [非Abel上同调]">非 Abel 上同调</a></span>与<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主齐性空间</a></span> (principal homogeneous space) 的关系;</li>
+<li>说明系数为 $\mathrm{GL}_n$ 的 $1$ 阶<span class="link local"><a href="./平展上同调.html" title="平展上同调 [平展上同调]">平展上同调</a></span>与<span class="link local"><a href="./向量丛.html" title="向量丛 [向量丛]">向量丛</a></span>的关系;</li>
+<li>介绍 <span class="link local"><a href="./Kummer理论.html" title="Kummer 理论 [Kummer理论]">Kummer 理论</a></span>.</li>
+</ul>
+<h2>非 Abel 上同调: 一般理论</h2>
+<p>某种意义上, 非 Abel 上同调是比传统的 “Abel” 上同调更简单的概念. 它的简单在于定义的简单, 而不简单在于没有什么计算的手段.</p>
+<p><span class="link local"><a href="./上同调.html" title="上同调 [上同调]">上同调</a></span>页面讨论了上同调的一般理论. 数学上所有名为 “某某上同调” 的概念, 无论 Abel 或者非 Abel, 都是如下概念的特殊情况.</p>
+<p><strong>定义</strong> (上同调). 设 $\mathcal C$ 为 <span class="link local"><a href="./无穷范畴.html" title="无穷范畴 [无穷范畴]">$\infty$-范畴</a></span>, $X,A$ 是 $\mathcal C$ 的对象; 定义 $X$ 的 $A$-系数 $0$ 阶<strong>上同调</strong>为映射空间的截断
+$$
+H^0(X,A) := \pi_0 \operatorname{Hom}_{\mathcal C}(X,A).
+$$
+对于正整数 $n$, 对象 $X,A$, 若 $A$ 具有 $n$ 阶<span class="link local"><a href="./逆环路空间.html" title="逆环路空间 [逆环路空间]">逆环路空间</a></span> $\mathbf{B}^n A$, 则定义 $X$ 的 $A$-系数 $n$ 阶上同调为
+$$
+H^n(X,A) := H^0(X,\mathbf{B}^n A) = \pi_0\operatorname{Hom}_{\mathcal C}(X,\mathbf{B}^n A).
+$$</p>
+<p>由上述讨论, 我们可定义群 $G$ 系数的 $1$ 阶上同调, 因为 $G$ 具有一阶<span class="link local"><a href="./逆环路空间.html" title="逆环路空间 [逆环路空间]">逆环路空间</a></span> $\mathbf{B}G$, 上同调 $H^1(X,G)$ 就定义为
+$$
+H^1(X,G) := \pi_0\operatorname{Hom}(X,\mathbf{B}G).
+$$</p>
+<p>一般地, 要计算空间 $X$ 到空间 $M$ 的映射空间, 若能将 $M$ 表示为某类对象的<span class="link local"><a href="./分类空间.html" title="分类空间 [分类空间]">分类空间</a></span>, 则要计算的东西可以转化为 $X$ 上的这类对象的<strong>丛</strong>. 群 $G$ 的<span class="link local"><a href="./逆环路空间.html" title="逆环路空间 [逆环路空间]">逆环路空间</a></span> $\mathbf{B}G$ 正是 $G$-<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主齐性空间</a></span>的<strong>群胚</strong> (因为 “任何 $G$-主齐性空间都同构于 $G$ 本身, 而这个对象的自同构群就是 $G$”), 所以毫不奇怪地, 计算 $G$-系数 $1$ 阶非 Abel 上同调就是计算 $G$-<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span>.</p>
+<h2>平坦景上的主齐性空间</h2>
+<p><span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span>页面介绍的主丛的一般理论. 现在我们将它具体到概形的平坦景上.</p>
+<p>考虑概形 $X$ 上的平坦局部有限型群 $G$. 以下所有概形均为 $X$-概形.</p>
+<p>在概形的平坦景上讨论, 重要的一点是概形的范畴<span class="link local"><a href="./米田嵌入.html" title="米田嵌入 [米田嵌入]">米田嵌入</a></span>到平坦景上的层范畴. 对概形的许多讨论都可以推广到平坦景上的层.</p>
+<h3>局部平凡性</h3>
+<p>首先, 我们看主丛的局部平凡性如何表现在平坦景上. (回忆抽象的主丛的局部平凡性不过是因为主丛平凡化自身.)</p>
+<p><strong>命题</strong>. 设群 $G$ 作用于概形 $S$. 如下条件等价:</p>
+<ol>
+<li>$S$ 忠实平坦, 局部有限型, 且 $S\times_X G\to S\times_X S$ 为同构, 其中两个分量分别为作用映射和投影映射.</li>
+<li>存在平坦覆盖 $\{U_i \to X\}$, 使得 $S_{U_i}$ 带有的 $G_{U_i}$-作用等同于 $G_{U_i}$ 在自身上的作用.</li>
+</ol>
+<p><strong>证明</strong>.</p>
+<ul>
+<li>1 $\Rightarrow$ 2. 取覆盖为 $S\to X$ 即可.</li>
+<li>2 $\Rightarrow$ 1. 令 $U=\bigsqcup_i U_i$, 则 $U$ 忠实平坦, 局部有限型, 且 $S_U$ 作为 $G_U$-作用同构于 $G_U$. 这意味着
+$$
+  (S\times_X G)_U \to (S\times_X S)_U
+$$
+为同构. 沿 $U\to X$ 使用下降理论, 可知
+$$
+  S\times_X G\to S\times_X S
+$$
+亦为同构.</li>
+</ul>
+<h3>可表性</h3>
+<p>平坦景上的层不一定可表为概形. 但是对于平坦景上的 $G$-主齐性空间 $S$, 由于我们<strong>已知</strong>其被一个有限型忠实平坦映射拉回之后同构于 $G$, 故有较大的希望应用概形的 fpqc 下降 (<span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> 定理 I.2.23) 证明 $S$ 可表. 这件事在如下情形中成立 (<span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> 定理 III.4.3):</p>
+<ol>
+<li>$G$ 在 $X$ 上仿射;</li>
+<li>$G$ 在 $X$ 上光滑, 分离, 且 $X$ 的维数 $\leq 1$;</li>
+<li>…</li>
+</ol>
+<h3>上圈</h3>
+<p>一般而言, <span class="link local"><a href="./上同调.html" title="上同调 [上同调]">上同调</a></span>类的<span class="link local"><a href="./数学对象的表现.html" title="数学对象的表现 [数学对象的表现]">表现</a></span>称为上圈. 对于一阶非 Abel 上同调, 有一种重要的表现称为 <span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">Čech 上圈</a></span>.</p>
+<p><span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">非交换 Čech 上同调</a></span>页面介绍了 Čech 上圈的抽象陈述.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Meta" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Meta. </span>讲稿 <a class="slug" href="./notes.html">[notes]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

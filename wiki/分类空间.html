@@ -62,54 +62,7 @@
 <p>范畴 $X$ 上的<span class="link local"><a href="./纤维范畴.html" title="纤维范畴 [纤维范畴]">纤维范畴</a></span>对应于函子 $X^{\text{op}}\to \mathsf{Cat}$. 这可以理解为 $\mathsf{Cat}$ 是范畴的分类空间. 若要求每个纤维均等价于某个固定的纤维 $F$, 则这样一个函子 $X^{\text{op}}\to \mathsf{Cat}$ 的像落在 $\mathbf{B}{\operatorname{Aut}(F)}$ 中.</p>
 <p>另见<span class="link local"><a href="./分类意象.html" title="“分类意象” [分类意象]">分类意象</a></span>, <span class="link local"><a href="./分类叠.html" title="分类叠 (模叠) [分类叠]">分类叠</a></span>.</p>
 <h3>主丛</h3>
-<p>群 $G$ 的<strong>分类空间</strong> (classifying space) 是连通空间 $BG$, 以及 $G$-<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span> $EG\to BG$, 称作<strong>万有主丛</strong>, 满足对任意仿紧 (paracompact) 空间 $X$, $X$ 上 $G$-主丛的等价类与 $X$ 到 $BG$ 的映射的同伦类一一对应, 也即
-$$\operatorname{Prin}_G(X)_0 \simeq \pi_0 \mathsf {Top}(X,BG).$$</p>
-<p>由上述定义可以证明 $BG$ 在同伦等价的意义下唯一.</p>
-<p><strong>定理</strong>. 若 $E\to B$ 为 $G$-主丛, $E$ 可缩, 则 $B$ 为 $G$ 的分类空间.</p>
-<h2>性质</h2>
-<h3>不同群的分类空间的关系</h3>
-<p>对于群同态 $\varphi\colon H\to G$, 存在连续映射 $B\varphi\colon BH\to BG$, 且满足
-$$
-(B\varphi^*)EG = EH\times_{\varphi} G.
-$$
-也即 $B\varphi$ 是 $BH$ 上 $\varphi$ 定义的<span class="link local"><a href="./关联.html" title=" [关联]">关联丛</a></span> $G$-主丛的分类映射.</p>
-<p><strong>命题</strong>. 设 $\varphi\colon H\to G$ 为同伦等价, 则 $B\varphi\colon BH\to BG$ 为同伦等价.</p>
-<p><strong>证明</strong>. 对纤维化 $H\to EH\to BH$ 与 $G\to EG\to BG$ 的同伦群长正合列用五引理.</p>
-<p><strong>推论</strong>. 设 $K$ 是 Lie 群 $G$ 的极大紧子群, 则 $BG$ 同伦等价于 $BK$. (<span class="link local"><a href="./岩泽分解.html" title=" [岩泽分解]">岩泽分解</a></span>说明 $K\to G$ 是同伦等价.)</p>
-<h3>Eilenberg–Maclane 空间</h3>
-<p>对于离散群 $G$, 其分类空间 $BG$ 又称为 <span class="link local"><a href="./Eilenberg--Maclane空间.html" title=" [Eilenberg--Maclane空间]">Eilenberg–Maclane 空间</a></span> $K(G,1)$.</p>
-<h3>同伦假设</h3>
-<p>在<span class="link local"><a href="./同伦假设.html" title="同伦假设 [同伦假设]">同伦假设</a></span>之下, 群胚对应于<span class="link local"><a href="./同伦1-类型.html" title=" [同伦1-类型]">同伦 1-类型</a></span>, 群 $G$ 作为单对象范畴对应拓扑上的分类空间 $BG$.</p>
-<h3>同伦群</h3>
-<p>由于 $EG$ 可缩, 同伦群的长正合列给出
-$$
-\pi_{n-1}(G)\simeq \pi_n(BG).
-$$</p>
-<h3>上同调</h3>
-<p>若 $G$ 紧或半单, <span class="link local"><a href="./陈--Weil理论.html" title="“陈–Weil 理论” [陈--Weil理论]">陈–Weil 理论</a></span>给出同构
-$$
-H^*(BG;\mathbb{C})\simeq \mathbb{C}[\mathfrak g]^G.
-$$
-其中 $\mathbb{C}[\mathfrak g]^G$ 称为<span class="link local"><a href="./不变多项式.html" title="“不变多项式” [不变多项式]">不变多项式</a></span>代数, 从而由不变多项式可以给出<span class="link local"><a href="./示性类.html" title="“示性类” [示性类]">示性类</a></span>.</p>
-<h2>构造</h2>
-<h3>Milnor 构造</h3>
-<p>Milnor 将分类空间 $BG$ 构造为 $n$ 重连接 $G * G * \cdots * G$ 的余极限. (这个构造关于 $G$ 有函子性.)</p>
-<p>等价地, $BG$ 可构造为单对象范畴 $G$ 的<span class="link local"><a href="./脉.html" title="脉 [脉]">脉</a></span>的<span class="link local"><a href="./几何实现.html" title="几何实现 (作为米田扩张) [几何实现]">几何实现</a></span>.</p>
-<h2>例</h2>
-<p>$B\mathbb{Z} = S^1$, $E\mathbb{Z}=\mathbb{R}$.</p>
-<p>$B\mathbb{Z}_2 = \mathbb{R}P^\infty$, $E\mathbb{Z}_2=S^\infty$.</p>
-<p>对任意有限群 $G$, 取 $G$ 的酉表示, 则可得 $G$ 在 $S^\infty\subset \mathbb{C}^{\infty}$ 上的自由作用, 从而构造 $BG$.</p>
-<p>$BS^1=\mathbb{C}P^{\infty}$, $ES^1=S^{\infty}$.</p>
-<p>$BO(n)=BGL_n(\mathbb{R})=\text{Gr}_n(\mathbb{R}^{\infty})$ 是 <span class="link local"><a href="./Grassmann流形.html" title=" [Grassmann流形]">Grassmann 流形</a></span>, 其 $\mathbb{Z}_2$ 系数上同调类为 <span class="link local"><a href="./Stiefel--Whitney类.html" title="Stiefel–Whitney 类 [Stiefel--Whitney类]">Stiefel–Whitney 类</a></span>:
-$$
-H^*(BO(n);\mathbb{Z}_2)=\mathbb{Z}_2[w_1,\cdots,w_n],
-$$
-其中 $w_k\in H^k$.</p>
-<p>$BU(n)=BGL_n(\mathbb{C})=\text{Gr}_n(\mathbb{C}^{\infty})$ 是复 <span class="link local"><a href="./Grassmann流形.html" title=" [Grassmann流形]">Grassmann 流形</a></span>, 其 $\mathbb{Z}$ 系数上同调为<span class="link local"><a href="./陈类.html" title="“陈类” [陈类]">陈类</a></span>:
-$$
-H^*(BU(n);\mathbb{Z})=\mathbb{Z}[c_1,\cdots,c_n],
-$$
-其中 $c_k\in H^{2k}$.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“A∞-空间” <a class="slug" href="./A∞-空间.html">[A∞-空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Gestalt <a class="slug" href="./Gestalt.html">[Gestalt]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Weil 群 <a class="slug" href="./Weil群.html">[Weil群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“结构群的约化” <a class="slug" href="./结构群的约化.html">[结构群的约化]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>逆环路空间 <a class="slug" href="./逆环路空间.html">[逆环路空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈类” <a class="slug" href="./陈类.html">[陈类]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<p><span class="link local"><a href="./群.html" title="群 [群]">群</a></span> $G$ 的<strong>分类空间</strong>指的是其<span class="link local"><a href="./逆环路空间.html" title="逆环路空间 [逆环路空间]">逆环路空间</a></span> $\mathbf{B}G$, 它是一个带基点连通空间, 带有万有 $G$-<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span> ${*}\to \mathbf{B}G$.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“A∞-空间” <a class="slug" href="./A∞-空间.html">[A∞-空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Gestalt <a class="slug" href="./Gestalt.html">[Gestalt]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Weil 群 <a class="slug" href="./Weil群.html">[Weil群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“结构群的约化” <a class="slug" href="./结构群的约化.html">[结构群的约化]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>逆环路空间 <a class="slug" href="./逆环路空间.html">[逆环路空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈类” <a class="slug" href="./陈类.html">[陈类]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
