@@ -58,6 +58,7 @@
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="非Abel上同调"><header><h1><span class="taxon">Wiki. </span>非 Abel 上同调 <a class="slug" href="./非Abel上同调.html">[非Abel上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>观念</h2>
 <p>非 Abel 上同调是一种广义的<span class="link local"><a href="./上同调.html" title="上同调 [上同调]">上同调</a></span>概念, 强调其系数对象并非 Abel 群.</p>
+<p>群 $G$ 系数的 $1$ 阶非 Abel 上同调类一一对应于 $G$-<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span>的等价类.</p>
 <p>非 Abel 上同调的一种计算方法是 <span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">Čech 上同调</a></span>.</p>
 <h2>性质</h2>
 <h3>长正合列</h3>
@@ -70,8 +71,28 @@ $$
 H^0(X,K) \to H^0(X,G) \to H^0(X,H)
 \to H^1(X,K) \to H^1(X,G) \to H^1(X,H).
 $$</p>
+<h3>群结构</h3>
+<p>虽然名为 “非交换” Čech 上同调, 当然它也可以处理交换群.</p>
+<p>对于 <span class="link local"><a href="./E2-代数.html" title="E2 代数 [E2-代数]">$\mathbb E_2$</a></span>-群 $A$, 有 $\mathbf{B}A$ 为<span class="link local"><a href="./群.html" title="群 [群]">群</a></span>, 从而 $H^1(X,A)=\pi_0\operatorname{Hom}(X,\mathbf{B}A)$ 为群.</p>
+<p>具体地, 设 $P_1,P_2$ 为 $X$ 上的 $A$-主丛, 分别由 $p_1,p_2\colon X\to\mathbf{B}A$ 分类. 考虑如下拉回图.
+$$
+\begin{array}
+    {ccccc}
+    P_1\times_X P_2 &amp; \to &amp; * \\
+    \downarrow &amp; &amp; \downarrow \\
+    ? &amp; \to &amp; \mathbf{B} A &amp; \to &amp; *\\
+    \downarrow &amp; &amp; \downarrow &amp; &amp; \downarrow \\
+    X &amp; \underset{(p_1,p_2)}{\to} &amp; \mathbf{B}A\times\mathbf{B}A &amp; \underset{\mu}{\to} &amp; \mathbf{B}A
+\end{array}
+$$
+其中 $\mu$ 为 $\mathbf{B}A$ 的乘法映射, 竖直向下的映射 $\mathbf{B}A\to\mathbf{B}A\times\mathbf{B}A$ 为 $\mathbf{B}(a\mapsto (a^{-1},a))$.
+图中问号位置的对象即是 $P_1$ 与 $P_2$ 在 $H^1(X,A)$ 中的<strong>和</strong>
+$$
+P_1+P_2 := (P_1 \times_X P_2) / A,
+$$
+其中 $A$ 通过 $(p_1,p_2) a = (p_1 a^{-1}, p_2 a)$ <span class="link local"><a href="./群作用.html" title="群作用 [群作用]">作用</a></span>于 $P_1\times_X P_2$ 上.</p>
 <h2>例</h2>
-<h3>1 阶非 Abel 上同调</h3>
+<h3>Zariski 景, 平展景与平坦景</h3>
 <p><strong>定理</strong>.
 在<span class="link local"><a href="./概形.html" title="概形 [概形]">概形</a></span> $X$ 对应的 <span class="link local"><a href="./Zariski景.html" title="Zariski 景 [Zariski景]">Zariski 景</a></span>, <span class="link local"><a href="./平展景.html" title="平展景 [平展景]">平展景</a></span>, <span class="link local"><a href="./平坦景.html" title="平坦景 [平坦景]">平坦景</a></span>上计算同一个群概形 $\mathrm{GL}_n$ (对应的层) 的上同调, 比较映射
 $$
@@ -98,6 +119,6 @@ $$
 <p>(b) 的证明用到如下观察: 投射模可由<span class="link local"><a href="./忠实平坦环同态.html" title="忠实平坦环同态 [忠实平坦环同态]">忠实平坦环同态</a></span>探测. 设 $A\to B$ 忠实平坦, 若 $B\otimes_A M$ 为投射 $B$-模, 则 $M$ 为投射 $A$-模. 这是因为 $B\otimes_A \operatorname{Hom}_A(M,-) \simeq \operatorname{Hom}_B(B\otimes_A M, B\otimes_A -)$.</p>
 </li>
 </ol>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Čech 上同调 <a class="slug" href="./Čech上同调.html">[Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notion" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notion.html" title="观念 [notion]">notion</a></span></span>上同调 <a class="slug" href="./上同调.html">[上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“拓扑 K-理论” <a class="slug" href="./拓扑K-理论.html">[拓扑K-理论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈–Weil 理论” <a class="slug" href="./陈--Weil理论.html">[陈--Weil理论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li><li class="meta-item">陈–Weil 同态</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>非交换 Čech 上同调 <a class="slug" href="./非交换Čech上同调.html">[非交换Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Čech 上同调 <a class="slug" href="./Čech上同调.html">[Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notion" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notion.html" title="观念 [notion]">notion</a></span></span>上同调 <a class="slug" href="./上同调.html">[上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>主齐性空间, 主丛 <a class="slug" href="./主丛.html">[主丛]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“拓扑 K-理论” <a class="slug" href="./拓扑K-理论.html">[拓扑K-理论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈–Weil 理论” <a class="slug" href="./陈--Weil理论.html">[陈--Weil理论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li><li class="meta-item">陈–Weil 同态</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>非交换 Čech 上同调 <a class="slug" href="./非交换Čech上同调.html">[非交换Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

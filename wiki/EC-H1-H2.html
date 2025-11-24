@@ -87,7 +87,7 @@ $$</p>
 <h2>平坦景上的主齐性空间</h2>
 <p><span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span>页面介绍的主丛的一般理论. 现在我们将它具体到概形的平坦景上.</p>
 <p>考虑概形 $X$ 上的平坦局部有限型群 $G$. 以下所有概形均为 $X$-概形.</p>
-<p>在概形的平坦景上讨论, 重要的一点是概形的范畴<span class="link local"><a href="./米田嵌入.html" title="米田嵌入 [米田嵌入]">米田嵌入</a></span>到平坦景上的层范畴. 对概形的许多讨论都可以推广到平坦景上的层.</p>
+<p>在概形的平坦景上讨论, 重要的一点是局部有限表现概形的范畴<span class="link local"><a href="./米田嵌入.html" title="米田嵌入 [米田嵌入]">米田嵌入</a></span>到平坦景上的层范畴, 这称为 Grothendieck 拓扑的<span class="link local"><a href="./次典范拓扑.html" title="次典范拓扑 [次典范拓扑]">次典范性</a></span>. 对概形的许多讨论都可以推广到平坦景上的层.</p>
 <h3>局部平凡性</h3>
 <p>首先, 我们看主丛的局部平凡性如何表现在平坦景上. (回忆抽象的主丛的局部平凡性不过是因为主丛平凡化自身.)</p>
 <p><strong>命题</strong>. 设群 $G$ 作用于概形 $S$. 如下条件等价:</p>
@@ -117,7 +117,56 @@ $$
 </ol>
 <h3>上圈</h3>
 <p>一般而言, <span class="link local"><a href="./上同调.html" title="上同调 [上同调]">上同调</a></span>类的<span class="link local"><a href="./数学对象的表现.html" title="数学对象的表现 [数学对象的表现]">表现</a></span>称为上圈. 对于一阶非 Abel 上同调, 有一种重要的表现称为 <span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">Čech 上圈</a></span>.</p>
-<p><span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">非交换 Čech 上同调</a></span>页面介绍了 Čech 上圈的抽象陈述.</p>
+<p><span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">非交换 Čech 上同调</a></span>页面介绍了 Čech 上圈的抽象陈述, 并讨论了 $0$-截断情形, 这相当于证明了 <span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> 命题 III.4.6.</p>
+<h2>Zariski, 平展与平坦的比较</h2>
+<p><strong>命题</strong> (<span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> III.4.9, <span class="link local"><a href="./Hilbert定理90.html" title="Hilbert 定理 90 [Hilbert定理90]">Hilbert 定理 90</a></span>). 典范的映射
+$$
+H^1(X_{\mathrm{Zar}},\mathbb G_m) \to H^1(X_{\mathrm{\'et}},\mathbb G_m) \to H^1(X_{\mathrm{fl}},\mathbb G_m)
+$$
+均为同构.</p>
+<p>记
+$$
+    f\colon \mathsf{Sh}(X_{\mathrm{fl}})\to \mathsf{Sh}(X_{\mathrm{Zar}})
+$$
+为<span class="link local"><a href="./平展意象.html" title="平展意象 [平展意象]">平展意象</a></span>到 <span class="link local"><a href="./Zariski意象.html" title="Zariski 意象 [Zariski意象]">Zariski 意象</a></span>的比较映射, 其中</p>
+<ul>
+<li>右伴随 (前推) 部分 $f_*$ 来自范畴的嵌入 $X_{\mathrm{Zar}}\to X_{\mathrm{fl}}$;</li>
+<li>左伴随 (拉回) $f^*$ 可由层化定义:
+对于 $F\in\mathsf{Sh}(X_{\mathrm{Zar}})$, $f^*F$ 是 $X_{\mathrm{fl}}$ 上的预层 $U\mapsto \operatorname{colim}_{U\to V\to X}F(V)$ 的层化.</li>
+</ul>
+<p>那么 $f_*$ 将 $\mathbb G_m$ 变为 $\mathbb G_m$. 由 <span class="link local"><a href="./Leray谱序列.html" title="Leray 谱序列 [Leray谱序列]">Leray 谱序列</a></span>
+$$
+    H^p(X_{\mathrm{Zar}},R^qf_*\mathbb G_m)\Rightarrow H^{p+q}(X_{\mathrm{fl}},\mathbb G_m)
+$$
+(来自<span class="link local"><a href="./滤过谱.html" title="“滤过谱” [滤过谱]">滤过谱</a></span> $\Gamma_{X_{\mathrm{Zar}}}(\tau_{\leq\bullet}f_*\mathbb G_m)$), 只需证明
+$$
+    R^1f_*\mathbb G_m = 0.
+$$
+其中 $R^1f_*\mathbb G_m$ 是 Zariski 景上的预层 $U\mapsto H^1(U_{\mathrm{fl}},\mathbb G_m)$ 的层化.
+所以只需证明如下命题 (我们甚至可以对一般的 $\mathrm{GL}_n$ 证明):</p>
+<p><strong>命题</strong> (<span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> III.4.10). 设 $A$ 为局部环, $U=\operatorname{Spec}A$, 则
+$$
+H^1(U_{\mathrm{fl}},\mathrm{GL}_n) = 0.
+$$</p>
+<p><em>证明</em>.
+对任意上同调类 $\alpha\in H^1(U_{\mathrm{fl}},\mathrm{GL}_n)$, 存在忠实平坦有限型仿射 $U$-概形 $V=\operatorname{Spec}B$ 以及上圈 $\phi\colon V\times_U V \to \mathrm{GL}_n$ 表现 $\alpha$, 而 $\phi$ 又可视为同构
+$$
+\begin{aligned}
+    B^n\otimes_A B &amp;\simeq B^n \otimes_B (B\otimes_A B) \\
+    &amp;\simeq
+    (B\otimes_A B)^n
+     \overset{\phi}{\to} (B\otimes_A B)^n\\
+    &amp;\simeq (B\otimes_A B)\otimes_B B^n \simeq B\otimes_A B^n,
+\end{aligned}
+$$
+这恰好给出了 $B^n$ 下降为 $A$-模的下降数据 (回忆模的忠实平坦下降, <span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> I.2.21). 由下降理论, $B^n$ 来自于平坦有限生成 $A$-模. 但 $A$ 为局部环, 这样的 $A$-模一定是自由 $A$-模. 于是上圈 $\phi$ 上同调等价于平凡的上圈.
+$\square$</p>
+<h2>应用: Kummer 理论与 Artin–Schreier 理论</h2>
+<ul>
+<li><span class="link local"><a href="./Kummer理论.html" title="Kummer 理论 [Kummer理论]">Kummer 理论</a></span></li>
+<li><span class="link local"><a href="./Artin–Schreier理论.html" title="Artin–Schreier 理论 [Artin–Schreier理论]">Artin–Schreier 理论</a></span></li>
+</ul>
+<h1>二阶上同调</h1>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Meta" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Meta. </span>讲稿 <a class="slug" href="./notes.html">[notes]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
