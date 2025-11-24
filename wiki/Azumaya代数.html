@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>Azumaya 代数</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Azumaya代数"><header><h1><span class="taxon">Wiki. </span>Azumaya 代数 <a class="slug" href="./Azumaya代数.html">[Azumaya代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>环或<span class="link local"><a href="./概形.html" title="概形 [概形]">概形</a></span>上的 <strong>Azumaya 代数</strong>是域上的<span class="link local"><a href="./中心单代数.html" title="中心单代数 [中心单代数]">中心单代数</a></span>的推广, 是 <span class="link local"><a href="./Morita等价.html" title=" [Morita等价]">Morita 等价</a></span>下可逆的代数, 给出 <span class="link local"><a href="./Brauer群.html" title="Brauer 群 [Brauer群]">Brauer 群</a></span>的元素.</p>
+<h2>定义</h2>
+<h3>局部环</h3>
+<p>局部环 $R$ 上的 <strong>Azumaya 代数</strong>是满足如下条件的 $R$-代数 $A$:</p>
+<ul>
+<li>$A$ 是有限维自由 $R$-模;</li>
+<li>映射 $A\otimes_R A^{\mathrm{op}} \to \operatorname{End}_R(A)$, $a\otimes a'\mapsto (x\mapsto axa')$ 为同构.</li>
+</ul>
+<p>由定义, Azumaya 代数在 <span class="link local"><a href="./Morita等价.html" title=" [Morita等价]">Morita 等价</a></span>的意义下可逆.</p>
+<h2>性质</h2>
+<h3>函子性</h3>
+<p>局部环上 Azumaya 代数的概念有如下的函子性.</p>
+<p><strong>命题</strong>. 设 $A$ 是 $R$ 上的 Azumaya 代数, $R'$ 是局部环, 且有环同态 $R\to R'$ (甚至不要求为局部环同态), 则 $A\otimes_R R'$ 构成 $R'$ 上的 Azumaya 代数.</p>
+<p><em>证明</em>.
+由已知,
+$$
+A\otimes_R A^{\mathrm{op}}
+\simeq
+\operatorname{End}_R(A).
+$$
+作用 $-\otimes_R R'$ 得
+$$
+A\otimes_R A^{\mathrm{op}}\otimes_R R'
+\simeq
+\operatorname{End}_R(A)\otimes_R R'.
+$$
+此即
+$$
+(A\otimes_R R')\otimes_{R'} (A\otimes_R R')^{\mathrm{op}}
+\simeq
+\operatorname{End}_{R'}(A\otimes_R R').
+$$</p>
+<h3>与中心单代数的关系</h3>
+<p>下面的结论说明 Azumaya 代数是域上的<span class="link local"><a href="./中心单代数.html" title="中心单代数 [中心单代数]">中心单代数</a></span>的推广.</p>
+<p><strong>结论</strong>. 设 $R$ 为局部环, $A$ 是 $R$ 上的 Azumaya 代数, 则</p>
+<ul>
+<li>$A$ 的<span class="link local"><a href="./中心.html" title="中心 [中心]">中心</a></span>为 $R$,</li>
+<li>$A$ 的双边理想一一对应于 $R$ 的理想: 对于 $A$ 的双边理想 $I$, $I=(I\cap R)A$; 对于 $R$ 的理想 $J$, $J=JA\cap R$.</li>
+</ul>
+<p><em>证明</em>.
+由于 $A\otimes_R A^{\mathrm{op}} \simeq \operatorname{End}_R(A)$,
+对任意 $\varphi\in \operatorname{End}_R(A)$,
+存在 $b_1,b'_1,\cdots,b_k,b'_k\in A$ 使得
+$\varphi(a)=b_1ab'_1+\cdots +b_kab'_k$.
+这说明</p>
+<ul>
+<li>对于 $A$ 的中心的元素 $c$, 有 $\varphi(ac)=\varphi(a)c$;</li>
+<li>对于 $A$ 的双边理想 $I$, 有 $\varphi(I)\subset I$.</li>
+</ul>
+<p>设 $a_1=1,\cdots,a_n$ 是 $A$ 的一组 $R$-基.
+考虑 $A$ 的 $R$-线性自同态 $\chi_i$, 满足 $\chi_i(a_j)=\delta_{ij}$.
+那么 $\chi_i$ 的像包含于 $R$.</p>
+<p>对 $A$ 的中心的元素 $c$, 设
+$$
+    c=\sum r_ia_i\,(r_i\in R),
+$$
+则 $c=\chi_1(a_1)c=\chi_1(a_1c)=r_1\in R$.</p>
+<p>设 $I$ 是 $A$ 的双边理想.
+对 $a\in I$, 设
+$$
+    a=\sum r_ia_i\,(r_i\in R),
+$$
+那么 $r_i=\chi_i(a)\in I$,
+从而 $a\in (I\cap R)A$.</p>
+<p>设 $J$ 是 $R$ 的理想.
+对 $a\in JA$, 设
+$$
+    a=\sum r_ia_i\,(r_i\in J),
+$$
+那么 $a\in R$ 当且仅当 $r_i=0\,(i&gt;1)$.
+故 $JA\cap R = J$.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Skolem–Noether 定理 <a class="slug" href="./Skolem–Noether定理.html">[Skolem–Noether定理]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

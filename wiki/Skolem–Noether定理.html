@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>Skolem–Noether 定理</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Skolem–Noether定理"><header><h1><span class="taxon">Wiki. </span>Skolem–Noether 定理 <a class="slug" href="./Skolem–Noether定理.html">[Skolem–Noether定理]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>陈述</h2>
+<p>设 $A$ 是局部环 $R$ 上的 <span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span>. 则 $A$ 作为 $R$-代数的自同构均为内自同构, 即形如 $a\mapsto uau^{-1}$, 其中 $u\in A$ 为可逆元.</p>
+<h2>证明</h2>
+<p>设 $\phi$ 是 $A$ 的自同构.
+那么 $A$ 以两种方式成为左 $A\otimes_R A^{\mathrm{op}}$-模 (即 $(A,A)$ 双模):</p>
+<ul>
+<li>$(a_1\otimes a_2^{\mathrm{op}}) a = a_1 a a_2$ (即正常的双模);</li>
+<li>$(a_1\otimes a_2^{\mathrm{op}}) a = \phi(a_1) a a_2$ (即左模结构经过 $\phi$ 拉回).</li>
+</ul>
+<p>分别记上述两个左 $A\otimes_{R}A^{\mathrm{op}}$-模为 $A$, $A'$.</p>
+<p>用上划线表示 $-\otimes_R R/\mathfrak{m}$. 由于 $\bar A \otimes_{\bar R} \bar A ^{\mathrm{op}}$ 是中心单代数, $\bar A$ 与 $\bar A'$ 是其上的单模, 故存在同构 $\psi\colon \bar A \to \bar A^{\mathrm{op}}$.</p>
+<p>现在证明 $A$ 是投射 $A\otimes A^{\mathrm{op}}$-模.
+由 $A\otimes A^{\mathrm{op}} \simeq \operatorname{End}(A)$,
+只需证明 $A$ 是投射 $\operatorname{End}(A)$-模. 事实上 $A$ 是 $\operatorname{End}(A)$ 的直和项.
+因为 $A$ 是自由 $R$-模, 故存在 $R$-模同态 $g\colon A\to R$ 使得 $g(r)=r\,(r\in R)$.
+考虑映射
+$$
+    A\mapsto \operatorname{End}(A),
+    a\mapsto g(-)a.
+$$
+它是 $\operatorname{End}(A)$-模同态, 且为投影映射
+$$
+    \operatorname{End}(A)\to A, f\mapsto f(1)
+$$
+的截面. 这说明 $A$ 是 $\operatorname{End}(A)$ 的直和项, 从而是投射 $\operatorname{End}(A)$-模.</p>
+<p>由于 $A$ 投射, $A\to\bar A\overset{\psi}{\to}\bar A'$ 可提升为同态 $\psi\colon A\to A'$.
+这个同态满足
+$$
+\phi(a)\psi(1)=\psi(a)=\psi(1)a.
+$$
+由中山引理, $\psi$ 为满射. 故存在 $a_0$ 使得 $\psi(a_0)=1$; 由上式知 $\psi(1)$ 可逆, 且 $\phi(a)=\psi(1)a\psi(1)^{-1}$, 即 $\phi$ 为内自同构.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>
