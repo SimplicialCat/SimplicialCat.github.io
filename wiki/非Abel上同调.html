@@ -68,8 +68,26 @@ K\to G\to H\to \mathbf{B}K \to \mathbf{B}G \to \mathbf{B}H,
 $$
 从而有非 Abel 上同调的正合列
 $$
-H^0(X,K) \to H^0(X,G) \to H^0(X,H)
-\to H^1(X,K) \to H^1(X,G) \to H^1(X,H).
+\begin{aligned}
+H^0(X,K) &amp;\to H^0(X,G) \to H^0(X,H)\\
+\to H^1(X,K) &amp;\to H^1(X,G) \to H^1(X,H).
+\end{aligned}
+$$</p>
+<p>对于 $0$-截断群的<span class="link local"><a href="./中心扩张.html" title="中心扩张 [中心扩张]">中心扩张</a></span>
+$$
+A \to G \to H
+$$
+(即不仅要短正合列, 还要求 $A\to G$ 落在 $G$ 的<span class="link local"><a href="./中心.html" title="中心 [中心]">中心</a></span>中, 特别地 $A$ 为 Abel 群), 纤维列与长正合列还能增加一项:
+$$
+A\to G \to H \to \mathbf{B}A \to \mathbf{B}G\to\mathbf{B}H
+\to\mathbf{B}^2 A,
+$$
+$$
+\begin{aligned}
+    H^0(X,A) &amp;\to H^0(X,G) \to H^0(X,H)\\
+\to H^1(X,A) &amp;\to H^1(X,G) \to H^1(X,H)\\
+\to H^2(X,A) &amp;.
+\end{aligned}
 $$</p>
 <h3>群结构</h3>
 <p>虽然名为 “非交换” Čech 上同调, 当然它也可以处理交换群.</p>
@@ -102,23 +120,7 @@ H^1(X_{\mathrm{flat}},\mathrm{GL}_n)
 $$
 均为同构.</p>
 <p>特别地, 对于域 $k$, $H^1(\operatorname{Spec}k,\mathbb G_m)=0$. 这是 <span class="link local"><a href="./Hilbert定理90.html" title="Hilbert 定理 90 [Hilbert定理90]">Hilbert 定理 90</a></span>.</p>
-<p><em>证明概要</em>.</p>
-<ol>
-<li>
-<p>记 $L_n(X_{\mathrm{Zar}})$, $L_n(X_{\mathrm{\'et}})$, $L_n(X_{\mathrm{fl}})$ 分别为 Zariski, 平展和平坦景上局部自由 $n$ 阶 $\mathcal O_X$-模的等价类. 可以证明局部平凡化对应的 <span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">Čech 上圈</a></span> 给出了双射
-$$
-     L_n(X_{*}) \to H^1(X_{*},\mathrm{GL}_n)\,(*=\mathrm{Zar},\mathrm{\'et},\mathrm{fl}).
- $$</p>
-</li>
-<li>
-<p>然后证明拉回函子 $M\mapsto M^{\mathrm{fl}}$, $M\mapsto M^{\mathrm{\'et}}$ 给出了双射 $L_n(X_{\mathrm{Zar}}) \to L_n(X_{\mathrm{fl}})$, $L_n(X_{\mathrm{Zar}}) \to L_n(X_{\mathrm{\'et}})$. (拉回函子的具体构造见<span class="link local"><a href="./平展景.html" title="平展景 [平展景]">平展景</a></span>.) 需要证明三件事情:</p>
-<p>(a) 平坦 (平展) 局部自由 $\mathcal O_X$-模均形如 $M^{\mathrm{fl}}$, $M$ 为 Zariski 景上的<span class="link local"><a href="./凝聚层.html" title="凝聚层 [凝聚层]">凝聚</a></span> $\mathcal O_X$-模.</p>
-<p>(b) 设 $M$ 为 Zariski 景上的<span class="link local"><a href="./凝聚层.html" title="凝聚层 [凝聚层]">凝聚</a></span> $\mathcal O_X$-模, 若 $M^{\mathrm{fl}}$ 平坦局部自由, 则 $M$ 局部自由.</p>
-<p>(c) 设 $M,N$ 为 Zariski 景上的局部自由 $\mathcal O_X$-模, 则 $M\simeq N$ 当且仅当 $M^{\mathrm{fl}} \simeq N^{\mathrm{fl}}$.</p>
-<p>(a) 的证明本质上是<span class="link local"><a href="./拟凝聚层的忠实平坦下降.html" title="拟凝聚层的忠实平坦下降 [拟凝聚层的忠实平坦下降]">拟凝聚层的忠实平坦下降</a></span>.</p>
-<p>(b) 的证明用到如下观察: 投射模可由<span class="link local"><a href="./忠实平坦环同态.html" title="忠实平坦环同态 [忠实平坦环同态]">忠实平坦环同态</a></span>探测. 设 $A\to B$ 忠实平坦, 若 $B\otimes_A M$ 为投射 $B$-模, 则 $M$ 为投射 $A$-模. 这是因为 $B\otimes_A \operatorname{Hom}_A(M,-) \simeq \operatorname{Hom}_B(B\otimes_A M, B\otimes_A -)$.</p>
-</li>
-</ol>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Čech 上同调 <a class="slug" href="./Čech上同调.html">[Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notion" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notion.html" title="观念 [notion]">notion</a></span></span>上同调 <a class="slug" href="./上同调.html">[上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>主齐性空间, 主丛 <a class="slug" href="./主丛.html">[主丛]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“拓扑 K-理论” <a class="slug" href="./拓扑K-理论.html">[拓扑K-理论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈–Weil 理论” <a class="slug" href="./陈--Weil理论.html">[陈--Weil理论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li><li class="meta-item">陈–Weil 同态</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>非交换 Čech 上同调 <a class="slug" href="./非交换Čech上同调.html">[非交换Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<p><em>证明</em>. 见 <span class="link local"><a href="./Zar-fl-et.html" title="Zariski 景, 平展景与平坦景的比较 [Zar-fl-et]">Zariski, 平展与平坦的比较</a></span>.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 代数 <a class="slug" href="./Azumaya代数.html">[Azumaya代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Čech 上同调 <a class="slug" href="./Čech上同调.html">[Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notion" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notion.html" title="观念 [notion]">notion</a></span></span>上同调 <a class="slug" href="./上同调.html">[上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>主齐性空间, 主丛 <a class="slug" href="./主丛.html">[主丛]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>平展基本群 <a class="slug" href="./平展基本群.html">[平展基本群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“拓扑 K-理论” <a class="slug" href="./拓扑K-理论.html">[拓扑K-理论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“陈–Weil 理论” <a class="slug" href="./陈--Weil理论.html">[陈--Weil理论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li><li class="meta-item">陈–Weil 同态</li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>非交换 Čech 上同调 <a class="slug" href="./非交换Čech上同调.html">[非交换Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

@@ -57,9 +57,9 @@
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="中心单代数"><header><h1><span class="taxon">Wiki. </span>中心单代数 <a class="slug" href="./中心单代数.html">[中心单代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>定义</h2>
-<p>域 $k$ 上的中心单代数 $A$ 是满足如下条件的 (有限维) $k$-代数:</p>
+<p>域 $k$ 上的中心单代数 $A$ 是满足如下条件的<strong>有限维</strong> $k$-代数:</p>
 <ul>
-<li>$A$ 为单代数, 即 $A$ 没有非平凡的双边理想;</li>
+<li>$A$ 为单代数, 即 $A$ 没有非平凡的<strong>双边</strong>理想;</li>
 <li>$A$ 的<span class="link local"><a href="./中心.html" title="中心 [中心]">中心</a></span>为 $k$.</li>
 </ul>
 <p>对于两个中心单代数 $A,B$, 若如下等价条件成立, 则称它们<strong>相似</strong>:</p>
@@ -72,8 +72,26 @@
 <p>矩阵环 $M_n(K)$ 是 $K$ 上的中心单代数.</p>
 <p>$\mathbb{H}$ 是 $\mathbb{R}$ 上的中心单代数.</p>
 <h2>性质</h2>
-<p><strong>定理</strong> (Wedderburn). 域 $k$ 上的有限维单代数同构于 $k$ 上的某个可除代数的矩阵代数.</p>
+<h3>张量积</h3>
+<p><strong>命题</strong>. 设 $A,B$ 为域 $k$ 上的中心代数, 则 $A\otimes_k B$ 为中心代数.</p>
+<p>证明. 设 $z = \sum_{i=1}^n a_i \otimes b_i$ 是 $A\otimes_k B$ 的中心的元素, 使得 $\{b_i\}$ 在 $k$ 上线性无关. 对任意 $a\in A$,
+$$
+0 = az-za = \sum_{i=1}^n (aa_i-a_ia)\otimes b_i.
+$$
+故 $aa_i = a_i a$ 对每个 $i$ 成立, 从而 $a_i\in k$, 进而 $z$ 可以写成 $1\otimes b$, $b\in B$, 而 $b$ 又与 $B$ 的所有元素交换, 故 $b\in k$. 这说明 $A\otimes_k B$ 的中心为 $k$. $\square$</p>
+<p><strong>命题</strong>. 设 $A$ 为域 $k$ 上的中心单代数, $B$ 为 $k$ 上的单代数, 则 $A\otimes_k B$ 为 $k$ 上的单代数.</p>
+<p>证明. 设 $I$ 为 $A\otimes_k B$ 的双边理想.</p>
+<p>注意到 $I$ 的非零元素 $x$ 可以写成 $x=\sum_{i=1}^n a_i\otimes b_i \in I$, 且 $\{b_i\}$ 在 $k$ 上线性无关. 考虑<strong>所有</strong> $x\in I$ 的所有这种表达式中使得 $n$ <strong>最小</strong>者.</p>
+<p>由于 $n$ 的最小性, 有 $a_1\neq 0$, 从而 $a_1$ 生成的 $A$ 的双边理想是 $A$ 自身, 故可选取 $x\in I$ 使得 $a_1=1$. 由于 $n$ 的最小性, 对任意 $a\in A$, 有 $ax-xa = 0$, 也即 $a$ 与 $a_2,\cdots,a_n$ 交换. 那么 $a_i\in Z(A)=k$. 这说明 $n=1$, $x = 1\otimes b$, $b\in B$. 由 $B$ 为单代数, $x$ 生成的 $B$ 的双边理想是 $B$ 自身, 故 $x$ 生成的 $A\otimes_k B$ 的双边理想是 $A\otimes_k B$ 自身. $\square$</p>
+<p><strong>推论</strong>. 中心单代数的张量积仍是中心单代数.</p>
+<p>这也是下述 Wedderburn 定理的推论, 因为 $M_n(D) \otimes_k M_{n'}(D') \simeq M_{nn'}(D\otimes_k D')$, 且中心可除代数的张量积为中心单代数.</p>
+<h3>与中心可除代数的关系</h3>
+<p><strong>定理</strong> (Wedderburn). 域 $k$ 上的有限维单代数同构于 $k$ 上的某个<strong>中心可除代数</strong> $D$ 的某个矩阵代数 $M_n(D)$.</p>
+<p>设域 $k$ 上的中心单代数 $A$ 同构于 $M_n(D)$, $D$ 为 $k$ 上的中心可除代数. 则同构意义下, $A$ 上唯一的单左模是 $D^n$.</p>
 <p><strong>定理</strong> (Frobenius). $\mathbb{R}$ 上的有限维可除代数仅有 $\mathbb{R},\mathbb{C},\mathbb{H}$.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 代数 <a class="slug" href="./Azumaya代数.html">[Azumaya代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Brauer 群 <a class="slug" href="./Brauer群.html">[Brauer群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<p>因此, $\mathbb{R}$ 上的<strong>中心</strong>可除代数仅有 $\mathbb{R},\mathbb{H}$. 换言之, $\mathbb R$ 的 <span class="link local"><a href="./Brauer群.html" title="Brauer 群 [Brauer群]">Brauer 群</a></span>是由 $\mathbb H$ 生成的二阶群 $\mathbb{Z}/2$.</p>
+<h3>自同构</h3>
+<p><strong>定理</strong> (<span class="link local"><a href="./Skolem–Noether定理.html" title="Skolem–Noether 定理 [Skolem–Noether定理]">Skolem–Noether</a></span>). 中心单代数的自同构为内自同构.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 代数 <a class="slug" href="./Azumaya代数.html">[Azumaya代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Brauer 群 <a class="slug" href="./Brauer群.html">[Brauer群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Skolem–Noether 定理 <a class="slug" href="./Skolem–Noether定理.html">[Skolem–Noether定理]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

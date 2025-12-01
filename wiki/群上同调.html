@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“群上同调”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>群上同调</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,19 +55,21 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="群上同调"><header><h1><span class="taxon">Wiki. </span>“群上同调” <a class="slug" href="./群上同调.html">[群上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>#代数</p>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="群上同调"><header><h1><span class="taxon">Wiki. </span>群上同调 <a class="slug" href="./群上同调.html">[群上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>群上同调是群的<span class="link local"><a href="./逆环路空间.html" title="逆环路空间 [逆环路空间]">逆环路空间</a></span>的<span class="link local"><a href="./上同调.html" title="上同调 [上同调]">上同调</a></span>.</p>
+<p><span class="link local"><a href="./todo.html" title="亟需施工的页面 [todo]">页面待重写</a></span></p>
 <h2>定义</h2>
 <h3>一般定义</h3>
-<p>使用<span class="link local"><a href="./无穷范畴.html" title="无穷范畴 [无穷范畴]">无穷范畴</a></span>语言, 设 $G$ 是<span class="link local"><a href="./无穷意象.html" title="“无穷意象” [无穷意象]">无穷意象</a></span> $\mathsf H$ 中的群对象, 设 $BG$ 为其<span class="link local"><a href="./逆环路空间.html" title="逆环路空间 [逆环路空间]">逆环路空间</a></span>. $G$ 在对象 $V$ 上的作用等同于<span class="link local"><a href="./纤维列.html" title="纤维列 [纤维列]">纤维列</a></span>
+<p>设 $G$ 是 <span class="link local"><a href="./∞-意象.html" title="∞-意象 [∞-意象]">$\infty$-意象</a></span> $\mathcal C$ 中的<span class="link local"><a href="./群.html" title="群 [群]">群</a></span>, 设 $\mathbf{B}G$ 为其<span class="link local"><a href="./逆环路空间.html" title="逆环路空间 [逆环路空间]">逆环路空间</a></span>. $G$ 在对象 $V$ 上的作用等同于<span class="link local"><a href="./纤维列.html" title="纤维列 [纤维列]">纤维列</a></span>
 $$
-V \to V//G \to BG,
+V \to V/G \to \mathbf{B}G,
 $$
-在<span class="link local"><a href="./俯范畴.html" title="“俯范畴” [俯范畴]">俯范畴</a></span> $\mathsf H/BG$ 中这就是 $x\colon BG \vdash V(x)\colon \mathsf {Type}$ 的<span class="link local"><a href="./范畴语义.html" title=" [范畴语义]">范畴语义</a></span>. 定义
+在<span class="link local"><a href="./俯范畴.html" title="俯范畴 [俯范畴]">俯范畴</a></span> $\mathsf H/BG$ 中这就是 $x\colon BG \vdash V(x)\colon \mathsf {Type}$ 的<span class="link local"><a href="./范畴语义.html" title=" [范畴语义]">范畴语义</a></span>. 定义
 $$
 H^1_{\text{Grp}}(G,V) := \operatorname{Hom}_{\mathsf H/BG}(BG,V),
 $$
-其中 $BG$ 表示俯范畴的终对象. 这是 $\vdash \prod_{x\colon BG}(* \to V )\colon \mathsf {Type}$ 的范畴语义.</p>
+其中 $BG$ 表示俯范畴的<span class="link local"><a href="./终对象.html" title="终对象 [终对象]">终对象</a></span>. 这是 $\vdash \prod_{x\colon BG}(* \to V )\colon \mathsf {Type}$ 的范畴语义.</p>
 <h3>普通群与 Abel 系数</h3>
 <p>对于普通群 $G$, 带 $G$-作用的 Abel 群等同于 $\mathbb{Z}[G]$-模. 其不变元由 $\operatorname{Hom}_{\mathbb{Z}[G]}(\mathbb{Z},-)$ 给出 ($\mathbb{Z}$ 带有平凡 $G$-作用). 群上同调是其<span class="link local"><a href="./导出函子.html" title="导出函子 [导出函子]">导出函子</a></span>,
 $$

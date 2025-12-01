@@ -57,16 +57,21 @@
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Skolem–Noether定理"><header><h1><span class="taxon">Wiki. </span>Skolem–Noether 定理 <a class="slug" href="./Skolem–Noether定理.html">[Skolem–Noether定理]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>陈述</h2>
+<h3>局部环</h3>
 <p>设 $A$ 是局部环 $R$ 上的 <span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span>. 则 $A$ 作为 $R$-代数的自同构均为内自同构, 即形如 $a\mapsto uau^{-1}$, 其中 $u\in A$ 为可逆元.</p>
+<h3>概形</h3>
+<p>设 $A$ 是<span class="link local"><a href="./概形.html" title="概形 [概形]">概形</a></span> $X$ 上的 <span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span>. 则 $A$ 作为 $\mathcal O_X$-代数的自同构在 <strong>Zariski 局部</strong>为内自同构.</p>
 <h2>证明</h2>
-<p>设 $\phi$ 是 $A$ 的自同构.
+<h3>局部环</h3>
+<p>设 $A$ 是局部环 $R$ 上的 <span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span>, $\phi$ 是 $A$ 的自同构.
 那么 $A$ 以两种方式成为左 $A\otimes_R A^{\mathrm{op}}$-模 (即 $(A,A)$ 双模):</p>
 <ul>
 <li>$(a_1\otimes a_2^{\mathrm{op}}) a = a_1 a a_2$ (即正常的双模);</li>
 <li>$(a_1\otimes a_2^{\mathrm{op}}) a = \phi(a_1) a a_2$ (即左模结构经过 $\phi$ 拉回).</li>
 </ul>
 <p>分别记上述两个左 $A\otimes_{R}A^{\mathrm{op}}$-模为 $A$, $A'$.</p>
-<p>用上划线表示 $-\otimes_R R/\mathfrak{m}$. 由于 $\bar A \otimes_{\bar R} \bar A ^{\mathrm{op}}$ 是中心单代数, $\bar A$ 与 $\bar A'$ 是其上的单模, 故存在同构 $\psi\colon \bar A \to \bar A^{\mathrm{op}}$.</p>
+<p><strong>注</strong>. 两个左 $A\otimes_{R}A^{\mathrm{op}}$-模 $A$, $A'$ 分别是 <span class="link local"><a href="./Morita范畴.html" title="Morita 范畴 [Morita范畴]">Morita 范畴</a></span>中 $A$ 的自同构 $\mathrm{id}$ 与 $\phi$. 换言之, 它们分别是 $2$-范畴 <span class="link local"><a href="./高阶模.html" title="高阶模 [高阶模]">$\mathsf{Pr}_R$</a></span> 中 $\mathsf{Mod}(A)$ 的两个自同构 $\mathrm{id}$ 与 $\phi$, 也就是将左 $A$-模结构 “扭曲”.</p>
+<p>用上划线表示 $-\otimes_R R/\mathfrak{m}$. 由于 $\bar A \otimes_{\bar R} \bar A ^{\mathrm{op}}$ 是<span class="link local"><a href="./中心单代数.html" title="中心单代数 [中心单代数]">中心单代数</a></span> (实际上是 $\bar R$ 上的矩阵代数), $\bar A$ 与 $\bar A'$ 是其上的单模, 而一个中心单代数上的单模在同构意义下唯一; 故存在同构 $\psi\colon \bar A \to \bar A'$.</p>
 <p>现在证明 $A$ 是投射 $A\otimes A^{\mathrm{op}}$-模.
 由 $A\otimes A^{\mathrm{op}} \simeq \operatorname{End}(A)$,
 只需证明 $A$ 是投射 $\operatorname{End}(A)$-模. 事实上 $A$ 是 $\operatorname{End}(A)$ 的直和项.
@@ -81,12 +86,15 @@ $$
     \operatorname{End}(A)\to A, f\mapsto f(1)
 $$
 的截面. 这说明 $A$ 是 $\operatorname{End}(A)$ 的直和项, 从而是投射 $\operatorname{End}(A)$-模.</p>
-<p>由于 $A$ 投射, $A\to\bar A\overset{\psi}{\to}\bar A'$ 可提升为同态 $\psi\colon A\to A'$.
-这个同态满足
-$$
-\phi(a)\psi(1)=\psi(a)=\psi(1)a.
-$$
-由中山引理, $\psi$ 为满射. 故存在 $a_0$ 使得 $\psi(a_0)=1$; 由上式知 $\psi(1)$ 可逆, 且 $\phi(a)=\psi(1)a\psi(1)^{-1}$, 即 $\phi$ 为内自同构.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<p>由于 $A$ 投射, $A\to\bar A\overset{\psi}{\to}\bar A'$ 可提升为 $A\otimes_{R}A^{\mathrm{op}}$-模同态 $\psi\colon A\to A'$, 且由<span class="link local"><a href="./中山引理.html" title="中山引理 [中山引理]">中山引理</a></span>, $\psi$ 为满射.</p>
+<p>又注意到</p>
+<ul>
+<li>$\psi(a) = \psi(1a) = \psi(1)a$;</li>
+<li>$\psi(a) = \psi(a1) = \phi(a)\psi(1)$.</li>
+</ul>
+<p>因此 $\phi(a) \psi(1) = \psi(1) a$.</p>
+<p>故存在 $a_0$ 使得 $\psi(a_0)=1$; 由上式知 $\psi(1)$ 可逆, 且 $\phi(a)=\psi(1)a\psi(1)^{-1}$, 即 $\phi$ 为内自同构.</p>
+<h3>概形</h3>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>PGLn <a class="slug" href="./PGLn.html">[PGLn]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>中心单代数 <a class="slug" href="./中心单代数.html">[中心单代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

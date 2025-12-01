@@ -64,9 +64,10 @@
 <h1>TODO</h1>
 <p>第一次讲之后留下的漏洞:</p>
 <ul>
-<li>[ ] 没能写出 <span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">Čech 上圈</a></span>的<span class="link local"><a href="./单纯同伦.html" title="单纯同伦 [单纯同伦]">单纯同伦</a></span>对应的具体条件.</li>
-<li>[ ] 没有说清<span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">非交换 Čech 上同调</a></span>与真正的上同调的关系.</li>
+<li>[x] 没能写出 <span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">Čech 上圈</a></span>的<span class="link local"><a href="./单纯同伦.html" title="单纯同伦 [单纯同伦]">单纯同伦</a></span>对应的具体条件. (<span class="link local"><a href="./单纯同伦.html" title="单纯同伦 [单纯同伦]">单纯同伦</a></span>页面写出了单纯同伦的前几个分量以及具体条件, <span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">非交换 Čech 上同调</a></span>页面写出了具体到 Čech 上圈的情形.)</li>
+<li>[ ] 没有说清具体的 $1$-景上<span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">非交换 Čech 上同调</a></span>与真正的上同调的关系.</li>
 <li>[ ] 没证明 Zariski 局部自由 $\mathcal O_X$-模到平坦局部自由 $\mathcal O_X$-模的拉回函子反映同构 (<span class="link local"><a href="./MilneLEC.html" title="Lectures on Etale Cohomology [MilneLEC]">Milne LEC</a></span> 定理 11.4 证明中略去的部分).</li>
+<li>[ ] 有限群 $G$ 的<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span>与<span class="link local"><a href="./Galois覆叠.html" title="Galois 覆叠 [Galois覆叠]">Galois 覆叠</a></span>, <span class="link local"><a href="./平展基本群.html" title="平展基本群 [平展基本群]">平展基本群</a></span>的关系.</li>
 </ul>
 <h1>主齐性空间与一阶上同调</h1>
 <p>本节的目标是</p>
@@ -126,48 +127,7 @@ $$
 <p>一般而言, <span class="link local"><a href="./上同调.html" title="上同调 [上同调]">上同调</a></span>类的<span class="link local"><a href="./数学对象的表现.html" title="数学对象的表现 [数学对象的表现]">表现</a></span>称为上圈. 对于一阶非 Abel 上同调, 有一种重要的表现称为 <span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">Čech 上圈</a></span>.</p>
 <p><span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">非交换 Čech 上同调</a></span>页面介绍了 Čech 上圈的抽象陈述, Čech 上同调与真正的上同调的关系, 并讨论了 $0$-截断情形.</p>
 <h2>Zariski, 平展与平坦的比较</h2>
-<p><strong>命题</strong> (<span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> III.4.9, <span class="link local"><a href="./Hilbert定理90.html" title="Hilbert 定理 90 [Hilbert定理90]">Hilbert 定理 90</a></span>). 典范的映射
-$$
-H^1(X_{\mathrm{Zar}},\mathbb G_m) \to H^1(X_{\mathrm{\'et}},\mathbb G_m) \to H^1(X_{\mathrm{fl}},\mathbb G_m)
-$$
-均为同构.</p>
-<p>记
-$$
-    f\colon \mathsf{Sh}(X_{\mathrm{fl}})\to \mathsf{Sh}(X_{\mathrm{Zar}})
-$$
-为<span class="link local"><a href="./平展意象.html" title="平展意象 [平展意象]">平展意象</a></span>到 <span class="link local"><a href="./Zariski意象.html" title="Zariski 意象 [Zariski意象]">Zariski 意象</a></span>的比较映射, 其中</p>
-<ul>
-<li>右伴随 (前推) 部分 $f_*$ 来自范畴的嵌入 $X_{\mathrm{Zar}}\to X_{\mathrm{fl}}$;</li>
-<li>左伴随 (拉回) $f^*$ 可由层化定义:
-对于 $F\in\mathsf{Sh}(X_{\mathrm{Zar}})$, $f^*F$ 是 $X_{\mathrm{fl}}$ 上的预层 $U\mapsto \operatorname{colim}_{U\to V\to X}F(V)$ 的层化.</li>
-</ul>
-<p>那么 $f_*$ 将 $\mathbb G_m$ 变为 $\mathbb G_m$. 由 <span class="link local"><a href="./Leray谱序列.html" title="Leray 谱序列 [Leray谱序列]">Leray 谱序列</a></span>
-$$
-    H^p(X_{\mathrm{Zar}},R^qf_*\mathbb G_m)\Rightarrow H^{p+q}(X_{\mathrm{fl}},\mathbb G_m)
-$$
-(来自<span class="link local"><a href="./滤过谱.html" title="“滤过谱” [滤过谱]">滤过谱</a></span> $\Gamma_{X_{\mathrm{Zar}}}(\tau_{\leq\bullet}f_*\mathbb G_m)$), 只需证明
-$$
-    R^1f_*\mathbb G_m = 0.
-$$
-其中 $R^1f_*\mathbb G_m$ 是 Zariski 景上的预层 $U\mapsto H^1(U_{\mathrm{fl}},\mathbb G_m)$ 的层化.
-所以只需证明如下命题 (我们甚至可以对一般的 $\mathrm{GL}_n$ 证明):</p>
-<p><strong>命题</strong> (<span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> III.4.10). 设 $A$ 为局部环, $U=\operatorname{Spec}A$, 则
-$$
-H^1(U_{\mathrm{fl}},\mathrm{GL}_n) = 0.
-$$</p>
-<p><em>证明</em>.
-对任意上同调类 $\alpha\in H^1(U_{\mathrm{fl}},\mathrm{GL}_n)$, 存在忠实平坦有限型仿射 $U$-概形 $V=\operatorname{Spec}B$ 以及上圈 $\phi\colon V\times_U V \to \mathrm{GL}_n$ 表现 $\alpha$, 而 $\phi$ 又可视为同构
-$$
-\begin{aligned}
-    B^n\otimes_A B &amp;\simeq B^n \otimes_B (B\otimes_A B) \\
-    &amp;\simeq
-    (B\otimes_A B)^n
-     \overset{\phi}{\to} (B\otimes_A B)^n\\
-    &amp;\simeq (B\otimes_A B)\otimes_B B^n \simeq B\otimes_A B^n,
-\end{aligned}
-$$
-这恰好给出了 $B^n$ 下降为 $A$-模的下降数据 (回忆模的忠实平坦下降, <span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> I.2.21). 由下降理论, $B^n$ 来自于平坦有限生成 $A$-模. 但 $A$ 为局部环, 这样的 $A$-模一定是自由 $A$-模. 于是上圈 $\phi$ 上同调等价于平凡的上圈.
-$\square$</p>
+<p>见 <span class="link local"><a href="./Zar-fl-et.html" title="Zariski 景, 平展景与平坦景的比较 [Zar-fl-et]">Zariski, 平展与平坦的比较</a></span>.</p>
 <h2>应用: Kummer 理论与 Artin–Schreier 理论</h2>
 <ul>
 <li><span class="link local"><a href="./Kummer理论.html" title="Kummer 理论 [Kummer理论]">Kummer 理论</a></span></li>
@@ -178,8 +138,40 @@ $\square$</p>
 <p>假设读者了解域 $k$ 的 Brauer 群, 即 $k$ 上的<span class="link local"><a href="./中心单代数.html" title="中心单代数 [中心单代数]">中心单代数</a></span>的相似类关于张量积构成的群.</p>
 <h2>局部环的 Brauer 群</h2>
 <p>设 $R$ 为<span class="link local"><a href="./局部环.html" title="“局部环” [局部环]">局部环</a></span>.</p>
+<p>相比于一个 <span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span>具体是什么, 我们其实更加关心 Azumaya 代数的<strong>自同构群</strong>是什么. 因为我们最后关心的是这种对象的<strong>丛的同构类</strong>集合; 而任何一个丛都关联于一个群的<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span>, 这个群正是纤维的<strong>自同构群</strong>. 所以如下的命题是尤其重要的. 但目前我不知道如何更好地理解这个命题.</p>
 <p><strong>命题</strong> (<span class="link local"><a href="./Skolem–Noether定理.html" title="Skolem–Noether 定理 [Skolem–Noether定理]">Skolem–Noether 定理</a></span>, <span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> 命题 IV.1.4). 设 $A$ 是 $R$ 上的 <span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span>. 则 $A$ 作为 $R$-代数的自同构均为内自同构, 即形如 $a\mapsto uau^{-1}$, 其中 $u\in A$ 为可逆元.</p>
 <p><strong>命题</strong> (<span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> 推论 IV.1.5). $M_n(R)$ 作为 $R$-代数的自同构群是 $\mathrm{PGL}_n(R) = \mathrm{GL}_n(R) / R^*$.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Meta" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Meta. </span>讲稿 <a class="slug" href="./notes.html">[notes]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Meta" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Meta. </span>亟需施工的页面 <a class="slug" href="./todo.html">[todo]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<h2>Azumaya 代数与概形的 Brauer 群</h2>
+<p><span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span>, <span class="link local"><a href="./Skolem–Noether定理.html" title="Skolem–Noether 定理 [Skolem–Noether定理]">Skolem–Noether定理</a></span>页面介绍了 Azumaya 代数的基本性质:</p>
+<ul>
+<li>概形上的 Azumaya 代数是<span class="link local"><a href="./平展景.html" title="平展景 [平展景]">平展</a></span>局部矩阵代数.</li>
+<li>概形上的 Azumaya 代数的自同构在 <strong>Zariski 局部</strong>为内自同构.</li>
+<li>概形上的 Azumaya 代数的<strong>同构类</strong> (而非相似类) 由 $H^1(X_{\mathrm{\'et}},\mathrm{PGL}_n)$ 分类.</li>
+<li>群同态 $\mathrm{GL}_n \to \mathrm{PGL}_n$ 给出的<span class="link local"><a href="./非Abel上同调.html" title="非 Abel 上同调 [非Abel上同调]">上同调</a></span>的映射 $H^1(X_{\mathrm{\'et}},\mathrm{GL}_n) \to H^1(X_{\mathrm{\'et}},\mathrm{PGL}_n)$ (向量丛 $\to$ Azumaya 代数) 将向量丛 $E$ 对应到 $\operatorname{End}(E)$.</li>
+</ul>
+<h3>正合列</h3>
+<h3>挠</h3>
+<p>下图中每行每列均为群的<span class="link local"><a href="./群短正合列.html" title="群的短正合列 [群短正合列]">短正合列</a></span>:
+$$
+\begin{array}
+{ccccc}
+\mu_n &amp; \to &amp; \mathbb G_m &amp; \to &amp; \mathbb G_m\\
+\downarrow &amp; &amp; \downarrow &amp; &amp; |\!| \\
+\mathrm{SL}_n &amp; \to &amp; \mathrm{GL}_n &amp; \to &amp; \mathbb G_m\\
+\downarrow &amp; &amp; \downarrow &amp; &amp; \\
+\mathrm{PGL}_n &amp; = &amp; \mathrm{PGL}_n
+\end{array}
+$$</p>
+<p>比较第一列与第二列的上同调长正合列, 可得
+$$
+\begin{array}
+{ccc}
+H^1(X,\mathrm{PGL}_n) &amp; \overset{\mathrm{id}}{\to} &amp; H^1(X,\mathrm{PGL}_n)\\
+\downarrow &amp; &amp; \downarrow \\
+H^2(X,\mu_n) &amp; \to &amp; H^2(X,\mathbb G_m).
+\end{array}
+$$
+而 $H^2(X,\mu_n)$ 是 $n$-挠群, 故同态 $H^1(X,\mathrm{PGL}_n) \to H^2(X,\mathbb G_m)$ 的像是 $n$-挠群.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Brauer 群 <a class="slug" href="./Brauer群.html">[Brauer群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Meta" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Meta. </span>讲稿 <a class="slug" href="./notes.html">[notes]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Meta" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Meta. </span>亟需施工的页面 <a class="slug" href="./todo.html">[todo]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

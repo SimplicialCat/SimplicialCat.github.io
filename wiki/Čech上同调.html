@@ -57,10 +57,21 @@
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Čech上同调"><header><h1><span class="taxon">Wiki. </span>Čech 上同调 <a class="slug" href="./Čech上同调.html">[Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>观念</h2>
-<p>Čech 上同调是一种用<span class="link local"><a href="./Grothendieck拓扑.html" title="Grothendieck 拓扑 [Grothendieck拓扑]">覆盖</a></span>的 <span class="link local"><a href="./Čech脉.html" title="Čech 脉 [Čech脉]">Čech 脉</a></span>来计算<span class="link local"><a href="./上同调.html" title="上同调 [上同调]">上同调</a></span>的方法.</p>
+<p>Čech 上同调是一种用<span class="link local"><a href="./Grothendieck拓扑.html" title="Grothendieck 拓扑 [Grothendieck拓扑]">覆盖</a></span>的 <span class="link local"><a href="./Čech脉.html" title="Čech 脉 [Čech脉]">Čech 脉</a></span>来计算<span class="link local"><a href="./上同调.html" title="上同调 [上同调]">上同调</a></span>的方法. 一般 Čech 上同调计算的是 Abel 群 (<span class="link local"><a href="./E∞-群.html" title="E∞-群 [E∞-群]">$\mathbb E_\infty$-群</a></span>) 系数的上同调, 但少数情形也有<span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">非交换 Čech 上同调</a></span>.</p>
 <h2>定义</h2>
-<p>设 $X$ 为拓扑空间, $\mathcal F$ 为其上的预<span class="link local"><a href="./层.html" title="拓扑空间上的层 [层]">层</a></span>.</p>
-<p>设 $\mathscr U =(U_\alpha)$ 为 $X$ 的 (局部有限) 开覆盖. 下面我们定义 $\mathscr U$ 上取值在 $\mathcal F$ 中的上链复形
+<h3>单纯对象</h3>
+<p>先讨论最广义的情形 (甚至包含了<span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">非交换 Čech 上同调</a></span>): 我们试图计算以<span class="link local"><a href="./单纯对象.html" title="单纯对象 [单纯对象]">单纯对象</a></span> (的<span class="link local"><a href="./几何实现(单纯图表的余极限).html" title="几何实现 (作为单纯图表的余极限) [几何实现(单纯图表的余极限)]">几何实现</a></span>) 为系数的上同调. 设 $\mathcal C$ 为 <span class="link local"><a href="./∞-意象.html" title="∞-意象 [∞-意象]">$\infty$-意象</a></span>, 记 $\mathsf{s}\mathcal{C}$ 为<span class="link local"><a href="./单纯对象.html" title="单纯对象 [单纯对象]">单纯对象</a></span>的范畴.
+定义 $\mathcal C$ 中的覆盖 (<span class="link local"><a href="./意象中的满射.html" title="意象中的满射 [意象中的满射]">满射</a></span>) $U\to X$ 上取值于<span class="link local"><a href="./单纯对象.html" title="单纯对象 [单纯对象]">单纯对象</a></span> $A\in\mathsf{s}\mathcal{C}$ 的 <strong>Čech 上圈</strong>为<span class="link local"><a href="./单纯对象.html" title="单纯对象 [单纯对象]">单纯对象</a></span>的同态
+$$
+\text{\v{C}}(U\to X) \to A,
+$$
+也即对每个 $[n]\in\Delta$ 给出相容的同态
+$$
+\underbrace{U\times_X U \times_X \cdots\times_X U}_{n+1} \to A_n.
+$$</p>
+<h3>Abel 群</h3>
+<p>设 $\mathcal C$ 为 <span class="link local"><a href="./∞-意象.html" title="∞-意象 [∞-意象]">$\infty$-意象</a></span>, $A$ 为其中的 <span class="link local"><a href="./E∞-群.html" title="E∞-群 [E∞-群]">$\mathbb E_\infty$-群</a></span>.</p>
+<p>设 $U\to X$ 为覆盖. 下面我们定义 $\mathscr U$ 上取值在 $\mathcal F$ 中的上链复形
 $$
 0\to C^0(\mathscr U,\mathcal F)\to C^1(\mathscr U,\mathcal F) \to \cdots.
 $$</p>

@@ -57,9 +57,10 @@
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="非交换Čech上同调"><header><h1><span class="taxon">Wiki. </span>非交换 Čech 上同调 <a class="slug" href="./非交换Čech上同调.html">[非交换Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>观念</h2>
-<p>非交换 Čech 上同调是用 <span class="link local"><a href="./Čech上同调.html" title="Čech 上同调 [Čech上同调]">Čech 上同调</a></span>计算<span class="link local"><a href="./非Abel上同调.html" title="非 Abel 上同调 [非Abel上同调]">非 Abel 上同调</a></span>的方法.</p>
+<p>非交换 Čech 上同调是用 <span class="link local"><a href="./Čech脉.html" title="Čech 脉 [Čech脉]">Čech 脉</a></span>计算<span class="link local"><a href="./非Abel上同调.html" title="非 Abel 上同调 [非Abel上同调]">非 Abel 上同调</a></span>的方法, 是 <span class="link local"><a href="./Čech上同调.html" title="Čech 上同调 [Čech上同调]">Čech 上同调</a></span>的非交换推广.</p>
+<p>对象 $X$ 上群 $G$ 系数的 $1$ 阶非 Abel 上同调即 $X$ 到 $\mathbf{B}G$ 的映射类, 也即 $X$ 上 $G$-<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span>的等价类; 若 $X$ 上的<span class="link local"><a href="./主丛.html" title="主齐性空间, 主丛 [主丛]">主丛</a></span> $P$ 被 $X$ 的覆盖 $U\to X$ 平凡化, 则对应的映射类 $X\to\mathbf{B}G$ 可被 $G$-Čech 上圈<span class="link local"><a href="./几何实现(单纯图表的余极限).html" title="几何实现 (作为单纯图表的余极限) [几何实现(单纯图表的余极限)]">实现</a></span>.</p>
 <h2>定义</h2>
-<h3>一般情形</h3>
+<h3>一阶: 一般情形</h3>
 <p>这里 “覆盖” 指的是 <span class="link local"><a href="./∞-意象.html" title="∞-意象 [∞-意象]">$\infty$-意象</a></span>中的<span class="link local"><a href="./有效满射.html" title=" [有效满射]">有效满射</a></span>, 即在 $\pi_0$ 上满的映射.</p>
 <p><strong>定义</strong>. 覆盖 $U\to X$ 上的 $1$ 阶 $G$-<strong>Čech 上圈</strong>是 <span class="link local"><a href="./Čech脉.html" title="Čech 脉 [Čech脉]">Čech 脉</a></span> (作为<span class="link local"><a href="./单纯对象.html" title="单纯对象 [单纯对象]">单纯对象</a></span>) 之间的态射
 $$
@@ -75,16 +76,31 @@ $$
 <li>$\mathrm{pr}_1, \mu, \mathrm{pr}_2\colon G\times G\to G$</li>
 </ul>
 </li>
-<li>满足 $\mathrm{pr}_1 \alpha_2 = \alpha_1 \mathrm{pr}_{12}$, $\mathrm{pr}_2 \alpha_2 = \alpha_1 \mathrm{pr}_{23}$, $\mu \alpha_2 = \alpha_1 \mathrm{pr}_{13}$, (这些条件推出 $\mu\circ (\alpha_1\mathrm{pr}_{12},\alpha_1\mathrm{pr}_{23})=\alpha_1\mathrm{pr}_{13}$)</li>
+<li>满足 $\mathrm{pr}_1 \alpha_2 = \alpha_1 \mathrm{pr}_{12}$, $\mathrm{pr}_2 \alpha_2 = \alpha_1 \mathrm{pr}_{23}$, $\mu \alpha_2 = \alpha_1 \mathrm{pr}_{13}$,</li>
 <li>…</li>
 </ul>
+<p>例如, 由上面写出的这些条件可得等式 $\mu\circ (\alpha_1\mathrm{pr}_{12},\alpha_1\mathrm{pr}_{23})=\alpha_1\mathrm{pr}_{13}$, 也即
+$$
+\alpha (u,v)\alpha(v,w) = \alpha(u,w).
+$$</p>
+<h4>上同调等价</h4>
 <p><strong>定义</strong>, 对于覆盖 $U\to X$ 上的两个 $G$-Čech 上圈 $\alpha,\alpha'$, 若存在<span class="link local"><a href="./单纯同伦.html" title="单纯同伦 [单纯同伦]">单纯同伦</a></span> $\alpha\to\alpha'$, 即
 $$
 \eta \colon \text{\v{C}}(U\to X)\times\Delta^1\to \text{\v{C}}(*\to \mathbf{B}G),
 $$
 满足 $\eta_0 = \alpha$, $\eta_1 = \alpha'$, 则称 $\alpha,\alpha'$ <strong>上同调等价</strong> (cohomologous).</p>
+<p>由<span class="link local"><a href="./单纯同伦.html" title="单纯同伦 [单纯同伦]">单纯同伦</a></span>页面写下的条件, $G$-Čech 上圈 $\alpha,\alpha'$ 的上同调等价包含如下资料:</p>
 <ul>
-<li>$\eta_0\colon U\to G$… <span class="link local"><a href="./todo.html" title="亟需施工的页面 [todo]">todo</a></span></li>
+<li>记 $h_1(-,01) \colon U\times_X U \to G$ 为 $h(u,v)$, 则
+<ul>
+<li>$h(v,w)\alpha(u,v) = h(u,w)$,</li>
+<li>$\alpha'(v,w)h(u,v)=h(u,w)$.</li>
+</ul>
+</li>
+<li>令 $\eta(u) = h(u,u)$, 则由上两式,
+$$
+\eta(v)\alpha(u,v) = h(u,v) = \alpha'(u,v) \eta(u).
+$$</li>
 </ul>
 <p>覆盖 $U\to X$ 上的 $1$ 阶 $G$-Čech 上圈的等价类记为 $H^1(U/X,G)$; 在许多场合中, 可以定义 $X$ 的 $G$-系数 $1$ 阶<strong>非交换 Čech 上同调</strong>为对<strong>某些</strong>覆盖的余极限
 $$
@@ -98,27 +114,32 @@ $$
 \begin{array}
     {ccc}
     U &amp; \to &amp; * \\
-    \downarrow &amp; &amp; \downarrow \\
+    \downarrow &amp; \swarrow \!\!{\scriptsize\alpha}\!\!\!\! &amp; \downarrow \\
     X &amp; \to &amp; \mathbf{B}G.
 \end{array}
 $$
-此时由 <span class="link local"><a href="./Čech脉.html" title="Čech 脉 [Čech脉]">Čech 脉</a></span>的函子性, 当然有 Čech 脉之间的映射.</p>
+此时由 <span class="link local"><a href="./Čech脉.html" title="Čech 脉 [Čech脉]">Čech 脉</a></span>的函子性, 当然有 Čech 脉之间的映射. 注意, 上述交换图是一个<span class="link local"><a href="./结构.html" title="结构, 性质 [结构]">结构而非性质</a></span>, 其中的 $2$-态射 $\alpha\colon \mathrm{triv}\to p$ 要参与到 Čech 上圈的计算中. 例如要计算其在 Čech 脉的第 $1$ 层上的映射, 考虑下图:
+$$
+\begin{array}
+  {ccccc}
+  \!\!\!\!\!\!\!\!\!\! U\times_X U \!\!\!\! &amp; \to &amp; U \\
+  \downarrow &amp; &amp; \downarrow &amp; \searrow \\
+  U &amp; \to &amp; X &amp; &amp; *\\
+  &amp; \searrow &amp; &amp; \searrow &amp; \downarrow \\
+  &amp;&amp; * &amp; \to &amp; \mathbf{B}G,
+\end{array}
+$$
+其中右方, 下方两个平行四边形均为 $2$-态射 $\alpha$. 可得 Čech 脉的第 $1$ 层上的映射为
+$$
+(\alpha\mathrm{pr}_2)^{-1} (\alpha\mathrm{pr}_1)\colon  U\times_X U \to G = *\times_{\mathbf{B}G} *.
+$$</p>
 <p>总结起来, 要想
 $$
 \check H^1(X, G):=\operatorname{colim}_{U\to X} H^1(U/ X, G).
 $$
 计算了真正的 $H^1(X,G)$, 就是要用合适的覆盖去平凡化每个 $G$-主丛.</p>
-<h3>截断情形</h3>
-<p>设 $G$ 是<span class="link local"><a href="./意象.html" title="意象 [意象]">意象</a></span> $\mathcal X$ 中的 $0$-<span class="link local"><a href="./截断性.html" title="截断性 [截断性]">截断</a></span><span class="link local"><a href="./群.html" title="群 [群]">群</a></span>. 传统的非交换 Čech 上同调的定义即是前述一般定义在这种情形的具体表述.</p>
-<p>对于覆盖 $U\to X$, 一个 $1$ 阶 $G$-Čech 上圈是一个态射 $\alpha \colon U\times_X U\to G$, 满足
-$$
-\alpha (u,v)\alpha(v,w) = \alpha(u,w).
-$$
-两个上圈 $\alpha,\alpha'$ <strong>上同调等价</strong>是指存在一个态射 $h\colon U\to G$ 满足
-$$
-h(u) \alpha(u,v) = \alpha(u,v) h(v).
-$$</p>
-<p>注意由于 $G$ 是 $0$-截断对象, 映射 $*\to \mathbf{B}G$ 是 $0$-截断映射, 从而其拉回也是 $0$-截断映射. 这意味着 $0$-截断对象 $X$ 上的 $G$-主丛的全空间也是 $0$-截断对象, 也就是落在 $1$-意象 $\mathcal X_{\leq 0}$ 中.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Meta" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Meta. </span>单纯百科 Simplopedia <a class="slug" href="./index.html">[index]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>主齐性空间, 主丛 <a class="slug" href="./主丛.html">[主丛]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>非 Abel 上同调 <a class="slug" href="./非Abel上同调.html">[非Abel上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<h3>二阶: 交叉模</h3>
+<p>设 $(G,H,\delta,\alpha)$ 为<span class="link local"><a href="./交叉模.html" title="交叉模 [交叉模]">交叉模</a></span>.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 代数 <a class="slug" href="./Azumaya代数.html">[Azumaya代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Zariski 景, 平展景与平坦景的比较 <a class="slug" href="./Zar-fl-et.html">[Zar-fl-et]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Meta" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Meta. </span>单纯百科 Simplopedia <a class="slug" href="./index.html">[index]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Čech 上同调 <a class="slug" href="./Čech上同调.html">[Čech上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>主齐性空间, 主丛 <a class="slug" href="./主丛.html">[主丛]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>非 Abel 上同调 <a class="slug" href="./非Abel上同调.html">[非Abel上同调]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

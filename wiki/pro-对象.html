@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>pro-对象</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="pro-对象"><header><h1><span class="taxon">Wiki. </span>pro-对象 <a class="slug" href="./pro-对象.html">[pro-对象]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>范畴 $\mathcal C$ 的 pro-对象是其对象的形式<span class="link local"><a href="./余滤极限.html" title="余滤极限 [余滤极限]">余滤极限</a></span>.</p>
+<h2>定义</h2>
+<p>范畴 $\mathcal C$ 的 pro-对象的范畴
+$$
+\mathsf{Pro}(\mathcal C) \hookrightarrow \mathsf{Fun}(\mathcal C,\mathsf{Set})^{\mathrm{op}}
+$$
+是<span class="link local"><a href="./可表函子.html" title="可表函子 [可表函子]">可表函子</a></span>在 $\mathsf{Fun}(\mathcal C,\mathsf{Set})^{\mathrm{op}}$ 中的<span class="link local"><a href="./余滤极限.html" title="余滤极限 [余滤极限]">余滤极限</a></span>构成的全子范畴.</p>
+<h2>例</h2>
+<ul>
+<li><span class="link local"><a href="./pro-有限集.html" title="pro-有限集 [pro-有限集]">pro-有限集</a></span></li>
+<li><span class="link local"><a href="./pro-有限群.html" title="pro-有限群 [pro-有限群]">pro-有限群</a></span></li>
+</ul>
+<h2>性质</h2>
+<h3>态射的计算</h3>
+<p>由<span class="link local"><a href="./米田引理.html" title="米田引理 [米田引理]">米田引理</a></span>, 对于 $X\in\mathsf{Pro}(\mathcal C)$ (视为函子 $\mathcal C\to\mathsf{Set}$) 与 $c\in\mathcal C$,
+$$
+\operatorname{Hom}_{\mathsf{Pro}(\mathcal C)}(X,\mathbf{y}(c))\simeq X(c).
+$$
+因此我们可以谈论 “$X$ 到 $c$ 的态射”, 也即 $X(c)$ 的元素.</p>
+<p>由定义和 $\operatorname{Hom}$ 函子保持极限的性质, 可直接得到 pro-对象之间的态射的如下计算.</p>
+<p><strong>命题</strong>. 设 $X,Y\in\mathsf{Pro}(\mathcal C)$ 对应函子 $X,Y\colon \mathcal C\to\mathsf{Set}$.
+$$
+\operatorname{Hom}_{\mathsf{Pro}(\mathcal C)}(X,Y) \simeq \operatorname{lim}_{Y \to d}\operatorname{colim}_{X\to c} \operatorname{Hom}(c,d).
+$$
+其中, $X\to c$ 表示的是 $X$ 到对象 $c\in\mathcal C$ 的 “态射”, 也即 $X(c)$ 的元素.</p>
+<p>具体证明见<span class="link local"><a href="./预层意象.html" title="预层意象 [预层意象]">预层</a></span>页面 “态射的计算” 小节.</p>
+<h3>自由余滤完备化</h3>
+<p>范畴 $\mathcal C$ 的 pro-对象的范畴 $\mathsf{Pro}(\mathcal C)$ 可视为向 $\mathcal C$ 中自由地添加余滤极限的结果. 这体现为如下的结论.</p>
+<p><strong>命题</strong>. 设 $\mathcal C$ 为范畴, $\mathcal D$ 是具有余滤极限的范畴, 有全忠实嵌入 $i\colon \mathcal C\to\mathcal D$, 且 $i$ 的像落在<span class="link local"><a href="./紧对象.html" title="紧对象 [紧对象]">余紧对象</a></span>的子范畴中. 那么 $i$ 可沿 $\mathcal C\to\mathsf{Pro}(\mathcal C)$ <span class="link local"><a href="./Kan扩张.html" title="Kan 扩张 [Kan扩张]">右 Kan 扩张</a></span>成为全忠实嵌入 $i\colon \mathsf{Pro}(\mathcal C) \to \mathcal D$; 对于 pro-对象 $X\colon \mathcal C\to\mathsf{Set}$,
+$$
+i(X) = \operatorname{lim}_{X\to c} i(c).
+$$</p>
+<p><em>证明</em>.
+设 $X,Y\in\mathsf{Pro}(\mathcal C)$,
+$$
+\begin{aligned}
+\operatorname{Hom}_{\mathsf{Pro}(\mathcal C)}(X,Y)
+&amp;\simeq
+\operatorname{lim}_{Y\to d}\operatorname{colim}_{X\to c}\operatorname{Hom}_{\mathcal C}(c,d)\\
+&amp;\simeq
+\operatorname{lim}_{Y\to d}\operatorname{colim}_{X\to c}\operatorname{Hom}_{\mathcal D}(i(c),i(d))\\
+&amp;\simeq^*
+\operatorname{lim}_{Y\to d}\operatorname{Hom}_{\mathcal D}(\operatorname{lim}_{X\to c}i(c),i(d))\\
+&amp;\simeq \operatorname{Hom}_{\mathcal D}(\operatorname{lim}_{X\to c}i(c),\operatorname{lim}_{Y\to d}i(d))\\
+&amp;\simeq\operatorname{Hom}_{\mathcal D}(i(X),i(Y)).
+\end{aligned}
+$$
+其中标记为 $\simeq^*$ 的一步使用了 $i(d)$ 的余紧性. $\square$</p>
+<p>上述命题的一个重要应用是将 <span class="link local"><a href="./pro-有限集.html" title="pro-有限集 [pro-有限集]">pro-有限集</a></span>与 <span class="link local"><a href="./pro-有限群.html" title="pro-有限群 [pro-有限群]">pro-有限群</a></span>视为紧 Hausdorff 空间, 因为有限离散空间是紧 Hausdorff 空间范畴 $\mathsf{CHaus}$ 中的余紧对象.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>pro-可表函子 <a class="slug" href="./pro-可表函子.html">[pro-可表函子]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>pro-有限集 <a class="slug" href="./pro-有限集.html">[pro-有限集]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>平展基本群 <a class="slug" href="./平展基本群.html">[平展基本群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>经典 Galois 理论 <a class="slug" href="./经典Galois理论.html">[经典Galois理论]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

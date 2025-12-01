@@ -62,9 +62,21 @@ $$
 $$
 其中</p>
 <ul>
-<li>“语法” 是由少量信息<span class="link local"><a href="./数学对象的表现.html" title="数学对象的表现 [数学对象的表现]">表现</a></span>的一个较为抽象的结构, 通常是一个代数或一个范畴, 其中的元素或对象记录了某种语言;</li>
-<li>“语义” 是某一类较为具体的, 或在实践中自然出现的对象;</li>
-<li>这个函子表达的是一个指定的结构相当于<strong>给语法的每个对象赋予一个具体的意义</strong>的过程.</li>
+<li>“语法” 是由少量信息<span class="link local"><a href="./数学对象的表现.html" title="数学对象的表现 [数学对象的表现]">表现</a></span>的一个较为抽象的结构, 通常是一个代数或一个范畴, 其中的元素或对象记录了某种语言 (如某种<span class="link local"><a href="./一阶语言.html" title="一阶语言 [一阶语言]">一阶语言</a></span>);</li>
+<li>“语义” 是某一类较为具体的, 或在实践中自然出现的代数对象;</li>
+<li>这个函子表达的是一个指定的结构相当于<strong>给语法的每个对象赋予一个具体的意义</strong>的过程 (如<span class="link local"><a href="./一阶语言的解释.html" title="一阶语言的解释 [一阶语言的解释]">一阶语言的解释</a></span>).</li>
+</ul>
+<h3>代数–几何对偶, 与分类空间的联系</h3>
+<p>若将上述的 “语法” 和 “语义” 视为代数对象, 则从<span class="link local"><a href="./代数-几何对偶.html" title="代数–几何对偶 [代数-几何对偶]">对偶</a></span>的几何侧来看, 一个数学结构是一个映射
+$$
+\text{参数空间} \to \text{分类空间},
+$$</p>
+<p>其中</p>
+<ul>
+<li>参数空间是某个在实践中自然出现的几何对象;</li>
+<li><strong>参数空间</strong>是<strong>语义</strong>的对偶;</li>
+<li><strong></strong><span class="link local"><a href="./分类空间.html" title="分类空间 [分类空间]">分类空间</a></span>是<strong>语法</strong>的对偶;</li>
+<li>这个映射表达的是一个指定的结构相当于<strong>对参数空间的每一个点赋予一个结构</strong>的过程.</li>
 </ul>
 <h2>例</h2>
 <h3>代数方程组的解</h3>
@@ -72,11 +84,21 @@ $$
 $$
 \mathbb{Z}[x]/(f) \to A,
 $$
-其中 $x$ 在 $A$ 中的像即是这个解. 当然, 本例也可推广到多个变量, 多个方程构成的方程组. 在<span class="link local"><a href="./代数-几何对偶.html" title="代数–几何对偶 [代数-几何对偶]">代数–几何对偶</a></span>之下这个环同态对应<span class="link local"><a href="./仿射概形.html" title="仿射概形 [仿射概形]">仿射概形</a></span>的映射
+其中 $x$ 在 $A$ 中的像即是这个解,</p>
+<ul>
+<li>$\mathbb{Z}[x]/(f)$ 是记录<strong>语法</strong>的代数对象,</li>
+<li>$A$ 是记录<strong>语义</strong>的代数对象.</li>
+</ul>
+<p>(当然, 本例也可推广到多个变量, 多个方程构成的方程组. 类似地, 微分方程组的解可表示为 <span class="link local"><a href="./D-模.html" title="D-模 [D-模]">D-模</a></span>的同态.)</p>
+<p>在<span class="link local"><a href="./代数-几何对偶.html" title="代数–几何对偶 [代数-几何对偶]">代数–几何对偶</a></span>之下, 环同态 $\mathbb{Z}[x]/(f) \to A$ 对应<span class="link local"><a href="./仿射概形.html" title="仿射概形 [仿射概形]">仿射概形</a></span>的映射
 $$
 \operatorname{Spec} A \to \operatorname{Spec}\mathbb{Z}[x]/(f) = \{x\in \mathbb A^1 \mid f(x) = 0\}.
-$$</p>
-<p>类似地, 微分方程组的解可表示为 <span class="link local"><a href="./D-模.html" title="D-模 [D-模]">D-模</a></span>的同态.</p>
+$$
+其中</p>
+<ul>
+<li>$\operatorname{Spec}A$ 是<strong>参数空间</strong>,</li>
+<li>$\operatorname{Spec}\mathbb{Z}[x]/(f)$ 是方程的解的<strong>分类空间</strong>.</li>
+</ul>
 <h3>交换半群</h3>
 <p>考虑有限集关于无交并构成的<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半范畴</a></span> $\mathsf{Fin}^{\sqcup}$,
 以及集合关于乘积构成的对称幺半范畴 $\mathsf{Set}^\times$.

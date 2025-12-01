@@ -57,7 +57,11 @@
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Azumaya代数"><header><h1><span class="taxon">Wiki. </span>Azumaya 代数 <a class="slug" href="./Azumaya代数.html">[Azumaya代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>观念</h2>
-<p>环或<span class="link local"><a href="./概形.html" title="概形 [概形]">概形</a></span>上的 <strong>Azumaya 代数</strong>是域上的<span class="link local"><a href="./中心单代数.html" title="中心单代数 [中心单代数]">中心单代数</a></span>的推广, 是 <span class="link local"><a href="./Morita等价.html" title=" [Morita等价]">Morita 等价</a></span>下可逆的代数, 给出 <span class="link local"><a href="./Brauer群.html" title="Brauer 群 [Brauer群]">Brauer 群</a></span>的元素.</p>
+<p>环或<span class="link local"><a href="./概形.html" title="概形 [概形]">概形</a></span>上的 <strong>Azumaya 代数</strong><sup class="footnote-reference" id="Azumaya代数_az-back"><a href="#Azumaya代数_az">1</a></sup>是域上的<span class="link local"><a href="./中心单代数.html" title="中心单代数 [中心单代数]">中心单代数</a></span>的推广, 是 <span class="link local"><a href="./Morita等价.html" title=" [Morita等价]">Morita 等价</a></span>下可逆的代数, 给出 <span class="link local"><a href="./Brauer群.html" title="Brauer 群 [Brauer群]">Brauer 群</a></span>的元素.</p>
+<div class="footnote-definition" id="Azumaya代数_az">
+  <sup class="footnote-definition-label"><a href="#Azumaya代数_az-back">1</a></sup>
+<p><strong>注</strong>. 東屋 五郎, Azumaya Gorō</p>
+</div>
 <p>Azumaya 代数在<span class="link local"><a href="./平展景.html" title="平展景 [平展景]">平展</a></span>局部上是矩阵代数.</p>
 <h2>定义</h2>
 <h3>局部环</h3>
@@ -67,7 +71,39 @@
 <li>映射 $A\otimes_R A^{\mathrm{op}} \to \operatorname{End}_R(A)$, $a\otimes a'\mapsto (x\mapsto axa')$ 为同构.</li>
 </ul>
 <p>由定义, Azumaya 代数在 <span class="link local"><a href="./Morita等价.html" title=" [Morita等价]">Morita 等价</a></span>的意义下可逆.</p>
+<p>一种等价的定义是仅对 “纤维” (剩余域) 作要求. 记 $k= R/\mathfrak m$ 为剩余域, 则 $R$-代数 $A$ 是 Azumaya 代数当且仅当</p>
+<ul>
+<li>$A$ 是有限维自由 $R$-模, 且 $\bar{A} := A\otimes_R k$ 是 $k$ 上的 Azumaya 代数 (由后面证明的性质, 此即域 $k$ 上的<span class="link local"><a href="./中心单代数.html" title="中心单代数 [中心单代数]">中心单代数</a></span>).</li>
+</ul>
+<p><em>证明</em>.
+基本上是<span class="link local"><a href="./中山引理.html" title="中山引理 [中山引理]">中山引理</a></span>的直接应用.</p>
+<h3>概形</h3>
+<p><strong>定义 1</strong>. 概形 $X$ 上的 Azumaya 代数是满足如下条件的 $\mathcal O_X$-代数 $A$:</p>
+<ul>
+<li>$A$ 是<span class="link local"><a href="./凝聚层.html" title="凝聚层 [凝聚层]">凝聚</a></span> $\mathcal O_X$-模;</li>
+<li>对 $X$ 的闭点 $x$, $A_x$ 是 $\mathcal O_{X,x}$ 上的 Azumaya 代数. 由局部环上 Azumaya 代数的性质, 这个条件可以仅在点处的 “纤维” (剩余域) 上验证.</li>
+</ul>
+<p>下面是一个等价的定义, 可视为将局部环上 Azumaya 代数的条件用 $X$ 的<span class="link local"><a href="./意象的内语言.html" title="意象的内语言 [意象的内语言]">内语言</a></span>陈述 (在 $X$ 的<span class="link local"><a href="./意象的内语言.html" title="意象的内语言 [意象的内语言]">内语言</a></span>中 $\mathcal O_X$ 为<span class="link local"><a href="./局部环.html" title="“局部环” [局部环]">局部环</a></span>):</p>
+<p><strong>定义 2</strong> (“内语言定义”). $A$ 为 $\mathcal O_X$-代数, 且为有限型 “自由” $\mathcal O_X$-模, 且 $A\otimes A^{\mathrm{op}} \to \operatorname{End}_{\mathcal O_X}(A)$ 为同构.</p>
+<p><strong>注</strong>. 内语言中的 “自由” 翻译到外部即局部自由.</p>
+<p>另一个等价的定义是</p>
+<p><strong>定义 3</strong> (“<span class="link local"><a href="./平展景.html" title="平展景 [平展景]">平展</a></span> / 平坦局部矩阵代数”). $A$ 为 $\mathcal O_X$-代数, 且为有限型 $\mathcal O_X$-模, 且存在<span class="link local"><a href="./平展景.html" title="平展景 [平展景]">平展</a></span>覆盖 (或平坦覆盖) $(U_i \to X)$, 使得 $A_{U_i}$ 是 $\mathcal O_{U_i}$ 上的矩阵代数.</p>
+<p>我们证明后两种定义与定义 1 等价.</p>
+<ul>
+<li>假设 $A$ 在每个局部环 $\mathcal O_{X,x}$ 上均为 Azumaya 代数, 那么 $(A\otimes A^{\mathrm{op}})_x \simeq A_x\otimes A^{\mathrm{op}}_x$, $\operatorname{End}_{\mathcal O_X}(A)_x \simeq \operatorname{End}_{\mathcal O_{X,x}}(A_x)$, 于是 $A\otimes A^{\mathrm{op}} \to \operatorname{End}_{\mathcal O_X}(A)$ 为同构. 所以 “内语言定义” 与原定义等价.</li>
+<li>假设 $A$ 在平展或平坦覆盖 $(U_i \to X)$ 上为矩阵代数. 那么 $U=\bigsqcup U_i$ 在 $X$ 上忠实平坦, 可得 $A$ 平坦从而为 Zariski 局部自由 $\mathcal O_X$-模. 在每一点 $x$ 的纤维 (剩余域) 上, 记 $A(x) := A_x \otimes k(x)$, 那么平坦覆盖 $U$ 上任何一个打到 $x$ 的点都给出 $k(x)$ 的一个域扩张 $k'$, 使得 $A(x) \otimes_{k(x)} k'$ 是 $k'$ 上的矩阵代数. 这推出 $A(x)$ 是 $k$ 上的中心单代数, 即 Azumaya 代数. 所以 “平坦局部矩阵代数” 与原定义等价.</li>
+</ul>
+<h3>环谱</h3>
+<p>设 $R$ 是 $\mathbb E_3$-环谱, 那么 $\mathsf{Mod}(R)$ 是 $\mathbb E_2$-幺半范畴, <span class="link local"><a href="./高阶模.html" title="高阶模 [高阶模]">$1\mathsf{Pr}_R=\mathsf{Mod}(\mathsf{Mod}(R))$</a></span> 是 $\mathbb E_1$-幺半范畴. 定义 $R$ 上的 Azumaya 代数为 $1\mathsf{Pr}_R$ 中的可逆对象.</p>
 <h2>性质</h2>
+<h3>张量积</h3>
+<p><strong>命题</strong>. 局部环 $R$ 上的 Azumaya 代数 $A,B$ 的张量积 $A\otimes_R B$ 仍为 Azumaya 代数.</p>
+<p><em>证明</em>. 这是如下事实的推论:</p>
+<ul>
+<li>$R$-代数 $A$ 为 Azumaya 代数当且仅当 $\bar{A}= A\otimes_R k$ 为 $k$ 上的 Azumaya 代数;</li>
+<li>域上的 Azumaya 代数等同于<span class="link local"><a href="./中心单代数.html" title="中心单代数 [中心单代数]">中心单代数</a></span>;</li>
+<li>域上的中心单代数的张量积仍为中心单代数.</li>
+</ul>
 <h3>函子性</h3>
 <p>局部环上 Azumaya 代数的概念有如下的函子性.</p>
 <p><strong>命题</strong>. 设 $A$ 是 $R$ 上的 Azumaya 代数, $R'$ 是局部环, 且有环同态 $R\to R'$ (甚至不要求为局部环同态), 则 $A\otimes_R R'$ 构成 $R'$ 上的 Azumaya 代数.</p>
@@ -129,6 +165,74 @@ $$
 $$
 那么 $a\in R$ 当且仅当 $r_i=0\,(i&gt;1)$.
 故 $JA\cap R = J$.</p>
+<h3>分类</h3>
+<p>由于 Azumaya 代数在平展局部上为矩阵代数, 而矩阵代数的自同构群为 <span class="link local"><a href="./PGLn.html" title="PGLn [PGLn]">$\mathrm{PGL}_n$</a></span>, Azumaya 代数给出<span class="link local"><a href="./非Abel上同调.html" title="非 Abel 上同调 [非Abel上同调]">非 Abel 上同调</a></span> $H^1(X_{\mathrm{\'et}},\mathrm{PGL}_n)$ 的元素.</p>
+<p>另一方面, 对<span class="link local"><a href="./平展意象.html" title="平展意象 [平展意象]">平展意象</a></span>中任意映射 $*\to\mathbf{B}\mathrm{PGL}_n$, 群同态 (闭嵌入)
+$$
+    \mathrm{PGL}_n \to \mathrm{GL}_{n^2}
+$$
+将其变为映射
+$$
+  {*} \to \mathbf{B}\mathrm{GL}_{n^2},
+$$
+由 $\mathrm{GL}_n$ 的 <span class="link local"><a href="./Zar-fl-et.html" title="Zariski 景, 平展景与平坦景的比较 [Zar-fl-et]">Zariski 与平展的比较</a></span>, 它实际上来自于一个秩为 $n^2$ 的 Zariski 局部自由 $\mathcal O_X$-模.</p>
+<h3>与向量丛的关系</h3>
+<p>考虑群同态 (<span class="link local"><a href="./Zariski意象.html" title="Zariski 意象 [Zariski意象]">Zariski 意象</a></span>中的满射)
+$$
+\mathrm{GL}_n \to \mathrm{PGL}_n
+$$
+给出的<span class="link local"><a href="./非Abel上同调.html" title="非 Abel 上同调 [非Abel上同调]">上同调</a></span>的映射
+$$
+H^1(X_{\mathrm{\'et}},\mathrm{GL}_n) \to H^1(X_{\mathrm{\'et}},\mathrm{PGL}_n).
+$$
+我们断言它将向量丛 $E$ 映射到 Azumaya 代数 $\operatorname{End}(E)$.</p>
+<p><em>证明</em>. 设 $E\colon * \to \mathbf{B}\mathrm{GL}_n$ 在 Zariski 覆盖 $U$ 上有平凡化
+$$
+\phi \colon \mathcal O_U^n \simeq E|_U.
+$$
+平凡化 $\phi$ 给出覆盖 $U$ 上实现了 $E$ 的 $\mathrm{GL}_n$-<span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">Čech 上圈</a></span>
+$$
+(\phi\mathrm{pr}_2)^{-1}(\phi\mathrm{pr}_1)\colon  U\times U \to \mathrm{GL}_n.
+$$
+平凡化 $\phi$ 还给出同构
+$$
+\psi\colon M_n(\mathcal O_U) = \operatorname{End}(\mathcal O_U^n)\simeq \operatorname{End}(E|_U),
+$$
+其中 $\psi$ 的作用是将下图左边的竖向箭头变为右边的竖向箭头.
+$$
+\begin{array}
+{ccc}
+\mathcal O_U^n &amp; \overset{\phi}{\to} &amp; E|_U \\
+\downarrow &amp; &amp; \downarrow\\
+\mathcal O_U^n &amp; \underset{\phi}{\to} &amp; E|_U
+\end{array}
+$$
+那么实现 $\operatorname{End}(E)$ 的一个 <span class="link local"><a href="./PGLn.html" title="PGLn [PGLn]">$\mathrm{PGL}_n$</a></span>-<span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">Čech 上圈</a></span>为
+$$
+(\psi\mathrm{pr}_2)^{-1}(\psi\mathrm{pr}_1)\colon U\times U \to \mathrm{PGL}_n.
+$$
+注意到 $(\psi\mathrm{pr}_2)^{-1}(\psi\mathrm{pr}_1)$ 的作用是将下图最左边的竖向箭头变为最右边的竖向箭头.
+$$
+\begin{array}
+{ccc}
+\mathcal O_{U\times U}^n &amp; \overset{\phi\mathrm{pr}_1}{\to} &amp; E|_{U\times U} &amp; \overset{\phi\mathrm{pr}_2}{\leftarrow} &amp; \mathcal O^n_{U\times U} \\
+\downarrow &amp; &amp; \downarrow &amp; &amp; \downarrow\\
+\mathcal O_{U\times U}^n &amp; \underset{\phi\mathrm{pr}_1}{\to} &amp; E|_{U\times U} &amp; \underset{\phi\mathrm{pr}_2}{\leftarrow} &amp; \mathcal O^n_{U\times U}
+\end{array}
+$$
+这正是前面实现了 $E$ 的 $\mathrm{GL}_n$-<span class="link local"><a href="./非交换Čech上同调.html" title="非交换 Čech 上同调 [非交换Čech上同调]">Čech 上圈</a></span>
+$$
+(\phi\mathrm{pr}_2)^{-1}(\phi\mathrm{pr}_1)\colon  U\times U \to \mathrm{GL}_n
+$$
+在群同态 $\mathrm{GL}_n \to \mathrm{PGL}_n , X\mapsto X(-)X^{-1}$ 下的像 (详见 <span class="link local"><a href="./PGLn.html" title="PGLn [PGLn]">$\mathrm{PGL}_n$</a></span> 页面). $\square$</p>
+<h3>与束的关系</h3>
+<p>概形 $X$ 上的 Azumaya 代数 $A$ 给出一个<span class="link local"><a href="./束.html" title="束 [束]">束</a></span> (gerbe) $F_A$:
+对 $U\in X_{\mathrm{\'et}}$, $F_A(U)$ 是如下资料构成的 $1$-群胚:</p>
+<ul>
+<li>$U$ 上的向量丛 $E$;</li>
+<li>同构 $A_U \simeq \operatorname{End}(E)$.</li>
+</ul>
+<p>此束由群 $\mathbb G_m$ 控制, 定义了 $H^2(X_{\mathrm{\'et}},\mathbb G_m)$ 的元素; 并且它平凡当且仅当 $A$ 在整体上同构于一个向量丛的自同态代数.</p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Skolem–Noether 定理 <a class="slug" href="./Skolem–Noether定理.html">[Skolem–Noether定理]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

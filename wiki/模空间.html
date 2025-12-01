@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“模空间”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>模空间</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,33 +55,33 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="模空间"><header><h1><span class="taxon">Wiki. </span>“模空间” <a class="slug" href="./模空间.html">[模空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>模空间 (moduli space) 是参数化一类几何对象的空间, 例如带 $n$ 个标记点的 $g$ <span class="link local"><a href="./亏格.html" title="“亏格” [亏格]">亏格</a></span> <span class="link local"><a href="./Riemann面.html" title="“Riemann 面” [Riemann面]">Riemann 面</a></span>的模空间 $\mathcal M_{g,n}$. 模空间的点为对象的等价类, 模空间的一条曲线为对象的单参数族.</p>
-<p>底空间 $B$ 上的一族空间通常用<span class="link local"><a href="./平坦态射.html" title="“平坦态射” [平坦态射]">平坦态射</a></span> $X\to B$ 描述, 其纤维为我们关心的某一类空间.</p>
-<p>一般而言, <strong>模问题</strong> (moduli problem) 可视为函子
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="模空间"><header><h1><span class="taxon">Wiki. </span>模空间 <a class="slug" href="./模空间.html">[模空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>模空间 (moduli space) 是 “参数化” 或 “分类” 一类对象的空间. 模空间的每一个点是一个对象, 模空间上的一条曲线为这种对象的单参数族, 等等.</p>
+<p>本页面介绍代数几何中的模空间, 通常要参数化或分类的对象也是某种几何对象. 更一般的观念见<span class="link local"><a href="./分类空间.html" title="分类空间 [分类空间]">分类空间</a></span>.</p>
+<p>在代数几何中, 基底空间 $S$ 上的一族几何对象通常用<span class="link local"><a href="./平坦态射.html" title="“平坦态射” [平坦态射]">平坦态射</a></span> $X\to S$ 描述, 其纤维为我们关心的某一类空间.</p>
+<p>在代数几何中, 一个<strong>模问题</strong> (moduli problem) 一般是一个函子
 $$
 \mathcal M\colon  \mathsf {Sch}^{\text{op}}\to \mathsf {Set},
-$$$\mathcal M(S)$ 为以 $S$ 参数化的空间族的集合. 从<span class="link local"><a href="./米田引理.html" title="米田引理 [米田引理]">米田引理</a></span>的观点, $S$ 参数化的一族空间相当于 $S$ 到 $\mathcal M$ 的一个态射. 函子 $\mathcal M$ 不总是可表的. 当它可表时, 其表示对象称为<strong>细模空间</strong>.</p>
-<h3>细模空间</h3>
-<p><strong>细模空间</strong>是带有 “万有” 族的空间 (概形) $M$, 使得任意一组空间都是由唯一的一个映射 $B\to M$ 拉回得到. 于是我们有双射
 $$
-\{B\text{ 上族的等价类}\} \leftrightarrow \{B\to M\}
+其中 $\mathcal M(S)$ 是 “以 $S$ 参数化的一族对象” 的集合. 从<span class="link local"><a href="./米田引理.html" title="米田引理 [米田引理]">米田引理</a></span>的观点, $S$ 参数化的一族对象相当于 $S$ 到 $\mathcal M$ 的一个态射. 函子 $\mathcal M$ 不总是可表的. 当它可表时, 其表示对象称为<strong>细模空间</strong>.</p>
+<p><strong>细模空间</strong>是带有<strong>万有族</strong>的空间 (概形) $M$, 使得任意概形 $S$ 上的一族某种对象都是由唯一的一个映射 $S\to M$ 将 $M$ 上的万有族拉回得到. 于是我们有双射
 $$
-“万有” 族总是重言的.</p>
-<h3>细模空间不存在的情况</h3>
-<p>然而, 细模空间并不总是存在. 例如一维向量空间的 “模空间” 应当是一个点 (因为一维向量空间在同构意义下唯一), 然而 $S^1$ 上有两个不同构的一维向量丛.</p>
-<p>一般而言, 对于有非平凡自同构的对象, 细模空间不存在. 这个问题一般有三种解决方法:</p>
+\{S\text{ 上的对象族}\} \leftrightarrow \{S\to M\}
+$$
+万有族总是带有某种重言 (tautology) 的特性, 即万有族在 $M$ 的某点上的纤维正是这个点对应的对象.</p>
+<p>一般而言, 对于有非平凡自同构的对象, 细模空间不存在. 这个问题一般的解决方法有:</p>
 <ul>
 <li>增加结构, 使得自同构消失;</li>
-<li>考虑粗模空间;</li>
-<li>考虑模<span class="link local"><a href="./叠.html" title="“叠” [叠]">叠</a></span>或<span class="link local"><a href="./轨形.html" title="“轨形” [轨形]">轨形</a></span>.</li>
+<li>考虑<span class="link local"><a href="./模叠.html" title=" [模叠]">模叠</a></span> (如<span class="link local"><a href="./轨形.html" title="“轨形” [轨形]">轨形</a></span>).</li>
 </ul>
 <h2>例</h2>
-<h3>$\mathbb P^1$ 上四点组的模空间</h3>
+<h3>带标记点的 Riemann 面的模空间</h3>
 <p>我们讨论 $\mathbb P^1$ 上的四点组的<strong>射影等价</strong> (projective equivalence). 所谓射影等价是指 $\mathbb P^1$ 的自同构 (分式线性变换). 四点组是指 $\mathbb P^1=\mathbb{C}\cup\{\infty\}$ 上互不相同的四个点. 两个四点组等价当且仅当它们有相同的<strong>交比</strong> (cross ratio). 四点组 $(0,1,\infty,z)$ 的交比是 $z$. 因此, 所考虑的模空间是
 $$
 \mathcal M_{0,4}= \mathbb P^1 \setminus \{0,1,\infty\}.
 $$</p>
+<p>例如带 $n$ 个标记点的 $g$ <span class="link local"><a href="./亏格.html" title="“亏格” [亏格]">亏格</a></span> <span class="link local"><a href="./Riemann面.html" title="“Riemann 面” [Riemann面]">Riemann 面</a></span>的模空间 $\mathcal M_{g,n}$.</p>
 <h3>主丛 (向量丛) 的模空间</h3>
 <p>设 $k$ 为域, $G$ 为 $k$ 上的约化代数群. $k$-概形 $X$ 上 $G$-<span class="link local"><a href="./主丛的模空间.html" title="“主丛的模空间” [主丛的模空间]">主丛的模空间</a></span>是函子 $\mathrm {Bun}_G \colon \mathsf {Sch}_k \to\mathsf {Grpd}$, 它将 $k$-概形 $S$ 映射到 $X\times S$ 上 $G$-主丛的群胚.</p>
 <p>在 $G=\mathrm {GL}_n$ 的情形, $G$-主丛等同于 $n$ 阶向量丛, $\mathrm {Bun}_G$ 等价于 $X$ 上 $n$ 阶向量丛的模空间 $\mathrm {Bun}_n$.</p>
