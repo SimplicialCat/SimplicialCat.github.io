@@ -57,7 +57,7 @@
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="Azumaya代数"><header><h1><span class="taxon">Wiki. </span>Azumaya 代数 <a class="slug" href="./Azumaya代数.html">[Azumaya代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>观念</h2>
-<p>环或<span class="link local"><a href="./概形.html" title="概形 [概形]">概形</a></span>上的 <strong>Azumaya 代数</strong><sup class="footnote-reference" id="Azumaya代数_az-back"><a href="#Azumaya代数_az">1</a></sup>是域上的<span class="link local"><a href="./中心单代数.html" title="中心单代数 [中心单代数]">中心单代数</a></span>的推广, 是 <span class="link local"><a href="./Morita等价.html" title=" [Morita等价]">Morita 等价</a></span>下可逆的代数, 给出 <span class="link local"><a href="./Brauer群.html" title="Brauer 群 [Brauer群]">Brauer 群</a></span>的元素.</p>
+<p>环或<span class="link local"><a href="./概形.html" title="概形 [概形]">概形</a></span>上的 <strong>Azumaya 代数</strong><sup class="footnote-reference" id="Azumaya代数_az-back"><a href="#Azumaya代数_az">1</a></sup>是域上的<span class="link local"><a href="./中心单代数.html" title="中心单代数 [中心单代数]">中心单代数</a></span>的推广, 是 <span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>下可逆的代数, 给出 <span class="link local"><a href="./Brauer群.html" title="Brauer 群 [Brauer群]">Brauer 群</a></span>的元素.</p>
 <div class="footnote-definition" id="Azumaya代数_az">
   <sup class="footnote-definition-label"><a href="#Azumaya代数_az-back">1</a></sup>
 <p><strong>注</strong>. 東屋 五郎, Azumaya Gorō</p>
@@ -67,16 +67,26 @@
 <h3>局部环</h3>
 <p>局部环 $R$ 上的 <strong>Azumaya 代数</strong>是满足如下条件的 $R$-代数 $A$:</p>
 <ul>
-<li>$A$ 是有限维自由 $R$-模;</li>
+<li>$A$ 是有限维<strong>自由</strong> $R$-模;</li>
 <li>映射 $A\otimes_R A^{\mathrm{op}} \to \operatorname{End}_R(A)$, $a\otimes a'\mapsto (x\mapsto axa')$ 为同构.</li>
 </ul>
-<p>由定义, Azumaya 代数在 <span class="link local"><a href="./Morita等价.html" title=" [Morita等价]">Morita 等价</a></span>的意义下可逆.</p>
+<p>由定义, Azumaya 代数在 <span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>的意义下可逆.</p>
 <p>一种等价的定义是仅对 “纤维” (剩余域) 作要求. 记 $k= R/\mathfrak m$ 为剩余域, 则 $R$-代数 $A$ 是 Azumaya 代数当且仅当</p>
 <ul>
 <li>$A$ 是有限维自由 $R$-模, 且 $\bar{A} := A\otimes_R k$ 是 $k$ 上的 Azumaya 代数 (由后面证明的性质, 此即域 $k$ 上的<span class="link local"><a href="./中心单代数.html" title="中心单代数 [中心单代数]">中心单代数</a></span>).</li>
 </ul>
 <p><em>证明</em>.
 基本上是<span class="link local"><a href="./中山引理.html" title="中山引理 [中山引理]">中山引理</a></span>的直接应用.</p>
+<h3>环</h3>
+<p>局部环上的 Azumaya 代数可以推广到环上, 区别基本上只是局部环上的自由模推广为环上的<span class="link local"><a href="./投射模.html" title="“投射模” [投射模]">投射模</a></span>.</p>
+<p><strong>命题-定义</strong>. 设 $R$ 是交换环, $R$ 上的 Azumaya 代数是满足如下等价条件的 $R$-代数 $A$:</p>
+<ul>
+<li>存在 $R$-代数 $B$ 使得 $A\otimes_R B$ 与 $R$ <span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>;</li>
+<li>$A\otimes_R A^{\mathrm{op}}$ 与 $R$ <span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>;</li>
+<li>$A$ 的中心为 $R$, 且 $A$ 是 $R$ 上的<span class="link local"><a href="./可分代数.html" title="可分代数 [可分代数]">可分代数</a></span>;</li>
+<li>$A$ 为有限生成 $R$-模, 且为 $R$-模范畴 $\mathsf{Mod}(R)$ 的<span class="link local"><a href="./投射生成元.html" title="投射生成元 [投射生成元]">投射生成元</a></span>, 且典范的 $R$-模同态 $A\otimes_R A^{\mathrm{op}} \to \operatorname{End}_R(A)$ 为同构.</li>
+</ul>
+<p>环上的 Azumaya 的概念可进一步推广为 <span class="link local"><a href="./Azumaya范畴.html" title="Azumaya 范畴 [Azumaya范畴]">Azumaya 范畴</a></span>.</p>
 <h3>概形</h3>
 <p><strong>定义 1</strong>. 概形 $X$ 上的 Azumaya 代数是满足如下条件的 $\mathcal O_X$-代数 $A$:</p>
 <ul>
@@ -225,6 +235,9 @@ $$
 (\phi\mathrm{pr}_2)^{-1}(\phi\mathrm{pr}_1)\colon  U\times U \to \mathrm{GL}_n
 $$
 在群同态 $\mathrm{GL}_n \to \mathrm{PGL}_n , X\mapsto X(-)X^{-1}$ 下的像 (详见 <span class="link local"><a href="./PGLn.html" title="PGLn [PGLn]">$\mathrm{PGL}_n$</a></span> 页面). $\square$</p>
+<h3>Azumaya 代数的相似, Brauer 群</h3>
+<p>定义环或概形上 Azumaya 代数的相似关系: $A\sim A'$ 当且仅当存在自然数 $n,n'$ 使得 $A\otimes M_n \simeq A'\otimes M_{n'}$.</p>
+<p>注意到 $M_n\otimes M_{n'} \simeq M_{nn'}$, 故张量积保持相似关系; 全体相似等价类在张量积下构成一个群, 称为环或概形的 <span class="link local"><a href="./Brauer群.html" title="Brauer 群 [Brauer群]">Brauer 群</a></span>.</p>
 <h3>与束的关系</h3>
 <p>概形 $X$ 上的 Azumaya 代数 $A$ 给出一个<span class="link local"><a href="./束.html" title="束 [束]">束</a></span> (gerbe) $F_A$:
 对 $U\in X_{\mathrm{\'et}}$, $F_A(U)$ 是如下资料构成的 $1$-群胚:</p>
@@ -233,6 +246,6 @@ $$
 <li>同构 $A_U \simeq \operatorname{End}(E)$.</li>
 </ul>
 <p>此束由群 $\mathbb G_m$ 控制, 定义了 $H^2(X_{\mathrm{\'et}},\mathbb G_m)$ 的元素; 并且它平凡当且仅当 $A$ 在整体上同构于一个向量丛的自同态代数.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Brauer 群 <a class="slug" href="./Brauer群.html">[Brauer群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Skolem–Noether 定理 <a class="slug" href="./Skolem–Noether定理.html">[Skolem–Noether定理]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 范畴 <a class="slug" href="./Azumaya范畴.html">[Azumaya范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./范畴论.html" title="范畴论 [范畴论]">范畴论</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Brauer 群 <a class="slug" href="./Brauer群.html">[Brauer群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Skolem–Noether 定理 <a class="slug" href="./Skolem–Noether定理.html">[Skolem–Noether定理]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

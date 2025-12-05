@@ -59,6 +59,18 @@
 <h2>观念</h2>
 <p>同伦群是用<span class="link local"><a href="./球面.html" title="球面 [球面]">球面</a></span>到一个空间 (<span class="link local"><a href="./生象.html" title="生象 [生象]">生象</a></span>) $X$ 的映射提取出的 $X$ 的同伦信息.</p>
 <p>虽然叫做同伦群, 但 $-2,-1,0$ 阶同伦信息不构成群.</p>
+<h2>定义</h2>
+<p>设 $X$ 为<span class="link local"><a href="./生象.html" title="生象 [生象]">生象</a></span>或更一般的 <span class="link local"><a href="./∞-意象.html" title="∞-意象 [∞-意象]">$\infty$-意象</a></span> $\mathcal{C}$ 的对象, $x\colon *\to X$ 为 $X$ 的点, $n\geq 0$ 为整数. 定义 $X$ 在 $x$ 处的 $n$ 阶同伦群为 $n$ 阶<span class="link local"><a href="./环路空间.html" title="环路空间 [环路空间]">环路空间</a></span>的 $0$-<span class="link local"><a href="./截断性.html" title="截断性 [截断性]">截断</a></span>:
+$$
+\pi_n(X,x) := \tau_{\leq 0} \Omega^n(X,x).
+$$
+$\pi_n(X,x)$ 是 <span class="link local"><a href="./En-代数.html" title="En-代数 [En-代数]">$\mathbb{E}_n$</a></span>-群. 由于它生活在一个 $1$-意象中, 故当 $n\geq 2$ 时它已经是 $\mathbb{E}_{\infty}$-群 (Abel 群). 当 $n=0$ 时它不是群, 只是带基点对象.</p>
+<p>还有一种 “整体” 的同伦群, 可理解为同时记录了 $X$ 在每一点处的同伦群:
+对 $n\geq 0$, 定义 $X$ 的 $n$ 阶同伦对象 $\pi_n(X)\in \mathcal{C}_{/X}$ 如下:
+$$
+\pi_n(X) := \tau_{\leq 0} (X^{S^n}\to X)\in\mathcal{C}_{/X}.
+$$
+当然, $\pi_n(X)$ 在点 $x\colon *\to X$ 处的<span class="link local"><a href="./基变换.html" title="基变换 [基变换]">基变换</a></span>即是 $\pi_n(X,x)$.</p>
 <h2>例</h2>
 <ul>
 <li>$(-2)$ 阶同伦信息是平凡的.</li>

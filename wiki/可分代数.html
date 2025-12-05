@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>可分代数</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="可分代数"><header><h1><span class="taxon">Wiki. </span>可分代数 <a class="slug" href="./可分代数.html">[可分代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>定义</h2>
+<p>含幺交换环 $R$ 上的可分代数是满足如下等价条件的 $R$-代数 $A$:</p>
+<ul>
+<li>$A$ 作为 $A\otimes_R A^{\mathrm{op}}$-模是<span class="link local"><a href="./投射模.html" title="“投射模” [投射模]">投射模</a></span> (注意此时它一定是有限生成的);</li>
+<li>乘法映射 $A\otimes_R A^{\mathrm{op}} \to A$ (作为 $A\otimes_R A^{\mathrm{op}}$-模同态) 存在截面.</li>
+</ul>
+<p>注意不要求 $A$ 是交换代数.</p>
+<h2>性质</h2>
+<h3>与可分域扩张的关系</h3>
+<p>可分代数是<span class="link local"><a href="./可分扩张.html" title="可分扩张 [可分扩张]">可分域扩张</a></span>的推广.</p>
+<p><strong>命题</strong>. 设 $k\hookrightarrow K$ 是域扩张, 则它是<span class="link local"><a href="./可分扩张.html" title="可分扩张 [可分扩张]">可分扩张</a></span>当且仅当 $K$ 是可分 $k$-代数.</p>
+<p><em>证明概要</em>. 假设 $k\hookrightarrow K$ 是<span class="link local"><a href="./可分扩张.html" title="可分扩张 [可分扩张]">可分扩张</a></span>. 那么存在 $K$ 的一组 $k$-基 $\{e_1,\cdots,e_n\}$ 以及对偶基 $\{f_1,\cdots,f_n\}$ 满足
+$\operatorname{Tr}_{E/F}(e_if_j) = \delta_{ij}$, 且 $\sum_{i=1}^n e_i f_i = 1$.
+令
+$$
+x = \sum_{i=1}^n e_i \otimes f_i \in K\otimes_k K.
+$$
+乘法映射 $\mu\colon K\otimes_k K\to K$ 将 $x$ 映射到 $1$.
+截面 $K \to K\otimes_k K$ 可由 $a\mapsto ax$ 给出.</p>
+<p>另一方面, 假设 $K$ 是可分 $k$-代数.
+若 $k\hookrightarrow K$ 不是可分扩张, 即存在 $a\in K$, 其在 $k$ 上的极小多项式有重根, 则 $K\otimes_k K$ 有幂零元.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 代数 <a class="slug" href="./Azumaya代数.html">[Azumaya代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>充实范畴上的模 <a class="slug" href="./充实范畴上的模.html">[充实范畴上的模]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

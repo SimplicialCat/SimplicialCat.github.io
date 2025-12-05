@@ -58,22 +58,34 @@
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="束"><header><h1><span class="taxon">Wiki. </span>束 <a class="slug" href="./束.html">[束]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <p>束 (gerbe) 是一种特殊的 (<span class="link local"><a href="./生象.html" title="生象 [生象]">生象</a></span>值) <span class="link local"><a href="./景上的层.html" title="景上的层 [景上的层]">层</a></span>.</p>
 <h2>定义</h2>
-<h3>抽象</h3>
+<h3>抽象定义</h3>
 <p>束就是<span class="link local"><a href="./层意象.html" title="层意象 [层意象]">层意象</a></span> (或一般的<span class="link local"><a href="./∞-意象.html" title="∞-意象 [∞-意象]">意象</a></span>) 中的 $1$-<span class="link local"><a href="./截断性.html" title="截断性 [截断性]">截断</a></span>且<span class="link local"><a href="./连通性.html" title="连通性 [连通性]">连通</a></span>的对象.</p>
 <p>一般地, 定义 $n$-<strong>束</strong>为 $n$-截断 $n$-连通 (connective) 对象.</p>
-<h3>传统</h3>
+<p>使用<span class="link local"><a href="./相对.html" title="相对观点 [相对]">相对观点</a></span>, 对于态射 $Y\to X$, 若其在 $X$ 上的<span class="link local"><a href="./俯意象.html" title="俯意象 [俯意象]">俯意象</a></span>中为 $n$-束, 我们也可称之为 $X$ 上的 $n$-束.</p>
+<p>带点的 $n$-束称为 <span class="link local"><a href="./Eilenberg--MacLane空间.html" title="Eilenberg–MacLane 空间 [Eilenberg--MacLane空间]">Eilenberg–MacLane 对象</a></span>. (注意非平凡的束也可能不带点; 当然, 这个点是<span class="link local"><a href="./结构.html" title="结构, 性质 [结构]">结构而非性质</a></span>.)</p>
+<h3>通过景定义</h3>
 <p><span class="link local"><a href="./景.html" title="景 [景]">景</a></span> $(\mathcal C,J)$ 上的<strong>束</strong> (gerbe) 是 $1$-群胚取值的<span class="link local"><a href="./景上的层.html" title="景上的层 [景上的层]">层</a></span> $F \colon \mathcal C\to\mathsf{Ani}_{\leq 1}$, 满足</p>
 <ul>
 <li>$F$ 局部非空, 即存在终对象的覆盖 $(U_i)$, 使得 $F(U_i)$ 非空;</li>
 <li>对任意 $U\in\mathcal C$, 任意两个元素 $x,y\in F(U)$ 局部同构, 即存在 $U$ 的覆盖使得 $x,y$ 在其上的限制 (拉回) 同构.</li>
 </ul>
 <h2>性质</h2>
+<p>设 $F$ 为 $n$-束, $x,y\colon * \to F$ 为两个点. 考虑拉回
+$$
+\begin{array}
+    {ccc}
+    *\times_F * &amp; \to &amp; * \\
+    \downarrow &amp; &amp; \downarrow {\scriptsize{x}}\!\!\! \\
+    * &amp; \underset{y}{\to} &amp; F,
+\end{array}
+$$
+那么 $*\times_F *$ 为 $(n-1)$-束.</p>
 <h3>由群控制的束</h3>
 <p>设 $G$ 为<span class="link local"><a href="./群.html" title="群 [群]">群</a></span>, $F$ 为 (景 $(\mathcal C,J)$ 上的) 束. 称 $F$ 由 $G$ <strong>控制</strong>是指如下条件成立:</p>
 <ul>
 <li>(抽象表述)</li>
 <li>(传统表述) 对任意 $U\in\mathcal C$, 任意 $x\in F(U)$, 有函子性的同构 $G(U) \simeq \operatorname{Aut}_{F(U)}(x)$.</li>
 </ul>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 代数 <a class="slug" href="./Azumaya代数.html">[Azumaya代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 代数 <a class="slug" href="./Azumaya代数.html">[Azumaya代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Eilenberg–MacLane 空间 <a class="slug" href="./Eilenberg--MacLane空间.html">[Eilenberg--MacLane空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
