@@ -251,8 +251,14 @@ $A\otimes_R \operatorname{End}_R(A') \simeq A'\otimes_R\operatorname{End}_R(E')$
 <li>$U$ 上的向量丛 $E$;</li>
 <li><span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">代数</a></span>同构 $A_U \simeq \operatorname{End}(E)$.</li>
 </ul>
-<p>$F_A$ 局部非空是由于 Azumaya 代数<span class="link local"><a href="./平展景.html" title="平展景 [平展景]">平展</a></span>局部同构于矩阵代数. 此<span class="link local"><a href="./束.html" title="束 [束]">束</a></span>由群 $\mathbb G_m$ 控制 ($\operatorname{Aut}_{F_A(U)}(x)\simeq \operatorname{Aut}(\operatorname{End}(E))\simeq \mathbb G_m(U)$), 定义了 $H^2(X_{\mathrm{\'et}},\mathbb G_m)$ 的元素; 并且它平凡当且仅当 $A$ 在整体上同构于一个向量丛的自同态代数.</p>
-<p>由<span class="link local"><a href="./束.html" title="束 [束]">束</a></span>的性质,</p>
+<p>$F_A$ 局部非空是由于 Azumaya 代数<span class="link local"><a href="./平展景.html" title="平展景 [平展景]">平展</a></span>局部同构于矩阵代数. 此<span class="link local"><a href="./束.html" title="束 [束]">束</a></span>由群 $\mathbb G_m$ 控制:
+$$
+\begin{aligned}
+    \operatorname{Aut}_{F_A(U)}(x)&amp;\simeq \operatorname{Aut}_{\operatorname{Aut}(\operatorname{End}(E))}(\mathrm{id})\\
+    &amp;\simeq Z(\operatorname{End}(E))\simeq \mathbb G_m(U),
+\end{aligned}
+$$
+(其中 $Z$ 表示代数的<span class="link local"><a href="./中心.html" title="中心 [中心]">中心</a></span>) 从而 (由<span class="link local"><a href="./束.html" title="束 [束]">束</a></span>与<span class="link local"><a href="./上同调.html" title="上同调 [上同调]">上同调</a></span>的关系) 定义了 $H^2(X_{\mathrm{\'et}},\mathbb G_m)$ 的元素; 并且它平凡当且仅当 $F_A$ 有<span class="link local"><a href="./整体截面.html" title="“整体截面” [整体截面]">整体</a></span>元素, 即 $A$ 在整体上同构于一个向量丛的自同态代数.</p>
 <h2>例</h2>
 <h3>特征 $p$ 的微分算子</h3>
 <p>设 $k$ 为特征 $p$ 域, $A = k\langle x,\partial \rangle / ([\partial ,x]-1)$ 为 <span class="link local"><a href="./Weyl代数.html" title="Weyl 代数 [Weyl代数]">Weyl 代数</a></span>. 那么 $A$ 是 $k[x^{p},y^p]$ 上的 Azumaya 代数.</p>
