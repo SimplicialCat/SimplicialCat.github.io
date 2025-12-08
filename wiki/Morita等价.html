@@ -59,6 +59,18 @@
 <h2>观念</h2>
 <p>Morita 等价是<span class="link local"><a href="./高阶模.html" title="高阶模 [高阶模]">模范畴</a></span>的等价.</p>
 <h2>定义</h2>
+<h3>代数</h3>
+<p>设 $k$ 为交换环, $A,B$ 为 $k$ 上的<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span>, 若如下等价条件成立, 则称 $A$ 与 $B$ <strong>Morita 等价</strong>:</p>
+<ul>
+<li>左模范畴 $\mathsf{LMod}(A)$ 与 $\mathsf{LMod}(B)$ 等价;</li>
+<li>右模范畴 $\mathsf{RMod}(A)$ 与 $\mathsf{RMod}(B)$ 等价;</li>
+<li>存在 $(A,B)$-双模 $M$ 与 $(B,A)$-双模 $N$ 满足
+$$
+M\otimes_B N\simeq A,\,N\otimes_A M\simeq B.
+$$</li>
+<li>$A$ 同构于左 (右) $B$-模范畴中某个<span class="link local"><a href="./紧投射生成元.html" title="紧投射生成元 [紧投射生成元]">有限生成投射生成元</a></span>的自同态代数.</li>
+<li>$B$ 同构于左 (右) $A$-模范畴中某个<span class="link local"><a href="./紧投射生成元.html" title="紧投射生成元 [紧投射生成元]">有限生成投射生成元</a></span>的自同态代数.</li>
+</ul>
 <h3>充实范畴</h3>
 <p>设 $\mathcal V$ 为 (完备, 余完备) 闭<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半范畴</a></span>, 例如交换环 $R$ 上的模范畴 $\mathsf{Mod}(R)$.</p>
 <p>回忆, $\mathcal V$ 中的<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span>等同于仅有一个对象的 $\mathcal V$-<span class="link local"><a href="./充实范畴.html" title="充实范畴 [充实范畴]">充实范畴</a></span>. 所以结合代数的 Morita 等价是下面的概念的特例:</p>
@@ -71,6 +83,50 @@ $$
   $$</li>
 </ul>
 <p>见<span class="link local"><a href="./充实范畴上的模.html" title="充实范畴上的模 [充实范畴上的模]">充实范畴上的模</a></span>.</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 代数 <a class="slug" href="./Azumaya代数.html">[Azumaya代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 范畴 <a class="slug" href="./Azumaya范畴.html">[Azumaya范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./范畴论.html" title="范畴论 [范畴论]">范畴论</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Morita 范畴 <a class="slug" href="./Morita范畴.html">[Morita范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>充实范畴 <a class="slug" href="./充实范畴.html">[充实范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>充实范畴上的模 <a class="slug" href="./充实范畴上的模.html">[充实范畴上的模]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<h2>性质</h2>
+<p>以下的 “环” 指的是固定的含幺交换环 $k$ 上的<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span>.</p>
+<p><strong>定义</strong>. 环 $A$ 上的右模 $M$ 的 <strong>Morita 语境</strong> (Morita context) 是如下的六元组 $(A,M,N,E,\alpha,\beta)$:</p>
+<ul>
+<li>$N=\operatorname{Hom}_A(M,A)$;</li>
+<li>$E= \operatorname{End}_A(M)$;</li>
+<li>$M\in\mathsf{BiMod}(E,A)$, $N\in\mathsf{BiMod}(A,E)$;</li>
+<li>$\alpha\colon N\otimes_{E} M \to A$, $f\otimes x\mapsto f(x)$;</li>
+<li>$\beta\colon M\otimes_A N \to E$, $x\otimes f\mapsto xf(-)$;</li>
+</ul>
+<p><strong>命题</strong>.
+设 $M$ 是 $\mathsf{RMod}(A)$ 的<span class="link local"><a href="./生成元(范畴论).html" title="生成元 (范畴论) [生成元(范畴论)]">生成元</a></span>, 则</p>
+<ul>
+<li>$\alpha\colon N\otimes_E M\to A$ 为同构;</li>
+<li>$N\simeq \operatorname{Hom}_{\mathsf{LMod}(E)}(M,E)\in\mathsf{BiMod}(A,E)$;</li>
+<li>$M\simeq \operatorname{Hom}_{\mathsf{RMod}(E)}(N,E)\in\mathsf{BiMod}(E,A)$;</li>
+<li>$A\simeq\operatorname{End}_{\mathsf{RMod}(E)}(N)\simeq\operatorname{End}_{\mathsf{LMod}(E)}(M)$.</li>
+</ul>
+<p><strong>命题</strong>.
+设 $M$ 是 $\mathsf{RMod}(A)$ 的<span class="link local"><a href="./可表现对象.html" title="可表现对象 [可表现对象]">有限生成</a></span><span class="link local"><a href="./投射对象.html" title="投射对象 [投射对象]">投射对象</a></span>, 则</p>
+<ul>
+<li>$\beta\colon M\otimes_A N \to E$ 为同构;</li>
+<li>$M\simeq \operatorname{Hom}_{\mathsf{LMod}(A)}(N,A)\in\mathsf{BiMod}(E,A)$;</li>
+<li>$N\simeq\operatorname{Hom}_{\mathsf{RMod}(A)}(M,A)\in\mathsf{BiMod}(A,E)$ (当然, 这就是 $N$ 的定义);</li>
+<li>$E\simeq \operatorname{End}_{\mathsf{RMod}(A)}(M) \simeq\operatorname{End}_{\mathsf{LMod}(A)}(N)$ (第一个同构就是 $E$ 的定义).</li>
+</ul>
+<p><strong>命题</strong> (“Morita I”). 设 $M$ 是 $\mathsf{RMod}(A)$ 的<span class="link local"><a href="./紧投射生成元.html" title="紧投射生成元 [紧投射生成元]">有限生成投射生成元</a></span>, $(A,M,N,E,\alpha,\beta)$ 是对应的 Morita 语境, 则</p>
+<ul>
+<li>$-\otimes_A N \colon \mathsf{RMod}(A) \to \mathsf{RMod}(E)$ 与 $-\otimes_E M \colon \mathsf{RMod}(E) \to \mathsf{RMod}(A)$ 是一对互逆的等价;</li>
+<li>$N\otimes_E - \colon \mathsf{LMod}(E) \to \mathsf{LMod}(A)$ 与 $M\otimes_A - \colon \mathsf{LMod}(A) \to \mathsf{LMod}(E)$ 是一对互逆的等价.</li>
+</ul>
+<p><strong>命题</strong> (“Morita II”). 设 $A,B$ 为环,
+$$
+F\colon \mathsf{RMod}(A) \to \mathsf{RMod}(B),
+G\colon \mathsf{RMod}(B) \to \mathsf{RMod}(A)
+$$
+为互逆的等价,
+则有</p>
+<ul>
+<li>$N = F(A) \in\mathsf{BiMod}(A,B)$, $F\simeq -\otimes_A N$;</li>
+<li>$M = G(B) \in\mathsf{BiMod}(B,A)$, $G\simeq -\otimes_B M$.</li>
+</ul>
+<p><strong>定义</strong>. 对于环 $A,B$ 与右 $A$-模 $M$, 若 $(B,A)$-双模 $M$ 为 $\mathsf{RMod}(A)$ 的<span class="link local"><a href="./紧投射生成元.html" title="紧投射生成元 [紧投射生成元]">有限生成投射生成元</a></span>, 且 $B\simeq\operatorname{End}_{\mathsf{RMod}(A)}(M)$, $A\simeq\operatorname{End}_{\mathsf{LMod}(E)}(M)$, 则称 $M$ 为 $(B,A)$-<strong>pro-生成元</strong> (progenerator).</p>
+<p><strong>命题</strong> (“Morita III”). 范畴等价 $\mathsf{RMod}(A) \to \mathsf{RMod}(B)$ 的同构类一一对应于 $(B,A)$-pro-生成元的同构类. 范畴等价的复合等同于紧投射生成元的张量积.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 代数 <a class="slug" href="./Azumaya代数.html">[Azumaya代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 范畴 <a class="slug" href="./Azumaya范畴.html">[Azumaya范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./范畴论.html" title="范畴论 [范畴论]">范畴论</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Morita 范畴 <a class="slug" href="./Morita范畴.html">[Morita范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>充实范畴 <a class="slug" href="./充实范畴.html">[充实范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>充实范畴上的模 <a class="slug" href="./充实范畴上的模.html">[充实范畴上的模]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

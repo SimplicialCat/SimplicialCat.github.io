@@ -78,13 +78,13 @@
 <p><em>证明</em>.
 基本上是<span class="link local"><a href="./中山引理.html" title="中山引理 [中山引理]">中山引理</a></span>的直接应用.</p>
 <h3>环</h3>
-<p>局部环上的 Azumaya 代数可以推广到环上, 区别基本上只是局部环上的自由模推广为环上的<span class="link local"><a href="./投射模.html" title="“投射模” [投射模]">投射模</a></span>.</p>
+<p>局部环上的 Azumaya 代数可以推广到环上, 区别基本上只是局部环上的自由模推广为环上的<span class="link local"><a href="./投射模.html" title="投射模 [投射模]">投射模</a></span>.</p>
 <p><strong>命题-定义</strong>. 设 $R$ 是交换环, $R$ 上的 Azumaya 代数是满足如下等价条件的 $R$-代数 $A$:</p>
 <ul>
 <li>存在 $R$-代数 $B$ 使得 $A\otimes_R B$ 与 $R$ <span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>;</li>
 <li>$A\otimes_R A^{\mathrm{op}}$ 与 $R$ <span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>;</li>
 <li>$A$ 的中心为 $R$, 且 $A$ 是 $R$ 上的<span class="link local"><a href="./可分代数.html" title="可分代数 [可分代数]">可分代数</a></span>;</li>
-<li>$A$ 为有限生成 $R$-模, 且为 $R$-模范畴 $\mathsf{Mod}(R)$ 的<span class="link local"><a href="./投射生成元.html" title="投射生成元 [投射生成元]">投射生成元</a></span>, 且典范的 $R$-模同态 $A\otimes_R A^{\mathrm{op}} \to \operatorname{End}_R(A)$ 为同构.</li>
+<li>$A$ 为 $R$-模范畴 $\mathsf{Mod}(R)$ 的<span class="link local"><a href="./紧投射生成元.html" title="紧投射生成元 [紧投射生成元]">有限生成投射生成元</a></span>, 且典范的 $R$-模同态 $A\otimes_R A^{\mathrm{op}} \to \operatorname{End}_R(A)$ 为同构.</li>
 </ul>
 <p>环上的 Azumaya 的概念可进一步推广为 <span class="link local"><a href="./Azumaya范畴.html" title="Azumaya 范畴 [Azumaya范畴]">Azumaya 范畴</a></span>.</p>
 <h3>概形</h3>
@@ -236,16 +236,36 @@ $$
 $$
 在群同态 $\mathrm{GL}_n \to \mathrm{PGL}_n , X\mapsto X(-)X^{-1}$ 下的像 (详见 <span class="link local"><a href="./PGLn.html" title="PGLn [PGLn]">$\mathrm{PGL}_n$</a></span> 页面). $\square$</p>
 <h3>Azumaya 代数的相似, Brauer 群</h3>
-<p>定义环或概形上 Azumaya 代数的相似关系: $A\sim A'$ 当且仅当存在自然数 $n,n'$ 使得 $A\otimes M_n \simeq A'\otimes M_{n'}$.</p>
-<p>注意到 $M_n\otimes M_{n'} \simeq M_{nn'}$, 故张量积保持相似关系; 全体相似等价类在张量积下构成一个群, 称为环或概形的 <span class="link local"><a href="./Brauer群.html" title="Brauer 群 [Brauer群]">Brauer 群</a></span>.</p>
+<p>定义环或概形上 Azumaya 代数的相似关系: $A\sim A'$ 当且仅当存在 Zariski 局部自由模 $E,E'$ 使得 $A\otimes \operatorname{End}(E) \simeq A'\otimes \operatorname{End}(E')$.</p>
+<p>注意到 $\operatorname{End}(E)\otimes \operatorname{End}(E') \simeq \operatorname{End}(E\otimes E')$, 故张量积保持相似关系; 全体相似等价类在张量积下构成一个群, 称为环或概形的 <span class="link local"><a href="./Brauer群.html" title="Brauer 群 [Brauer群]">Brauer 群</a></span>.</p>
+<p><strong>命题</strong>. 两个 Azumaya 代数相似当且仅当它们作为结合代数 <span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>.</p>
+<p><em>证明</em>. 由于 $\operatorname{End}(E)$ Morita 等价于基环, 且张量积保持 Morita 等价, Azumaya 代数的相似当然推出 <span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>. 需要费点功夫的是另一个方向.</p>
+<p>由 <span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>的刻画, $R$-代数 $A$ <span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>于 $R$ 当且仅当 $A\simeq\operatorname{End}_R(E)$, $E$ 为有限生成投射 $R$-模. 对于 $R$ 为局部环的情形, $E$ 为自由 $R$-模.</p>
+<p>设局部环 $R$ 上 Azumaya 代数 $A,A'$ Morita 等价, 由定义, Azumaya 代数 $A$ 在 Morita 等价意义下的逆为 $A^{\mathrm{op}}$, 故有 $A\otimes_R (A')^{\mathrm{op}}$ Morita 等价于 $R$. 由前述结论, $A\otimes_R (A')^{\mathrm{op}} \simeq\operatorname{End}_R(E)$, $E$ 为自由 $R$-模.
+两边以 $-\otimes_R A'$ 作用, 得
+$A\otimes_R \operatorname{End}_R(A') \simeq A'\otimes_R\operatorname{End}_R(E')$, 故 $A,A'$ 作为 Azumaya 代数相似.</p>
 <h3>与束的关系</h3>
 <p>概形 $X$ 上的 Azumaya 代数 $A$ 给出一个<span class="link local"><a href="./束.html" title="束 [束]">束</a></span> (gerbe) $F_A$:
 对 $U\in X_{\mathrm{\'et}}$, $F_A(U)$ 是如下资料构成的 $1$-群胚:</p>
 <ul>
 <li>$U$ 上的向量丛 $E$;</li>
-<li>同构 $A_U \simeq \operatorname{End}(E)$.</li>
+<li><span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">代数</a></span>同构 $A_U \simeq \operatorname{End}(E)$.</li>
 </ul>
-<p>此束由群 $\mathbb G_m$ 控制, 定义了 $H^2(X_{\mathrm{\'et}},\mathbb G_m)$ 的元素; 并且它平凡当且仅当 $A$ 在整体上同构于一个向量丛的自同态代数.</p>
+<p>$F_A$ 局部非空是由于 Azumaya 代数<span class="link local"><a href="./平展景.html" title="平展景 [平展景]">平展</a></span>局部同构于矩阵代数. 此<span class="link local"><a href="./束.html" title="束 [束]">束</a></span>由群 $\mathbb G_m$ 控制 ($\operatorname{Aut}_{F_A(U)}(x)\simeq \operatorname{Aut}(\operatorname{End}(E))\simeq \mathbb G_m(U)$), 定义了 $H^2(X_{\mathrm{\'et}},\mathbb G_m)$ 的元素; 并且它平凡当且仅当 $A$ 在整体上同构于一个向量丛的自同态代数.</p>
+<p>由<span class="link local"><a href="./束.html" title="束 [束]">束</a></span>的性质,</p>
+<h2>例</h2>
+<h3>特征 $p$ 的微分算子</h3>
+<p>设 $k$ 为特征 $p$ 域, $A = k\langle x,\partial \rangle / ([\partial ,x]-1)$ 为 <span class="link local"><a href="./Weyl代数.html" title="Weyl 代数 [Weyl代数]">Weyl 代数</a></span>. 那么 $A$ 是 $k[x^{p},y^p]$ 上的 Azumaya 代数.</p>
+<p>首先, $x^p, \partial^p$ 落在 $A$ 的中心中.</p>
+<p>不妨设 $\bar k$ 代数闭; 由 Hilbert 零点定理, $k[x^p,y^p]$ 的极大理想形如 $(x^p-a,y^p-b)$; 设 $\alpha^p = a, \beta^p = b$, 则有同构
+$$
+A / (x^p - a ,y^p - b) \simeq \operatorname{End}_k(k[x]/x^p),
+$$
+$$
+x\mapsto \text{乘 } (x+\alpha),\,y\mapsto \frac{\partial}{\partial x}+\beta.
+$$</p>
+<h3>量子环面</h3>
+<p>设 $A = \mathbb{C}\langle z^{\pm 1}, t^{\pm 1} \rangle / (zt = qtz)$, $q\in\mathbb{C}^\times$ 为固定的常数. 这称为<strong>量子环面</strong> (quantum tori) 上的 “函数环”. 设 $q$ 为 $n$ 次单位根, 则 $A$ 是 $\mathbb{C}[x^{\pm n}, t^{\pm n}]$ 上的 Azumaya 代数.</p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Azumaya 范畴 <a class="slug" href="./Azumaya范畴.html">[Azumaya范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./范畴论.html" title="范畴论 [范畴论]">范畴论</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Brauer 群 <a class="slug" href="./Brauer群.html">[Brauer群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notes" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notes.html" title="讲稿 [notes]">notes</a></span></span>平展上同调讨论班 : 非 Abel 上同调, 主齐性空间与 Brauer 群 <a class="slug" href="./EC-H1-H2.html">[EC-H1-H2]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Skolem–Noether 定理 <a class="slug" href="./Skolem–Noether定理.html">[Skolem–Noether定理]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

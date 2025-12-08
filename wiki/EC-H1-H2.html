@@ -134,7 +134,7 @@ $$
 <li><span class="link local"><a href="./Artin–Schreier理论.html" title="Artin–Schreier 理论 [Artin–Schreier理论]">Artin–Schreier 理论</a></span></li>
 </ul>
 <h1>Brauer 群与二阶上同调</h1>
-<p>本节介绍概形 $X$ 的 Brauer 群与 $H^2(X,\mathbb G_m)$ 的关系. 一个关键的概念是 <span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span>.</p>
+<p>本节介绍概形 $X$ 的 Brauer 群与 $H^2(X,\mathbb G_m)$ 的关系; $X$ 上的 <span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span>的相似等价类 (<span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>类) 给出 $H^2(X,\mathbb G_m)$ 的元素.</p>
 <p>假设读者了解域 $k$ 的 Brauer 群, 即 $k$ 上的<span class="link local"><a href="./中心单代数.html" title="中心单代数 [中心单代数]">中心单代数</a></span>的相似类关于张量积构成的群.</p>
 <h2>局部环的 Brauer 群</h2>
 <p>设 $R$ 为<span class="link local"><a href="./局部环.html" title="“局部环” [局部环]">局部环</a></span>.</p>
@@ -142,15 +142,32 @@ $$
 <p><strong>命题</strong> (<span class="link local"><a href="./Skolem–Noether定理.html" title="Skolem–Noether 定理 [Skolem–Noether定理]">Skolem–Noether 定理</a></span>, <span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> 命题 IV.1.4). 设 $A$ 是 $R$ 上的 <span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span>. 则 $A$ 作为 $R$-代数的自同构均为内自同构, 即形如 $a\mapsto uau^{-1}$, 其中 $u\in A$ 为可逆元.</p>
 <p><strong>命题</strong> (<span class="link local"><a href="./MilneEC.html" title="Etale Cohomology [MilneEC]">Milne</a></span> 推论 IV.1.5). $M_n(R)$ 作为 $R$-代数的自同构群是 $\mathrm{PGL}_n(R) = \mathrm{GL}_n(R) / R^*$.</p>
 <h2>Azumaya 代数与概形的 Brauer 群</h2>
-<p><span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span>, <span class="link local"><a href="./Skolem–Noether定理.html" title="Skolem–Noether 定理 [Skolem–Noether定理]">Skolem–Noether定理</a></span>页面介绍了 Azumaya 代数的基本性质:</p>
+<p><span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span> 页面介绍了 Azumaya 代数的基本性质:</p>
 <ul>
 <li>概形上的 Azumaya 代数是<span class="link local"><a href="./平展景.html" title="平展景 [平展景]">平展</a></span>局部矩阵代数.</li>
-<li>概形上的 Azumaya 代数的自同构在 <strong>Zariski 局部</strong>为内自同构.</li>
-<li>概形上的 Azumaya 代数的<strong>同构类</strong> (而非相似类) 由 $H^1(X_{\mathrm{\'et}},\mathrm{PGL}_n)$ 分类.</li>
+<li>概形上的 Azumaya 代数的自同构在 <strong>Zariski 局部</strong>为内自同构 (<span class="link local"><a href="./Skolem–Noether定理.html" title="Skolem–Noether 定理 [Skolem–Noether定理]">Skolem–Noether定理</a></span>).</li>
+<li>概形上的 Azumaya 代数的<strong>同构类</strong>由 $H^1(X_{\mathrm{\'et}},\mathrm{PGL}_n)$ 分类.</li>
 <li>群同态 $\mathrm{GL}_n \to \mathrm{PGL}_n$ 给出的<span class="link local"><a href="./非Abel上同调.html" title="非 Abel 上同调 [非Abel上同调]">上同调</a></span>的映射 $H^1(X_{\mathrm{\'et}},\mathrm{GL}_n) \to H^1(X_{\mathrm{\'et}},\mathrm{PGL}_n)$ (向量丛 $\to$ Azumaya 代数) 将向量丛 $E$ 对应到 $\operatorname{End}(E)$.</li>
-<li>Azumaya 代数的相似</li>
+</ul>
+<p><span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>页面介绍了 Morita 等价的等价刻画, 由此可以证明</p>
+<ul>
+<li><span class="link local"><a href="./Azumaya代数.html" title="Azumaya 代数 [Azumaya代数]">Azumaya 代数</a></span>的<strong>相似</strong>等同于 <span class="link local"><a href="./Morita等价.html" title="Morita 等价 [Morita等价]">Morita 等价</a></span>, 也即模范畴的等价.</li>
+</ul>
+<p>故</p>
+<ul>
+<li>Azumaya 代数的<strong>相似类</strong>含于 $H^2(X,\mathbb G_m)$, 即可逆 “线性范畴层” (见<span class="link local"><a href="./高阶拟凝聚层.html" title="高阶拟凝聚层 [高阶拟凝聚层]">高阶拟凝聚层</a></span>) 的等价类.</li>
 </ul>
 <h3>正合列</h3>
+<p><strong>命题</strong>. 对概形 $X$, 有带基点集合的正合列
+$$
+\cdots\to H^1(X_{\mathrm{\'et}},\mathrm{GL}_n) \to H^1(X_{\mathrm{\'et}},\mathrm{PGL}_n) \overset{d}{\to} H^2(X_{\mathrm{\'et}},\mathbb G_m),
+$$
+其中 $d$ 将 Azumaya 代数 $A$ 的<strong>同构类</strong>对应到 $A$ 的<strong>相似类</strong>.
+映射 $d$ 有两种具体写出的方法:</p>
+<ul>
+<li>通过 <span class="link local"><a href="./Čech上同调.html" title="Čech 上同调 [Čech上同调]">Čech 上同调</a></span>;</li>
+<li>通过 Azumaya 代数表现的<span class="link local"><a href="./束.html" title="束 [束]">束</a></span> (gerbe).</li>
+</ul>
 <h3>挠</h3>
 <p>下图中每行每列均为群的<span class="link local"><a href="./群短正合列.html" title="群的短正合列 [群短正合列]">短正合列</a></span>:
 $$

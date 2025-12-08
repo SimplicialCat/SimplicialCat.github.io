@@ -64,12 +64,13 @@
 $$
 \pi_n(X,x) := \tau_{\leq 0} \Omega^n(X,x).
 $$
-$\pi_n(X,x)$ 是 <span class="link local"><a href="./En-代数.html" title="En-代数 [En-代数]">$\mathbb{E}_n$</a></span>-群. 由于它生活在一个 $1$-意象中, 故当 $n\geq 2$ 时它已经是 $\mathbb{E}_{\infty}$-群 (Abel 群). 当 $n=0$ 时它不是群, 只是带基点对象.</p>
+其中 $\Omega^n(X,x)$ 也是 $(S^n,*)$ 到 $(X,x)$ 的保基点映射空间, 从而是 <span class="link local"><a href="./En-代数.html" title="En-代数 [En-代数]">$\mathbb{E}_n$</a></span>-群; 那么其截断 $\pi_n(X,x)$ 也是 <span class="link local"><a href="./En-代数.html" title="En-代数 [En-代数]">$\mathbb{E}_n$</a></span>-群. 但由于其截断生活在一个 $1$-意象中, 故当 $n\geq 2$ 时它已经是 $\mathbb{E}_{\infty}$-群 (Abel 群). 当 $n=0$ 时它不是群, 只是带基点对象.</p>
 <p>还有一种 “整体” 的同伦群, 可理解为同时记录了 $X$ 在每一点处的同伦群:
 对 $n\geq 0$, 定义 $X$ 的 $n$ 阶同伦对象 $\pi_n(X)\in \mathcal{C}_{/X}$ 如下:
 $$
 \pi_n(X) := \tau_{\leq 0} (X^{S^n}\to X)\in\mathcal{C}_{/X}.
 $$
+$\pi_n(X)$ 是 $\mathcal{C}_{/X}$ 中的 $0$-<span class="link local"><a href="./截断性.html" title="截断性 [截断性]">截断</a></span> $\mathbb{E}_n$-群.
 当然, $\pi_n(X)$ 在点 $x\colon *\to X$ 处的<span class="link local"><a href="./基变换.html" title="基变换 [基变换]">基变换</a></span>即是 $\pi_n(X,x)$.</p>
 <h2>例</h2>
 <ul>
@@ -78,8 +79,20 @@ $$
 <li>$0$ 阶同伦信息是<strong>连通分支的集合</strong>.</li>
 <li>$1$ 阶同伦信息是<span class="link local"><a href="./基本群.html" title="基本群 [基本群]">基本群</a></span>.</li>
 </ul>
+<h2>性质</h2>
+<h3>拉回稳定性</h3>
+<p><strong>命题</strong>. 保持余极限和有限极限的函子保持同伦群.</p>
+<h3>长正合列</h3>
+<p><strong>命题</strong>. 对<span class="link local"><a href="./∞-意象.html" title="∞-意象 [∞-意象]">意象</a></span> $\mathcal C$ 中的任意映射 $f\colon X\to Y$, 有 $(\mathcal C_{/X})_{\leq 0}$ 中的长正合列
+$$
+\begin{aligned}
+\cdots&amp;\to \pi_n(f) \to \pi_n(X) \to f^*\pi_n(Y) \\
+&amp;\to\pi_{n-1}(f) \to \cdots.
+\end{aligned}
+$$</p>
+<p>其中 $\pi_n(f)$ 是 $f\in \mathcal C_{/Y}$ 的同伦群, 是 $(\mathcal C_{/Y})_{/f} = \mathcal C_{/X}$ 的对象.</p>
 <h2>相关概念</h2>
 <p><span class="link local"><a href="./相对同伦群.html" title="“相对同伦群” [相对同伦群]">相对同伦群</a></span></p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Eilenberg–MacLane 空间 <a class="slug" href="./Eilenberg--MacLane空间.html">[Eilenberg--MacLane空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“相对同伦群” <a class="slug" href="./相对同伦群.html">[相对同伦群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notion" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notion.html" title="观念 [notion]">notion</a></span></span>结构, 性质 <a class="slug" href="./结构.html">[结构]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>谱序列 <a class="slug" href="./谱序列.html">[谱序列]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>连通性 <a class="slug" href="./连通性.html">[连通性]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Eilenberg–MacLane 对象 <a class="slug" href="./Eilenberg–MacLane空间.html">[Eilenberg–MacLane空间]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>束 <a class="slug" href="./束.html">[束]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“相对同伦群” <a class="slug" href="./相对同伦群.html">[相对同伦群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="notion" style="margin-bottom: 0.4em;"><header><h1><span class="taxon"><span class="link local"><a href="./notion.html" title="观念 [notion]">notion</a></span></span>结构, 性质 <a class="slug" href="./结构.html">[结构]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>谱序列 <a class="slug" href="./谱序列.html">[谱序列]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>连通性 <a class="slug" href="./连通性.html">[连通性]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
