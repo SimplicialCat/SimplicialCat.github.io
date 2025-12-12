@@ -89,16 +89,21 @@ $$
 \end{aligned}
 $$</p>
 <h3>环</h3>
-<p>$\mathsf{Set}$ 中的 (非交换) 环 $R$ 的中心是
+<p>$\mathsf{Set}$ 中的 (非交换) 环 $R$ 的中心是与所有元素交换的元素的集合
 $$
 Z(R) = \{r\in R | \forall s\in R, rs=sr\},
 $$
-也可定义为
+也是 $R$ 作为 $(R,R)$-双模的自同态的集合.</p>
+<p>回忆 <span class="link local"><a href="./Morita范畴.html" title="Morita 范畴 [Morita范畴]">Morita 范畴</a></span>中, 对象 $R$ 的恒等态射即是 $R$ 作为 $(R,R)$-双模. 因此, 环 $R$ 的中心又可理解为
+$$
+Z(R) = \operatorname{End}_{\operatorname{End}_{\mathsf{Morita}}(R)}(\mathrm{id}).
+$$</p>
+<p>进一步, Morita 范畴嵌入线性范畴的范畴, 从而环 $R$ 的中心也可定义为
 $$
 Z(R) := \operatorname{End}_{\operatorname{End}_{\mathsf{Cat}}(\mathsf{Mod}(R))}(\mathrm{id}).
 $$</p>
 <h3>2-范畴的对象</h3>
-<p>定义 $2$-范畴 $\mathcal C$ 的对象 $X$ 的<strong>中心</strong>为幺半群
+<p>定义 $2$-范畴 $\mathcal C$ 的对象 $X$ 的<strong>中心</strong>为<span class="link local"><a href="./幺半群.html" title="幺半群 [幺半群]">幺半群</a></span>
 $$
 Z(X) := \operatorname{End}_{\operatorname{End}_{\mathcal C}(X)}(\mathrm{id}_X).
 $$

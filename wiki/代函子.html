@@ -61,7 +61,7 @@
 <p><span class="link local"><a href="./充实范畴.html" title="充实范畴 [充实范畴]">充实范畴</a></span>之间的代函子又称为<span class="link local"><a href="./充实范畴上的模.html" title="充实范畴上的模 [充实范畴上的模]">充实范畴上的双模</a></span>.</p>
 <p>单对象的<span class="link local"><a href="./充实范畴.html" title="充实范畴 [充实范畴]">充实范畴</a></span>之间的代函子 (<span class="link local"><a href="./充实范畴上的模.html" title="充实范畴上的模 [充实范畴上的模]">双模</a></span>) 是代数同态的推广. 对于交换环 $R$, 全体单对象 $\mathsf{Mod}(R)$-<span class="link local"><a href="./充实范畴.html" title="充实范畴 [充实范畴]">充实范畴</a></span> (即 $R$-<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">代数</a></span>) 以及代函子 (即双模) 构成的 $2$-范畴正是 <span class="link local"><a href="./Morita范畴.html" title="Morita 范畴 [Morita范畴]">Morita 范畴</a></span>.</p>
 <h2>定义</h2>
-<p>范畴 $\mathcal C$ 到 $\mathcal D$ 的<strong>代函子</strong> (profunctor) 是指函子 $\mathcal C \times \mathcal D^{\mathrm{op}} \to \mathsf{Set}$, 也即函子 $\mathcal C\to \mathsf{Psh}(\mathcal D)$. 代函子有时记作 $\mathcal C$ ⇸ $\mathcal D$.</p>
+<p>范畴 $\mathcal C$ 到 $\mathcal D$ 的<strong>代函子</strong> (profunctor) 是指函子 $\mathcal C \times \mathcal D^{\mathrm{op}} \to \mathsf{Set}$, 也即 $\mathcal C$ 到<span class="link local"><a href="./预层.html" title="预层 [预层]">预层</a></span>范畴 $\mathsf{Psh}(\mathcal D)$ 的函子 $\mathcal C\to \mathsf{Psh}(\mathcal D)$. 代函子有时也记作 $\mathcal C$ ⇸ $\mathcal D$.</p>
 <p>当然, <span class="link local"><a href="./充实范畴.html" title="充实范畴 [充实范畴]">充实范畴</a></span>也有类似的概念.</p>
 <h3>复合</h3>
 <p>代函子 $f\colon \mathcal C\times\mathcal D^{\mathrm{op}}\to\mathsf{Set}$ 与 $g\colon \mathcal D\times\mathcal E^{\mathrm{op}} \to\mathsf{Set}$ 的<strong>复合</strong>是代函子 $gf\colon \mathcal C\times\mathcal E^{\mathrm{op}}\to\mathsf{Set}$,
@@ -69,6 +69,13 @@ $$
 gf(c,e) := \operatorname{colim}_{d\in \mathcal D} f(c,d)\times g(d,e).
 $$</p>
 <p>全体范畴以及代函子构成一个 $2$-范畴.</p>
+<p><span class="link local"><a href="./充实范畴.html" title="充实范畴 [充实范畴]">充实范畴</a></span>之间的代函子又叫<span class="link local"><a href="./充实范畴上的模.html" title="充实范畴上的模 [充实范畴上的模]">双模</a></span>, 代函子的复合即是双模的张量积.</p>
+<h3>同态集</h3>
+<p>代函子 $f\colon \mathcal C\times\mathcal D^{\mathrm{op}} \to \mathsf{Set}$ 到 $g\colon \mathcal E\times\mathcal D^{\mathrm{op}}\to\mathsf{Set}$ 的<strong>同态集</strong>是代函子 $[f,g]\colon \mathcal E\times\mathcal C^{\mathrm{op}}\to\mathsf{Set}$,
+$$
+[f,g](e,c) := \operatorname{lim}_d \operatorname{Hom}(f(c,d),g(e,d)).
+$$</p>
+<p><span class="link local"><a href="./充实范畴.html" title="充实范畴 [充实范畴]">充实范畴</a></span>之间的代函子 (<span class="link local"><a href="./充实范畴上的模.html" title="充实范畴上的模 [充实范畴上的模]">双模</a></span>) 的同态集即是双模的同态集.</p>
 <h2>性质</h2>
 <h3>与普通函子的关系</h3>
 <p>普通的函子 $f\colon \mathcal C\to\mathcal D$ 给出两个代函子:</p>
@@ -76,6 +83,6 @@ $$</p>
 <li>$\operatorname{Hom}_{\mathcal D}(f(-),-) \colon \mathcal D \otimes\mathcal C^{\mathrm{op}} \to \mathsf{Set}$;</li>
 <li>$\operatorname{Hom}_{\mathcal D}(-,f(-)) \colon \mathcal C \otimes\mathcal D^{\mathrm{op}} \to \mathsf{Set}$.</li>
 </ul>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Morita 范畴 <a class="slug" href="./Morita范畴.html">[Morita范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>充实范畴上的模 <a class="slug" href="./充实范畴上的模.html">[充实范畴上的模]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Morita 范畴 <a class="slug" href="./Morita范畴.html">[Morita范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>充实范畴上的模 <a class="slug" href="./充实范畴上的模.html">[充实范畴上的模]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>预层范畴之间的伴随 <a class="slug" href="./预层范畴之间的伴随.html">[预层范畴之间的伴随]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./范畴论.html" title="范畴论 [范畴论]">范畴论</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

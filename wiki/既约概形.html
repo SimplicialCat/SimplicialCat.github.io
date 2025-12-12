@@ -55,17 +55,42 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="既约概形"><header><h1><span class="taxon">Wiki. </span>既约概形 <a class="slug" href="./既约概形.html">[既约概形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="既约概形"><header><h1><span class="taxon">Wiki. </span>既约概形 <a class="slug" href="./既约概形.html">[既约概形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./代数几何.html" title="代数几何 [代数几何]">代数几何</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>定义</h2>
 <p>称满足如下等价条件的<span class="link local"><a href="./概形.html" title="概形 [概形]">概形</a></span> $X$ 为既约概形:</p>
 <ul>
-<li>对每点 $x\in X$, 茎 $\mathcal O_{X,x}$ 为既约环, 即没有非零的幂零元;</li>
+<li>对每点 $x\in X$, 茎 $\mathcal O_{X,x}$ 为<span class="link local"><a href="./既约环.html" title="既约环 [既约环]">既约环</a></span>, 即没有非零的幂零元;</li>
 <li>存在仿射开覆盖 $\{\operatorname{Spec}A_i \to X\}$, 其中每个 $A_i$ 都是既约环;</li>
 <li>对任意 Zariski 开集 $U\hookrightarrow X$, $\Gamma(\mathcal O_X,U)$ 是既约环.</li>
 </ul>
 <p>$X$ 既约概形等价于在 $\mathrm{Sh}(X)$ 的<span class="link local"><a href="./意象的内语言.html" title="意象的内语言 [意象的内语言]">内语言</a></span>中 $\mathcal O_X$ 为既约环.</p>
+<h3>函子式</h3>
+<p>在<span class="link local"><a href="./函子式代数几何.html" title="函子式代数几何 [函子式代数几何]">函子式代数几何</a></span>中, 记
+$i\colon \mathsf{Aff}_{\mathrm{red}}\hookrightarrow\mathsf{Aff}$
+为既约仿射概形 (<span class="link local"><a href="./既约环.html" title="既约环 [既约环]">既约环</a></span>对应的<span class="link local"><a href="./仿射概形.html" title="仿射概形 [仿射概形]">仿射概形</a></span>) 的子范畴, 那么既约概形可视为 $\mathsf{Aff}_{\mathrm{red}}$ (带有 Zariski 拓扑的限制) 上的 (满足某种局部可表性的) <span class="link local"><a href="./景上的层.html" title="景上的层 [景上的层]">层</a></span> $X$ 的<span class="link local"><a href="./Kan扩张.html" title="Kan 扩张 [Kan扩张]">左 Kan 扩张</a></span> $\operatorname{LKE}_iX$: 对于任意仿射概形 $\operatorname{Spec}A$,
+$$
+\begin{aligned}
+&amp;(\operatorname{LKE}_iX)(\operatorname{Spec}A) \\
+&amp;=
+\operatorname{colim}\limits_{
+            \operatorname{Spec} A\to \operatorname{Spec}R
+    }
+    X(\operatorname{Spec}R)  (R\in \mathsf{Ring}_{\mathrm{red}}).
+\end{aligned}
+$$</p>
+<p>另见<span class="link local"><a href="./概形的约化.html" title="概形的约化 [概形的约化]">概形的约化</a></span>.</p>
+<h2>性质</h2>
+<h3>约化</h3>
+<p>既约概形的子范畴的嵌入 $\mathsf{Sch}_{\mathrm{red}}\hookrightarrow\mathsf{Sch}$ 有右伴随; 换言之, 对于既约概形 $X$ 和任意概形 $Y$, 映射 $X\to Y$ 唯一地穿过 $Y_{\mathrm{red}}$. 见<span class="link local"><a href="./概形的约化.html" title="概形的约化 [概形的约化]">概形的约化</a></span>.</p>
+<h3>局部闭子集上的既约子概形</h3>
+<p>对于概形 $X$ 的局部闭子集 $Z$, 存在唯一的<span class="link local"><a href="./局部闭嵌入.html" title="局部闭嵌入 [局部闭嵌入]">局部闭嵌入</a></span> $Y\to X$ 满足 $Y$ 为既约概形且其像集为 $Z$, 称之为 $Z$ 确定的<strong>既约子概形</strong> $Z_{\mathrm{red}}$.</p>
 <h2>例</h2>
 <p>$\operatorname{Spec} k[x]/(x^2)$ 不是既约概形.</p>
 <p>$\operatorname{Spec}k[x,y]/(xy)$ 是既约概形.</p>
+<p>既约概形的乘积不一定是既约概形:
+$$
+\operatorname{Spec}\mathbb F_p \times \operatorname{Spec}\mathbb{Z}[t]/(t^2-p) = \operatorname{Spec}\mathbb F_p [t]/(t^2).
+$$</p>
 <h2>相关概念</h2>
 <p><span class="link local"><a href="./整概形.html" title="“整概形” [整概形]">整概形</a></span></p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“整概形” <a class="slug" href="./整概形.html">[整概形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
