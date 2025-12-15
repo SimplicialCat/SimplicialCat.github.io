@@ -56,6 +56,41 @@
     });
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="极限"><header><h1><span class="taxon">Wiki. </span>极限 <a class="slug" href="./极限.html">[极限]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>定义</h2>
+<h3>万有锥</h3>
+<p>设 $X \colon I \to \mathcal C$ 为函子, 记 $X(i)=X_i$. 定义 $X$ 上的<strong>锥</strong>为 $\mathcal C$ 的对象 $c$ (称为锥的<strong>顶点</strong>) 配备其到每个 $X_i$ 的态射 $c\to X_i$, 满足对 $I$ 中任意态射 $i\to j$, 有如下交换图.
+$$
+\begin{array}
+{ccc}
+c &amp; \to &amp; X_i \\
+&amp; \searrow &amp; \downarrow \\
+&amp;&amp; X_j
+\end{array}
+$$</p>
+<p>换言之, 考虑常值函子 $\operatorname{const}c\colon I\to\mathcal C$, 那么 $X$ 上的锥是自然变换
+$$
+\operatorname{const} c \to X.
+$$</p>
+<p>$X$ 的<strong>极限</strong>是万有的锥, 也即 $\mathcal C$ 的对象 $\operatorname{lim} X$, 带有一个锥
+$$
+\operatorname{const}\operatorname{lim} X \to X,
+$$
+使得 $X$ 上以任何对象 $c$ 为顶点的锥等同于 $c$ 到 $\operatorname{lim}X$ 的态射, 即有自然同构
+$$
+\operatorname{Hom}_{\mathcal C}(c,\operatorname{lim}X)\simeq \operatorname{Hom}_{\mathsf{Fun}(I,\mathcal{C})}(\operatorname{const}c,X).
+$$</p>
+<h3>加权</h3>
+<p>图 $X$ 上以 $c$ 为顶点的锥也等同于函子 $\operatorname{Hom}(c,X(-))\colon I\to\mathsf{Set}$ 的一个<span class="link local"><a href="./整体截面.html" title="“整体截面” [整体截面]">整体元素</a></span>, 也即常值函子 $1\colon I\to\mathsf{Set}$ 到该函子的自然变换:
+$$
+\operatorname{Hom}_{\mathsf{Fun}(I,\mathcal{C})}(\operatorname{const}c,X)
+\simeq
+\operatorname{Hom}_{
+    \mathsf{Fun}(I,\mathsf{Set})}
+\big[
+    {1,\operatorname{Hom}_{\mathcal C}(c,X(-))}
+\big]
+$$</p>
+<p>我们可以将 $1\colon I\to\mathsf{Set}$ 替换为一般的函子 $w\colon I\to\mathsf{Set}$, 视为指标范畴 $I$ 上的 “权”, 以此定义<strong>加权极限</strong>.</p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>拉回 (范畴论) <a class="slug" href="./拉回.html">[拉回]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>有限极限 <a class="slug" href="./有限极限.html">[有限极限]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
