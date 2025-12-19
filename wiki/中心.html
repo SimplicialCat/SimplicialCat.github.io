@@ -89,19 +89,37 @@ $$
 \end{aligned}
 $$</p>
 <h3>环</h3>
-<p>$\mathsf{Set}$ 中的 (非交换) 环 $R$ 的中心是与所有元素交换的元素的集合
+<p>固定交换环 $k$ 作为基环.
+设 $A$ 为 $k$ 上的<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span>. $A$ 的<strong>中心</strong>是与所有元素交换的元素的集合
 $$
-Z(R) = \{r\in R | \forall s\in R, rs=sr\},
+Z(A) = \{a\in A | \forall b\in A, ab=ba\},
 $$
-也是 $R$ 作为 $(R,R)$-双模的自同态的集合.</p>
-<p>回忆 <span class="link local"><a href="./Morita范畴.html" title="Morita 范畴 [Morita范畴]">Morita 范畴</a></span>中, 对象 $R$ 的恒等态射即是 $R$ 作为 $(R,R)$-双模. 因此, 环 $R$ 的中心又可理解为
+也是 $A$ 作为 $(A,A)$-双模的自同态的集合
 $$
-Z(R) = \operatorname{End}_{\operatorname{End}_{\mathsf{Morita}}(R)}(\mathrm{id}).
+Z(A) = \operatorname{End}_{\mathsf{BiMod}(A,A)}(A),
+$$
+也是<span class="link local"><a href="./等化子.html" title="等化子 [等化子]">等化子</a></span>
+$$
+Z(A) = \operatorname{eq}\big(
+    A\rightrightarrows \operatorname{Hom}_k(A,A)
+\big),
+$$
+其中两个映射分别为左乘与右乘.</p>
+<p>回忆 <span class="link local"><a href="./Morita范畴.html" title="Morita 范畴 [Morita范畴]">Morita 范畴</a></span>中, <span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span> $A$ 的恒等态射即是 $A$ 作为 $(A,A)$-双模. 因此, $A$ 的中心又可理解为
+$$
+Z(A) = \operatorname{End}_{\operatorname{End}_{\mathsf{Morita}}(A)}(\mathrm{id}).
 $$</p>
-<p>进一步, Morita 范畴嵌入线性范畴的范畴, 从而环 $R$ 的中心也可定义为
+<p>进一步, Morita 范畴嵌入线性范畴的范畴, 从而<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span> $A$ 的中心也可定义为
 $$
-Z(R) := \operatorname{End}_{\operatorname{End}_{\mathsf{Cat}}(\mathsf{Mod}(R))}(\mathrm{id}).
+Z(R) := \operatorname{End}_{\operatorname{End}_{\mathsf{Cat}}(\mathsf{Mod}(A))}(\mathrm{id}).
 $$</p>
+<h3>幺半范畴</h3>
+<p>设 $\mathcal C$ 为 $k$-线性<span class="link local"><a href="./幺半范畴.html" title="幺半范畴 [幺半范畴]">幺半范畴</a></span>,
+定义 $\mathcal C$ 的 <strong>Drinfeld 中心</strong> $Z(\mathcal C)$ 是一个<span class="link local"><a href="./辫幺半范畴.html" title="辫幺半范畴 [辫幺半范畴]">辫幺半范畴</a></span>, 可理解为两个函子 $\mathcal C \to \operatorname{Hom}_k(\mathcal C,\mathcal C)$ 的<span class="link local"><a href="./等化子.html" title="等化子 [等化子]">等化子</a></span>, 其对象为 $\mathcal C$ 的对象 $X$ 配备自然变换
+$$
+X\otimes (-) \to (-)\otimes X,
+$$
+满足两个自然变换 $X\otimes (Y\otimes Z)\to (Y\otimes Z)\otimes X$ 相等.</p>
 <h3>2-范畴的对象</h3>
 <p>定义 $2$-范畴 $\mathcal C$ 的对象 $X$ 的<strong>中心</strong>为<span class="link local"><a href="./幺半群.html" title="幺半群 [幺半群]">幺半群</a></span>
 $$

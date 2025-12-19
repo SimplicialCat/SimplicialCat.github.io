@@ -56,22 +56,43 @@
     });
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="群作用"><header><h1><span class="taxon">Wiki. </span>群作用 <a class="slug" href="./群作用.html">[群作用]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary><h2>定义</h2>
+<h3>生象群与一般范畴的对象</h3>
+<p>对于<span class="link local"><a href="./生象.html" title="生象 [生象]">生象</a></span><span class="link local"><a href="./群.html" title="群 [群]">群</a></span> $G$ 与范畴 $\mathcal C$ 的对象 $X$, 定义 $G$ 在 $X$ 上的作用为函子 $\mathbf{B}G\to\mathcal C$.</p>
+<p>当然, <span class="link local"><a href="./充实范畴.html" title="充实范畴 [充实范畴]">充实范畴</a></span>中的对象也有类似概念.</p>
+<h3>一般范畴中的群</h3>
 <p>对于范畴 $\mathcal C$ 中的<span class="link local"><a href="./群.html" title="群 [群]">群</a></span> $G$, 定义 $G$-作用为<span class="link local"><a href="./单纯对象.html" title="单纯对象 [单纯对象]">单纯对象</a></span>
 $$
-X /\!/ G = (\cdots X\times G\times G \to^3 X\times G \rightrightarrows X )
+X /\!\!/ G = (\cdots X\times G\times G \to^3 X\times G \rightrightarrows X )
 $$
 以及态射
 $$
-X /\!/ G \to * /\!/ G.
+X /\!\!/ G \to * /\!\!/ G.
 $$</p>
-<p>在 <span class="link local"><a href="./∞-意象.html" title="∞-意象 [∞-意象]">$\infty$-意象</a></span> $\mathcal C$ 中, 群 $G$ 的作用等同于指向 $\mathbf{B}G$ 的映射, 即<span class="link local"><a href="./俯意象.html" title="俯意象 [俯意象]">俯意象</a></span> $\mathcal C_{/ \mathbf{B}G}$ 的对象:
+<h3>意象中的群</h3>
+<p>在 <span class="link local"><a href="./∞-意象.html" title="∞-意象 [∞-意象]">$\infty$-意象</a></span> $\mathcal C$ 中, 群 $G$ 的作用等同于指向 $\mathbf{B}G$ 的映射, 即<span class="link local"><a href="./俯意象.html" title="俯意象 [俯意象]">俯意象</a></span> $\mathcal C_{/ \mathbf{B}G}$ 的对象; 而由意象的下降性质有
 $$
 \mathcal C_{/\mathbf{B}G} \simeq \operatorname{lim}\Big(
 \mathcal C \rightrightarrows \mathcal C_{/G} \to^3 \mathcal C_{/G\times G}\cdots
-\Big)
+\Big),
+$$
+于是 $\mathcal C_{/\mathbf{B}G}$ 的对象等同于单纯对象
+$$
+X /\!\!/ G = (\cdots X\times G\times G \to^3 X\times G \rightrightarrows X ).
 $$</p>
-<h3>经典</h3>
-<p>…</p>
+<h2>性质</h2>
+<p>生象群 $G$ 在生象 $X$ 上的作用的<strong>不动点</strong>为
+$$
+X^G := \operatorname{lim}_{\mathbf{B}G}X = \operatorname{Hom}_{\mathsf{Ani}_{/\mathbf{B}G}}(\mathbf{B}G,X/G);
+$$
+<strong>余不动点</strong> (即群作用的<strong>商</strong>) 为
+$$
+X_G := \operatorname{colim}_{\mathbf{B}G}X = X/G= \operatorname{colim} X /\!\!/ G,
+$$
+即是<span class="link local"><a href="./单纯对象.html" title="单纯对象 [单纯对象]">单纯对象</a></span>
+$$
+(\cdots X\times G\times G \to^3 X\times G \rightrightarrows X )
+$$
+的<span class="link local"><a href="./几何实现(单纯图表的余极限).html" title="几何实现 (作为单纯图表的余极限) [几何实现(单纯图表的余极限)]">几何实现</a></span>.</p>
 <h2>例</h2>
 <p>群在自身上的<span class="link local"><a href="./共轭作用.html" title="共轭作用 [共轭作用]">共轭作用</a></span></p>
 <h2>相关概念</h2>

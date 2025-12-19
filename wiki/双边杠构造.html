@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“双边杠构造”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>双边杠构造</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,24 +55,24 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="双边杠构造"><header><h1><span class="taxon">Wiki. </span>“双边杠构造” <a class="slug" href="./双边杠构造.html">[双边杠构造]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>双边杠构造是<span class="link local"><a href="./杠构造.html" title="“杠构造” [杠构造]">杠构造</a></span> (bar construction) 的推广.</p>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="双边杠构造"><header><h1><span class="taxon">Wiki. </span>双边杠构造 <a class="slug" href="./双边杠构造.html">[双边杠构造]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<p>双边杠构造是<span class="link local"><a href="./杠构造.html" title="杠构造 [杠构造]">杠构造</a></span> (bar construction) 的推广.</p>
 <h2>定义</h2>
-<p>设 $(C,\mu,\eta)$ 为范畴 $\mathcal T$ 上的<span class="link local"><a href="./单子.html" title="单子 [单子]">单子</a></span>. 设 $\mathcal V$ 为另一范畴. 称如下函子 $F\colon \mathcal T\to\mathcal V$ 为 $C$-函子: 存在自然变换 $\lambda \colon FC\to F$, 满足
+<p>设 $T$ 为范畴 $\mathcal C$ 上的<span class="link local"><a href="./单子.html" title="单子 [单子]">单子</a></span>. 对于 $T$ 上的<span class="link local"><a href="./单子上的代数.html" title="单子上的代数 [单子上的代数]">左模</a></span> $X\colon I\to\mathcal C$ 与<span class="link local"><a href="./单子上的代数.html" title="单子上的代数 [单子上的代数]">右模</a></span> $Y\colon \mathcal C\to J$, <strong>双边杠构造</strong>是 $\mathsf{Fun}(I,J)$ 中的<span class="link local"><a href="./单纯对象.html" title="单纯对象 [单纯对象]">单纯对象</a></span>
 $$
-F\overset{F\eta}{\to}FC\overset{\lambda}{\to}F =\operatorname{id}_F,
-$$
-$$
-FCC\overset{F\mu}{\to}FC\overset{\lambda }{\to}F =FCC\overset{\lambda C}{\to}FC\overset{\lambda }{\to}F.
-$$
-这是 $\mathsf {End}(\mathcal T)$ 中的幺半群右作用在 $\mathsf {Fun}(\mathcal T,\mathcal V)$ 上.</p>
-<p>定义范畴 $\mathcal B(\mathcal T,\mathcal V)$, 其对象为 $(F,C,X)$, $C$ 为单子, $F$ 为 $C$-函子, $X$ 为 $C$-代数. 定义
-$$
-B_q(F,C,X)=FC^qX,
-$$
-$B_q(F,C,X)$ 可以构成一个单纯对象 $B_*(F,C,X)$.</p>
+B(Y,T,X) = (\cdots YTTX \to^3 YTX \rightrightarrows YX).
+$$</p>
 <h2>例</h2>
-<h3>分类空间</h3>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>“杠构造” <a class="slug" href="./杠构造.html">[杠构造]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<h3>伴随的典范双边杠构造</h3>
+<p>对于函子 $F\colon \mathcal C\to\mathcal D$, $G\colon \mathcal D\to\mathcal C$ 之间的一对<span class="link local"><a href="./伴随.html" title="伴随 [伴随]">伴随</a></span> $F\dashv G$ 给出的<span class="link local"><a href="./伴随给出单子.html" title="伴随给出单子 [伴随给出单子]">单子</a></span> $T = GF$,</p>
+<ul>
+<li>$F$ 有典范的 $T$-<strong>右模</strong>结构 $FT=FGF \to F$,</li>
+<li>$G$ 有典范的 $T$-<strong>左模</strong>结构 $TG=GFG \to G$.</li>
+</ul>
+<p>因此伴随 $F\dashv G$ 给出典范的<strong>双边杠构造</strong>
+$$
+B(F,T,G) = (\cdots FGFGFG \to^3 FGFG \rightrightarrows FG).
+$$</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>单子上的代数 <a class="slug" href="./单子上的代数.html">[单子上的代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>杠构造 <a class="slug" href="./杠构造.html">[杠构造]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>
