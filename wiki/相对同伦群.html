@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width"><title>“相对同伦群”</title><link rel="stylesheet" href="./main.css">
+<meta name="viewport" content="width=device-width"><title>相对同伦群</title><link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -55,11 +55,21 @@
       minRuleThickness: 0.05,
     });
   });
-</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="相对同伦群"><header><h1><span class="taxon">Wiki. </span>“相对同伦群” <a class="slug" href="./相对同伦群.html">[相对同伦群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p>#代数拓扑</p>
-<p><span class="link local"><a href="./同伦群.html" title="同伦群 [同伦群]">同伦群</a></span>的<span class="link local"><a href="./相对.html" title="相对观点 [相对]">相对</a></span>版本.</p>
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="相对同伦群"><header><h1><span class="taxon">Wiki. </span>相对同伦群 <a class="slug" href="./相对同伦群.html">[相对同伦群]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>观念</h2>
+<p>相对同伦群是<span class="link local"><a href="./同伦群.html" title="同伦群 [同伦群]">同伦群</a></span>的<span class="link local"><a href="./相对.html" title="相对观点 [相对]">相对</a></span>版本.</p>
 <h2>定义</h2>
-<p>设 $(X,A)$ 为空间对, $A$ 带有基点 $x_0$. 设 $n$ 为正整数.</p>
+<h3>一般定义</h3>
+<p><span class="link local"><a href="./意象.html" title="意象 [意象]">意象</a></span> $\mathcal C$ 中的映射 $A\to X$ 的相对同伦群是其作为 $X$ 的<span class="link local"><a href="./俯意象.html" title="俯意象 [俯意象]">俯意象</a></span>的对象的<span class="link local"><a href="./同伦群.html" title="同伦群 [同伦群]">同伦群</a></span>
+$$
+\pi_n(A\to X) \in \mathcal (\mathcal C_{/X})_{/A} = \mathcal C_{/A}.
+$$
+对于 $A$ 的点 $a\colon 1\to A$, 定义 $a$ 处的相对同伦群
+$$
+\pi_n(A\to X, a) := a^*\pi_n(A\to X).
+$$</p>
+<h3>传统</h3>
+<p>设 $(X,A)$ 为空间偶, $A$ 带有基点 $x_0$. 设 $n$ 为正整数.</p>
 <p>定义相对同伦群 $\pi_n(X,A,x_0)$ 的元素为映射 $(I^n,\partial I^n,J^{n-1}) \to (X,A,x_0)$ 的同伦类, 其中 $J^{n-1}$ 是 $\partial I^n$ 去掉一个面 (“开口的盒子”).</p>
 <p>另一种等价的定义是, $\pi_n(X,A,x_0)$ 的元素为映射 $(D^n,S^{n-1},s_0) \to (X,A,x_0)$ 的同伦类.</p>
 <p>对于 $n\geq 2$, 定义 $\pi_n(X,A,x_0)$ 的群运算如下. 设 $[f],[g] \in\pi_n(X,A,x_0)$ 分别由映射 $f,g \colon (I^n,\partial I^n,J^{n-1}) \to (X,A,x_0)$ 代表. 设 $J^{n-1}$ 是 $\partial I^n$ 去掉了对应于 $x_n=1$ 的面. 定义 $f\cdot g$ 为映射

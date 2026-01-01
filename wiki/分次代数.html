@@ -59,7 +59,27 @@
 <p>分次代数是分成不同次数的 “齐次” 部分之和的<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span>, 齐次元素的乘积的次数是次数的和.</p>
 <p>次数也可取值于一般的幺半群.</p>
 <h2>定义</h2>
-<p>设 $M$ 为<span class="link local"><a href="./幺半群.html" title="幺半群 [幺半群]">幺半群</a></span>,</p>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>乘法群概形 <a class="slug" href="./乘法群概形.html">[乘法群概形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./代数几何.html" title="代数几何 [代数几何]">代数几何</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>射影谱 <a class="slug" href="./射影谱.html">[射影谱]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./代数几何.html" title="代数几何 [代数几何]">代数几何</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>相对射影谱 <a class="slug" href="./相对射影谱.html">[相对射影谱]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./代数几何.html" title="代数几何 [代数几何]">代数几何</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<p>固定基环 $k$, 设 $M$ 为<span class="link local"><a href="./幺半群.html" title="幺半群 [幺半群]">幺半群</a></span>, 通常 $M = \mathbb{Z}$.</p>
+<p>定义 $k$ 上的 $M$-分次代数为 $k$-代数 $A$ 带有底层 $k$-模的分解
+$$
+A = \bigoplus_{m\in M} A_m,
+$$
+其中 $A_m$ 的元素称为 $m$ 次的<strong>齐次元素</strong>,
+满足齐次元素的乘积仍为齐次元素, 即乘法映射将 $A_m \times A_{m'}$ 映射到 $A_{mm'}$.</p>
+<h3>余模结构</h3>
+<p>设 $M$ 为交换幺半群.</p>
+<p>回忆幺半群代数 $k[M]$ 的双代数结构. 注意到自由 $k$-模函子
+$$
+k[-]\colon (\mathsf{Set},\times) \to (\mathsf{Mod}(k),\otimes)
+$$
+为对称幺半函子, 故将 $(\mathsf{Set},\times)$ 中的交换余交换<span class="link local"><a href="./双代数.html" title="双代数 [双代数]">双代数</a></span> $M$ 对应到 $\mathsf{Mod}(k)$ 中的交换余交换双代数 $k[M]$, 即 $\mathsf{CAlg}(k)$ 中的余交换<span class="link local"><a href="./结合余代数.html" title="结合余代数 [结合余代数]">余代数</a></span>.</p>
+<p>现在, 容易验证 $k$ 上的<span class="link local"><a href="./交换代数.html" title="交换代数 [交换代数]">交换代数</a></span> $A$ 上的 $M$-分次结构等同于 $\mathsf{CAlg}(k)$ 中的余代数 $k[M]$ 上的一个余模结构
+$$
+A \to A[M] := A \otimes_k k[M],
+$$
+将 $m$ 次齐次元素 $a$ 映射到 $a \otimes m$. 其构成代数同态的条件恰好表明齐次元素的乘积的次数是各自次数的和.</p>
+<p><span class="link local"><a href="./代数-几何对偶.html" title="代数–几何对偶 [代数-几何对偶]">对偶</a></span>地, $\operatorname{Spec}k[M]$ 是<span class="link local"><a href="./仿射概形.html" title="仿射概形 [仿射概形]">仿射概形</a></span>范畴中的交换幺半群, $A$ 上的 $M$-分次也等同于 $k$-概形 $\operatorname{Spec}A$ 上的 $\operatorname{Spec}k[M]$-<span class="link local"><a href="./群作用.html" title="群作用 [群作用]">作用</a></span>.</p>
+<h2>性质</h2>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>滤与分次的叠观点 <a class="slug" href="./fil-gr.html">[fil-gr]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./代数几何.html" title="代数几何 [代数几何]">代数几何</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>乘法群概形 <a class="slug" href="./乘法群概形.html">[乘法群概形]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./代数几何.html" title="代数几何 [代数几何]">代数几何</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>射影谱 <a class="slug" href="./射影谱.html">[射影谱]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./代数几何.html" title="代数几何 [代数几何]">代数几何</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>射影谱上的拟凝聚层 <a class="slug" href="./射影谱上的拟凝聚层.html">[射影谱上的拟凝聚层]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./代数几何.html" title="代数几何 [代数几何]">代数几何</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>相对射影谱 <a class="slug" href="./相对射影谱.html">[相对射影谱]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./代数几何.html" title="代数几何 [代数几何]">代数几何</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

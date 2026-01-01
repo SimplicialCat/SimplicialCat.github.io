@@ -57,6 +57,7 @@
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="双代数"><header><h1><span class="taxon">Wiki. </span>双代数 <a class="slug" href="./双代数.html">[双代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>定义</h2>
+<p><span class="link local"><a href="./幺半范畴.html" title="幺半范畴 [幺半范畴]">幺半范畴</a></span> $\mathcal C$ 中的双代数是其<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span>范畴中的<span class="link local"><a href="./结合余代数.html" title="结合余代数 [结合余代数]">结合余代数</a></span>, 也是其<span class="link local"><a href="./结合余代数.html" title="结合余代数 [结合余代数]">结合余代数</a></span>范畴中的<span class="link local"><a href="./结合代数.html" title="结合代数 [结合代数]">结合代数</a></span>.</p>
 <h3>传统定义</h3>
 <p><span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半 $1$-范畴</a></span>中的<strong>双代数</strong> (bialgebra) $(A,m,\eta,\epsilon,\Delta)$ 是对象 $A$ 配备如下资料,</p>
 <ul>
@@ -72,6 +73,18 @@
 <li>$\Delta,\epsilon$ 均为结合代数的同态,</li>
 <li>$m,\eta$ 均为结合余代数的同态.</li>
 </ul>
-</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Hopf 代数 <a class="slug" href="./Hopf代数.html">[Hopf代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+<h2>性质</h2>
+<h3>模范畴</h3>
+<p><span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半范畴</a></span> $\mathcal C$ 中, 双代数 $A$ 上的 (左) 模范畴具有<span class="link local"><a href="./幺半范畴.html" title="幺半范畴 [幺半范畴]">幺半范畴</a></span>结构, 两个 $A$-模的张量积上的 $A$-模结构为
+$$
+\begin{aligned}
+A\otimes M\otimes N &amp;\overset{\Delta}{\to} A\otimes A\otimes M \otimes N \\&amp;\to A\otimes M\otimes A\otimes N \\&amp;\to  M\otimes N.
+\end{aligned}
+$$
+抽象地看, 这是由于 $\mathsf{Mod}(-)\colon \mathsf{Alg}^{\mathrm{op}} \to \mathsf{Cat}$ 为<span class="link local"><a href="./松幺半函子.html" title="松幺半函子 [松幺半函子]">松幺半函子</a></span>, 故将 $\mathsf{Alg}^{\mathrm{op}}$ 中的代数 $A$ 变为 $\mathsf{Cat}$ 中的代数; $\mathsf{Mod}(A)$ 上的幺半结构为
+$$
+\mathsf{Mod}(A)\times\mathsf{Mod}(A)\overset{\otimes}{\to}\mathsf{Mod}(A\otimes A) \overset{\Delta^*}{\to}\mathsf{Mod}(A).
+$$</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>Hopf 代数 <a class="slug" href="./Hopf代数.html">[Hopf代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>分次代数 <a class="slug" href="./分次代数.html">[分次代数]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

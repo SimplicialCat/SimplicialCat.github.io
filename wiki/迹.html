@@ -58,12 +58,24 @@
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="迹"><header><h1><span class="taxon">Wiki. </span>迹 <a class="slug" href="./迹.html">[迹]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
 <h2>定义</h2>
 <h3>自映射的迹</h3>
-<p>对于某些<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半范畴</a></span> $\mathcal C$ 中某些对象 $X$ 的自映射 $f\colon X\to X$, 可以定义迹 $\operatorname{Tr}(f)\in\operatorname{End}(1)$,
+<p>对于<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半范畴</a></span> $\mathcal C$ 中<span class="link local"><a href="./可对偶对象.html" title="对偶 [可对偶对象]">可对偶对象</a></span> $X$ 的自映射 $f\colon X\to X$, 定义<strong>迹</strong> $\operatorname{Tr}(f)\in\operatorname{End}_{\mathcal C}(1)$,
 $$
     \operatorname{Tr}(f):
     1 \overset{\operatorname{coev}}{\to} X\otimes X^* \overset{f\otimes\mathrm{id}}{\to} X\otimes X^*\overset{\operatorname{ev}}{\to} 1.
 $$</p>
-<p>恒等映射的迹又叫<span class="link local"><a href="./幺半维数.html" title="对称幺半维数 [幺半维数]">幺半维数</a></span>.</p>
+<p>对象 $X$ 的恒等映射的迹又叫 $X$ 的<span class="link local"><a href="./幺半维数.html" title="对称幺半维数 [幺半维数]">幺半维数</a></span>
+$$
+\operatorname{dim}X := \operatorname{Tr}(\mathrm{id}_X).
+$$</p>
+<p>考虑范畴
+$$
+\mathsf{End}_{\mathcal C} := \mathsf{Fun}(\mathbf{B}\mathbb{N},\mathcal C)= \{(X,f)\colon X\in\mathcal C, f\in\operatorname{End}_{\mathcal C}(X)\},
+$$
+(其中 $\mathbf{B}\mathbb{N}$ 是 “<span class="link local"><a href="./游走.html" title="游走 [游走]">游走</a></span>的自同态”)
+那么迹的构造升级为一个函子
+$$
+\operatorname{Tr}\colon \mathsf{End}_\mathcal C \to \operatorname{End}_{\mathcal C}(1).
+$$</p>
 <h3>对象的迹</h3>
 <h2>例</h2>
 <p>当 $\mathcal C = \mathsf{Vect}_k$

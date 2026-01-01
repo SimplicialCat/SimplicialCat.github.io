@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>射影谱上的拟凝聚层</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="射影谱上的拟凝聚层"><header><h1><span class="taxon">Wiki. </span>射影谱上的拟凝聚层 <a class="slug" href="./射影谱上的拟凝聚层.html">[射影谱上的拟凝聚层]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./代数几何.html" title="代数几何 [代数几何]">代数几何</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<h2>定义</h2>
+<p>设 $R$ 为 $\mathbb{Z}_{\geq 0}$-<span class="link local"><a href="./分次代数.html" title="分次代数 [分次代数]">分次环</a></span>, $M$ 为 $\mathbb{Z}$-分次 $R$-模. 考虑 $\operatorname{Spec}R$ 上的<span class="link local"><a href="./拟凝聚层.html" title="拟凝聚层 [拟凝聚层]">拟凝聚层</a></span> $\widetilde {M}$, 限制在 $\operatorname{Spec}R$ 的开子空间
+$$
+\operatorname{Spec}^\circ R :=
+\operatorname{Spec}R \setminus \operatorname{Spec}R_0=\bigcup_{f\in R_+} U(f).
+$$
+有典范的拓扑空间映射 $\pi\colon \operatorname{Spec}^\circ R\to\operatorname{Proj}R$ (见<span class="link local"><a href="./射影谱.html" title="射影谱 [射影谱]">射影谱</a></span>).
+定义<strong>射影谱上的拟凝聚层</strong> $\widetilde {M}\in\mathsf{QCoh}(\operatorname{Proj}R)$ 为其推前的零次部分:
+$$
+\widetilde {M} := \big[\pi_*(\widetilde {M}|_{\operatorname{Spec}^\circ R})\big]_0 \in \mathsf{QCoh}(\operatorname{Proj}R).
+$$</p>
+<p>由构造,
+$$
+\widetilde {M}|_{U_+(f)} \simeq \widetilde {M_{(f)}}\in\mathsf{QCoh}(U_+(f)),
+$$
+其中 $M_{(f)} := (M_f)_0$.</p>
+<h3>通过商叠</h3>
+<p>环 $S$ 上的<span class="link local"><a href="./分次代数.html" title="分次代数 [分次代数]">分次</a></span>相等于 $\operatorname{Spec}S$ 上的 $\mathbb G_m$-作用. 分次环 $S$ 上的 $\mathbb{Z}$-分次模相当于商叠 $\operatorname{Spec}S / \mathbb G_m$ 上的拟凝聚层.</p>
+<p>… (todo)</p>
+<h2>例</h2>
+<p>分次环 $R$ 自身作为 $R$-模给出的 $\operatorname{Proj}R$ 上的拟凝聚层就是结构层 $\mathcal O_{\operatorname{Proj}R}$.</p>
+<h3>移位</h3>
+<p>对于 $\mathbb{Z}$-分次 $R$-模 $M$, 记 $M(n)$ 为如下 $\mathbb{Z}$-分次 $R$-模: 其底层 $R$-模为 $M$, 分次为
+$M(n)_m = M_{n+m}$. 移位等同于与 $R(n)$ 作张量积: $M(n) = M \otimes_R R(n)$.</p>
+<p>记 $R(n)$ 对应的 $\operatorname{Proj}R$ 上的拟凝聚层为
+$$
+\mathcal O(n) := \widetilde {R(n)}.
+$$</p>
+<h2>性质</h2>
+<p><strong>命题</strong>. 函子 $\mathsf{Mod}^{\mathrm{gr}}(R) \to \mathsf{QCoh}(\operatorname{Proj}R)$, $M\mapsto \widetilde {M}$ 为正合函子且保持余极限.</p>
+<h3>张量积</h3>
+<p><strong>命题</strong>. 设 $M$, $N$ 为分次 $R$-模, 则有 $\mathsf{QCoh}(\operatorname{Proj}R)$ 中的同构
+$$
+\widetilde {M} \otimes_{\mathcal O} \widetilde N \simeq \widetilde {M\otimes_R N}.
+$$
+换言之, $M\mapsto \widetilde M$ 是<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半函子</a></span>.</p>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>射影谱 <a class="slug" href="./射影谱.html">[射影谱]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./代数几何.html" title="代数几何 [代数几何]">代数几何</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>
