@@ -62,7 +62,11 @@ $$
 \operatorname{Spec}^\circ R :=
 \operatorname{Spec}R \setminus \operatorname{Spec}R_0=\bigcup_{f\in R_+} U(f).
 $$
-有典范的拓扑空间映射 $\pi\colon \operatorname{Spec}^\circ R\to\operatorname{Proj}R$ (见<span class="link local"><a href="./射影谱.html" title="射影谱 [射影谱]">射影谱</a></span>).
+常常假设 $R_+$ 由 $R_1$ 生成, 因而
+$$
+\operatorname{Spec}^\circ R = \bigcup_{f\in R_1} U_+(f).
+$$</p>
+<p>有典范的拓扑空间映射 $\pi\colon \operatorname{Spec}^\circ R\to\operatorname{Proj}R$ (见<span class="link local"><a href="./射影谱.html" title="射影谱 [射影谱]">射影谱</a></span>).
 定义<strong>射影谱上的拟凝聚层</strong> $\widetilde {M}\in\mathsf{QCoh}(\operatorname{Proj}R)$ 为其推前的零次部分:
 $$
 \widetilde {M} := \big[\pi_*(\widetilde {M}|_{\operatorname{Spec}^\circ R})\big]_0 \in \mathsf{QCoh}(\operatorname{Proj}R).
@@ -85,6 +89,7 @@ $$
 \mathcal O(n) := \widetilde {R(n)}.
 $$</p>
 <h2>性质</h2>
+<p>假设 $R_+$ 由 $R_1$ 生成.</p>
 <p><strong>命题</strong>. 函子 $\mathsf{Mod}^{\mathrm{gr}}(R) \to \mathsf{QCoh}(\operatorname{Proj}R)$, $M\mapsto \widetilde {M}$ 为正合函子且保持余极限.</p>
 <h3>张量积</h3>
 <p><strong>命题</strong>. 设 $M$, $N$ 为分次 $R$-模, 则有 $\mathsf{QCoh}(\operatorname{Proj}R)$ 中的同构
@@ -92,6 +97,8 @@ $$
 \widetilde {M} \otimes_{\mathcal O} \widetilde N \simeq \widetilde {M\otimes_R N}.
 $$
 换言之, $M\mapsto \widetilde M$ 是<span class="link local"><a href="./对称幺半范畴.html" title="对称幺半范畴 [对称幺半范畴]">对称幺半函子</a></span>.</p>
+<h3>截面</h3>
+<p><strong>命题</strong>. 函子 $\widetilde{(-)} \colon \mathsf{Mod}^{\mathrm{gr}}(R) \to \mathsf{Mod}(\mathcal O)$ 与 $\Gamma^{\mathrm{gr}}\colon \mathsf{Mod}(\mathcal O)\to \mathsf{Mod}^{\mathrm{gr}}(R)$ 构成一对伴随 $\widetilde{(-)}\dashv\Gamma^{\mathrm{gr}}$.</p>
 </details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Wiki" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Wiki. </span>射影谱 <a class="slug" href="./射影谱.html">[射影谱]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./代数几何.html" title="代数几何 [代数几何]">代数几何</a></span></li><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
 
 </div></body></html>

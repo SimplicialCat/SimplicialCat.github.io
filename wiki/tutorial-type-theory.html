@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width"><title>教程 : 类型论</title><link rel="stylesheet" href="./main.css">
+<link rel="stylesheet" href="./typst.css"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  pre,
+  code {
+    font-family: monospace;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  nav {
+    font-family: "Inria Sans", sans-serif;
+  }
+
+  thead {
+    font-family: "Inria Sans", sans-serif;
+  }
+</style><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+  integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"
+  integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+  integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/copy-tex.min.js"
+  integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      strict: false,
+      throwOnError: false,
+      minRuleThickness: 0.05,
+    });
+  });
+</script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="pedagogy"><details open><summary id="tutorial-type-theory"><header><h1><span class="taxon"><span class="link local"><a href="./pedagogy.html" title="教学 [pedagogy]">pedagogy</a></span></span>教程 : 类型论 <a class="slug" href="./tutorial-type-theory.html">[tutorial-type-theory]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
+<p>本文是杨家同于 2026 年 1 月在求真书院形式化数学冬令营上的讲座的笔记, 加入了个人的见解. 假想的读者是有一定数学成熟度但对类型论没有了解的同学.</p>
+<h2>什么是类型论</h2>
+<p>类型论是一种不同于集合论的做数学的方法, 因其在处理逻辑问题上的优越性, 而在计算机形式化数学这一领域得到广泛应用. 类型论的首要特征是<strong>给每个对象一个类型</strong>. 常量, 变量, 函数, 命题, 命题的证明, … 每个对象有唯一且可计算的类型; 甚至 (在某些类型论中) 一个类型也有它的类型. <strong>命题是类型</strong>的原则让逻辑学成为类型论的一个子集.</p>
+<p>与之相比, 集合论中每个对象的类型都是 “集合”, 这种理论上的简洁造成了实操上的混乱. 例如用集合论定义自然数, $1 = \{\varnothing\}$, 而 $2 = \{\varnothing,\{\varnothing\}\}$, 我们便可写出 $1\in 2$ 这样正确但毫无意义的话. 这句话在类型论中是不允许的, 因为 $1,2$ 只是类型 $\mathbb{N}$ 的元素, 它们之间无法谈论 “$\in$” 这个关系. 懂得道理的人类可以自觉避免说出无意义的话, 那么如何让死板的机器也能永远做正确的事呢? 最好的办法就是明确地记录每个对象的身份, 用一套成体系的算法计算出每个构造的新对象的类型; 这样, 机器就能确保它说的一句话是有<strong>数学意义</strong>的.</p>
+<p>其实, 类型论的思想已经隐约地存在于每一位数学家的心中. 我们做的事情只是把它明确地表达出来.</p>
+<h2>类型的三要素</h2>
+<p>设想有两个类型 $A, B$, 我们希望定义一个类型 $A\times B$, 称为<strong>积类型</strong> (product type). 这个类型的一个元素相当于 $A$ 的一个元素和 $B$ 的一个元素, 也即一个二元组 $(a,b)$. 类型论期待我们用如下的方式刻画这个类型:</p>
+<ol>
+<li>如何<strong>创建</strong>这个类型, 称为<strong>形成法则</strong> (formation rule); 这里, 由两个已知类型 $A,B$ 可以形成这个类型 $A\times B$.</li>
+<li>如何<strong>引入</strong>这个类型的元素, 称为<strong>引入法则</strong> (introduction rule); 这里, 由类型 $A$ 的元素 $a$, 类型 $B$ 的元素 $b$, 可以得到类型 $A\times B$ 的元素 $(a,b)$.</li>
+<li>如何<strong>使用</strong>这个类型的元素, 称为<strong>消去法则</strong> (elimination rule); 这里, 由类型 $A\times B$ 的元素 $p$, 可以拆出来类型 $A$ 的元素 $\mathrm{pr}_1(p)$ 和类型 $B$ 的元素 $\mathrm{pr}_2(p)$.</li>
+<li>作为对消去法则的补充, 还需要我们规定<strong>消去法则如何作用于引入法则</strong>, 又称<strong>计算法则</strong>; 这里, $\mathrm{pr}_1((a,b)) = a$, $\mathrm{pr}_2((a,b)) = b$.</li>
+</ol>
+<p>类型论中的所有类型都是用这样三个要素刻画的.</p>
+<p>下一个例子是 “<strong>和类型</strong>” (sum type) $A+B$.</p>
+<ol>
+<li>形成法则: 由两个类型 $A,B$ 可构造和类型 $A+B$.</li>
+<li>引入法则: 由 $a : A$ 可得 $L(a) : A+B$, 由 $b : B$ 可得 $R(b) : A+B$.</li>
+<li>消去法则: 由 $f : A\to C$, $g : B\to C$ 可得 $(f,g) : A+B \to C$.</li>
+<li>计算法则: $(f,g)(L(a)) = f(a)$, $(f,g)(R(b)) = g(b)$.</li>
+</ol>
+<p>和类型的消去法则体现了范畴论中的<span class="link local"><a href="./和(范畴论).html" title="和 (范畴论) [和(范畴论)]">和</a></span>的泛性质.</p>
+<p><strong>函数类型</strong> (function type) $A\to B$.</p>
+<ol>
+<li>形成法则: 由两个类型 $A,B$ 可构造函数类型 $A\to B$.</li>
+<li>引入法则: 由含一个变量 $x : A$ 的表达式 $\Phi(x) : B$, 可得 $(x\mapsto \Phi(x)) : A \to B$.</li>
+<li>消去法则: 由 $a : A$, $f : A\to B$, 可得 $f(a) : B$.</li>
+<li>计算法则: 对于 $a : A$, $f = (x\mapsto \Phi(x)) : A\to B$, 有 $f(a) = \Phi(a)$. 此外, $(x\mapsto f(x))$ 和 $f$ 是一个意思.</li>
+</ol>
+<p><strong></strong><span class="link local"><a href="./空类型(同伦类型论).html" title="空类型 (同伦类型论) [空类型(同伦类型论)]">空类型</a></span> (empty type).</p>
+<ol>
+<li>形成法则: 我们规定有一个类型 $\mathbf{0}$, 称为空类型.</li>
+<li>引入法则: 没有任何方法可以手动引入 $\mathbf{0}$ 的元素.</li>
+<li>消去法则: 由 $x : \mathbf{0}$, 可得<strong>任何</strong>类型 $C$ 的元素 $\mathsf{elim}_{\mathbf{0}}(x) : C$. 这就像是空集到任何集合都有一个映射.</li>
+</ol>
+<p><strong></strong><span class="link local"><a href="./单点(同伦类型论).html" title="单点 (同伦类型论) [单点(同伦类型论)]">单元类型</a></span> (unit type).</p>
+<ol>
+<li>形成法则: 我们规定有一个类型 $\mathbf{1}$, 称为单元类型.</li>
+<li>引入法则: 有一个元素 $\star : \mathbf{1}$.</li>
+<li>消去法则: 对 $a : A$, 有一个函数 $f : \mathbf{1} \to A$, $f(\star) = a$.</li>
+</ol>
+<p>类似地, 可定义有两个元素的类型 $\mathbf{2}$.</p>
+<p>一种重要的定义类型的模式称为<strong>归纳类型</strong> (inductive type), 以自然数类型为例. (其实空类型, 单元类型这些也是归纳类型, 不过对初学者可能有点烧脑, 还是从熟悉的自然数开始介绍.)</p>
+<ol>
+<li>形成法则. 我们规定有一个类型 $\mathbb{N}$.</li>
+<li>引入法则. 有一个元素 $0 : \mathbb{N}$; 对任意 $n : \mathbb{N}$ 有一个元素 $n' : \mathbb{N}$, 称为 $n$ 的<strong>后继</strong>.</li>
+<li>消去法则 (又称<strong>归纳</strong>). 对任意类型 $C$, 要给出一个函数 $f : \mathbb{N}\to C$, 只要给出 $f(0) : C$, 以及 $f(n') : C$ 的表达式, 其中 $f(n') : C$ 的表达式<strong>可以使用前一项</strong> $f(n)$.</li>
+</ol>
+<p>例如, 要定义 $\mathrm{Even} : \mathbb{N} \to \mathbf{2}$, 只需给出 $\mathrm{Even}(0) = 1$, $\mathrm{Even}(1) = 0$, $\mathrm{Even}(n'') = \mathrm{Even}(n)$.</p>
+<p><strong>归纳</strong>的一种理解方式是, 在消去法则中, 当我们要使用一个元素时, <strong>不妨设</strong>它具有某种形式 (来自某个引入法则). 例如要使用一个自然数 $n$, 不妨设它具有两种形式之一: 或者是 $0$, 或者是某个自然数 $n$ 的后继. 后面我们将更严格地讲解归纳类型.</p>
+<h2>类型的类型: 宇宙</h2>
+<p>一个类型也有它的类型. 粗略地说, 所有类型都是某个类型 $\mathcal U$ 的元素, 称之为<strong>宇宙</strong> (universe). 但假若 $\mathcal U$ 也是 $\mathcal U$ 的元素会导致矛盾; 实践上人们的做法是规定一串宇宙 $\mathcal U_1,\mathcal U_2,\cdots$, “普通” 的类型是宇宙 $\mathcal U_1$ 的元素, 而 $\mathcal U_1$ 是 $\mathcal U_2$ 的元素, 以至于无穷.</p>
+<p>但在多数情况下, 我们不需要明确所处的宇宙层级, 而是以笼统的 $\mathcal U$ 代替.</p>
+<h2>依值类型: 到宇宙的函数</h2>
+<p>宇宙 $\mathcal U$ 也是 (某个更大的宇宙的) 类型, 从而我们可以谈论类型 $A$ 到 $\mathcal U$ 的函数 $B\colon A \to \mathcal U$, 称为<strong>依值类型</strong> (dependent type). 它对每个 $a : A$ 都指定了一个类型 $B(a)$.</p>
+<p>例如, 固定 $A : \mathcal U$, 对每个自然数 $n : \mathbb{N}$ 有一个类型 $A^n$, 那么这些类型合起来构成了一个依值类型 $V_A \colon \mathbb{N} \to \mathcal U$.
+这个依值类型是通过归纳定义的:
+$V_A(0) = \mathbf{1}$, $V_A(n') = V_A(n) \times A$.</p>
+<p>写给有相关背景的读者: 依值类型是代数拓扑中的<strong></strong><span class="link local"><a href="./纤维化.html" title="纤维化 [纤维化]">纤维化</a></span> (fibration) (<span class="link local"><a href="./纤维丛.html" title="纤维丛 [纤维丛]">纤维丛</a></span>) 或代数几何中<strong>相对概形</strong> (relative scheme) 的类比. 准确地说, 它们都是<span class="link local"><a href="./纤维范畴.html" title="纤维范畴 [纤维范畴]">纤维范畴</a></span>的例子, 而纤维范畴可以作为依值类型的<span class="link local"><a href="./范畴语义.html" title="范畴语义 [范畴语义]">范畴语义</a></span>.</p>
+<p>对一个依值类型 $B \colon A \to\mathcal U$ 我们可以做两件事: 把每个类型 “加起来”, 叫做<strong>依值和</strong> (dependent sum)
+$$
+\sum_{a : A} B(a),
+$$
+以及把每个类型 “乘起来”, 叫做<strong>依值积</strong> (dependent product)
+$$
+\prod_{a : A} B(a).
+$$
+两者分别是乘积类型和函数类型的推广, 因为当 $B(a)$ 不依赖于 $a$ 时, $\sum_{a : A} B(a)$, $\prod_{a : A} B(a)$ 分别退化为 $A\times B$, $A\to B$. 因此, 有些文献或形式化系统中也将 $\sum_{a : A} B(a)$ 记为 $(a : A)\times B(a)$, 将 $\prod_{a : A} B(a)$ 记为 $(a : A) \to B(a)$.</p>
+<p>依值积类型的元素又称为<strong>依值函数</strong>. 归纳类型 (如 $\mathbb{N}$) 的消去法则可以升级为依值函数的构造法则, 以 $\mathbb{N}$ 为例:
+要给出一个依值函数 $f\colon (n : \mathbb{N}) \to C(n)$, 只要给出 $f(0) : C(0)$, 以及 $f(n') : C(n')$ 的表达式, 依赖于 $f(n) : C(n)$, 这相当于给出函数 $C(n) \to C(n')$.</p>
+<p>如果依值类型类比于纤维丛, 那么依值和类比于纤维丛的<strong>全空间</strong>, 而依值积类比于纤维丛的<strong></strong><span class="link local"><a href="./整体截面.html" title="“整体截面” [整体截面]">截面空间</a></span>.</p>
+<p>写给有范畴论背景的读者: 依值和类型与依值积类型的范畴语义分别是拉回的<strong>左伴随</strong>和<strong>右伴随</strong>.</p>
+<h2>命题即类型: Curry–Howard 对应</h2>
+<p>类型论不仅能让机器保证它说出的话<strong>有意义</strong>, 而且能让它保证作出的证明是<strong>对</strong>的 (而这当然是我们做形式化数学最关心的事情). 这是因为 “有意义” 和 “对” 根本是一回事: 由于<strong>命题即类型</strong> (Propositions as Types) 的原则, 在类型论中检查一个元素的类型是否正确, 和检查一个证明是否正确, 做的是同一件事.</p>
+<p>比如, 检查 $(a,b)$ 是类型 $A\times B$ 的元素, 就是分别检查 $a$ 是 $A$ 的元素, 以及 $b$ 是 $B$ 的元素. 与之对应地, 检查 $(p,q)$ 构成命题 $P \land Q$ 的证明, 就是检查 $p$ 构成 $P$ 的证明, 以及 $q$ 构成 $Q$ 的证明.</p>
+<h3>直觉主义逻辑</h3>
+<p>不是每个经典逻辑的永真命题都能通过 Curry–Howard 对应得到证明. 一个重要的例子是<strong></strong><span class="link local"><a href="./排中律.html" title="排中律 [排中律]">排中律</a></span> (law of excludded middle)
+$$
+A + \neg A = A + (A \to \mathbf{0}).
+$$
+要证明这个命题 (构造这个类型的元素), 我们只能要么构造 $A$ 的元素, 要么构造映射 $A\to \mathbf{0}$. 但是当我们不知道 $A$ 的更多信息时, 无论哪一边都没有办法构造, 进退两难.
+类似地, <strong>双重否定律</strong> (law of double negation)
+$$
+\neg\neg A \to A
+$$
+也不能证明.
+在需要经典逻辑的类型论中, 这些定律是作为公理提供的. 所谓公理就是人为规定某个特定类型的一个元素.</p>
+<h2>归纳类型</h2>
+</details></section><footer><section class="block"><details open><summary><header><h1>Backlinks</h1></header></summary><section class="block" data-taxon="Meta" style="margin-bottom: 0.4em;"><header><h1><span class="taxon">Meta. </span>教学 <a class="slug" href="./pedagogy.html">[pedagogy]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></section></details></section></footer></article>
+
+</div></body></html>

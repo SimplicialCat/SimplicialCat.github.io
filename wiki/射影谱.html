@@ -101,6 +101,21 @@ $$
 <p>见<span class="link local"><a href="./射影谱上的拟凝聚层.html" title="射影谱上的拟凝聚层 [射影谱上的拟凝聚层]">射影谱上的拟凝聚层</a></span>.</p>
 <h3>理想与闭嵌入</h3>
 <p><strong>命题</strong>. 设 $R$ 为 $\mathbb{Z}_{\geq 0}$-分次环, $I$ 为分次理想. 则同态 $R \to R / I$ 给出<span class="link local"><a href="./闭嵌入.html" title="闭嵌入 [闭嵌入]">闭嵌入</a></span> $\operatorname{Proj}(R/I) \to \operatorname{Proj}R$, 且其对应的<span class="link local"><a href="./理想层.html" title="理想层 [理想层]">理想层</a></span>为 $\widetilde {I}$.</p>
+<h3>函子性</h3>
+<p>设 $\phi\colon R \to R'$ 为 $\mathbb{Z}_{\geq 0}$-分次环的同态, 不一定有映射 $\operatorname{Proj}(R') \to \operatorname{Proj}(R)$, 但有定义在 $\operatorname{Proj}(R')$ 的一个开子概形
+$$
+U_+(\phi) := \bigcup_{f\in R_+} U_+(\phi(f)) \subset\operatorname{Proj}(R')
+$$
+上的 “部分映射” $U_+(\phi) \to \operatorname{Proj}(R)$.</p>
+<p>例如, 设 $A\to B$ 为交换环同态, $S$ 为 $\mathbb{Z}_{\geq 0}$-分次 $A$-代数, 则有分次环同态 $\phi\colon S \to S\otimes_A B$. 此时 $U_+(\phi)$ 是整个 $\operatorname{Proj}(S\otimes_A B)$, 且有拉回图
+$$
+\begin{array}
+{ccc}
+\operatorname{Proj}(S\otimes_A B) &amp; \to &amp; \operatorname{Proj}(S)\\
+\downarrow &amp; &amp; \downarrow \\
+\operatorname{Spec}B &amp; \to &amp; \operatorname{Spec}A.
+\end{array}
+$$</p>
 <h2>例</h2>
 <h3>椭圆曲线</h3>
 <p>给定复数 $\lambda \in\mathbb{C} \setminus \{0,1\}$,
