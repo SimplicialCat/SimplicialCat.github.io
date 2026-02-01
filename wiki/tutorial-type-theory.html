@@ -111,7 +111,7 @@
 <p>但在多数情况下, 我们不需要明确所处的宇宙层级, 而是以笼统的 $\mathcal U$ 代替.</p>
 <p>比通常宇宙低一个层级的宇宙是<strong>命题</strong>的类型 $\mathsf{Prop}=\mathcal U_0$. 所谓<strong>命题</strong>是满足如下条件的类型 $P$: 对任意 $x,y : P$ 有 $x=y$. 在 Curry–Howard 对应之下, 这意味着一个命题的任意两个证明都视为相等.</p>
 <h2>依值类型: 到宇宙的函数</h2>
-<p>宇宙 $\mathcal U$ 也是 (某个更大的宇宙的) 类型, 从而我们可以谈论类型 $A$ 到 $\mathcal U$ 的函数 $B\colon A \to \mathcal U$, 称为<strong>依值类型</strong> (dependent type). 它对每个 $a : A$ 都指定了一个类型 $B(a)$.</p>
+<p>宇宙 $\mathcal U$ 也是 (某个更大的宇宙的) 类型, 从而我们可以谈论类型 $A$ 到 $\mathcal U$ 的函数 $B\colon A \to \mathcal U$, 称为<strong></strong><span class="link local"><a href="./依值类型.html" title="依值类型 [依值类型]">依值类型</a></span> (dependent type). 它对每个 $a : A$ 都指定了一个类型 $B(a)$.</p>
 <p>例如, 固定 $A : \mathcal U$, 对每个自然数 $n : \mathbb{N}$ 有一个类型 $A^n$, 那么这些类型合起来构成了一个依值类型 $V_A \colon \mathbb{N} \to \mathcal U$.
 这个依值类型是通过归纳定义的:
 $V_A(0) = \mathbf{1}$, $V_A(n') = V_A(n) \times A$.</p>
@@ -120,7 +120,7 @@ $V_A(0) = \mathbf{1}$, $V_A(n') = V_A(n) \times A$.</p>
 $$
 \sum_{a : A} B(a),
 $$
-以及把每个类型 “乘起来”, 叫做<strong>依值积</strong> (dependent product)
+以及把每个类型 “乘起来”, 叫做<strong></strong><span class="link local"><a href="./依值积.html" title="依值积 [依值积]">依值积</a></span> (dependent product)
 $$
 \prod_{a : A} B(a).
 $$
