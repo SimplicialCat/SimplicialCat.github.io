@@ -1,13 +1,286 @@
+/* 
+ * Mathematical Minimalism with Furina's Impression Colors
+ * Light Theme Design: Clean, Elegant, Scholarly
+ * Color Palette:
+ *   - Background: #F5F8FC (Light blue-white)
+ *   - Primary Text: #1A2844 (Midnight blue)
+ *   - Secondary Text: #3A4A5C (Blue-gray)
+ *   - Accent Blue: #3A7DE3 (Furina's water blue)
+ *   - Accent Gold: #C5A059 (Furina's gold)
+ *   - Card Background: #FFFFFF (Pure white)
+ *   - Border: #E0E8F0 (Light blue-gray)
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-color: #F5F8FC;
+    --text-primary: #1A2844;
+    --text-secondary: #3A4A5C;
+    --accent-blue: #3A7DE3;
+    --accent-gold: #C5A059;
+    --white: #FFFFFF;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #FAFBFF;
+    --border-color: #E0E8F0;
+    --shadow-color: rgba(26, 40, 68, 0.08);
+    --shadow-hover: rgba(26, 40, 68, 0.12);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-  background-color: powderblue;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.8;
+    min-height: 100vh;
+    padding: 0;
 }
-body {
-  padding: 5em;
+
+/* Subtle background pattern - mathematical precision */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(58, 125, 227, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(58, 125, 227, 0.03) 1px, transparent 1px);
+    background-size: 100px 100px;
+    pointer-events: none;
+    z-index: -1;
 }
-h1 , h2 , h3 {
-  color: rgb(4, 4, 56);
-  text-align: center;
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
 }
-h4 {
-  color: rgb(10, 10, 118);
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+header h1 {
+    font-size: 2.2em;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    margin-bottom: 25px;
+    color: var(--text-primary);
+}
+
+header nav {
+    font-size: 1em;
+}
+
+header nav a,
+header nav span.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin: 0 15px;
+    padding: 10px 20px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+    display: inline-block;
+}
+
+header nav a:hover,
+header nav span.nav-link:hover {
+    color: var(--accent-blue);
+    border-bottom-color: var(--accent-blue);
+}
+
+header nav span.nav-link.active {
+    color: var(--accent-blue);
+    border-bottom-color: var(--accent-blue);
+}
+
+/* Content Sections */
+.content-section {
+    display: none;
+    padding: 40px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 10px var(--shadow-color);
+    animation: fadeIn 0.4s ease;
+}
+
+.content-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.content-section:hover {
+    box-shadow: 0 4px 20px var(--shadow-hover);
+}
+
+.content-section h2 {
+    font-size: 1.5em;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    letter-spacing: 0.1em;
+}
+
+.content-section h3 {
+    font-size: 1.2em;
+    font-weight: 400;
+    color: var(--accent-blue);
+    margin: 30px 0 20px 0;
+    letter-spacing: 0.05em;
+}
+
+.content-section h4 {
+    font-size: 1.1em;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin: 25px 0 15px 0;
+}
+
+/* Links */
+a {
+color: var(--accent-blue);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--accent-gold);
+}
+
+/* Images */
+img {
+    display: block;
+    margin: 20px 0;
+    border-radius: 4px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 25px var(--shadow-hover);
+}
+
+/* Text and paragraphs */
+p {
+    margin-bottom: 15px;
+    color: var(--text-secondary);
+    text-align: justify;
+}
+
+/* Lists */
+ul {
+    margin: 15px 0 15px 30px;
+    list-style-type: none;
+}
+
+li {
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+    color: var(--text-secondary);
+}
+
+li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent-blue);
+}
+
+/* Emphasis and special text */
+strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Links section styling */
+#links h4 {
+    margin-top: 20px;
+}
+
+#links p {
+    margin-bottom: 10px;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .container {
+        padding: 30px 20px;
+    }
+    
+    .content-section {
+        padding: 30px 20px;
+    }
+    
+    header h1 {
+        font-size: 1.6em;
+    }
+    
+    header nav a,
+    header nav span.nav-link {
+        display: block;
+        margin: 8px 0;
+        padding: 8px 15px;
+    }
+}
+
+/* Smooth animations */
+* {
+    transition-property: color, background, border-color, box-shadow, transform;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+}
+
+/* Selection color */
+::selection {
+    background: var(--accent-blue);
+    color: var(--white);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue);
 }

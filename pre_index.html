@@ -1,28 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css">
     <title>Wang Jinyi (SimplicialCat)</title>
 </head>
 <body>
-    <div class="container">
     <header>
         <h1>
             王进一 (Wang Jinyi), SimplicialCat
         </h1>
         <nav>
-            <span class="nav-link active" onclick="showSection('about', this)">About</span>
-            <span class="nav-link" onclick="showSection('maths', this)">Maths</span>
-            <span class="nav-link" onclick="showSection('nonmaths', this)">Non-maths</span>
-            <span class="nav-link" onclick="showSection('links', this)">Links</span>
+            <p>
+                <a href="#about">About</a> - 
+                <a href="#maths">Maths</a> - 
+                <a href="#nonmaths">Non-maths</a> - 
+                <a href="#links">Links</a>
+            </p>
         </nav>
     </header>
     
-    <section id="about" class="content-section active">
+    <section id="about">
     <h2>About</h2>
-    <img src="furina.jpg" alt="Portrait" width="100">
+    <img src="furina.jpg" alt="" width="100">
     
     <p>
         I am a graduate student at <a href="https://qzc.tsinghua.edu.cn/">Qiuzhen College</a>, Tsinghua University.
@@ -34,30 +34,30 @@
     
     <p>
     Email:
-    </p>
     <ul>
         <li>wangjiny24@mails.tsinghua.edu.cn</li>
         <li>jinExp2iPi@gmail.com</li>
     </ul>
+    </p>
     </section>
 
-    <section id="maths" class="content-section">
+    <section id="maths">
     
     <h2>Maths</h2>
 
-    <img src="cat-seminar.jpg" alt="Seminar" width="200">
+    <img src="cat-seminar.jpg" alt="" width="200">
     <p>
     My supervisor is <a href="https://windshower.github.io/linchen/">Prof. Lin Chen</a>.
     </p>
     <p>
     My mathematical interests lie in
-    </p>
     <ul>
         <li>initially, differential geometry, algebraic topology;</li>
         <li>later, category theory, topos theory, categorical logic,</li>
         <li>homotopy theory, homotopy type theory;</li>
         <li>and recently, the geometric Langlands program.</li>
     </ul>
+    </p>
     
     <p>
     Some of my talks are on <a href="https://space.bilibili.com/395890444">Bilibili</a>.
@@ -91,7 +91,7 @@
     <h4>Sketches of an Elephant</h4>
     <p>A short talk on topos theory (name borrowed from P. Johnstone)</p>
     <p>(English)</p>
-    <a href="pre-topos.pdf">Notes</a></p>
+    <a href="pre-topos.pdf">Notes</a>
 
     <h4>Interview with Prof. Laurent Lafforgue</h4>
     <p>(English)</p>
@@ -142,10 +142,10 @@
 
     </section>
 
-    <section id="nonmaths" class="content-section">
+    <section id="nonmaths">
     <h2>Non-maths</h2>
     
-    <img src="piano.jpg" alt="Piano" width="100">
+    <img src="piano.jpg" alt="" width="100">
     
     <h3>Selected musical works</h3>
 
@@ -155,7 +155,7 @@
 
     </section>
 
-    <section id="links" class="content-section">
+    <section id="links">
     <h2>Links</h2>
     
     <h3>Sites</h3>
@@ -175,26 +175,5 @@
     <p><a href="https://qzc31.github.io/">Shared homepage</a> of several brilliant students from class 31, Qiuzhen College.</p>
 
     </section>
-    </div>
-
-    <script>
-    function showSection(sectionId, element) {
-        // Remove active class from all nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-        
-        // Add active class to clicked nav link
-        element.classList.add('active');
-        
-        // Hide all content sections
-        document.querySelectorAll('.content-section').forEach(section => {
-            section.classList.remove('active');
-        });
-        
-        // Show the selected content section
-        document.getElementById(sectionId).classList.add('active');
-    }
-    </script>
 </body>
 </html>
