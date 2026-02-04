@@ -47,24 +47,29 @@ body {
 .container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 50px 40px;
+    padding: 30px 30px;
 }
 
 /* Header */
 header {
     text-align: center;
-    margin-bottom: 50px;
-    padding-bottom: 30px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
     border-bottom: 2px solid var(--border-color);
 }
 
 header h1 {
     font-family: inherit;
-    font-size: 2.2em;
+    font-size: 2.5em;
     font-weight: 600;
     letter-spacing: 0.02em;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     color: var(--accent-blue-dark);
+}
+
+header h1 .subtitle {
+    font-weight: 400;
+    color: var(--text-muted);
 }
 
 header nav {
@@ -77,8 +82,8 @@ header nav span.nav-link {
     font-family: inherit;
     color: var(--text-muted);
     text-decoration: none;
-    margin: 0 12px;
-    padding: 10px 16px;
+    margin: 0 8px;
+    padding: 8px 12px;
     position: relative;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -101,7 +106,7 @@ header nav span.nav-link.active {
 /* Content Sections */
 .content-section {
     display: none;
-    padding: 40px;
+    padding: 25px;
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: 4px;
@@ -130,30 +135,50 @@ header nav span.nav-link.active {
 
 .content-section h2 {
     font-family: inherit;
-    font-size: 1.5em;
+    font-size: 1.8em;
     font-weight: 600;
     color: var(--accent-blue-dark);
-    margin-bottom: 30px;
-    padding-bottom: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--border-light);
     letter-spacing: 0.03em;
 }
 
+.content-section h2::before {
+    content: '✦';
+    margin-right: 10px;
+    color: var(--accent-blue-light);
+}
+
 .content-section h3 {
     font-family: inherit;
-    font-size: 1.15em;
+    font-size: 1.35em;
     font-weight: 600;
     color: var(--accent-blue);
-    margin: 30px 0 18px 0;
+    margin: 25px 0 15px 0;
     letter-spacing: 0.05em;
+}
+
+.content-section h3::before {
+    content: '✦';
+    margin-right: 10px;
+    color: var(--accent-blue-light);
 }
 
 .content-section h4 {
     font-family: inherit;
-    font-size: 1.05em;
+    font-size: 1.2em;
     font-weight: 600;
     color: var(--text-primary);
-    margin: 25px 0 14px 0;
+    margin: 20px 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.content-section h4::before {
+    content: '✦';
+    color: var(--accent-blue-light);
 }
 
 /* Links */
@@ -170,7 +195,7 @@ a:hover {
 /* Images */
 img {
     display: block;
-    margin: 20px 0;
+    margin: 15px 0;
     border-radius: 4px;
     box-shadow: 0 3px 12px var(--shadow-color);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -179,24 +204,24 @@ img {
 
 img.profile-right {
     float: right;
-    margin-left: 30px;
-    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-bottom: 15px;
     width: 120px;
     shape-outside: margin-box;
 }
 
 img.seminar-right {
     float: right;
-    margin-left: 30px;
-    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-bottom: 15px;
     width: 200px;
     shape-outside: margin-box;
 }
 
 img.piano-right {
     float: right;
-    margin-left: 30px;
-    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-bottom: 15px;
     width: 100px;
     shape-outside: margin-box;
 }
@@ -215,33 +240,46 @@ img:hover {
 
 /* Text and paragraphs */
 p {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     color: var(--text-secondary);
     text-align: justify;
 }
 
+.language-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--accent-blue-light);
+    color: var(--white);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
 /* Lists */
 ul {
-    margin: 16px 0 16px 28px;
+    margin: 12px 0 12px 24px;
     list-style-type: none;
 }
 
 li {
-    margin-bottom: 10px;
-    padding-left: 18px;
+    margin-bottom: 8px;
+    padding-left: 16px;
     position: relative;
     color: var(--text-secondary);
 }
 
 li::before {
-    content: '';
+    content: '✧';
     position: absolute;
     left: 0;
-    top: 8px;
-    width: 6px;
-    height: 6px;
-    background: var(--accent-blue-light);
-    border-radius: 50%;
+    top: 0;
+    color: var(--accent-blue-light);
+    font-size: 0.9em;
 }
 
 /* Emphasis */
@@ -252,11 +290,11 @@ strong {
 
 /* Links section */
 #links h4 {
-    margin-top: 20px;
+    margin-top: 18px;
 }
 
 #links p {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 /* Selection color */
