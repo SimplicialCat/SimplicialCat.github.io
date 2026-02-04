@@ -17,6 +17,7 @@
 
 :root {
     --bg-color: #FAFBFC;
+    --lan-tag: #BACBF0;
     --text-primary: #1A2844;
     --text-secondary: #4A5A70;
     --text-muted: #8899AA;
@@ -249,15 +250,15 @@ p {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background-color: var(--accent-blue-light);
+    background-color: var(--lan-tag);
     color: var(--white);
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: 0.75em;
+    padding: 2px 5px;
+    border-radius: 2px;
+    font-size: 0.5em;
     font-weight: 600;
     letter-spacing: 0.05em;
-    margin-left: auto;
-    flex-shrink: 0;
+    /*margin-left: auto;
+    flex-shrink: 0;*/
 }
 
 /* Lists */
