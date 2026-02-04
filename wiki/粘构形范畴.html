@@ -56,7 +56,7 @@
     });
   });
 </script></head><body><header class="header"><nav class="nav"><div class="logo"><span onclick="window.location.href='./index.html'" title="单纯百科 Simplopedia">« 单纯百科 Simplopedia</span></div></nav></header><div id="grid-wrapper"><article><section class="block" data-taxon="Wiki"><details open><summary id="粘构形范畴"><header><h1><span class="taxon">Wiki. </span>粘构形范畴 <a class="slug" href="./粘构形范畴.html">[粘构形范畴]</a></h1><div class="metadata"><ul><li class="meta-item"><span class="link local"><a href="./SimplicialCat.html" title="单纯猫 [SimplicialCat]">SimplicialCat</a></span></li></ul></div></header></summary>
-<p><strong>粘构形范畴</strong> (category of sticky configurations) 是 <span class="link local"><a href="./AndradeMfdInvEn.html" title=" [AndradeMfdInvEn]">Ricardo Andrade 的博士论文</a></span>定义的一个范畴. 对于空间 $X$, 该文定义了一个范畴 $\mathbb M(X)$,</p>
+<p><strong>粘构形范畴</strong> (category of sticky configurations) 是 <span class="link local"><a href="./AndradeMfdInvEn.html" title=" [AndradeMfdInvEn]">Ricardo Andrade 的博士论文</a></span> (以下简称 “原文”) 定义的一个范畴. 对于空间 $X$, 该文定义了一个范畴 $\mathbb M(X)$,</p>
 <ul>
 <li>其对象为 $X$ 中的有限点集;</li>
 <li>态射为 “粘同伦”, 即一种特殊的同伦, 其中两个点 “一旦碰到一起便不会再分开”, 仿佛这些点有 “粘性”.</li>
@@ -71,7 +71,7 @@
 <p><strong>定义</strong> (粘同伦). 考虑 $(\mathcal C_0\hookrightarrow\mathcal C_1)\in\mathsf{Cat}^{\hookrightarrow}$, 以及函子 $F \colon \mathcal C_1 \to \mathsf{Top}$.
 对于 $\mathcal C_1$ 的对象 $x$, 称拓扑空间 $F(x)$ 上的道路 $\alpha$ 为<strong>粘同伦</strong> (sticky homotopy) 是指如下条件成立: 对 $\mathcal C_0$ 中的任意态射 $y\to x$, 若道路 $\alpha$ 在某时刻落入 $F(y)\to F(x)$ 的像, 则它该时刻以后都落在这个像中.</p>
 <p><strong>注</strong>. 粘同伦的概念具有良好的函子性. 设 $\mathcal C = (\mathcal C_0\hookrightarrow\mathcal C_1)\in\mathsf{Cat}^{\hookrightarrow}$, $F\colon \mathcal C_1 \to \mathsf{Top}$,
-考虑拓扑空间 $F(x)$ 的道路范畴 $\operatorname{Path}F(x)$, 它是 $\mathsf{Top}$ 的<span class="link local"><a href="./内范畴.html" title="内范畴 [内范畴]">内范畴</a></span> (粗略地说, 即其对象集和态射集均有拓扑结构), 则粘同伦给出其一个子范畴 $\operatorname{St}F(x) \to \operatorname{Path}F(x)$. 这一构造关于许多东西有函子性, 详见 <span class="link local"><a href="./AndradeMfdInvEn.html" title=" [AndradeMfdInvEn]">Andrade 的原文</a></span> III.3 节. 这里的叙述已经比原文简化了许多, 但仍旧显得过度抽象. 读者可安心地忽略以上内容, 从下一段开始阅读.</p>
+考虑拓扑空间 $F(x)$ 的道路范畴 $\operatorname{Path}F(x)$, 它是 $\mathsf{Top}$ 的<span class="link local"><a href="./内范畴.html" title="内范畴 [内范畴]">内范畴</a></span> (粗略地说, 即其对象集和态射集均有拓扑结构), 则粘同伦给出其一个子范畴 $\operatorname{St}F(x) \to \operatorname{Path}F(x)$. 这一构造关于许多东西有函子性, 详见原文 III.3 节. 这里的叙述已经比原文简化了许多, 但仍旧显得过度抽象. 读者可安心地忽略以上内容, 从下一段开始阅读.</p>
 <p>记</p>
 <ul>
 <li>$\mathsf{Fin}$ 为有限集 (即有限离散拓扑空间) 的范畴.</li>
@@ -83,6 +83,10 @@
 </ul>
 <p>换言之, 若 $S$ 的两个点在某时刻碰到一起, 则它们此后都保持在一起.</p>
 <p>对每个有限集 $S$ 均有 $\mathsf{Top}$ 的一个<span class="link local"><a href="./内范畴.html" title="内范畴 [内范畴]">内范畴</a></span> $\operatorname{St}\operatorname{Hom}(S,X)$, 其对象为映射 $S\to X$, 态射为粘同伦. 对这一构造进行某种 <span class="link local"><a href="./Grothendieck构造.html" title="Grothendieck 构造 [Grothendieck构造]">Grothendieck 构造</a></span> (即对所有 $S$ 将这些范畴合在一起), 得到 $\mathsf{Top}$ 的一个<span class="link local"><a href="./内范畴.html" title="内范畴 [内范畴]">内范畴</a></span> $\mathbb M^{\mathrm{big}}(X)$ (原文 III.4.4), 表示 “所有有限点集到 $X$ 的映射与粘同伦构成的范畴”, 再取其中的单射 $S\hookrightarrow X$ (所谓<strong>构形</strong>) 构成的子范畴, 得到 $\mathbb M(X)$.</p>
+<h2>例</h2>
+<h3>$S^1$ 的粘构形范畴</h3>
+<p>$S^1$ 的粘构形范畴可给出 <span class="link local"><a href="./Hochschild同调.html" title="Hochschild 同调 [Hochschild同调]">Hochschild 同调</a></span>.</p>
+<p>记 $\mathbb{Z}\mathsf{Poset}$ 为带 $\mathbb{Z}$-作用的偏序集的范畴. 对正整数 $n$ 考虑其中的对象 $x_n$, 底层偏序集为 $(\mathbb{Z},\leq)$, $\mathbb{Z}$-作用由映射 $(-)+n$ 给出. 定义范畴 $\mathcal E$ 为 $\varnothing$ 与 $x_n\,(n\in\mathbb{Z}_{+})$ 在 $\mathbb{Z}\mathsf{Poset}$ 中构成的全子范畴, 原文称之为 <strong>Elmendorf 范畴</strong>.</p>
 </details></section><footer></footer></article>
 
 </div></body></html>
