@@ -21,15 +21,18 @@
     --text-primary: #1A2844;
     --text-secondary: #4A5A70;
     --text-muted: #8899AA;
-    --accent-blue: #3A7DE3;
-    --accent-blue-dark: #1B3F8F;
-    --accent-blue-light: #6BA3E8;
     --white: #FFFFFF;
     --bg-card: #FFFFFF;
     --border-color: #E2E8F0;
     --border-light: #EEF2F6;
     --shadow-color: rgba(27, 63, 143, 0.05);
     --shadow-hover: rgba(27, 63, 143, 0.1);
+    --color-Furina-deep-navy: #253055;
+    --color-Furina-royal-blue: #465BAF;
+    --color-Furina-aqua-cyan: #6AC6E8;
+    --color-Furina-frost-white: #FAFBFC;
+    --color-Furina-misty-blue: #C4D7ED;
+    --color-Furina-vintage-gold: #CDA368;
 }
 
 html {
@@ -65,7 +68,7 @@ header h1 {
     font-weight: 600;
     letter-spacing: 0.02em;
     margin-bottom: 20px;
-    color: var(--accent-blue-dark);
+    color: var(--color-Furina-deep-navy);
 }
 
 header h1 .subtitle {
@@ -94,13 +97,13 @@ header nav span.nav-link {
 
 header nav a:hover,
 header nav span.nav-link:hover {
-    color: var(--accent-blue);
-    border-bottom-color: var(--accent-blue);
+    color: var(--color-Furina-royal-blue);
+    border-bottom-color: var(--color-Furina-royal-blue);
 }
 
 header nav span.nav-link.active {
-    color: var(--accent-blue-dark);
-    border-bottom-color: var(--accent-blue-dark);
+    color: var(--color-Furina-deep-navy);
+    border-bottom-color: var(--color-Furina-deep-navy);
     font-weight: 600;
 }
 
@@ -138,7 +141,7 @@ header nav span.nav-link.active {
     font-family: inherit;
     font-size: 1.8em;
     font-weight: 600;
-    color: var(--accent-blue-dark);
+    color: var(--color-Furina-deep-navy);
     margin-bottom: 20px;
     padding-bottom: 12px;
     border-bottom: 1px solid var(--border-light);
@@ -148,14 +151,14 @@ header nav span.nav-link.active {
 .content-section h2::before {
     content: '✦';
     margin-right: 10px;
-    color: var(--accent-blue-light);
+    color: var(--color-Furina-vintage-gold);
 }
 
 .content-section h3 {
     font-family: inherit;
     font-size: 1.35em;
     font-weight: 600;
-    color: var(--accent-blue);
+    color: var(--color-Furina-royal-blue);
     margin: 25px 0 15px 0;
     letter-spacing: 0.05em;
 }
@@ -163,7 +166,7 @@ header nav span.nav-link.active {
 .content-section h3::before {
     content: '✦';
     margin-right: 10px;
-    color: var(--accent-blue-light);
+    color: var(--color-Furina-aqua-cyan);
 }
 
 .content-section h4 {
@@ -179,18 +182,18 @@ header nav span.nav-link.active {
 
 .content-section h4::before {
     content: '✦';
-    color: var(--accent-blue-light);
+    color: var(--color-Furina-aqua-cyan);
 }
 
 /* Links */
 a {
-    color: var(--accent-blue);
+    color: var(--color-Furina-royal-blue);
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 a:hover {
-    color: var(--accent-blue-dark);
+    color: var(--color-Furina-deep-navy);
 }
 
 /* Images */
@@ -279,7 +282,7 @@ li::before {
     position: absolute;
     left: 0;
     top: 0;
-    color: var(--accent-blue-light);
+    color: var(--color-Furina-aqua-cyan);
     font-size: 0.9em;
 }
 
@@ -300,7 +303,7 @@ strong {
 
 /* Selection color */
 ::selection {
-    background: var(--accent-blue);
+    background: var(--color-Furina-royal-blue);
     color: var(--white);
 }
 
@@ -319,7 +322,7 @@ strong {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-blue);
+    background: var(--color-Furina-royal-blue);
 }
 
 /* Responsive */
