@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>和弦进行</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #fff;
+            color: #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+        .input-field {
+            flex: 1 1 200px;
+            padding: 0.7rem 0.5rem;
+            font-size: 1rem;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            background: transparent;
+            outline: none;
+        }
+        .input-field:focus { border-bottom-color: #000; }
+        .input-field::placeholder { color: #aaa; font-weight: 300; }
+
+        .btn {
+            padding: 0.5rem 0.9rem;
+            font-size: 1rem;
+            border: none;
+            background: transparent;
+            color: #111;
+            cursor: pointer;
+            transition: 0.1s;
+            border-radius: 0;
+        }
+        .btn:hover { background: #f0f0f0; }
+        .btn:active { background: #e0e0e0; }
+        .btn-play { font-size: 1.3rem; padding: 0.5rem 0.8rem; }
+        .btn-stop { color: #666; }
+
+        .preview {
+            font-size: 0.75rem;
+            color: rgba(0,0,0,0.45);
+            word-break: break-all;
+            padding: 0.3rem 0;
+            border-top: 0.5px solid rgba(0,0,0,0.05);
+            margin-top: 0.3rem;
+            font-family: monospace;
+        }
+        .footer-hint {
+            margin-top: 2.5rem;
+            font-size: 0.7rem;
+            color: rgba(0,0,0,0.3);
+            text-align: center;
+            line-height: 1.5;
+            font-weight: 300;
+        }
+        hr {
+            border: none;
+            border-top: 0.5px solid rgba(0,0,0,0.05);
+            margin: 0.8rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 第一行：和弦进行输入 + 编码表编辑按钮 -->
+        <div class="row">
+            <input type="text" id="chordProgInput" class="input-field" 
+                   placeholder="C, G, Am, Em, F, G, C" autofocus>
+        </div>
+
+        <!-- 第二行：播放与停止并排 -->
+        <div class="row" style="gap: 0.8rem;">
+            <button id="playProgBtn" class="btn btn-play">▶</button>
+            <button id="stopBtn" class="btn btn-stop">⏹</button>
+            <button id="editTableBtn" class="btn" style="font-size:0.9rem;">✎ 编码表</button>
+        </div>
+
+        <!-- 编码表编辑区（默认隐藏） -->
+        <textarea id="chordTableInput" 
+                  style="width:100%; padding:0.8rem; font-size:0.9rem; border:0.5px solid #ccc; border-radius:4px; background:#fafafa; display:none; resize:vertical; rows:6;"
+                  placeholder="输入自定义和弦编码表（只写C调）&#10;例：&#10;C = C,E,G&#10;Cm = C,Eb,G&#10;C7 = C,E,G,Bb&#10;Cmaj7 = C,E,G,B&#10;C9 = C,E,G,Bb,D&#10;Cm9 = C,Eb,G,Bb,D&#10;Cadd9 = C,E,G,D&#10;C7b5 = C,E,Gb,Bb&#10;Cm7b5 = C,Eb,Gb,Bb"></textarea>
+
+        <!-- 预览区：显示实际MIDI编号（调试/验证） -->
+        <div id="preview" class="preview">—</div>
+
+        <hr>
+        <div class="footer-hint">
+            • 输入和弦进行，例如 C, G7, Am, B/C, Dm7b5, C9 · 点击 ▶ 播放<br>
+            • 编码表只写 C 开头的和弦（保留音符顺序），程序自动推导所有调 · 播放时自动读取编码表最新内容<br>
+            • 斜杠和弦: X/Y 表示以Y为最低音的X和弦 · 最低音自动置于 C4–C5 (MIDI 60–72)<br>
+            • ✎ 编码表 显示/隐藏编辑区 · ⏹ 停止 · 预览区显示实际MIDI编号
+        </div>
+    </div>
+
+    <script>
+        // ---------- 音符名称 ↔ 半音编号 ----------
+        const NOTE_TO_PC = {
+            'C':0, 'D':2, 'E':4, 'F':5, 'G':7, 'A':9, 'B':11
+        };
+        const ACCIDENTAL_OFFSET = { 'b':-1, '#':1, '♭':-1, '♯':1 };
+
+        function noteNameToPc(name) {
+            if (!name) return null;
+            let match = name.match(/^([A-G])([#b♭♯]*)$/);
+            if (!match) return null;
+            let root = NOTE_TO_PC[match[1]];
+            let acc = match[2];
+            for (let ch of acc) {
+                root += ACCIDENTAL_OFFSET[ch] || 0;
+            }
+            return ((root % 12) + 12) % 12;
+        }
+
+        // ---------- 和弦模式存储 ----------
+        // Map<string, { intervals: number[] }>  key = 类型名 (如 "", "m", "7", "9"等)
+        let chordPatterns = new Map();
+
+        // ---------- 默认编码表 ----------
+        const DEFAULT_TABLE = `C = C,E,G
+Cm = C,Eb,G
+C7 = C,E,G,Bb
+Cmaj7 = C,E,G,B
+C6 = C,E,G,A
+Cm6 = C,Eb,G,A
+C9 = C,E,G,Bb,D
+Cm9 = C,Eb,G,Bb,D
+Cmaj9 = C,E,G,B,D
+Cadd9 = C,E,G,D
+Cmadd9 = C,Eb,G,D
+C7b5 = C,E,Gb,Bb
+Cm7b5 = C,Eb,Gb,Bb
+Cdim = C,Eb,Gb
+Cdim7 = C,Eb,Gb,A
+Caug = C,E,G#
+Csus4 = C,F,G
+Csus2 = C,D,G
+C11 = C,E,G,Bb,D,F
+Cm11 = C,Eb,G,Bb,D,F
+C13 = C,E,G,Bb,D,F,A
+Cm13 = C,Eb,G,Bb,D,F,A
+C69 = C,E,G,A,D
+C7#9 = C,E,G,Bb,D#`;
+
+        // ---------- 解析编码表 ----------
+        function parseChordTable(tableStr) {
+            const lines = tableStr.split(/\r?\n/);
+            const patterns = new Map();
+            for (let line of lines) {
+                line = line.trim();
+                if (line === '' || line.startsWith('//')) continue;
+                let eqIdx = line.indexOf('=');
+                if (eqIdx === -1) continue;
+                let chordName = line.slice(0, eqIdx).trim();
+                let notePart = line.slice(eqIdx + 1).trim();
+                if (!chordName.startsWith('C')) continue;
+                let type = chordName.slice(1); // 去掉开头的C
+                let noteNames = notePart.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                let intervals = [];
+                for (let n of noteNames) {
+                    let pc = noteNameToPc(n);
+                    if (pc !== null) {
+                        let interval = (pc - 0 + 12) % 12;
+                        intervals.push(interval);
+                    }
+                }
+                if (intervals.length > 0) {
+                    patterns.set(type, { intervals });
+                }
+            }
+            return patterns;
+        }
+
+        // ---------- 根据根音和类型名获取音级序列 ----------
+        function getChordPitches(rootPc, type) {
+            let pattern = chordPatterns.get(type);
+            if (!pattern) return null;
+            return pattern.intervals.map(interval => (rootPc + interval) % 12);
+        }
+
+        // ---------- 解析完整和弦名称 ----------
+        function parseChordName(fullName) {
+            fullName = fullName.trim();
+            let slashIdx = fullName.indexOf('/');
+            let chordPart, bassName = null;
+            if (slashIdx !== -1) {
+                chordPart = fullName.slice(0, slashIdx).trim();
+                bassName = fullName.slice(slashIdx + 1).trim();
+            } else {
+                chordPart = fullName;
+            }
+            let rootMatch = chordPart.match(/^([A-G][#b♭♯]*)/);
+            if (!rootMatch) return null;
+            let rootStr = rootMatch[1];
+            let rootPc = noteNameToPc(rootStr);
+            if (rootPc === null) return null;
+            let type = chordPart.slice(rootStr.length);
+            // 常见记号归一化
+            if (type === 'Δ') type = 'maj7';
+            else if (type === 'ø') type = 'm7b5';
+            else if (type === '-') type = 'm';
+            else if (type === '+') type = 'aug';
+            
+            let pitches = getChordPitches(rootPc, type);
+            if (!pitches) return null;
+
+            let bassPc = null;
+            if (bassName) {
+                bassPc = noteNameToPc(bassName);
+            }
+            return { pitches, bassPc };
+        }
+
+        // ---------- 将音级序列转换为MIDI编号，最低音C4–C5 ----------
+        function pitchesToMidi(pitches, bassPc = null) {
+            if (!pitches || pitches.length === 0) return [];
+            let finalPcs = [];
+            if (bassPc !== null) {
+                finalPcs.push(bassPc);
+            }
+            for (let pc of pitches) {
+                if (bassPc !== null && pc === bassPc) continue;
+                finalPcs.push(pc);
+            }
+            const TARGET_MIN = 60; // C4
+            const TARGET_MAX = 72; // C5
+            let bestMidis = null;
+            let bestDev = Infinity;
+            for (let baseOct = 3; baseOct <= 7; baseOct++) {
+                let midis = [];
+                let prevMidi = null;
+                for (let i = 0; i < finalPcs.length; i++) {
+                    let pc = finalPcs[i];
+                    let oct;
+                    if (prevMidi === null) {
+                        oct = baseOct;
+                    } else {
+                        let candidateOct = Math.floor(prevMidi / 12);
+                        let candidateMidi = candidateOct * 12 + pc;
+                        if (candidateMidi > prevMidi) {
+                            oct = candidateOct;
+                        } else {
+                            oct = candidateOct + 1;
+                        }
+                    }
+                    let midi = oct * 12 + pc;
+                    while (midi <= (prevMidi !== null ? prevMidi : -1)) {
+                        oct++;
+                        midi = oct * 12 + pc;
+                    }
+                    midis.push(midi);
+                    prevMidi = midi;
+                }
+                let lowest = midis[0];
+                if (lowest >= TARGET_MIN && lowest <= TARGET_MAX) {
+                    bestMidis = midis;
+                    break;
+                }
+                let dev = Math.abs(lowest - TARGET_MIN);
+                if (dev < bestDev) {
+                    bestDev = dev;
+                    bestMidis = midis;
+                }
+            }
+            return bestMidis || [];
+        }
+
+        // ---------- 解析进行字符串 ----------
+        function parseProgression(progStr) {
+            return progStr.split(',')
+                .map(part => part.trim())
+                .filter(part => part.length > 0)
+                .map(name => parseChordName(name))
+                .filter(res => res !== null);
+        }
+
+        // ---------- Web Audio 播放 ----------
+        let audioCtx = null;
+        let currentTimeouts = [];
+        let activeOscillators = [];
+
+        function getAudioContext() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            return audioCtx;
+        }
+
+        function stopAllSounds() {
+            activeOscillators.forEach(osc => { try { osc.stop(); } catch(e) {} });
+            activeOscillators = [];
+            currentTimeouts.forEach(id => clearTimeout(id));
+            currentTimeouts = [];
+            if (audioCtx && audioCtx.state !== 'closed') audioCtx.suspend();
+        }
+
+        function playChord(midiNotes, durationSec = 1.2) {
+            const ctx = getAudioContext();
+            if (ctx.state === 'suspended') ctx.resume();
+            const gainNode = ctx.createGain();
+            gainNode.gain.setValueAtTime(0.12, ctx.currentTime);
+            gainNode.connect(ctx.destination);
+            midiNotes.forEach(midi => {
+                const freq = 440 * Math.pow(2, (midi - 69) / 12);
+                const osc = ctx.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                osc.connect(gainNode);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + durationSec);
+                activeOscillators.push(osc);
+                osc.onended = () => {
+                    const idx = activeOscillators.indexOf(osc);
+                    if (idx > -1) activeOscillators.splice(idx, 1);
+                };
+            });
+        }
+
+        // ---------- 播放进行（每次都会重新解析编码表）----------
+        function playProgression(progStr) {
+            // 1. 读取编码表最新内容
+            const tableTextarea = document.getElementById('chordTableInput');
+            let tableText = tableTextarea.value.trim();
+            if (tableText === '') tableText = DEFAULT_TABLE;
+            chordPatterns = parseChordTable(tableText);
+
+            // 2. 解析和弦进行
+            const chords = parseProgression(progStr);
+            if (chords.length === 0) return;
+
+            // 3. 停止当前播放，准备新播放
+            stopAllSounds();
+            const ctx = getAudioContext();
+            if (ctx.state === 'suspended') ctx.resume();
+
+            let currentTime = ctx.currentTime;
+            const DURATION = 1.2;
+            const INTERVAL = 0.3;
+            let previewText = [];
+
+            chords.forEach((chord, idx) => {
+                let midis = pitchesToMidi(chord.pitches, chord.bassPc);
+                if (!midis || midis.length === 0) return;
+                const startTime = currentTime + idx * (DURATION + INTERVAL);
+                const timeoutId = setTimeout(() => playChord(midis, DURATION), (startTime - ctx.currentTime) * 1000);
+                currentTimeouts.push(timeoutId);
+                previewText.push(midis.join(' '));
+            });
+
+            document.getElementById('preview').innerText = previewText.join('  |  ') || '—';
+        }
+
+        // ---------- 初始化UI事件 ----------
+        window.onload = function() {
+            const progInput = document.getElementById('chordProgInput');
+            const playBtn = document.getElementById('playProgBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const editBtn = document.getElementById('editTableBtn');
+            const tableTextarea = document.getElementById('chordTableInput');
+
+            // 播放按钮：自动使用当前编码表内容
+            playBtn.addEventListener('click', () => {
+                playProgression(progInput.value);
+            });
+
+            // 停止按钮
+            stopBtn.addEventListener('click', stopAllSounds);
+
+            // 编辑按钮：仅切换显示/隐藏，不触发编码表更新
+            editBtn.addEventListener('click', () => {
+                if (tableTextarea.style.display === 'none') {
+                    if (tableTextarea.value.trim() === '') {
+                        tableTextarea.value = DEFAULT_TABLE;
+                    }
+                    tableTextarea.style.display = 'block';
+                    editBtn.textContent = '✎ 编码表 ▲';
+                } else {
+                    tableTextarea.style.display = 'none';
+                    editBtn.textContent = '✎ 编码表';
+                }
+            });
+
+            // 页面关闭清理音频
+            window.addEventListener('beforeunload', () => { if (audioCtx) audioCtx.close(); });
+
+            // 初始播放一次，展示默认编码表效果
+            setTimeout(() => {
+                playProgression(progInput.value);
+            }, 100);
+        };
+    </script>
+</body>
+</html>
