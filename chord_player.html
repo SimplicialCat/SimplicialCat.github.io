@@ -72,7 +72,7 @@
             justify-content: center;   /* 水平居中 */
             width: 3rem;
             height: 3rem;
-            font-size: 1.7rem;
+            font-size: 1.5rem;
             color: #667BCF;
         }
 
@@ -98,6 +98,29 @@
             border-top: 0.5px solid rgba(0,0,0,0.05);
             margin: 0.8rem 0;
         }
+        /* ---------- 和弦编码表编辑器：蓝色系 ---------- */
+#chordTableInput {
+    border: 1px solid #6AC6E8;        /* 与输入框下边框同色，保持完整边框 */
+    background: white;                /* 纯白背景，干净明亮 */
+    color: #253055;                  /* 深蓝色文字，与标题/焦点色一致 */
+    border-radius: 4px;             /* 保留已有圆角 */
+    padding: 0.8rem;               /* 保留已有内边距 */
+    font-family: inherit;          /* 从内联保留（也可移至此处） */
+    resize: vertical;             /* 保留 */
+    transition: border-color 0.15s ease; /* 平滑过渡 */
+}
+
+#chordTableInput:focus {
+    border-color: #253055;         /* 聚焦时变为深蓝，与 .input-field:focus 一致 */
+    outline: none;                /* 移除默认轮廓，仅保留边框变色 */
+    background: #fff;            /* 保持纯白 */
+}
+
+#chordTableInput::placeholder {
+    color: #6AC6E8;             /* 占位符淡蓝色，与 .input-field::placeholder 一致 */
+    font-weight: 300;           /* 细体 */
+    opacity: 1;                /* 防止某些浏览器变灰 */
+}
     </style>
 </head>
 <body>
@@ -120,8 +143,8 @@
 
         <!-- 编码表编辑区（默认隐藏） -->
         <textarea id="chordTableInput" 
-                  style="width:100%; padding:0.8rem; font-size:0.9rem; border:0.5px solid #ccc; border-radius:4px; background:#fafafa; display:none; resize:vertical; height: 10em;"
-                  placeholder="输入自定义和弦编码表（只写C调）&#10;例：&#10;C = C,E,G&#10;Cm = C,Eb,G&#10;C7 = C,E,G,Bb&#10;Cmaj7 = C,E,G,B&#10;C9 = C,E,G,Bb,D&#10;Cm9 = C,Eb,G,Bb,D&#10;Cadd9 = C,E,G,D&#10;C7b5 = C,E,Gb,Bb&#10;Cm7b5 = C,Eb,Gb,Bb"></textarea>
+                  style="width:100%; padding:0.8rem; font-size:0.9rem; border-radius:4px; background:#fafafa; display:none; resize:vertical; height: 10em; font-family: inherit;"
+                  placeholder="输入自定义和弦编码表（只写C调）&#10;例：&#10;C = C,E,G&#10;Cm = C,Eb,G&#10;C7 = C,E,G,Bb&#10;Cm7 = C,Eb,G,Bb&#10;Cmaj7 = C,E,G,B&#10;..."></textarea>
 
         <!-- 预览区：显示实际MIDI编号（调试/验证） -->
         <div id="preview" class="preview">—</div>
