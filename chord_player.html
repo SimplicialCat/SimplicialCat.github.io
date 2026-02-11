@@ -8,8 +8,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #fff;
-            color: #111;
+            background: #FAFBFC;
+            color: #253055;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -39,27 +39,42 @@
             padding: 0.7rem 0.5rem;
             font-size: 1rem;
             border: none;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #6AC6E8;
             background: transparent;
             outline: none;
         }
-        .input-field:focus { border-bottom-color: #000; }
-        .input-field::placeholder { color: #aaa; font-weight: 300; }
+        .input-field:focus { border-bottom-color: #253055; }
+        .input-field::placeholder { color: #6AC6E8; font-weight: 300; }
 
         .btn {
             padding: 0.5rem 0.9rem;
             font-size: 1rem;
             border: none;
             background: transparent;
-            color: #111;
+            color: #465BAF;
             cursor: pointer;
             transition: 0.1s;
             border-radius: 0;
         }
-        .btn:hover { background: #f0f0f0; }
-        .btn:active { background: #e0e0e0; }
-        .btn-play { font-size: 1.1rem; padding: 0.5rem 0.8rem; }
-        .btn-stop { font-size: 1.4rem; color: #666; }
+        .btn:hover { background: #AAD6F8; }
+        .btn:active { background: #8AB6D8; }
+        .btn-play {
+            display: inline-flex;      /* 弹性容器 */
+            align-items: center;       /* 垂直居中 */
+            justify-content: center;   /* 水平居中 */
+            width: 3rem;
+            height: 3rem;
+            font-size: 1.1rem;
+        }
+        .btn-stop {
+            display: inline-flex;      /* 弹性容器 */
+            align-items: center;       /* 垂直居中 */
+            justify-content: center;   /* 水平居中 */
+            width: 3rem;
+            height: 3rem;
+            font-size: 1.7rem;
+            color: #667BCF;
+        }
 
         .preview {
             font-size: 0.75rem;
@@ -113,10 +128,10 @@
 
         <hr>
         <div class="footer-hint">
-            • 输入和弦进行，例如 C, G7, Am, B/C, Dm7b5, C9 · 点击 ▶ 播放<br>
-            • 编码表只写 C 开头的和弦（保留音符顺序），程序自动推导所有调 · 播放时自动读取编码表最新内容<br>
-            • 斜杠和弦: X/Y 表示以Y为最低音的X和弦 · 最低音自动置于 C4–C5 (MIDI 60–72)<br>
-            • ✎ 编码表 显示/隐藏编辑区 · ⏹ 停止 · 预览区显示实际MIDI编号
+            • 输入和弦进行，以逗号分隔<br>
+            • 编码表只写 C 开头的和弦（保留音符顺序）<br>
+            • 支持斜杠和弦: X/Y 表示 X 和弦加入低音 Y<br>
+            • 预览区显示实际MIDI编号
         </div>
     </div>
 
@@ -147,6 +162,7 @@
         const DEFAULT_TABLE = `C = C,E,G
 Cm = C,Eb,G
 C7 = C,E,G,Bb
+Cm7 = C,Eb,G,Bb
 Cmaj7 = C,E,G,B
 C6 = C,E,G,A
 Cm6 = C,Eb,G,A
@@ -218,7 +234,7 @@ C7#9 = C,E,G,Bb,D#`;
             }
             let rootMatch = chordPart.match(/^([A-G][#b♭♯]*)/);
             if (!rootMatch) return null;
-            let rootStr = rootMatch[1];
+            let rootStr = rootMatch[1].trim();
             let rootPc = noteNameToPc(rootStr);
             if (rootPc === null) return null;
             let type = chordPart.slice(rootStr.length);
