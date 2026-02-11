@@ -62,18 +62,16 @@
             transition: 0.1s;
             border-radius: 0;
         }
-        .btn:hover { background: #AAD6F8; }
-        .btn:active { background: #8AB6D8; }
- /* ---------- 金色渐变符号：播放键 & 停止键 ---------- */
+/* ---------- 金色渐变符号：播放键 & 停止键 ---------- */
 :root {
     --gold-dark: #BD9368;
     --gold-light: #DDB368;
     --gold-ultra-light: #FDF388;
 }
 
-/* 播放键渐变 */
-.btn-play {
-    /* 保留原有布局属性（宽高、弹性等） */
+/* 播放键 & 停止键 共用基础渐变 */
+.btn-play,
+.btn-stop {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -87,45 +85,47 @@
     );
     -webkit-background-clip: text;
     background-clip: text;
-    color: transparent;          /* 文字透明，显示渐变背景 */
+    color: transparent;
     
-    /* 取消可能继承的背景色/边框 */
+    /* 彻底去除背景色/边框 */
     background-color: transparent;
     border: none;
     
-    /* 柔和阴影，增加立体感（仅作用于文字轮廓） */
+    /* 柔和阴影（仅作用于文字） */
     filter: drop-shadow(0 1px 2px rgba(120, 80, 40, 0.2));
     
-    /* 过渡平滑 */
+    /* 过渡与变换基准 */
     transition: all 0.15s ease;
+    transform: scale(1);  /* 明确基准 */
 }
 
-/* 停止键 */
+/* 停止键字体大小 */
 .btn-stop {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     font-size: 1.5rem;
 }
 
-/* 悬停状态：去除蓝色背景，增强渐变亮度和阴影 */
-.btn-play:hover {
-    background: linear-gradient(
-        150deg,
-        #FFF9C4 20%,
-        #FFD97E 60%,
-        #E6B86B 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    background-color: transparent;  /* 覆盖 .btn:hover 的蓝色背景 */
-    filter: drop-shadow(0 2px 5px rgba(180, 130, 70, 0.5));
-    transform: scale(2.5);         /* 轻微放大 */
+/* ----- 悬停状态（仅对真正支持hover的设备生效）----- */
+@media (hover: hover) {
+    .btn-play:hover,
+    .btn-stop:hover {
+        background: linear-gradient(
+            150deg,
+            #FFF9C4 20%,
+            #FFD97E 60%,
+            #E6B86B 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        background-color: transparent;
+        filter: drop-shadow(0 2px 5px rgba(180, 130, 70, 0.5));
+        transform: scale(1.5);
+    }
 }
 
-/* 激活（按下）状态：颜色略微变深，缩小还原 */
-.btn-play:active {
+/* ----- 激活（按下）状态 ----- */
+.btn-play:active,
+.btn-stop:active {
     background: linear-gradient(
         150deg,
         var(--gold-light) 20%,
@@ -139,6 +139,23 @@
     transform: scale(0.98);
 }
 
+/* ----- 焦点状态（解决触屏点击后保持放大/背景问题）----- */
+.btn-play:focus,
+.btn-stop:focus {
+    background: linear-gradient(
+        150deg,
+        var(--gold-ultra-light) 20%,
+        var(--gold-light) 60%,
+        var(--gold-dark) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-color: transparent;
+    transform: scale(1);               /* 恢复原始大小 */
+    filter: drop-shadow(0 1px 2px rgba(120, 80, 40, 0.2));
+    outline: none;                    /* 移除默认焦点环 */
+}
 
         .preview {
             font-size: 0.75rem;
