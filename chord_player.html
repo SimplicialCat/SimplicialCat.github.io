@@ -96,7 +96,7 @@
     
     /* 过渡与变换基准 */
     transition: all 0.15s ease;
-    transform: scale(1);  /* 明确基准 */
+    transform: scale(1);
 }
 
 /* 停止键字体大小 */
@@ -104,7 +104,25 @@
     font-size: 1.5rem;
 }
 
-/* ----- 悬停状态（仅对真正支持hover的设备生效）----- */
+/* ----- 焦点状态（无鼠标悬停时）----- */
+.btn-play:focus,
+.btn-stop:focus {
+    background: linear-gradient(
+        150deg,
+        var(--gold-ultra-light) 20%,
+        var(--gold-light) 60%,
+        var(--gold-dark) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-color: transparent;
+    transform: scale(1);               /* 保持原始大小 */
+    filter: drop-shadow(0 1px 2px rgba(120, 80, 40, 0.2));
+    outline: none;                    /* 移除默认焦点环 */
+}
+
+/* ----- 悬停状态（仅在支持hover的设备，且会覆盖焦点样式）----- */
 @media (hover: hover) {
     .btn-play:hover,
     .btn-stop:hover {
@@ -117,9 +135,9 @@
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
-        background-color: transparent;
+        background-color: transparent;  /* 覆盖全局 .btn:hover 的蓝色 */
         filter: drop-shadow(0 2px 5px rgba(180, 130, 70, 0.5));
-        transform: scale(1.5);
+        transform: scale(1.05);         /* 轻微放大 */
     }
 }
 
@@ -137,24 +155,6 @@
     background-color: transparent;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
     transform: scale(0.98);
-}
-
-/* ----- 焦点状态（解决触屏点击后保持放大/背景问题）----- */
-.btn-play:focus,
-.btn-stop:focus {
-    background: linear-gradient(
-        150deg,
-        var(--gold-ultra-light) 20%,
-        var(--gold-light) 60%,
-        var(--gold-dark) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    background-color: transparent;
-    transform: scale(1);               /* 恢复原始大小 */
-    filter: drop-shadow(0 1px 2px rgba(120, 80, 40, 0.2));
-    outline: none;                    /* 移除默认焦点环 */
 }
 
         .preview {
