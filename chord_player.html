@@ -13,9 +13,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             min-height: 100vh;
-            padding: 2rem 1rem;
+            padding: 12rem 1rem;
         }
         .container {
             width: 100%;
@@ -30,6 +30,9 @@
             align-items: center;
             gap: 0.5rem;
             width: 100%;
+        }
+        .title {
+            text-align: center;
         }
         .input-field {
             flex: 1 1 200px;
@@ -55,8 +58,8 @@
         }
         .btn:hover { background: #f0f0f0; }
         .btn:active { background: #e0e0e0; }
-        .btn-play { font-size: 1.3rem; padding: 0.5rem 0.8rem; }
-        .btn-stop { color: #666; }
+        .btn-play { font-size: 1.1rem; padding: 0.5rem 0.8rem; }
+        .btn-stop { font-size: 1.4rem; color: #666; }
 
         .preview {
             font-size: 0.75rem;
@@ -69,8 +72,8 @@
         }
         .footer-hint {
             margin-top: 2.5rem;
-            font-size: 0.7rem;
-            color: rgba(0,0,0,0.3);
+            font-size: 0.8rem;
+            color: rgba(0,0,0,0.5);
             text-align: center;
             line-height: 1.5;
             font-weight: 300;
@@ -84,6 +87,9 @@
 </head>
 <body>
     <div class="container">
+        <div class="title">
+            <h1>和弦进行</h1>
+        </div>
         <!-- 第一行：和弦进行输入 + 编码表编辑按钮 -->
         <div class="row">
             <input type="text" id="chordProgInput" class="input-field" 
@@ -93,13 +99,13 @@
         <!-- 第二行：播放与停止并排 -->
         <div class="row" style="gap: 0.8rem;">
             <button id="playProgBtn" class="btn btn-play">▶</button>
-            <button id="stopBtn" class="btn btn-stop">⏹</button>
+            <button id="stopBtn" class="btn btn-stop">■</button>
             <button id="editTableBtn" class="btn" style="font-size:0.9rem;">✎ 编码表</button>
         </div>
 
         <!-- 编码表编辑区（默认隐藏） -->
         <textarea id="chordTableInput" 
-                  style="width:100%; padding:0.8rem; font-size:0.9rem; border:0.5px solid #ccc; border-radius:4px; background:#fafafa; display:none; resize:vertical; rows:6;"
+                  style="width:100%; padding:0.8rem; font-size:0.9rem; border:0.5px solid #ccc; border-radius:4px; background:#fafafa; display:none; resize:vertical; height: 10em;"
                   placeholder="输入自定义和弦编码表（只写C调）&#10;例：&#10;C = C,E,G&#10;Cm = C,Eb,G&#10;C7 = C,E,G,Bb&#10;Cmaj7 = C,E,G,B&#10;C9 = C,E,G,Bb,D&#10;Cm9 = C,Eb,G,Bb,D&#10;Cadd9 = C,E,G,D&#10;C7b5 = C,E,Gb,Bb&#10;Cm7b5 = C,Eb,Gb,Bb"></textarea>
 
         <!-- 预览区：显示实际MIDI编号（调试/验证） -->
