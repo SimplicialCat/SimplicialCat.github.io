@@ -215,7 +215,7 @@
             <button id="playProgBtn" class="btn btn-play">▶</button>
             <button id="stopBtn" class="btn btn-stop">■</button>
             <button id="editTableBtn" class="btn" style="font-size:1rem;">✎ 编码表</button>
-            每个和弦持续
+            持续
             <input type="number" id="durationInput" class="input-field" value="1.2" step="0.1" min="0.1" style="width: 80px; text-align: center; color:#465BAF; flex:none;" placeholder="1.2">
             秒
         </div>
@@ -275,9 +275,11 @@ Cadd9 = C,E,G,D
 Cmadd9 = C,Eb,G,D
 C7b5 = C,E,Gb,Bb
 Cm7b5 = C,Eb,Gb,Bb
+Co7 = C,Eb,Gb,Bbb
 Cdim = C,Eb,Gb
 Cdim7 = C,Eb,Gb,A
 Caug = C,E,G#
+Cb5 = C,E,Gb
 Csus4 = C,F,G
 Csus2 = C,D,G
 C11 = C,E,G,Bb,D,F
@@ -285,7 +287,10 @@ Cm11 = C,Eb,G,Bb,D,F
 C13 = C,E,G,Bb,D,F,A
 Cm13 = C,Eb,G,Bb,D,F,A
 C69 = C,E,G,A,D
-C7#9 = C,E,G,Bb,D#`;
+Cm69 = C,Eb,G,A,D
+C7#9 = C,E,G,Bb,D#
+Cmaj#11 = C,E,G,B,D,F#
+Cm7b5(11) = C,Eb,Gb,Bb,F`;
 
         // ---------- 解析编码表 ----------
         function parseChordTable(tableStr) {
@@ -367,8 +372,8 @@ C7#9 = C,E,G,Bb,D#`;
                 if (bassPc !== null && pc === bassPc) continue;
                 finalPcs.push(pc);
             }
-            const TARGET_MIN = 60; // C4
-            const TARGET_MAX = 72; // C5
+            const TARGET_MIN = 55; // G3
+            const TARGET_MAX = 67; // G4
             let bestMidis = null;
             let bestDev = Infinity;
             for (let baseOct = 3; baseOct <= 7; baseOct++) {
@@ -445,7 +450,7 @@ C7#9 = C,E,G,Bb,D#`;
             return Math.min(2.0, Math.max(0.02, linear * REF_GAIN));
         }
 
-        function playChord(midiNotes, durationSec = 1.2) {
+        /*function playChord(midiNotes, durationSec = 1.2) {
             const ctx = getAudioContext();
             if (ctx.state === 'suspended') ctx.resume();
             // 可保留一个主 Gain（用来整体静音或将来加混响），但不是必须
@@ -456,7 +461,7 @@ C7#9 = C,E,G,Bb,D#`;
             midiNotes.forEach(midi => {
                 const freq = 440 * Math.pow(2, (midi - 69) / 12);
                 const osc = ctx.createOscillator();
-                osc.type = 'sine';
+                osc.type = 'triangle';
                 osc.frequency.setValueAtTime(freq, ctx.currentTime);
                 // --- 新增：每个音符自己的增益节点 ---
                 const noteGain = ctx.createGain();
@@ -474,7 +479,58 @@ C7#9 = C,E,G,Bb,D#`;
                     if (idx > -1) activeOscillators.splice(idx, 1);
                 };
             });
-        }
+        }*/
+        function playChord(midiNotes, durationSec = 1.2) {
+    const ctx = getAudioContext();
+    if (ctx.state === 'suspended') ctx.resume();
+
+    midiNotes.forEach(midi => {
+        const baseFreq = 440 * Math.pow(2, (midi - 69) / 12);
+        
+        // --- 钢琴音色：主振荡器（三角波）---
+        const osc = ctx.createOscillator();
+        osc.type = 'triangle';                // 更丰富的泛音
+        osc.frequency.setValueAtTime(baseFreq, ctx.currentTime);
+
+        // --- 钢琴音色：副振荡器（高八度，音量较低，增加明亮感）---
+        const osc2 = ctx.createOscillator();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(baseFreq * 2, ctx.currentTime); // 高八度
+
+        // --- 每个音符独立增益，并添加包络 ---
+        const noteGain = ctx.createGain();
+        const peakGain = computeNoteGain(midi);   // 仍保留原响度补偿
+
+        // 包络：快速起音 → 指数衰减（模仿钢琴）
+        const now = ctx.currentTime;
+        noteGain.gain.cancelScheduledValues(now);
+        noteGain.gain.setValueAtTime(0, now);                 // 从0开始
+        noteGain.gain.linearRampToValueAtTime(peakGain, now + 0.005); // 5ms 起音
+        noteGain.gain.exponentialRampToValueAtTime(0.001, now + 4); // 衰减到接近0
+
+        // 连接：两个振荡器 → 同一个增益 → 输出
+        osc.connect(noteGain);
+        osc2.connect(noteGain);
+        noteGain.connect(ctx.destination);
+
+        // 启动与停止
+        osc.start(now);
+        osc2.start(now);
+        osc.stop(now + durationSec);
+        osc2.stop(now + durationSec);
+
+        // 保持原有振荡器管理（用于紧急停止）
+        activeOscillators.push(osc, osc2);
+        osc.onended = () => {
+            const idx = activeOscillators.indexOf(osc);
+            if (idx > -1) activeOscillators.splice(idx, 1);
+        };
+        osc2.onended = () => {
+            const idx = activeOscillators.indexOf(osc2);
+            if (idx > -1) activeOscillators.splice(idx, 1);
+        };
+    });
+}
 
         // ---------- 播放进行（每次都会重新解析编码表）----------
         function playProgression(progStr) {
