@@ -32,7 +32,9 @@
     --color-Furina-aqua-cyan: #6AC6E8;
     --color-Furina-frost-white: #FAFBFC;
     --color-Furina-misty-blue: #C4D7ED;
-    --color-Furina-vintage-gold: #CDA368;
+    --color-Furina-vintage-gold: #BD9368;
+    --color-Furina-vintage-gold-light: #DDB368;
+    --color-Furina-vintage-gold-ultra-light : #FDF388;
 }
 
 html {
@@ -150,8 +152,19 @@ header nav span.nav-link.active {
 
 .content-section h2::before {
     content: '✦';
-    margin-right: 10px;
-    color: var(--color-Furina-vintage-gold);
+    display: inline-block;
+    margin-right: 0.3em;
+    background: linear-gradient(
+        150deg,
+        var(--color-Furina-vintage-gold-ultra-light) 30%,
+        var(--color-Furina-vintage-gold-light) 60%,
+        var(--color-Furina-vintage-gold) 90%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0px 1px 1px rgba(184, 150, 131, 0.5)); /* 可选：增加与主色呼应的柔和投影 */
+    font-weight: normal;
 }
 
 .content-section h3 {
@@ -161,12 +174,6 @@ header nav span.nav-link.active {
     color: var(--color-Furina-royal-blue);
     margin: 25px 0 15px 0;
     letter-spacing: 0.05em;
-}
-
-.content-section h3::before {
-    content: '✦';
-    margin-right: 10px;
-    color: var(--color-Furina-aqua-cyan);
 }
 
 .content-section h4 {
@@ -181,8 +188,21 @@ header nav span.nav-link.active {
 }
 
 .content-section h4::before {
-    content: '✦';
-    color: var(--color-Furina-aqua-cyan);
+    content: "\2726"; /* ✦ 的Unicode转义码 */
+  display: inline-block;
+  margin-left: 0.06em;
+  margin-right: 0.06em;
+  /*color: var(--color-Furina-vintage-gold-ultra-light);*/
+  background: linear-gradient(
+    150deg,
+    var(--color-Furina-vintage-gold-ultra-light) 20%,
+    var(--color-Furina-vintage-gold-light) 90%,
+    var(--color-Furina-vintage-gold) 95%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: normal;
 }
 
 /* Links */
