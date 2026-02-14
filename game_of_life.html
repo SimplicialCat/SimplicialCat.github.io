@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生命游戏</title>
+    <style>
+        /* ---------- 全局设计变量 ---------- */
+        * {
+            --color-Furina-deep-navy: #253085;
+            --color-Furina-royal-blue: #465BCF;
+            --color-Furina-aqua-cyan: #6AC6E8;
+            --color-Furina-frost-white: #FAFBFC;
+            --color-Furina-misty-blue: #C4D7ED;
+            --color-Furina-vivid-sapphire: #5670E9;
+            --color-Furina-luminous-hydro: #70DBFF;
+            --color-Furina-bright-periwinkle: #8DA4F1;
+            --color-Furina-vintage-gold: #BD9368;
+            --color-Furina-vintage-gold-light: #DDB368;
+            --color-Furina-vintage-gold-ultra-light : #FDF388;
+            --bg-gradient-start: var(--color-Furina-frost-white);
+            --bg-gradient-end: var(--color-Furina-misty-blue);
+            --container-bg: rgba(255, 255, 255, 0.7);
+            --container-border: rgba(255, 255, 255, 0.7);
+            --wrapper-bg: #ffffff;
+            --canvas-bg: #ffffff;
+            --canvas-border-light: rgba(0, 0, 0, 0.05);
+            --canvas-border-strong: #cbd5e1;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --stat-bg: rgba(255, 255, 255, 0.6);
+            --stat-border: rgba(255, 255, 255, 0.8);
+            --btn-bg: rgba(255, 255, 255, 0.7);
+            --btn-border: rgba(255, 255, 255, 0.9);
+            --btn-hover-bg: rgba(255, 255, 255, 0.95);
+            --btn-active-bg: rgba(240, 240, 245, 0.9);
+            --kbd-bg: rgba(0, 0, 0, 0.04);
+            --kbd-border: rgba(255, 255, 255, 0.7);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --shadow-dark: rgba(0, 0, 0, 0.25);
+            --cell-color: var(--color-Furina-vivid-sapphire);               /* 活细胞填充色 */
+            --cell-shadow: rgba(70, 130, 200, 0.2);
+            --grid-line: #e2e8f0;                 /* 网格线颜色 */
+            --border-light: #d9e1ec;              /* 辅助网格颜色 */
+            --inset-shadow: rgba(0, 0, 0, 0.02);
+            --white-highlight: rgba(255, 255, 255, 0.6);
+        }
+
+        body {
+            background: linear-gradient(145deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            padding: 1rem;
+        }
+
+        .game-container {
+            background: var(--container-bg);
+            backdrop-filter: blur(8px);
+            border-radius: 2.5rem;
+            padding: 2rem 2rem 2rem 2rem;
+            box-shadow: 0 25px 50px -12px var(--shadow-dark), inset 0 1px 2px var(--white-highlight);
+            border: 1px solid var(--container-border);
+        }
+
+        .canvas-wrapper {
+            display: flex;
+            justify-content: center;
+            border-radius: 1.8rem;
+            background: var(--wrapper-bg);
+            box-shadow: inset 0 4px 8px var(--inset-shadow), 0 10px 20px -5px var(--shadow-color);
+            padding: 12px;
+        }
+
+        canvas {
+            display: block;
+            width: 600px;
+            height: 600px;
+            border-radius: 1.2rem;
+            cursor: crosshair;
+            box-shadow: 0 0 0 1px var(--canvas-border-light), 0 4px 12px var(--shadow-color);
+            background-color: var(--canvas-bg);
+        }
+
+        .info-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            padding: 0 0.5rem;
+            color: var(--text-primary);
+            font-weight: 450;
+        }
+
+        .stats {
+            background: var(--stat-bg);
+            backdrop-filter: blur(4px);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            display: flex;
+            gap: 1.8rem;
+            box-shadow: 0 2px 6px var(--inset-shadow), inset 0 1px 2px var(--white-highlight);
+            border: 1px solid var(--stat-border);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: baseline;
+            gap: 0.3rem;
+        }
+
+        .stat-label {
+            font-weight: 350;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .stat-value {
+            font-weight: 550;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .btn {
+            background: var(--btn-bg);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--btn-border);
+            box-shadow: 0 4px 10px -4px var(--shadow-color), 0 1px 2px var(--inset-shadow);
+            padding: 0.5rem 1.3rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 470;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            letter-spacing: 0.01em;
+        }
+
+        .btn:hover {
+            background: var(--btn-hover-bg);
+            box-shadow: 0 8px 16px -8px var(--shadow-dark);
+            transform: scale(1.02);
+            border-color: var(--btn-border);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+            background: var(--btn-active-bg);
+        }
+
+        .hint {
+            margin-top: 1rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 380;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.8rem;
+        }
+
+        .hint kbd {
+            background: var(--kbd-bg);
+            border-radius: 30px;
+            padding: 0.2rem 1rem;
+            border: 1px solid var(--kbd-border);
+            box-shadow: inset 0 1px 3px var(--inset-shadow);
+            font-family: 'Inter', monospace;
+            font-weight: 420;
+            color: var(--text-primary);
+            background: var(--white-highlight);
+            backdrop-filter: blur(2px);
+        }
+
+        .hint span {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <div class="canvas-wrapper">
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
+    </div>
+
+    <div class="info-bar">
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">世代</span>
+                <span class="stat-value" id="generationDisplay">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">生命</span>
+                <span class="stat-value" id="populationDisplay">0</span>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="randomBtn">随机</button>
+            <button class="btn" id="clearBtn">清空</button>
+            <button class="btn" id="playPauseBtn">暂停</button>
+        </div>
+    </div>
+
+    <div class="hint">
+        <span><kbd>左键</kbd> 画下生命</span>
+        <span><kbd>右键</kbd> 擦除细胞</span>
+        <span><kbd>空格</kbd> 暂停/继续</span>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // 读取 CSS 变量（使 canvas 绘制颜色也统一）
+        const rootStyle = getComputedStyle(document.documentElement);
+        const CELL_COLOR = rootStyle.getPropertyValue('--cell-color').trim() || '#5880a0';
+        const CELL_SHADOW = rootStyle.getPropertyValue('--cell-shadow').trim() || 'rgba(70, 130, 200, 0.2)';
+        const GRID_LINE = rootStyle.getPropertyValue('--grid-line').trim() || '#e2e8f0';
+        const BORDER_STRONG = rootStyle.getPropertyValue('--canvas-border-strong').trim() || '#cbd5e1';
+        const BORDER_LIGHT = rootStyle.getPropertyValue('--border-light').trim() || '#d9e1ec';
+
+        const CELL_SIZE = 20;          // px
+        const COLS = 30;               // 600/20
+        const ROWS = 30;
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const generationSpan = document.getElementById('generationDisplay');
+        const populationSpan = document.getElementById('populationDisplay');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const randomBtn = document.getElementById('randomBtn');
+        const clearBtn = document.getElementById('clearBtn');
+
+        let grid = [];
+        let generation = 0;
+        let running = false;
+        let timer = null;
+        const UPDATE_INTERVAL = 180;
+
+        function initGrid(randomize = true) {
+            const newGrid = [];
+            for (let r = 0; r < ROWS; r++) {
+                const row = [];
+                for (let c = 0; c < COLS; c++) {
+                    row.push(randomize ? (Math.random() < 0.25 ? 1 : 0) : 0);
+                }
+                newGrid.push(row);
+            }
+            return newGrid;
+        }
+
+        grid = initGrid(true);
+        generation = 0;
+
+        // 绘制画布（所有颜色均取自 CSS 变量）
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 活细胞 (柔和阴影)
+            ctx.shadowColor = CELL_SHADOW;
+            ctx.shadowBlur = 6;
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    if (grid[r][c] === 1) {
+                        ctx.fillStyle = CELL_COLOR;
+                        ctx.fillRect(c * CELL_SIZE, r * CELL_SIZE, CELL_SIZE - 0.5, CELL_SIZE - 0.5);
+                    }
+                }
+            }
+            ctx.shadowColor = 'transparent';
+
+            // 极细网格线
+            ctx.lineWidth = 0.8;
+            ctx.strokeStyle = GRID_LINE;
+            ctx.beginPath();
+            for (let i = 0; i <= COLS; i++) {
+                const x = i * CELL_SIZE;
+                ctx.moveTo(x + 0.5, 0);
+                ctx.lineTo(x + 0.5, canvas.height);
+            }
+            for (let i = 0; i <= ROWS; i++) {
+                const y = i * CELL_SIZE;
+                ctx.moveTo(0, y + 0.5);
+                ctx.lineTo(canvas.width, y + 0.5);
+            }
+            ctx.strokeStyle = GRID_LINE;
+            ctx.stroke();
+
+            // 最外层边框
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = BORDER_STRONG;
+            ctx.strokeRect(0.5, 0.5, canvas.width - 1, canvas.height - 1);
+
+            updateStats();
+        }
+
+        function updateStats() {
+            const population = grid.flat().filter(cell => cell === 1).length;
+            populationSpan.textContent = population;
+            generationSpan.textContent = generation;
+        }
+
+        function setCell(row, col, value) {
+            if (row < 0 || row >= ROWS || col < 0 || col >= COLS) return false;
+            if (grid[row][col] !== value) {
+                grid[row][col] = value;
+                drawGrid();
+                return true;
+            }
+            return false;
+        }
+
+        // 下一代
+        function nextGeneration() {
+            const newGrid = [];
+            for (let r = 0; r < ROWS; r++) {
+                const newRow = [];
+                for (let c = 0; c < COLS; c++) {
+                    let neighbors = 0;
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            if (dr === 0 && dc === 0) continue;
+                            const nr = r + dr;
+                            const nc = c + dc;
+                            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+                                neighbors += grid[nr][nc];
+                            }
+                        }
+                    }
+                    const alive = grid[r][c];
+                    if (alive === 1) {
+                        newRow.push(neighbors === 2 || neighbors === 3 ? 1 : 0);
+                    } else {
+                        newRow.push(neighbors === 3 ? 1 : 0);
+                    }
+                }
+                newGrid.push(newRow);
+            }
+            grid = newGrid;
+            generation++;
+            drawGrid();
+        }
+
+        function startPlay() {
+            if (timer) clearInterval(timer);
+            running = true;
+            timer = setInterval(() => {
+                nextGeneration();
+            }, UPDATE_INTERVAL);
+            playPauseBtn.textContent = '暂停';
+        }
+
+        function pausePlay() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+            running = false;
+            playPauseBtn.textContent = '播放';
+        }
+
+        function toggleRunning() {
+            if (running) {
+                pausePlay();
+            } else {
+                startPlay();
+            }
+        }
+
+        function randomizeGrid() {
+            grid = initGrid(true);
+            generation = 0;
+            drawGrid();
+        }
+
+        function clearGrid() {
+            grid = initGrid(false);
+            generation = 0;
+            drawGrid();
+        }
+
+        // 鼠标交互
+        function getCellCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            const mouseY = (e.clientY - rect.top) * scaleY;
+            if (mouseX < 0 || mouseX >= canvas.width || mouseY < 0 || mouseY >= canvas.height) {
+                return null;
+            }
+            const col = Math.floor(mouseX / CELL_SIZE);
+            const row = Math.floor(mouseY / CELL_SIZE);
+            return { row, col };
+        }
+
+        function handleMouseDown(e) {
+            e.preventDefault();
+            const coords = getCellCoords(e);
+            if (!coords) return;
+            const { row, col } = coords;
+            if (e.button === 0) {          // 左键
+                setCell(row, col, 1);
+            } else if (e.button === 2) {    // 右键
+                setCell(row, col, 0);
+            }
+        }
+
+        function handleMouseMove(e) {
+            e.preventDefault();
+            const coords = getCellCoords(e);
+            if (!coords) return;
+            const { row, col } = coords;
+            if (e.buttons & 1) {            // 左键按下
+                setCell(row, col, 1);
+            } else if (e.buttons & 2) {      // 右键按下
+                setCell(row, col, 0);
+            }
+        }
+
+        function handleContextMenu(e) {
+            e.preventDefault();
+        }
+
+        function handleKeyDown(e) {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                toggleRunning();
+            }
+        }
+
+        // 事件绑定
+        canvas.addEventListener('mousedown', handleMouseDown);
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('contextmenu', handleContextMenu);
+        window.addEventListener('keydown', handleKeyDown);
+
+        randomBtn.addEventListener('click', randomizeGrid);
+        clearBtn.addEventListener('click', clearGrid);
+        playPauseBtn.addEventListener('click', toggleRunning);
+
+        drawGrid();
+        startPlay();  // 默认播放
+    })();
+</script>
+</body>
+</html>
