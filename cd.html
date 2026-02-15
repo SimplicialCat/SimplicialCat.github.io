@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交换图 · 单击编辑节点 + 浅色预览</title>
+    <!-- KaTeX 核心 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+
+    <style>
+        /* 颜色变量 —— 方便整体替换 */
+        :root {
+            --color-Furina-deep-navy: #253085;
+            --color-Furina-royal-blue: #465BCF;
+            --color-Furina-aqua-cyan: #6AC6E8;
+            --color-Furina-frost-white: #FAFBFC;
+            --color-Furina-misty-blue: #C4D7ED;
+            --color-Furina-vivid-sapphire: #5670E9;
+            --color-Furina-luminous-hydro: #70DBFF;
+            --color-Furina-bright-periwinkle: #8DA4F1;
+            --color-Furina-vintage-gold: #BD9368;
+            --color-Furina-vintage-gold-light: #DDB368;
+            --color-Furina-vintage-gold-ultra-light : #FDF388;
+            --bg-page: #FAFBFC;
+            --bg-radial: radial-gradient(circle at 87% 13%, rgba(70, 91, 207, 0.03) 0%, transparent 70%);
+            --text-dark: #253085;
+            --text-light: #6AC6E8;
+            --border-light: #6AC6E8;
+            --border-focus: #253085;
+            --node-bg: #f0f0f0;
+            --edge-bg: #ffffff;
+            --selected-bg: #e0e0ff;
+            --selected-border: var(--color-Furina-royal-blue);
+            --button-bg: transparent;
+            --button-hover: rgba(0,0,0,0.02);
+            --input-bg: #ffffe0;
+            --gap-color: transparent;
+            /* 浅色预览区 */
+            --preview-bg: #f5f5f5;
+            --pre-header-text: #333;
+            --pre-code-bg: #ffffff;
+            --pre-code-text: #111;
+            --pre-code-border: #ddd;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-radial), var(--bg-page);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 3rem 1rem;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .title {
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .title h1 {
+            font-weight: 500;
+            font-size: 2rem;
+            letter-spacing: -0.5px;
+            color: var(--text-dark);
+        }
+
+        /* 行布局 —— 源自和弦播放器 */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem 0.8rem;
+            width: 100%;
+        }
+
+        .input-field {
+            flex: 1 1 200px;
+            padding: 0.7rem 0.5rem;
+            font-size: 1rem;
+            border: none;
+            border-bottom: 1px solid var(--border-light);
+            background: transparent;
+            outline: none;
+            color: var(--text-dark);
+        }
+        .input-field:focus {
+            border-bottom-color: var(--border-focus);
+        }
+        .input-field::placeholder {
+            color: var(--border-light);
+            font-weight: 300;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border: none;
+            background: transparent;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: 0.1s;
+            border-radius: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+        .btn:hover {
+            background: var(--button-hover);
+        }
+
+        .apply-btn {
+            border-bottom: 1px solid var(--border-light);
+            padding: 0.5rem 1rem;
+        }
+
+        /* 网格容器 —— 无边框 */
+        .grid-container {
+            overflow-x: auto;
+            margin: 1rem 0 0.5rem 0;
+            background: transparent;
+            padding: 1rem 0.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .swap-table {
+            border-collapse: separate;
+            border-spacing: 2px;
+        }
+
+        .swap-table td {
+            border: none;
+            min-width: 3.2rem;
+            height: 3.2rem;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 1.1rem;
+            padding: 0 4px;
+            transition: background 0.1s;
+        }
+
+        .swap-table td.node-cell {
+            background-color: var(--node-bg);
+            font-weight: 500;
+            cursor: pointer;  /* 暗示可单击编辑 */
+        }
+
+        .swap-table td.edge-cell {
+            background-color: var(--edge-bg);
+            font-family: 'Times New Roman', serif;
+        }
+
+        .swap-table td.edge-cell.selected {
+            background-color: var(--selected-bg);
+        }
+
+        /* 原地编辑输入框 */
+        .cell-editor {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: var(--input-bg);
+            font-family: inherit;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            outline: 1px solid var(--selected-border);
+            color: var(--text-dark);
+        }
+
+        /* 边工具栏 */
+        .edge-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px 24px;
+            padding: 12px 0;
+            margin: 8px 0 16px 0;
+        }
+
+        .selection-info {
+            font-size: 14px;
+            color: var(--text-dark);
+            opacity: 0.7;
+            padding: 4px 0;
+        }
+
+        .arrow-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .arrow-btn {
+            min-width: 2.8rem;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-light);
+            padding: 4px 8px;
+            font-size: 1.2rem;
+            line-height: 1;
+            font-family: 'Times New Roman', serif;
+            cursor: pointer;
+            color: var(--text-dark);
+            transition: 0.1s;
+        }
+        .arrow-btn:hover {
+            border-bottom-color: var(--border-focus);
+            background: var(--button-hover);
+        }
+        .empty-btn {
+            font-size: 0.9rem;
+            padding: 4px 12px;
+        }
+
+        /* 浅色预览区 */
+        .markdown-panel {
+            margin-top: 24px;
+            background: var(--preview-bg);
+            padding: 16px;
+            border-radius: 0;
+        }
+        .markdown-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .markdown-header h3 {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--pre-header-text);
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--pre-header-text);
+            font-size: 13px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-bottom: 1px solid #aaa;
+        }
+        .copy-btn:hover {
+            border-bottom-color: var(--border-focus);
+        }
+
+        pre {
+            background: var(--pre-code-bg);
+            padding: 16px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+            border: 1px solid var(--pre-code-border);
+            color: var(--pre-code-text);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .preview-hint {
+            font-size: 0.75rem;
+            color: rgba(0,0,0,0.45);
+            word-break: break-all;
+            padding: 0.3rem 0;
+            border-top: 0.5px solid rgba(0,0,0,0.05);
+            margin-top: 0.5rem;
+            font-family: monospace;
+        }
+
+        .footer-hint {
+            margin-top: 2.5rem;
+            font-size: 0.8rem;
+            color: rgba(0,0,0,0.5);
+            text-align: center;
+            line-height: 1.5;
+            font-weight: 300;
+        }
+        hr {
+            border: none;
+            border-top: 0.5px solid rgba(0,0,0,0.05);
+            margin: 0.8rem 0;
+        }
+
+        .copy-feedback {
+            color: #4caf50;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="title">
+        <h1>交换图生成器</h1>
+        <div style="font-size:0.9rem; color:#6AC6E8;">单击节点编辑 · 单击边选中 · 双击边编辑</div>
+    </div>
+
+    <!-- 第一行：行列输入 + 重新生成按钮 -->
+    <div class="row">
+        <div style="display: flex; gap: 0.5rem; align-items: baseline;">
+            <div class="dim-input" style="display: flex; align-items: center; gap: 0.2rem;">
+                <label style="font-size:0.9rem;">行</label>
+                <input type="number" id="rowsInput" min="1" max="5" value="2" class="input-field" style="width:70px; flex:none;">
+            </div>
+            <div class="dim-input" style="display: flex; align-items: center; gap: 0.2rem;">
+                <label style="font-size:0.9rem;">列</label>
+                <input type="number" id="colsInput" min="1" max="5" value="2" class="input-field" style="width:70px; flex:none;">
+            </div>
+        </div>
+        <button class="btn apply-btn" id="applyDim">重新生成网格 (注意会清空内容)</button>
+    </div>
+
+    <!-- 网格容器 -->
+    <div class="grid-container" id="gridContainer"></div>
+
+    <!-- 边编辑工具栏 -->
+    <div class="edge-toolbar" id="edgeToolbar">
+        <span class="selection-info" id="selectedEdgeLabel">⚫ 未选中边</span>
+        <div class="arrow-buttons" id="arrowButtonGroup">
+            <button class="arrow-btn" data-arrow="\leftarrow" title="\leftarrow">←</button>
+            <button class="arrow-btn" data-arrow="\rightarrow" title="\rightarrow">→</button>
+            <button class="arrow-btn" data-arrow="\uparrow" title="\uparrow">↑</button>
+            <button class="arrow-btn" data-arrow="\downarrow" title="\downarrow">↓</button>
+            <button class="arrow-btn" data-arrow="\nwarrow" title="\nwarrow">↖</button>
+            <button class="arrow-btn" data-arrow="\nearrow" title="\nearrow">↗</button>
+            <button class="arrow-btn" data-arrow="\swarrow" title="\swarrow">↙</button>
+            <button class="arrow-btn" data-arrow="\searrow" title="\searrow">↘</button>
+            <button class="arrow-btn empty-btn" data-arrow="" title="清空">␣ 空</button>
+        </div>
+    </div>
+
+    <!-- 浅色预览卡片 + 复制按钮 -->
+    <div class="markdown-panel">
+        <div class="markdown-header">
+            <h3>Markdown 代码</h3>
+            <button class="copy-btn" id="copyMarkdownBtn">复制代码</button>
+        </div>
+        <pre id="markdownOutput">$$\n\\begin{array}{ccc}\n &  \\\\\n\\end{array}\n$$</pre>
+        <div id="copyFeedback" class="preview-hint" style="text-align:right;"></div>
+    </div>
+
+    <hr>
+    <div class="footer-hint">
+        • 单击节点直接编辑<br>
+        • 单击边选中 (快捷设置方向)，双击边进入编辑<br>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // --- 等待 KaTeX 加载完成 ---
+        function waitForKatex(callback) {
+            if (window.katex) {
+                callback();
+            } else {
+                setTimeout(() => waitForKatex(callback), 50);
+            }
+        }
+
+        // --- 状态 ---
+        let rows = 2;
+        let cols = 2;
+        let gridRows = 2 * rows - 1;
+        let gridCols = 2 * cols - 1;
+        let cellContents = [];
+
+        let selectedRow = null;
+        let selectedCol = null;
+
+        // DOM 元素
+        const rowsInput = document.getElementById('rowsInput');
+        const colsInput = document.getElementById('colsInput');
+        const applyBtn = document.getElementById('applyDim');
+        const gridContainer = document.getElementById('gridContainer');
+        const selectedEdgeLabel = document.getElementById('selectedEdgeLabel');
+        const markdownOutput = document.getElementById('markdownOutput');
+        const arrowButtons = document.querySelectorAll('.arrow-btn');
+        const copyBtn = document.getElementById('copyMarkdownBtn');
+        const copyFeedback = document.getElementById('copyFeedback');
+
+        // --- 初始化 / 重置网格内容，并添加默认箭头 ---
+        function initCellContents() {
+            const r = gridRows;
+            const c = gridCols;
+            const arr = Array(r).fill().map(() => Array(c).fill(''));
+
+            // 节点 (i%2==0, j%2==0) 填入字母
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    const cellRow = i * 2;
+                    const cellCol = j * 2;
+                    const index = i * cols + j;
+                    let letter = index < 26 
+                        ? String.fromCharCode(65 + index) 
+                        : String.fromCharCode(65 + (index % 26)) + Math.floor(index / 26);
+                    arr[cellRow][cellCol] = letter;
+                }
+            }
+
+            // 默认横向边：行偶数列奇数 -> \rightarrow
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols - 1; j++) {
+                    const cellRow = i * 2;
+                    const cellCol = j * 2 + 1;
+                    arr[cellRow][cellCol] = '\\rightarrow';
+                }
+            }
+
+            // 默认纵向边：行奇数，列偶数 -> \downarrow
+            for (let i = 0; i < rows - 1; i++) {
+                for (let j = 0; j < cols; j++) {
+                    const cellRow = i * 2 + 1;
+                    const cellCol = j * 2;
+                    arr[cellRow][cellCol] = '\\downarrow';
+                }
+            }
+
+            return arr;
+        }
+
+        // --- 使用 KaTeX 渲染单元格 ---
+        function renderMathInGrid() {
+            const tds = gridContainer.querySelectorAll('td');
+            tds.forEach(td => {
+                const row = parseInt(td.dataset.row, 10);
+                const col = parseInt(td.dataset.col, 10);
+                if (isNaN(row) || isNaN(col)) return;
+                const content = cellContents[row]?.[col] || '';
+                td.innerHTML = '';
+                if (content.trim() === '') return;
+                try {
+                    katex.render(content, td, {
+                        displayMode: false,
+                        throwOnError: false,
+                        output: 'html'
+                    });
+                } catch (e) {
+                    td.textContent = content;
+                    td.style.color = 'red';
+                }
+            });
+        }
+
+        // --- 渲染整个表格 ---
+        function renderGrid() {
+            const r = gridRows;
+            const c = gridCols;
+            let html = '<table class="swap-table">';
+
+            for (let i = 0; i < r; i++) {
+                html += '<tr>';
+                for (let j = 0; j < c; j++) {
+                    const isNode = (i % 2 === 0 && j % 2 === 0);
+                    const cellClass = isNode ? 'node-cell' : 'edge-cell';
+                    html += `<td class="${cellClass}" data-row="${i}" data-col="${j}"></td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</table>';
+            gridContainer.innerHTML = html;
+
+            if (window.katex) {
+                renderMathInGrid();
+            } else {
+                waitForKatex(renderMathInGrid);
+            }
+
+            // 恢复边选中高亮
+            if (selectedRow !== null && selectedCol !== null) {
+                if (selectedRow >= 0 && selectedRow < r && selectedCol >= 0 && selectedCol < c) {
+                    if (!(selectedRow % 2 === 0 && selectedCol % 2 === 0)) {
+                        const td = document.querySelector(`.swap-table td[data-row="${selectedRow}"][data-col="${selectedCol}"]`);
+                        if (td) td.classList.add('selected');
+                    } else {
+                        selectedRow = null;
+                        selectedCol = null;
+                    }
+                } else {
+                    selectedRow = null;
+                    selectedCol = null;
+                }
+            }
+            updateSelectedLabel();
+        }
+
+        function updateSelectedLabel() {
+            if (selectedRow !== null && selectedCol !== null) {
+                selectedEdgeLabel.innerText = `🔹 选中边: (${selectedRow+1}, ${selectedCol+1})`;
+            } else {
+                selectedEdgeLabel.innerText = `⚫ 未选中边`;
+            }
+        }
+
+        // --- 生成 markdown ---
+        function generateMarkdown() {
+            const r = gridRows;
+            const c = gridCols;
+            const colFormat = 'c'.repeat(c);
+            let body = '';
+
+            for (let i = 0; i < r; i++) {
+                const rowCells = [];
+                for (let j = 0; j < c; j++) {
+                    let content = cellContents[i]?.[j] || '';
+                    rowCells.push(content);
+                }
+                body += rowCells.join(' & ');
+                if (i < r - 1) body += ' \\\\\n';
+            }
+
+            return `$$\n\\begin{array}{${colFormat}}\n${body}\n\\end{array}\n$$`;
+        }
+
+        function updateMarkdown() {
+            markdownOutput.innerText = generateMarkdown();
+        }
+
+        // --- 复制功能 ---
+        function copyMarkdown() {
+            const text = markdownOutput.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                copyFeedback.innerText = '已复制到剪贴板';
+                setTimeout(() => { copyFeedback.innerText = ''; }, 2000);
+            }).catch(() => {
+                copyFeedback.innerText = '复制失败';
+            });
+        }
+
+        // --- 清除选中的边 ---
+        function clearEdgeSelection() {
+            if (selectedRow !== null && selectedCol !== null) {
+                const prevTd = document.querySelector(`.swap-table td[data-row="${selectedRow}"][data-col="${selectedCol}"]`);
+                if (prevTd) prevTd.classList.remove('selected');
+                selectedRow = null;
+                selectedCol = null;
+                updateSelectedLabel();
+            }
+        }
+
+        // --- 选中一条边 (用于双击边时) ---
+        function selectEdge(row, col) {
+            // 清除之前的高亮
+            if (selectedRow !== null && selectedCol !== null) {
+                const prevTd = document.querySelector(`.swap-table td[data-row="${selectedRow}"][data-col="${selectedCol}"]`);
+                if (prevTd) prevTd.classList.remove('selected');
+            }
+            // 如果点击的是同一个边，则取消选中；否则设为选中
+            if (selectedRow === row && selectedCol === col) {
+                selectedRow = null;
+                selectedCol = null;
+            } else {
+                selectedRow = row;
+                selectedCol = col;
+                const td = document.querySelector(`.swap-table td[data-row="${row}"][data-col="${col}"]`);
+                if (td) td.classList.add('selected');
+            }
+            updateSelectedLabel();
+        }
+
+        // --- 原地编辑功能 ---
+        function startEditing(td, row, col) {
+            if (td.querySelector('input')) return;
+            const originalContent = cellContents[row]?.[col] || '';
+            td.innerHTML = '';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = originalContent;
+            input.className = 'cell-editor';
+            input.style.width = '100%';
+            input.style.height = '100%';
+            input.style.boxSizing = 'border-box';
+
+            td.appendChild(input);
+            input.focus();
+
+            function finishEdit() {
+                const newValue = input.value;
+                cellContents[row][col] = newValue;
+                renderGrid();
+                updateMarkdown();
+            }
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    finishEdit();
+                } else if (e.key === 'Escape') {
+                    renderGrid(); // 放弃修改
+                }
+            });
+            input.addEventListener('blur', finishEdit);
+        }
+
+        // --- 事件处理 ---
+        function handleGridClick(e) {
+            const td = e.target.closest('td');
+            if (!td) return;
+            const row = parseInt(td.dataset.row, 10);
+            const col = parseInt(td.dataset.col, 10);
+            if (isNaN(row) || isNaN(col)) return;
+
+            const isNode = (row % 2 === 0 && col % 2 === 0);
+
+            if (isNode) {
+                // 节点：清除边选中，直接开始编辑
+                clearEdgeSelection();
+                startEditing(td, row, col);
+            } else {
+                // 边：执行选中/取消选中（工具栏专用）
+                if (selectedRow !== null && selectedCol !== null) {
+                    const prevTd = document.querySelector(`.swap-table td[data-row="${selectedRow}"][data-col="${selectedCol}"]`);
+                    if (prevTd) prevTd.classList.remove('selected');
+                }
+                if (selectedRow === row && selectedCol === col) {
+                    selectedRow = null;
+                    selectedCol = null;
+                } else {
+                    selectedRow = row;
+                    selectedCol = col;
+                    td.classList.add('selected');
+                }
+                updateSelectedLabel();
+            }
+        }
+
+        function handleGridDoubleClick(e) {
+            const td = e.target.closest('td');
+            if (!td) return;
+            const row = parseInt(td.dataset.row, 10);
+            const col = parseInt(td.dataset.col, 10);
+            if (isNaN(row) || isNaN(col)) return;
+
+            const isNode = (row % 2 === 0 && col % 2 === 0);
+            if (isNode) {
+                // 节点双击忽略（因为单击已编辑），避免冲突
+                return;
+            } else {
+                // 边：先确保该边被选中，然后开始编辑
+                selectEdge(row, col);   // 这会更新 selectedRow/Col 并添加高亮
+                startEditing(td, row, col);
+            }
+        }
+
+        // 箭头按钮点击：向选中的边插入命令
+        function handleArrowClick(e) {
+            const btn = e.currentTarget;
+            const arrowCmd = btn.dataset.arrow;
+
+            if (selectedRow === null || selectedCol === null) {
+                alert('请先单击一个边单元格 (选中)');
+                return;
+            }
+            if (selectedRow % 2 === 0 && selectedCol % 2 === 0) {
+                // 意外：清除选中
+                selectedRow = null;
+                selectedCol = null;
+                renderGrid();
+                updateSelectedLabel();
+                alert('选中的不是边，已清除选择');
+                return;
+            }
+
+            cellContents[selectedRow][selectedCol] = arrowCmd;
+            renderGrid();    // 重绘，保持选中 (selected不变)
+            updateMarkdown();
+        }
+
+        // --- 维度更新 ---
+        function updateDim() {
+            let newRows = parseInt(rowsInput.value, 10);
+            let newCols = parseInt(colsInput.value, 10);
+            if (isNaN(newRows) || newRows < 1) newRows = 1;
+            if (isNaN(newCols) || newCols < 1) newCols = 1;
+            newRows = Math.min(5, newRows);
+            newCols = Math.min(5, newCols);
+            rowsInput.value = newRows;
+            colsInput.value = newCols;
+
+            if (newRows !== rows || newCols !== cols) {
+                rows = newRows;
+                cols = newCols;
+                gridRows = 2 * rows - 1;
+                gridCols = 2 * cols - 1;
+                cellContents = initCellContents();
+                selectedRow = null;
+                selectedCol = null;
+                renderGrid();
+                updateMarkdown();
+            }
+        }
+
+        // --- 初始化 ---
+        function init() {
+            rows = 2; cols = 2;
+            gridRows = 3; gridCols = 3;
+            cellContents = initCellContents();
+
+            waitForKatex(() => {
+                renderGrid();
+                updateMarkdown();
+            });
+
+            gridContainer.addEventListener('click', handleGridClick);
+            gridContainer.addEventListener('dblclick', handleGridDoubleClick);
+
+            arrowButtons.forEach(btn => {
+                btn.addEventListener('click', handleArrowClick);
+            });
+
+            applyBtn.addEventListener('click', updateDim);
+            copyBtn.addEventListener('click', copyMarkdown);
+
+            rowsInput.addEventListener('change', () => {
+                let val = parseInt(rowsInput.value, 10);
+                if (isNaN(val) || val < 1) rowsInput.value = 1;
+                if (val > 5) rowsInput.value = 5;
+            });
+            colsInput.addEventListener('change', () => {
+                let val = parseInt(colsInput.value, 10);
+                if (isNaN(val) || val < 1) colsInput.value = 1;
+                if (val > 5) colsInput.value = 5;
+            });
+
+            selectedRow = null;
+            selectedCol = null;
+        }
+
+        init();
+    })();
+</script>
+</body>
+</html>
