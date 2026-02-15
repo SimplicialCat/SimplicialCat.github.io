@@ -22,22 +22,22 @@
             --color-Furina-vintage-gold: #BD9368;
             --color-Furina-vintage-gold-light: #DDB368;
             --color-Furina-vintage-gold-ultra-light : #FDF388;
-            --bg-page: #FAFBFC;
+            --bg-page: var(--color-Furina-frost-white);
             --bg-radial: radial-gradient(circle at 87% 13%, rgba(70, 91, 207, 0.03) 0%, transparent 70%);
             --text-dark: #253085;
             --text-light: #6AC6E8;
             --border-light: #6AC6E8;
             --border-focus: #253085;
-            --node-bg: #f0f0f0;
-            --edge-bg: #ffffff;
-            --selected-bg: #e0e0ff;
-            --selected-border: var(--color-Furina-royal-blue);
+            --node-bg: #EFEFFF;
+            --edge-bg: #FFFFFF;
+            --selected-bg: #F4F5FF;
+            --selected-border: #FFFFFF;
             --button-bg: transparent;
             --button-hover: rgba(0,0,0,0.02);
-            --input-bg: #ffffe0;
+            --input-bg: #FFFFFF;
             --gap-color: transparent;
             /* 浅色预览区 */
-            --preview-bg: #f5f5f5;
+            --preview-bg: #EFEFFF;
             --pre-header-text: #333;
             --pre-code-bg: #ffffff;
             --pre-code-text: #111;
@@ -106,7 +106,7 @@
             font-size: 1rem;
             border: none;
             background: transparent;
-            color: var(--text-dark);
+            color: var(--text-light);
             cursor: pointer;
             transition: 0.1s;
             border-radius: 0;
@@ -172,7 +172,7 @@
             border: none;
             background: var(--input-bg);
             font-family: inherit;
-            font-size: 1.1rem;
+            font-size: 1.0rem;
             text-align: center;
             padding: 0;
             margin: 0;
@@ -298,7 +298,7 @@
         }
 
         .copy-feedback {
-            color: #4caf50;
+            color: var(--color-Furina-vintage-gold-light);
             font-size: 0.9rem;
             margin-left: 10px;
             opacity: 0.8;
@@ -308,7 +308,7 @@
 <body>
 <div class="container">
     <div class="title">
-        <h1>交换图生成器</h1>
+        <h2>交换图生成器</h2>
         <div style="font-size:0.9rem; color:#6AC6E8;">单击节点编辑 · 单击边选中 · 双击边编辑</div>
     </div>
 
@@ -316,15 +316,15 @@
     <div class="row">
         <div style="display: flex; gap: 0.5rem; align-items: baseline;">
             <div class="dim-input" style="display: flex; align-items: center; gap: 0.2rem;">
-                <label style="font-size:0.9rem;">行</label>
-                <input type="number" id="rowsInput" min="1" max="5" value="2" class="input-field" style="width:70px; flex:none;">
+                <label style="font-size:0.9rem;">行数</label>
+                <input type="number" id="rowsInput" min="1" max="9" value="2" class="input-field" style="width:70px; flex:none;">
             </div>
             <div class="dim-input" style="display: flex; align-items: center; gap: 0.2rem;">
-                <label style="font-size:0.9rem;">列</label>
-                <input type="number" id="colsInput" min="1" max="5" value="2" class="input-field" style="width:70px; flex:none;">
+                <label style="font-size:0.9rem;">列数</label>
+                <input type="number" id="colsInput" min="1" max="9" value="2" class="input-field" style="width:70px; flex:none;">
             </div>
         </div>
-        <button class="btn apply-btn" id="applyDim">重新生成网格 (注意会清空内容)</button>
+        <button class="btn" id="applyDim">重新生成网格 (注意会清空内容)</button>
     </div>
 
     <!-- 网格容器 -->
@@ -332,7 +332,7 @@
 
     <!-- 边编辑工具栏 -->
     <div class="edge-toolbar" id="edgeToolbar">
-        <span class="selection-info" id="selectedEdgeLabel">⚫ 未选中边</span>
+        <span class="selection-info" id="selectedEdgeLabel">-</span>
         <div class="arrow-buttons" id="arrowButtonGroup">
             <button class="arrow-btn" data-arrow="\leftarrow" title="\leftarrow">←</button>
             <button class="arrow-btn" data-arrow="\rightarrow" title="\rightarrow">→</button>
@@ -406,11 +406,12 @@
                 for (let j = 0; j < cols; j++) {
                     const cellRow = i * 2;
                     const cellCol = j * 2;
-                    const index = i * cols + j;
+                    /*const index = i * cols + j;
                     let letter = index < 26 
                         ? String.fromCharCode(65 + index) 
-                        : String.fromCharCode(65 + (index % 26)) + Math.floor(index / 26);
-                    arr[cellRow][cellCol] = letter;
+                        : String.fromCharCode(65 + (index % 26)) + Math.floor(index / 26);*/
+                    arr[cellRow][cellCol] = '';
+                    /*`A_{${i+1},${j+1}}`*/
                 }
             }
 
@@ -502,9 +503,9 @@
 
         function updateSelectedLabel() {
             if (selectedRow !== null && selectedCol !== null) {
-                selectedEdgeLabel.innerText = `🔹 选中边: (${selectedRow+1}, ${selectedCol+1})`;
+                selectedEdgeLabel.innerText = `选中边: (${selectedRow+1}, ${selectedCol+1})`;
             } else {
-                selectedEdgeLabel.innerText = `⚫ 未选中边`;
+                selectedEdgeLabel.innerText = `未选中边`;
             }
         }
 
@@ -689,8 +690,8 @@
             let newCols = parseInt(colsInput.value, 10);
             if (isNaN(newRows) || newRows < 1) newRows = 1;
             if (isNaN(newCols) || newCols < 1) newCols = 1;
-            newRows = Math.min(5, newRows);
-            newCols = Math.min(5, newCols);
+            newRows = Math.min(9, newRows);
+            newCols = Math.min(9, newCols);
             rowsInput.value = newRows;
             colsInput.value = newCols;
 
@@ -731,12 +732,12 @@
             rowsInput.addEventListener('change', () => {
                 let val = parseInt(rowsInput.value, 10);
                 if (isNaN(val) || val < 1) rowsInput.value = 1;
-                if (val > 5) rowsInput.value = 5;
+                if (val > 9) rowsInput.value = 9;
             });
             colsInput.addEventListener('change', () => {
                 let val = parseInt(colsInput.value, 10);
                 if (isNaN(val) || val < 1) colsInput.value = 1;
-                if (val > 5) colsInput.value = 5;
+                if (val > 9) colsInput.value = 9;
             });
 
             selectedRow = null;
