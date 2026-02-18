@@ -5,35 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css">
     <title>Wang Jinyi (SimplicialCat)</title>
+    <style>
+        /* 语言切换控制：默认英文 (body 类 lang-en) */
+        body.lang-en .zh { display: none; }
+        body.lang-zh .en { display: none; }
+
+        /* 切换按钮样式，尽量保持简洁，不破坏原有布局 */
+        #lang-toggle {
+            background: none;
+            border: 1px solid #88d;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-left: 20px;
+            vertical-align: middle;
+            color: #333;
+            transition: background 0.2s;
+        }
+        #lang-toggle:hover {
+            background: #f0f0f0;
+        }
+        /* 让 header 里的元素能良好对齐 */
+        header {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        header h1 {
+            margin-right: auto;  /* 把导航和按钮推到右边 */
+        }
+        nav {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        /* 适应小屏幕 */
+        @media (max-width: 700px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            header h1 { margin-right: 0; }
+            #lang-toggle { margin-left: 0; }
+        }
+    </style>
 </head>
-<body>
+<body class="lang-en">
     <div class="container">
     <header>
         <h1>
-            王进一 <span class="subtitle">(Wang Jinyi), SimplicialCat</span>
+            王进一 <span class="subtitle"><span class="en">(Wang Jinyi), SimplicialCat</span>
+        <span class="zh">, 单纯猫 SimplicialCat</span></span>
         </h1>
         <nav>
-            <span class="nav-link active" onclick="showSection('about', this)">About</span>
-            <span class="nav-link" onclick="showSection('maths', this)">Maths</span>
-            <span class="nav-link" onclick="showSection('nonmaths', this)">Non-maths</span>
-            <span class="nav-link" onclick="showSection('links', this)">Links</span>
+            <span class="nav-link active" onclick="showSection('about', this)">
+                <span class="en">About</span><span class="zh">基本信息</span>
+            </span>
+            <span class="nav-link" onclick="showSection('maths', this)">
+                <span class="en">Maths</span><span class="zh">数学</span>
+            </span>
+            <span class="nav-link" onclick="showSection('nonmaths', this)">
+                <span class="en">Non-maths</span><span class="zh">非数学</span>
+            </span>
+            <span class="nav-link" onclick="showSection('links', this)">
+                <span class="en">Links</span><span class="zh">链接</span>
+            </span>
         </nav>
+        <button id="lang-toggle" onclick="toggleLang()">中文</button>
     </header>
     
     <section id="about" class="content-section active clearfix">
-    <h2>About</h2>
+    <h2><span class="en">About</span>
+        <span class="zh">基本信息</span></h2>
     <img src="furina.jpg" alt="Portrait" class="profile-right">
     
     <p>
-        I am a graduate student at <a href="https://qzc.tsinghua.edu.cn/">Qiuzhen College</a>, Tsinghua University.
+        <span class="en">I am a graduate student at <a href="https://qzc.tsinghua.edu.cn/">Qiuzhen College</a>, Tsinghua University.</span>
+        <span class="zh">我是清华大学<a href="https://qzc.tsinghua.edu.cn/">求真书院</a>的研究生.</span>
     </p>
 
     <p>
-    I was born on March 27, 2003.
+        <span class="en">I was born on March 27, 2003.</span>
+        <span class="zh">我的生日是 2003 年 3 月 27 日.</span>
     </p>
     
     <p>
-    Email:
+        <span class="en">Email:</span>
+        <span class="zh">邮箱:</span>
     </p>
     <ul>
         <li>wangjiny24@mails.tsinghua.edu.cn</li>
@@ -41,174 +101,297 @@
     </ul>
 
     <p>
-    Recently I am devoted to building <a href="https://simplopedia.org">单纯百科</a>, a personal encyclopedia of maths. The current URL is <code>simplopedia.org</code>.
+        <span class="en">Recently I am devoted to building <a href="https://simplopedia.org">单纯百科 (Simplopedia)</a>, a personal encyclopedia of maths. The current URL is <code>simplopedia.org</code>.</span>
+        <span class="zh">我最近致力于建设<a href="https://simplopedia.org">单纯百科</a>, 我的个人数学百科全书. 目前的网址是 <code>simplopedia.org</code>.</span>
     </p>
     </section>
 
     <section id="maths" class="content-section clearfix">
     
-    <h2>Maths</h2>
+    <h2><span class="en">Maths</span>
+        <span class="zh">数学</span></h2>
 
     <img src="cat-seminar.jpg" alt="Seminar" class="seminar-right">
     <p>
-    My supervisor is <a href="https://windshower.github.io/linchen/">Prof. Lin Chen</a>.
+        <span class="en">My supervisor is <a href="https://windshower.github.io/linchen/">Prof. Lin Chen</a>.</span>
+        <span class="zh">我的导师是<a href="https://windshower.github.io/linchen/">陈麟老师</a>.</span>
     </p>
     <p>
-    My mathematical interests lie in
+        <span class="en">My mathematical interests lie in</span>
+        <span class="zh">我的数学兴趣 (按时间顺序排列):</span>
     </p>
     <ul>
-        <li>initially, differential geometry, algebraic topology;</li>
-        <li>later, category theory, topos theory, categorical logic,</li>
-        <li>homotopy theory, homotopy type theory;</li>
-        <li>and recently, the geometric Langlands program.</li>
+        <li><span class="en">initially, differential geometry, algebraic topology;</span><span class="zh">微分几何, 代数拓扑;</span></li>
+        <li><span class="en">later, category theory, topos theory, categorical logic,</span><span class="zh">范畴论, 意象, 范畴逻辑;</span></li>
+        <li><span class="en">homotopy theory, homotopy type theory;</span><span class="zh">同伦论, 同伦类型论;</span></li>
+        <li><span class="en">and recently, the geometric Langlands program.</span><span class="zh">几何 Langlands 纲领.</span></li>
     </ul>
     
     <p>
-    Some of my talks are on <a href="https://space.bilibili.com/395890444">Bilibili</a>.
+        <span class="en">Some of my talks are on <a href="https://space.bilibili.com/395890444">Bilibili</a>.</span>
+        <span class="zh"><a href="https://space.bilibili.com/395890444">B 站</a>上有一些我的讲座.</span>
     </p>
     <p>
-    Some of my notes are on <a href="https://www.zhihu.com/people/wang-jin-yi-4">Zhihu</a>.
+        <span class="en">Some of my notes are on <a href="https://www.zhihu.com/people/wang-jin-yi-4">Zhihu</a>.</span>
+        <span class="zh"><a href="https://www.zhihu.com/people/wang-jin-yi-4">知乎</a>上有一些我的笔记.</span>
     </p>
     <p>
-    <a href="https://github.com/SimplicialCat?tab=repositories">Here</a> are my Github repositories.
+        <span class="en"><a href="https://github.com/SimplicialCat?tab=repositories">Here</a> are my Github repositories.</span>
+        <span class="zh"><a href="https://github.com/SimplicialCat?tab=repositories">这里</a>是我的 Github 仓库.</span>
     </p>
 
     <h4>Markdown commutative diagram tool</h4>
-    <p>An interactive commutative diagram editor for Markdown.</p>
-    <p><a href="cd.html">→ Page</a></p>
+    <p>
+        <span class="en">An interactive commutative diagram editor for Markdown.</span>
+        <span class="zh">一个用于 Markdown 的交互式交换图编辑器.</span>
+    </p>
+    <p>
+        <span class="en"><a href="cd.html">Page</a></span>
+        <span class="zh"><a href="cd.html">页面</a></span>
+    </p>
 
-    <h3>Selected works</h3>
+    <h3><span class="en">Selected works</span>
+        <span class="zh">数学作品选</span></h3>
 
     <p class="convention">
-    These are in Chinese unless specified otherwise.
+        <span class="en">These are in Chinese unless specified otherwise.</span>
+        <span class="zh">除特别说明外, 以下资料为中文.</span>
     </p>
 
     <h4>盲人摸象 (Blind men touching an elephant)</h4>
-    <p>A basic introduction to topos theory.</p>
-    <p><a href="https://github.com/SimplicialCat/topos">→ Book</a> on Github (>300 pages)</p>
+    <p>
+        <span class="en">A basic introduction to topos theory.</span>
+        <span class="zh">意象理论入门资料.</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://github.com/SimplicialCat/topos">Book PDF</a> on Github (>300 pages)</span>
+        <span class="zh">Github 上有<a href="https://github.com/SimplicialCat/topos">书籍 PDF</a> (>300 页)</span>
+    </p>
 
     <h4>单纯百科 Simplopedia</h4>
-    <p>A <a href="https://www.jonmsterling.com/index/index.xml">forest</a>-style site personal encyclopedia of mathematics.</p>
-    <p><a href="https://simplopedia.org">→ Site</a></p>
+    <p>
+        <span class="en">A <a href="https://www.jonmsterling.com/index/index.xml">forest</a>-style site personal encyclopedia of mathematics.</span>
+        <span class="zh">一个<a href="https://www.jonmsterling.com/index/index.xml">forest</a>风格的个人数学百科.</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://simplopedia.org">Site</a></span>
+        <span class="zh"><a href="https://simplopedia.org">网站</a></span>
+    </p>
 
     <h4>Nonabelian Cohomology
     <span class="language-tag">English</span>
     </h4>
-    <p>A short note on nonabelian cohomology, using the language of ∞-toposes.</p>
-    <p><a href="nonabelian_cohomology.pdf">→ Notes</a></p>
+    <p>
+        <span class="en">A short note on nonabelian cohomology, using the language of ∞-toposes.</span>
+        <span class="zh">关于非 Abel 上同调的简短笔记, 使用 ∞-意象的语言.</span>
+    </p>
+    <p>
+        <span class="en"><a href="nonabelian_cohomology.pdf">Notes</a></span>
+        <span class="zh"><a href="nonabelian_cohomology.pdf">笔记</a></span>
+    </p>
 
     <h4>Sketches of an Elephant
     <span class="language-tag">English</span>
     </h4>
-    <p>A short talk on topos theory (name borrowed from P. Johnstone)</p>
-    <p><a href="pre-topos.pdf">→ Notes</a></p>
+    <p>
+        <span class="en">A short talk on topos theory (title borrowed from P. Johnstone)</span>
+        <span class="zh">关于意象理论的简短报告 (标题致敬 P. Johnstone)</span>
+    </p>
+    <p>
+        <span class="en"><a href="pre-topos.pdf">Notes</a></span>
+        <span class="zh"><a href="pre-topos.pdf">笔记</a></span>
+    </p>
 
     <h4>Interview with Prof. Laurent Lafforgue
     <span class="language-tag">English</span>
     </h4>
     <p>
-        <a href="https://www.bilibili.com/video/BV1aX4y1a7Z1">→ Video 1</a>:
-        From Langlands program to topos theory
+        <span class="en"><a href="https://www.bilibili.com/video/BV1aX4y1a7Z1">Video 1</a>: From Langlands program to topos theory</span>
+        <span class="zh"><a href="https://www.bilibili.com/video/BV1aX4y1a7Z1">视频 1</a>: 从 Langlands 纲领到意象理论</span>
     </p>
     <p>
-        <a href="https://www.bilibili.com/video/BV1GF41197hh">→ Video 2</a>:
-        The future of topos theory
+        <span class="en"><a href="https://www.bilibili.com/video/BV1GF41197hh">Video 2</a>: The future of topos theory</span>
+        <span class="zh"><a href="https://www.bilibili.com/video/BV1GF41197hh">视频 2</a>: 意象理论的未来</span>
     </p>
 
-    <h4>Category Theory in Differential Geometry</h4>
-    <p>A short talk on the use of sheaves and stacks in differential geometry.</p>
-    <p><a href="微分几何中的范畴学.pdf">→ Notes</a></p>
+    <h4>
+        <span class="en">Category Theory in Differential Geometry</span>
+        <span class="zh">微分几何中的范畴学</span>
+    </h4>
+    <p>
+        <span class="en">A short talk on the use of sheaves and stacks in differential geometry.</span>
+        <span class="zh">关于层和叠在微分几何中的用处的简短报告.</span>
+    </p>
+    <p>
+        <span class="en"><a href="微分几何中的范畴学.pdf">Notes</a></span>
+        <span class="zh"><a href="微分几何中的范畴学.pdf">笔记</a></span>
+    </p>
 
     <h4>Quillen's 1969 paper explained
     <span class="language-tag">English</span>
     </h4>
-    <p>A presentation of Quillen's 1969 paper on formal group laws.</p>
     <p>
-    <a href="Quillen1969report.pdf">→ Notes</a>
+        <span class="en">A presentation of Quillen's 1969 paper on formal group laws.</span>
+        <span class="zh">Quillen 1969年关于形式群律论文的介绍.</span>
+    </p>
+    <p>
+        <span class="en"><a href="Quillen1969report.pdf">Notes</a></span>
+        <span class="zh"><a href="Quillen1969report.pdf">笔记</a></span>
     </p>
     
     <h4>Survey on Atiyah–Singer index theorem
     <span class="language-tag">English</span>
     </h4>
     <p>
-    <a href="Submitted version - Atiyah--Singer Index Theorem - 王进一.pdf">→ Article</a>
+        <span class="en"><a href="Submitted version - Atiyah--Singer Index Theorem - 王进一.pdf">Article</a></span>
+        <span class="zh"><a href="Submitted version - Atiyah--Singer Index Theorem - 王进一.pdf">文章</a></span>
     </p>
 
-    <h4>Spin geometry and Dirac operators</h4>
-    <p><a href="自旋几何与 Dirac 算子.pdf">→ Notes</a></p>
-
-    <h4>Notes on Categorical Logic Summer School 2025</h4>
+    <h4>
+        <span class="en">Spin geometry and Dirac operators</span>
+        <span class="zh">自旋几何与 Dirac 算子</span>
+    </h4>
     <p>
-    <a href="https://zhuanlan.zhihu.com/p/1921238166871990492">→ Notes 1</a>: Posets and propositional logic
-    </p>
-    <p>
-    <a href="https://zhuanlan.zhihu.com/p/1921670598905553676">→ Notes 2</a>: Lex categories, algebraic theories and locally finitely presentable categories
-    </p>
-    <p>
-    <a href="https://zhuanlan.zhihu.com/p/1922016221357929996">→ Notes 3</a>: Sketches
+        <span class="en"><a href="自旋几何与 Dirac 算子.pdf">Notes</a></span>
+        <span class="zh"><a href="自旋几何与 Dirac 算子.pdf">讲义</a></span>
     </p>
 
-    <h4>Principal bundles in an ∞-topos</h4>
+    <h4>
+        <span class="en">Notes on Categorical Logic Summer School 2025</span>
+        <span class="zh">2025 范畴逻辑暑校笔记</span>
+    </h4>
     <p>
-    <a href="https://www.bilibili.com/video/BV1i1DUYPEL3">→ Video</a>
+        <span class="en"><a href="https://zhuanlan.zhihu.com/p/1921238166871990492">Notes 1</a>: Posets and propositional logic</span>
+        <span class="zh"><a href="https://zhuanlan.zhihu.com/p/1921238166871990492">笔记 1</a>: 偏序集与命题逻辑</span>
     </p>
     <p>
-    <a href="Jinyi-pre-∞topos.pdf">→ Slides
+        <span class="en"><a href="https://zhuanlan.zhihu.com/p/1921670598905553676">Notes 2</a>: Lex categories, algebraic theories and locally finitely presentable categories</span>
+        <span class="zh"><a href="https://zhuanlan.zhihu.com/p/1921670598905553676">笔记 2</a>: 左正合范畴, 代数理论, 局部有限可表现范畴</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://zhuanlan.zhihu.com/p/1922016221357929996">Notes 3</a>: Sketches</span>
+        <span class="zh"><a href="https://zhuanlan.zhihu.com/p/1922016221357929996">笔记 3</a>: 提纲 (Sketches)</span>
+    </p>
+
+    <h4>
+        <span class="en">Principal bundles in an ∞-topos</span>
+        <span class="zh">∞-意象中的主丛</span>
+    </h4>
+    <p>
+        <span class="en"><a href="https://www.bilibili.com/video/BV1i1DUYPEL3">Video</a></span>
+        <span class="zh"><a href="https://www.bilibili.com/video/BV1i1DUYPEL3">视频</a></span>
+    </p>
+    <p>
+        <span class="en"><a href="Jinyi-pre-∞topos.pdf">Slides</a></span>
+        <span class="zh"><a href="Jinyi-pre-∞topos.pdf">讲稿 (幻灯片)</a></span>
         <span class="language-tag">English</span>
-    </a>
     </p>
 
-    <h4>All concepts are Kan extensions</h4>
-    <p><a href="https://www.bilibili.com/video/BV1ByjGzfEfr">→ Video</a></p>
+    <h4>
+        <span class="en">All concepts are Kan extensions</span>
+        <span class="zh">一切概念都是 Kan 扩张</span>
+    </h4>
+    <p>
+        <span class="en"><a href="https://www.bilibili.com/video/BV1ByjGzfEfr">Video</a></span>
+        <span class="zh"><a href="https://www.bilibili.com/video/BV1ByjGzfEfr">视频</a></span>
+    </p>
 
     </section>
 
     <section id="nonmaths" class="content-section clearfix">
-    <h2>Non-maths</h2>
+    <h2>
+        <span class="en">Non-maths</span>
+        <span class="zh">非数学</span>
+    </h2>
     
     <img src="piano.jpg" alt="Piano" class="piano-right">
     
-    <h4>Chord Progression Player</h4>
-    <p>A web-based chord progression player.</p>
-    <p><a href="chord_player.html">→ Page</a></p>
+    <h4><span class="en">Chord Progression Player</span>
+        <span class="zh">和弦进行播放器</span></h4>
+    <p>
+        <span class="en">A web-based chord progression player.</span>
+        <span class="zh">基于 Web 的和弦进行播放器.</span>
+    </p>
+    <p>
+        <span class="en"><a href="chord_player.html">Page</a></span>
+        <span class="zh"><a href="chord_player.html">页面</a></span>
+    </p>
 
-    <h4>Game of Life</h4>
-    <p>A toy simulator of Conway's Game of Life.</p>
-    <p><a href="game_of_life.html">→ Page</a></p>
+    <h4><span class="en">Game of Life</span>
+        <span class="zh">生命游戏</span></h4>
+    <p>
+        <span class="en">A toy simulator of Conway's Game of Life.</span>
+        <span class="zh">Conway 生命游戏的简易模拟器.</span>
+    </p>
+    <p>
+        <span class="en"><a href="game_of_life.html">Page</a></span>
+        <span class="zh"><a href="game_of_life.html">页面</a></span>
+    </p>
 
-    <h3>Selected musical works</h3>
+    <h3><span class="en">Selected musical works</span>
+        <span class="zh">音乐作品选</span></h3>
 
     <h4>Que le Vent Soit Doux</h4>
-    <p>An improvised piano re-arrangement of a beautiful background music in Genshin Impact.</p>
-    <p><a href="https://www.bilibili.com/video/BV1dr421E7oj">→ Video</a></p>
+    <p>
+        <span class="en">An improvised piano re-arrangement of a beautiful background music in Genshin Impact.</span>
+        <span class="zh">原神中一段优美的背景音乐的即兴钢琴改编.</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://www.bilibili.com/video/BV1dr421E7oj">Video</a></span>
+        <span class="zh"><a href="https://www.bilibili.com/video/BV1dr421E7oj">视频</a></span>
+    </p>
 
     </section>
 
     <section id="links" class="content-section">
-    <h2>Links</h2>
+    <h2><span class="en">Links</span>
+        <span class="zh">链接</span></h2>
     
-    <h3>Sites</h3>
+    <h3><span class="en">Organizations</span>
+        <span class="zh">组织</span></h3>
 
-    <h4>香蕉空间 (Banana Space)</h4>
-    <p>A growing Chinese math community.</p>
-    <p><a href="https://www.bananaspace.org">→ Site</a></p>
+    <h4>香蕉空间<span class="en"> (Banana Space)</span></h4>
+    <p>
+        <span class="en">A growing Chinese math community.</span>
+        <span class="zh">一个成长中的中文数学社区。</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://www.bananaspace.org">Site</a></span>
+        <span class="zh"><a href="https://www.bananaspace.org">网站</a></span>
+    </p>
     
-    <h3>Friends</h3>
-    <h4>李心宇</h4>
-    <p><a href="https://est-wald.github.io/">→ Site</a></p>
+    <h3><span class="en">Friends</span>
+        <span class="zh">朋友</span></h3>
+    <h4>李心宇<span class="en"> (Li Xinyu)</span></h4>
+    <p>
+        <span class="en"><a href="https://est-wald.github.io/">Site</a></span>
+        <span class="zh"><a href="https://est-wald.github.io/">网站</a></span>
+    </p>
 
     <h4>ApolloniusSun</h4>
-    <p><a href="https://apolloniussun.github.io/">→ Site</a></p>
+    <p>
+        <span class="en"><a href="https://apolloniussun.github.io/">Site</a></span>
+        <span class="zh"><a href="https://apolloniussun.github.io/">网站</a></span>
+    </p>
     
     <h4>QZC31</h4>
     <p> Shared homepage of several brilliant students from class 31, Qiuzhen College.</p>
-    <p><a href="https://qzc31.github.io/">→ Site</a></p>
+    <p>
+        <span class="en"><a href="https://qzc31.github.io/">Site</a></span>
+        <span class="zh"><a href="https://qzc31.github.io/">网站</a></span>
+    </p>
 
-    <h4>郑宇泽</h4>
-    <p><a href="https://marco-yuze-zheng.blogspot.com/">→ Site</a></p>
+    <h4>郑宇泽<span class="en"> (Zheng Yuze)</span></h4>
+    <p>
+        <span class="en"><a href="https://marco-yuze-zheng.blogspot.com/">Site</a></span>
+        <span class="zh"><a href="https://marco-yuze-zheng.blogspot.com/">网站</a></span>
+    </p>
     
-    <h4>无懈可击99</h4>
-    <p><a href="https://wxkj99.github.io/">→ Site</a></p>
+    <h4>无懈可击99<span class="en"> (wxkj99)</span></h4>
+    <p>
+        <span class="en"><a href="https://wxkj99.github.io/">Site</a></span>
+        <span class="zh"><a href="https://wxkj99.github.io/">网站</a></span>
+    </p>
     </section>
 
     </div>
@@ -230,6 +413,20 @@
         
         // Show the selected content section
         document.getElementById(sectionId).classList.add('active');
+    }
+
+    function toggleLang() {
+        var body = document.body;
+        var btn = document.getElementById('lang-toggle');
+        if (body.classList.contains('lang-en')) {
+            body.classList.remove('lang-en');
+            body.classList.add('lang-zh');
+            btn.textContent = 'English';
+        } else {
+            body.classList.remove('lang-zh');
+            body.classList.add('lang-en');
+            btn.textContent = '中文';
+        }
     }
     </script>
 </body>
