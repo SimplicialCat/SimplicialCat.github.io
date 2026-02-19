@@ -15,12 +15,13 @@
             background: none;
             border: 1px solid #88d;
             border-radius: 20px;
-            padding: 4px 12px;
+            display: block;
+            margin: 10px auto;
+            padding: 3px 10px;
             font-size: 0.9rem;
             cursor: pointer;
-            margin-left: 20px;
             vertical-align: middle;
-            color: #333;
+            color: #465BAF;
             transition: background 0.2s;
         }
         #lang-toggle:hover {
@@ -56,9 +57,13 @@
     <div class="container">
     <header>
         <h1>
-            王进一 <span class="subtitle"><span class="en">(Wang Jinyi), SimplicialCat</span>
-        <span class="zh">, 单纯猫 SimplicialCat</span></span>
+            王进一
+            <span class="subtitle">
+                <span class="en">(Wang Jinyi), SimplicialCat</span>
+                <span class="zh">, 单纯猫 SimplicialCat</span>
+            </span>
         </h1>
+        <button id="lang-toggle" onclick="toggleLang()">切换为中文</button>
         <nav>
             <span class="nav-link active" onclick="showSection('about', this)">
                 <span class="en">About</span><span class="zh">基本信息</span>
@@ -73,7 +78,6 @@
                 <span class="en">Links</span><span class="zh">链接</span>
             </span>
         </nav>
-        <button id="lang-toggle" onclick="toggleLang()">中文</button>
     </header>
     
     <section id="about" class="content-section active clearfix">
@@ -174,7 +178,7 @@
     <h4>单纯百科 Simplopedia</h4>
     <p>
         <span class="en">A <a href="https://www.jonmsterling.com/index/index.xml">forest</a>-style site personal encyclopedia of mathematics.</span>
-        <span class="zh">一个<a href="https://www.jonmsterling.com/index/index.xml">forest</a>风格的个人数学百科.</span>
+        <span class="zh">一个 <a href="https://www.jonmsterling.com/index/index.xml">forest</a> 风格的个人数学百科.</span>
     </p>
     <p>
         <span class="en"><a href="https://simplopedia.org">Site</a></span>
@@ -424,11 +428,11 @@
         if (body.classList.contains('lang-en')) {
             body.classList.remove('lang-en');
             body.classList.add('lang-zh');
-            btn.textContent = 'English';
+            btn.textContent = 'Switch to English';
         } else {
             body.classList.remove('lang-zh');
             body.classList.add('lang-en');
-            btn.textContent = '中文';
+            btn.textContent = '切换为中文';
         }
     }
     </script>
