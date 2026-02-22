@@ -407,7 +407,7 @@
     </div>
 
     <script>
-    function showSection(sectionId, element) {
+    /*function showSection(sectionId, element) {
         // Remove active class from all nav links
         document.querySelectorAll('.nav-link').forEach(link => {
             link.classList.remove('active');
@@ -437,7 +437,63 @@
             body.classList.add('lang-en');
             btn.textContent = '切换为中文';
         }
+    }*/
+    function showSection(sectionId, element) {
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    element.classList.add('active');
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    document.getElementById(sectionId).classList.add('active');
+}
+
+function setLanguage(lang) {
+    // lang 应为 'en' 或 'zh'
+    var body = document.body;
+    var btn = document.getElementById('lang-toggle');
+    // 移除所有语言类
+    body.classList.remove('lang-en', 'lang-zh');
+    // 添加目标语言类
+    body.classList.add(lang === 'zh' ? 'lang-zh' : 'lang-en');
+    // 更新按钮文本
+    if (btn) {
+        btn.textContent = lang === 'zh' ? 'Switch to English' : '切换为中文';
     }
+    // 更新 URL 参数（使用规范名称 en/zh）
+    var url = new URL(window.location);
+    var params = new URLSearchParams(url.search);
+    params.set('lang', lang);
+    url.search = params.toString();
+    window.history.replaceState({}, '', url);
+}
+
+function getLangFromURL() {
+    var params = new URLSearchParams(window.location.search);
+    var langParam = params.get('lang');
+    if (langParam === 'en') {
+        return 'en';
+    } else if (langParam === 'zh' || langParam === 'cn') {
+        return 'zh';
+    } else {
+        return null; // 无参数或无法识别的值，保持默认
+    }
+}
+
+function toggleLang() {
+    var currentLang = document.body.classList.contains('lang-zh') ? 'zh' : 'en';
+    var newLang = currentLang === 'zh' ? 'en' : 'zh';
+    setLanguage(newLang);
+}
+
+// 页面加载时根据 URL 参数初始化语言
+document.addEventListener('DOMContentLoaded', function() {
+    var lang = getLangFromURL();
+    if (lang) {
+        setLanguage(lang);
+    }
+});
     </script>
 </body>
 </html>
