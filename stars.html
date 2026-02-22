@@ -38,7 +38,7 @@
 </head>
 <body>
     <div class="instruction">拖动旋转</div>
-    <div id="info">恒星数据来源: BSC5</div>
+    <div id="info">恒星数据来源: Yale Bright Star Catalog - BSC5</div>
     <div id="loading">加载恒星数据中...</div>
     <div id="status">状态: 初始化</div>
 
@@ -73,6 +73,9 @@
             sizeMax: 30,                          // 最大大小限制
             useDynamicSize: true,                 // 是否根据星等动态调整大小（true 则亮星更大，false 则固定大小）
             dynamicSizeFactor: 1.9,                // 动态大小系数：size = sizeBase * (1 + factor * (maxMag - mag))，可自行调整公式
+
+            brightnessMin: 0.2,                 // 最暗星（最大星等）的亮度因子
+            brightnessMax: 1.6,                 
 
             // ----- 光晕纹理参数 -----
             haloInnerGlow: 0.8,                    // 内光晕起始位置（0~1），越小光晕越集中
@@ -229,7 +232,7 @@
                 });
             }
 
-            starsData.forEach(star => {
+            /*starsData.forEach(star => {
                 if (star.ra === undefined || star.dec === undefined) return;
                 const raRad = THREE.MathUtils.degToRad(star.ra);
                 const decRad = THREE.MathUtils.degToRad(star.dec);
@@ -240,7 +243,35 @@
 
                 const [r, g, b] = bvToRGB(star.bv);
                 colors.push(r, g, b);
-            });
+            });*/
+            starsData.forEach(star => {
+    if (star.ra === undefined || star.dec === undefined) return;
+    const raRad = THREE.MathUtils.degToRad(star.ra);
+    const decRad = THREE.MathUtils.degToRad(star.dec);
+    const x = radius * Math.cos(decRad) * Math.cos(raRad);
+    const y = radius * Math.sin(decRad);
+    const z = radius * Math.cos(decRad) * Math.sin(raRad);
+    positions.push(x, y, z);
+
+    // 获取基础颜色
+    let [r, g, b] = bvToRGB(star.bv);
+
+    // ---- 亮度增强 ----
+    if (star.mag !== undefined) {
+        // 线性插值：星等越小（越亮）因子越大
+        let t = (maxMag - star.mag) / (maxMag - minMag); // t 范围 0~1，最亮星为1
+        let brightnessFactor = CONFIG.brightnessMin + t * t * (CONFIG.brightnessMax - CONFIG.brightnessMin);
+        r *= brightnessFactor;
+        g *= brightnessFactor;
+        b *= brightnessFactor;
+        // 可选：限制颜色值不超过1.0（但 AdditiveBlending 下超过1.0也没关系）
+        r = Math.min(1.0, r);
+        g = Math.min(1.0, g);
+        b = Math.min(1.0, b);
+    }
+
+    colors.push(r, g, b);
+});
 
             const geometry = new THREE.BufferGeometry();
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
