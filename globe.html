@@ -103,6 +103,54 @@
             text-align: right;
             margin-top: 5px;
         }
+        /* 面板头部布局 */
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.panel-header h4 {
+    margin: 0; /* 覆盖原外边距 */
+    border-left: 3px solid #ffaa00;
+    padding-left: 10px;
+    flex: 1;
+}
+.toggle-btn {
+    background: none;
+    border: none;
+    color: #ffaa00;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+.toggle-btn:hover {
+    background: rgba(255,170,0,0.2);
+}
+
+/* 折叠状态 */
+.custom-panel.collapsed {
+    width: 50px;           /* 收缩后的宽度，只显示图标 */
+    padding: 0;
+    border: none;
+    overflow: hidden;
+    transition: width 0.3s ease;
+}
+.custom-panel.collapsed .panel-content,
+.custom-panel.collapsed .panel-note {
+    display: none;         /* 隐藏内容区域 */
+}
+.custom-panel.collapsed .panel-header h4 {
+    display: none;         /* 隐藏标题文字 */
+}
+
     </style>
     <!-- 导入映射（可替换为国内镜像） -->
     <script type="importmap">
@@ -115,20 +163,22 @@
     </script>
 </head>
 <body>
-    <!-- 新增自定义输入面板 - 完全独立，不影响原有标记 -->
+    <!-- 输入面板 -->
     <div class="custom-panel">
-        <h4>标记地点</h4>
-        <textarea id="markerInput" placeholder="经度 纬度 标签&#10;示例: 120.155 30.274 上海&#10;-74.006 40.7128 纽约">
-12.095035 49.020170 Regensburg
+        <div class="panel-header"><h4>标记地点</h4><button class="toggle-btn" id="togglePanelBtn">−</button></div>
+        <div class="panel-content">
+            <textarea id="markerInput" placeholder="经度 纬度 标签&#10;示例: 120.155 30.274 上海&#10;-74.006 40.7128 纽约">12.095035 49.020170 Regensburg
 -71.056804 42.358880 Boston
 7.820358 44.389645 Mondovi
 114.288990 30.580944 武汉
 109.512670 18.246744 三亚
-(这些是我曾经学术访问的地方)
-</textarea>
-        <div class="panel-buttons">
-            <button class="primary" id="updateMarkersBtn">↻ 显示标记</button>
-            <button class="secondary" id="clearCustomBtn">✕ 清空</button>
+121.469207 31.232276 上海
+114.054710 22.535383 深圳
+(这些是我曾经学术访问的地方)</textarea>
+            <div class="panel-buttons">
+                <button class="primary" id="updateMarkersBtn">↻ 显示标记</button>
+                <button class="secondary" id="clearCustomBtn">✕ 清空</button>
+            </div>
         </div>
     </div>
 
@@ -318,6 +368,19 @@
         // 绑定事件
         updateBtn.addEventListener('click', updateCustomMarkersFromInput);
         clearBtn.addEventListener('click', clearCustomMarkers);
+        // 折叠面板功能
+const panel = document.querySelector('.custom-panel');
+const toggleBtn = document.getElementById('togglePanelBtn');
+
+toggleBtn.addEventListener('click', () => {
+    panel.classList.toggle('collapsed');
+    // 改变按钮符号
+    if (panel.classList.contains('collapsed')) {
+        toggleBtn.textContent = '+';   // 展开符号
+    } else {
+        toggleBtn.textContent = '−';   // 折叠符号
+    }
+});
 
         // 可选：在控制台提示偏移已就绪
         console.log('自定义标记面板已加载，使用经度偏移:', lonOffset.toFixed(4));
