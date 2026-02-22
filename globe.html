@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地球</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0,0,0,0.6);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .css2d-renderer {
+            pointer-events: none;
+        }
+        /* 自定义输入面板样式 — 完全新增，不影响原有功能 */
+        .custom-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(20, 20, 30, 0.1);
+            backdrop-filter: blur(5px);
+            color: white;
+            padding: 18px 20px;
+            border-radius: 16px;
+            z-index: 300;
+            font-family: 'Segoe UI', sans-serif;
+            width: 280px;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            pointer-events: auto;
+            transition: opacity 0.2s;
+        }
+        .custom-panel h4 {
+            margin: 0 0 10px 0;
+            font-weight: 400;
+            color: #ffaa00;
+            letter-spacing: 0.5px;
+            font-size: 16px;
+            border-left: 3px solid #ffaa00;
+            padding-left: 10px;
+        }
+        .custom-panel textarea {
+            width: 100%;
+            height: 130px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #3a3a4a;
+            color: #eee;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            box-sizing: border-box;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .custom-panel textarea:focus {
+            border-color: #ffaa00;
+        }
+        .panel-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+        .panel-buttons button {
+            flex: 1;
+            background: #2a2a3a;
+            border: none;
+            color: white;
+            padding: 10px 0;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .panel-buttons button.primary {
+            background: #ffaa00;
+            color: #1a1a1a;
+        }
+        .panel-buttons button.primary:hover {
+            background: #ffbb22;
+            transform: scale(1.02);
+        }
+        .panel-buttons button.secondary:hover {
+            background: #3d3d55;
+            border-color: #ffaa00;
+        }
+        .panel-note {
+            font-size: 11px;
+            color: #aaa;
+            text-align: right;
+            margin-top: 5px;
+        }
+    </style>
+    <!-- 导入映射（可替换为国内镜像） -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- 新增自定义输入面板 - 完全独立，不影响原有标记 -->
+    <div class="custom-panel">
+        <h4>标记地点</h4>
+        <textarea id="markerInput" placeholder="经度 纬度 标签&#10;示例: 120.155 30.274 上海&#10;-74.006 40.7128 纽约">
+12.095035 49.020170 Regensburg
+-71.056804 42.358880 Boston
+7.820358 44.389645 Mondovi
+114.288990 30.580944 武汉
+109.512670 18.246744 三亚
+(这些是我曾经学术访问的地方)
+</textarea>
+        <div class="panel-buttons">
+            <button class="primary" id="updateMarkersBtn">↻ 显示标记</button>
+            <button class="secondary" id="clearCustomBtn">✕ 清空</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+        // ==================== 用户自定义数据 ====================
+        // 1. 图片尺寸 (用于计算UV)
+        const IMG_WIDTH = 2048;
+        const IMG_HEIGHT = 1024;
+
+        // 2. 参考点信息：像素坐标 (x, y) 对应实际地点三亚角 (经纬度)
+        const refPixel = { x: 1646, y: 408 };
+        // 北纬18°23′、东经109°02′ → 十进制
+        const refLat = 18 + 23/60;      // 18.3833333°
+        const refLon = 109 + 2/60;       // 109.0333333°
+        // ========================================================
+
+        // --- 计算经度偏移量 ---
+        // 将参考点像素坐标转为 UV (左上角为原点, U右增, V下增)
+        const u = refPixel.x / IMG_WIDTH;
+        const v = refPixel.y / IMG_HEIGHT;
+
+        // 理论经纬度 (假设标准映射: U:0→-180°, U:1→180°; V:0→90°, V:1→-90°)
+        const lonTheory = u * 360 - 180;        // 经度理论值
+        const latTheory = 90 - v * 180;          // 纬度理论值
+
+        // 经度偏移量 = 实际经度 - 理论经度
+        // 校准后：真实经度对应的放置经度 = 真实经度 + offset
+        const lonOffset = refLon - lonTheory;    // ≈ -0.3026° (实际比理论小，所以偏移为负)
+        console.log(`参考点理论经度: ${lonTheory.toFixed(4)}°, 实际经度: ${refLon.toFixed(4)}°, 经度偏移: ${lonOffset.toFixed(4)}°`);
+
+        // 可选：验证纬度误差 (用户未要求校准，但可输出供参考)
+        const latOffset = refLat - latTheory;
+        console.log(`参考点理论纬度: ${latTheory.toFixed(4)}°, 实际纬度: ${refLat.toFixed(4)}°, 纬度误差: ${latOffset.toFixed(4)}°`);
+
+        // --- 初始化场景 ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x111122);
+
+        // --- 相机 ---
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 3);
+
+        // --- WebGL 渲染器 ---
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        // --- CSS2D 渲染器 (用于文字) ---
+        const labelRenderer = new CSS2DRenderer();
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        labelRenderer.domElement.style.position = 'absolute';
+        labelRenderer.domElement.style.top = '0px';
+        labelRenderer.domElement.style.left = '0px';
+        labelRenderer.domElement.style.pointerEvents = 'none';
+        labelRenderer.domElement.classList.add('css2d-renderer');
+        document.body.appendChild(labelRenderer.domElement);
+
+        // --- 轨道控制器 ---
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = false;
+        controls.enableZoom = true;
+        controls.target.set(0, 0, 0);
+
+        // --- 光源 ---
+        const ambientLight = new THREE.AmbientLight(0x404060);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+        dirLight.position.set(1, 1, 1);
+        scene.add(dirLight);
+        const backLight = new THREE.PointLight(0x446688, 0.5);
+        backLight.position.set(-1, -0.5, -1);
+        scene.add(backLight);
+
+        // --- 主球体 (带纹理) ---
+        const geometry = new THREE.SphereGeometry(1, 64, 64);
+        const textureLoader = new THREE.TextureLoader();
+        // 请替换为您的图片URL (可以是相对路径或网络图片)
+        const textureUrl = 'earth_atmos_2048.jpg';
+        const material = new THREE.MeshBasicMaterial({
+            map: textureLoader.load(textureUrl),
+            side: THREE.DoubleSide  // 如需仅外部可见可删除
+        });
+        const sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+
+        /////////////////////////////////////////
+        function lonLatToPosition(lon, lat, radius) {
+            // 输入：经度(度)，纬度(度)，半径
+            const phi = (90 - lat) * Math.PI / 180;      // 极角 (0在北极)
+            const theta = - lon * Math.PI / 180;            // 方位角
+            return new THREE.Vector3(
+                radius * Math.sin(phi) * Math.cos(theta),
+                radius * Math.cos(phi),
+                radius * Math.sin(phi) * Math.sin(theta)
+            );
+        }
+
+        // ========== 自定义标记 ==========
+        // 创建一个组来存放所有通过输入框添加的标记，方便清空和更新
+        const customGroup = new THREE.Group();
+        scene.add(customGroup);
+
+        // 获取DOM元素
+        const markerInput = document.getElementById('markerInput');
+        const updateBtn = document.getElementById('updateMarkersBtn');
+        const clearBtn = document.getElementById('clearCustomBtn');
+
+        // 复用原有的创建逻辑，但将生成的对象添加到customGroup
+        function createCustomMarker(lon, lat, labelText) {
+            const calibratedLon = lon + lonOffset; // 应用同样的经度偏移
+            
+            // 小球位置 (半径1.02)
+            const spherePos = lonLatToPosition(calibratedLon, lat, 1.00);
+            const sphereGeo = new THREE.SphereGeometry(0.007, 16, 16);
+            const sphereMat = new THREE.MeshStandardMaterial({
+                color: 0xffaa00,
+                emissive: 0x442200,
+                roughness: 0.3,
+                metalness: 0.1
+            });
+            const smallSphere = new THREE.Mesh(sphereGeo, sphereMat);
+            smallSphere.position.copy(spherePos);
+            customGroup.add(smallSphere);
+
+            // 文字div (样式与原有完全一致)
+            const div = document.createElement('div');
+            div.textContent = labelText;
+            div.style.color = 'white';
+            div.style.fontFamily = 'sans-serif';
+            div.style.fontSize = '16px';
+            div.style.fontWeight = 'bold';
+            div.style.textShadow = '1px 1px 2px black';
+            div.style.whiteSpace = 'nowrap';
+            
+            const textPos = lonLatToPosition(calibratedLon, lat, 1.01);
+            const labelObj = new CSS2DObject(div);
+            labelObj.position.copy(textPos);
+            customGroup.add(labelObj);
+        }
+
+        // 解析输入框内容并更新自定义标记
+        function updateCustomMarkersFromInput() {
+            // 清空customGroup中所有内容 (只移除我们动态添加的)
+            while(customGroup.children.length > 0) {
+                customGroup.remove(customGroup.children[0]);
+            }
+
+            const rawText = markerInput.value;
+            const lines = rawText.split(/\r?\n/);
+            
+            lines.forEach(line => {
+                line = line.trim();
+                if (line === '') return;
+                
+                // 更健壮的解析：支持经度 纬度 标签（标签可以包含空格）
+                // 格式: 可选的符号 + 数字 (整数或小数) , 然后空白, 同样纬度, 然后空白, 剩下全部作为标签
+                const match = line.match(/^([+-]?\d+(?:\.\d+)?)\s+([+-]?\d+(?:\.\d+)?)\s+(.+)$/);
+                if (match) {
+                    const lon = parseFloat(match[1]);
+                    const lat = parseFloat(match[2]);
+                    const label = match[3].trim();
+                    if (!isNaN(lon) && !isNaN(lat) && label) {
+                        createCustomMarker(lon, lat, label);
+                    } else {
+                        console.warn('解析出的数值无效:', line);
+                    }
+                } else {
+                    console.warn('无法解析的行 (请使用空格分隔):', line);
+                }
+            });
+        }
+
+        // 清空自定义标记 (同时保留输入框内容以便重新编辑)
+        function clearCustomMarkers() {
+            while(customGroup.children.length > 0) {
+                customGroup.remove(customGroup.children[0]);
+            }
+        }
+
+        // 绑定事件
+        updateBtn.addEventListener('click', updateCustomMarkersFromInput);
+        clearBtn.addEventListener('click', clearCustomMarkers);
+
+        // 可选：在控制台提示偏移已就绪
+        console.log('自定义标记面板已加载，使用经度偏移:', lonOffset.toFixed(4));
+
+        // ==================== 动画循环 ====================
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+            labelRenderer.render(scene, camera);
+        }
+        animate();
+
+        // --- 窗口自适应 ---
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        }
+    </script>
+</body>
+</html>
