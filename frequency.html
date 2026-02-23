@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>音</title>
+    <title>频率比</title>
     <style>
         * {
             user-select: none;
@@ -20,11 +20,6 @@
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
             margin: 0;
             padding: 16px;
-        }
-        .main-canvas {
-            display: block;
-            cursor: crosshair;
-            touch-action: none;
         }
         .container {
             max-width: 800px;
@@ -53,6 +48,30 @@
             font-family: 'JetBrains Mono', monospace;
             letter-spacing: 0.5px;
         }
+        /* 新增播放按钮样式 */
+        .play-toggle {
+            background: #caccfb;
+            border: none;
+            color: #ffffffdd;
+            font-size: 1.6rem;
+            line-height: 1;
+            width: 48px;
+            height: 48px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: background 0.15s;
+            padding: 0;
+            outline: none;
+            touch-action: manipulation;
+        }
+        .play-toggle:active {
+            background: #5f4bb6;
+            transform: scale(0.96);
+        }
         .hint {
             color: #7f8196;
             font-size: 0.85rem;
@@ -79,6 +98,8 @@
     <canvas id="circleCanvas" class="main-canvas" width="800" height="800"></canvas>
     <div class="info-panel">
         <span class="freq-value" id="ratioDisplay">频率比 1 : 1.000</span>
+        <!-- 独立播放按钮，取代圆心内的图标 -->
+        <button id="playToggle" class="play-toggle" aria-label="播放/暂停">▶</button>
     </div>
     <canvas id="waveformCanvas" class="waveform-canvas" width="800" height="200"></canvas>
 </div>
@@ -92,19 +113,19 @@
         const bigR = 240;
         const innerCircleR = bigR - 40;
         const outerCircleR = bigR + 45;
-        const buttonR = 44;
+        const buttonR = 44;          // 圆心纯色圆盘半径（不再可点击）
 
         // 固定起点：12点钟方向 (角度 -PI/2)
         const START_ANGLE = -Math.PI / 2;
 
         // 可变的终点参数：扇形占比 x (0~1)
-        let x = 0.38;
+        let x = 0.585;                // 默认值（可自行调整）
 
         // ---------- 音频相关 ----------
         let audioCtx = null;
         let osc1 = null, osc2 = null;
-        let gainNodeC = null;      // 中央C的增益 (音量×2)
-        let gainNodeSecond = null; // 第二音的增益
+        let gainNodeC = null;         // 中央C的增益
+        let gainNodeSecond = null;     // 第二音的增益
         let isPlaying = false;
 
         const CENTRAL_C_FREQ = 261.6;
@@ -120,9 +141,10 @@
 
         // ---------- DOM 元素 ----------
         const ratioDisplay = document.getElementById('ratioDisplay');
+        const playToggle = document.getElementById('playToggle');  // 新增按钮
 
-        // ---------- 刻度定义 ----------
-        const INNER_TICK_LEN = 15;               // 向内刻度线长度
+        // ---------- 刻度定义（完全保留） ----------
+        const INNER_TICK_LEN = 15;
         const RATIONAL_TICKS = [
             { ratio: 9/8,  label: '9/8' },
             { ratio: 6/5,  label: '6/5' },
@@ -135,11 +157,9 @@
             { ratio: 15/8, label: '15/8' },
             { ratio: 2/1,  label: '2/1' }
         ];
-        const OUTER_INNER_TICK_LEN = 18;           // 外圈向内刻度线长度
-
-        const INNER_CIRCLE_TICK_LEN_INWARD = 15;    // 19平均律向内刻度线长度
+        const OUTER_INNER_TICK_LEN = 18;
+        const INNER_CIRCLE_TICK_LEN_INWARD = 15;
         const INNER_CIRCLE_COLOR = '#b87ad0';
-
         const NOTE_NAMES = [
             { index: 0, name: 'C' },
             { index: 2, name: 'D' },
@@ -150,7 +170,7 @@
             { index: 11, name: 'B' }
         ];
 
-        // ---------- 辅助函数: 计算扇形占比 x 和终点角度 ----------
+        // ---------- 辅助函数 ----------
         function computeRatioFromMouse(mx, my) {
             const dx = mx - centerX;
             const dy = my - centerY;
@@ -163,15 +183,8 @@
             return START_ANGLE + ratio * 2 * Math.PI;
         }
 
-        function normalizeAngle(angle) {
-            return (angle + 2 * Math.PI) % (2 * Math.PI);
-        }
-
         // ---------- 更新显示文字及音频频率 ----------
         function updateStatsAndAudio() {
-            //const percent = (x * 100).toFixed(1);
-            //xDisplay.innerText = `八度占比 ${percent}%`;
-
             const ratio = Math.pow(2, x);
             ratioDisplay.innerHTML = `频率比 : 2<sup>${x.toFixed(3)}</sup> = ${ratio.toFixed(3)}`;
 
@@ -183,17 +196,17 @@
             }
         }
 
-        // ---------- 绘制主画布 ----------
+        // ---------- 绘制主画布（圆心改为纯色圆盘，无图标）----------
         function drawCanvas() {
             ctx.clearRect(0, 0, w, h);
 
-            // ----- 绘制透明扇形 (代替圆弧) -----
+            // ----- 绘制透明扇形 -----
             const endAngle = getEndAngleFromX(x);
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
             ctx.arc(centerX, centerY, outerCircleR, START_ANGLE, endAngle);
             ctx.closePath();
-            ctx.fillStyle = 'rgba(20,20,255,0.05)'; // 半透明橙色
+            ctx.fillStyle = 'rgba(20,20,255,0.05)';
             ctx.shadowBlur = 12;
             ctx.shadowColor = '#ffac6f40';
             ctx.fill();
@@ -204,22 +217,20 @@
             ctx.arc(centerX, centerY, bigR, 0, 2 * Math.PI);
             ctx.strokeStyle = '#6d6f8f';
             ctx.lineWidth = 3;
-            ctx.setLineDash([]); // 实线
+            ctx.setLineDash([]);
             ctx.stroke();
 
-            // ===== 绘制内圈 (19平均律参考圆) 和外圈 (有理数参考圆) 实线 =====
+            // ----- 内圈 (19平均律参考圆) 和外圈 (有理数参考圆) 实线 -----
             ctx.beginPath();
             ctx.arc(centerX, centerY, innerCircleR, 0, 2 * Math.PI);
             ctx.strokeStyle = '#4d4f6e';
             ctx.lineWidth = 1.5;
-            ctx.setLineDash([]); // 实线
             ctx.stroke();
 
             ctx.beginPath();
             ctx.arc(centerX, centerY, outerCircleR, 0, 2 * Math.PI);
             ctx.strokeStyle = '#6e5f4d';
             ctx.lineWidth = 1.5;
-            ctx.setLineDash([]); // 实线
             ctx.stroke();
 
             // ===== 1. 12平均律向内刻度线 =====
@@ -277,10 +288,8 @@
                 ctx.lineTo(endX, endY);
                 ctx.stroke();
 
-                // 标签放在外圈外侧
                 const labelX = centerX + (outerCircleR + 16) * Math.cos(angle);
                 const labelY = centerY + (outerCircleR + 16) * Math.sin(angle);
-
                 const cosA = Math.cos(angle);
                 const sinA = Math.sin(angle);
                 if (cosA > 0.15) ctx.textAlign = 'left';
@@ -294,7 +303,7 @@
             });
             ctx.shadowBlur = 0;
 
-            // ===== 4. 12平均律音名标注 (CDEFGAB) =====
+            // ===== 4. 12平均律音名标注 =====
             ctx.font = 'bold 16px "Segoe UI", "Arial", sans-serif';
             ctx.fillStyle = '#465BAF';
             ctx.shadowBlur = 1;
@@ -305,7 +314,6 @@
                 const textRadius = bigR - INNER_TICK_LEN - 18;
                 const textX = centerX + textRadius * Math.cos(angle);
                 const textY = centerY + textRadius * Math.sin(angle);
-
                 const cosA = Math.cos(angle);
                 const sinA = Math.sin(angle);
                 if (cosA > 0.1) ctx.textAlign = 'left';
@@ -314,25 +322,13 @@
                 if (sinA > 0.1) ctx.textBaseline = 'top';
                 else if (sinA < -0.1) ctx.textBaseline = 'bottom';
                 else ctx.textBaseline = 'middle';
-
                 ctx.fillText(note.name, textX, textY);
             });
             ctx.shadowBlur = 0;
 
-            // ----- 起点标记 (绿色大圆点) -----
-            /*const startDotX = centerX + bigR * Math.cos(START_ANGLE);
-            const startDotY = centerY + bigR * Math.sin(START_ANGLE);
-            ctx.beginPath();
-            ctx.arc(startDotX, startDotY, 8, 0, 2*Math.PI);
-            ctx.fillStyle = '#73e7b0';
-            ctx.shadowBlur = 12;
-            ctx.shadowColor = '#73e7b080';
-            ctx.fill();*/
-
-            // ===== 指针 (从圆心到最外圈 outerCircleR) =====
+            // ----- 指针 (从圆心到最外圈) -----
             const endX = centerX + outerCircleR * Math.cos(endAngle);
             const endY = centerY + outerCircleR * Math.sin(endAngle);
-
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
             ctx.lineTo(endX, endY);
@@ -342,59 +338,30 @@
             ctx.shadowColor = '#25305560';
             ctx.stroke();
 
-            // 指针端点 (细点)
+            // ----- 圆心纯色圆盘（固定颜色，无图标）-----
             /*ctx.beginPath();
-            ctx.arc(endX, endY, 4, 0, 2*Math.PI);
-            ctx.fillStyle = '#ffe570';
-            ctx.shadowBlur = 12;
-            ctx.shadowColor = '#ffb570';
-            ctx.fill();
-            ctx.shadowBlur = 0;*/
-
-            // ----- 圆心按钮 -----
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, buttonR, 0, 2*Math.PI);
-            ctx.fillStyle = isPlaying ? '#5f4bb6' : '#42435a';
+            ctx.arc(centerX, centerY, buttonR, 0, 2 * Math.PI);
+            ctx.fillStyle = '#42435a';        // 纯色，不再随播放状态变化
             ctx.shadowBlur = 15;
             ctx.shadowColor = '#00000060';
             ctx.fill();
-            ctx.shadowBlur = 0;
-
-            // 播放/暂停图标
-            ctx.fillStyle = '#ffffffdd';
-            if (isPlaying) {
-                ctx.fillRect(centerX-12, centerY-11, 6, 22);
-                ctx.fillRect(centerX+6, centerY-11, 6, 22);
-            } else {
-                ctx.beginPath();
-                ctx.moveTo(centerX-8, centerY-14);
-                ctx.lineTo(centerX-8, centerY+14);
-                ctx.lineTo(centerX+14, centerY);
-                ctx.closePath();
-                ctx.fill();
-            }
+            ctx.shadowBlur = 0;*/
+            // 不再绘制任何播放/暂停图标
         }
 
-        // ---------- 绘制实时波形 (静止叠加, 约20个周期, 振幅减半) ----------
+        // ---------- 绘制实时波形 (与原代码完全相同) ----------
         function drawWaveform() {
             wCtx.clearRect(0, 0, waveWidth, waveHeight);
-            
 
             const f1 = CENTRAL_C_FREQ;
             const f2 = CENTRAL_C_FREQ * Math.pow(2, x);
-
-            // 显示约20个周期 (基于中央C)
             const duration = 80 / f1;
-
-            // 静止显示，不随时间滑动 (baseTime = 0)
             const steps = waveWidth * 4;
             const timeStep = duration / steps;
+            const centerY = waveHeight / 2;
+            const amplitude = 40;
 
-            // 中心线Y坐标
-            const centerY = waveHeight / 2; // 100
-            const amplitude = 40; // 振幅减半 (原80)
-
-            // 绘制零轴参考线
+            // 零轴参考线
             wCtx.strokeStyle = '#3e4055';
             wCtx.lineWidth = 0.8;
             wCtx.beginPath();
@@ -402,8 +369,7 @@
             wCtx.lineTo(waveWidth, centerY);
             wCtx.stroke();
 
-            // 绘制两个波形 (叠加)
-            // 中央C
+            // 中央C (蓝色)
             wCtx.beginPath();
             wCtx.strokeStyle = '#465BAF';
             wCtx.lineWidth = 2.2;
@@ -411,12 +377,12 @@
                 const t = i * timeStep;
                 const phase = 2 * Math.PI * f1 * t;
                 const y = centerY + Math.sin(phase) * amplitude;
-                const x = i;
-                if (i === 0) wCtx.moveTo(x, y);
-                else wCtx.lineTo(x, y);
+                if (i === 0) wCtx.moveTo(i, y);
+                else wCtx.lineTo(i, y);
             }
             wCtx.stroke();
-            // 第二音
+
+            // 第二音 (深色)
             wCtx.beginPath();
             wCtx.strokeStyle = '#253055';
             wCtx.lineWidth = 1.8;
@@ -424,13 +390,11 @@
                 const t = i * timeStep;
                 const phase = 2 * Math.PI * f2 * t;
                 const y = centerY + Math.sin(phase) * amplitude;
-                const x = i;
-                if (i === 0) wCtx.moveTo(x, y);
-                else wCtx.lineTo(x, y);
+                if (i === 0) wCtx.moveTo(i, y);
+                else wCtx.lineTo(i, y);
             }
             wCtx.stroke();
 
-            // 标注频率
             wCtx.font = '12px "Segoe UI", monospace';
             wCtx.fillStyle = '#465BAF';
             wCtx.fillText('261.6 Hz', 10, 20);
@@ -438,77 +402,79 @@
             wCtx.fillText(`${f2.toFixed(1)} Hz`, 10, 40);
         }
 
-        // ---------- 音频控制 (音量均衡：中央C×2) ----------
-async function togglePlay() {
-    if (window._toggling) return;
-    window._toggling = true;
+        // ---------- 音频控制（适配移动端）----------
+        async function togglePlay() {
+            if (window._toggling) return;
+            window._toggling = true;
 
-    try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            gainNodeC = audioCtx.createGain();
-            gainNodeSecond = audioCtx.createGain();
-            gainNodeC.gain.value = 0.24;
-            gainNodeSecond.gain.value = 0.12;
-            gainNodeC.connect(audioCtx.destination);
-            gainNodeSecond.connect(audioCtx.destination);
-        }
-
-        if (isPlaying) {
-            // 停止逻辑不变
-            gainNodeC.gain.setValueAtTime(0, audioCtx.currentTime);
-            gainNodeSecond.gain.setValueAtTime(0, audioCtx.currentTime);
-            [osc1, osc2].forEach(osc => {
-                if (osc) {
-                    try { osc.stop(); } catch (e) {}
-                    try { osc.disconnect(); } catch (e) {}
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    gainNodeC = audioCtx.createGain();
+                    gainNodeSecond = audioCtx.createGain();
+                    gainNodeC.gain.value = 0.24;
+                    gainNodeSecond.gain.value = 0.12;
+                    gainNodeC.connect(audioCtx.destination);
+                    gainNodeSecond.connect(audioCtx.destination);
                 }
-            });
-            osc1 = osc2 = null;
-            isPlaying = false;
-            if (audioCtx.state === 'running') {
-                await audioCtx.suspend();
+
+                if (isPlaying) {
+                    // 停止
+                    gainNodeC.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gainNodeSecond.gain.setValueAtTime(0, audioCtx.currentTime);
+                    [osc1, osc2].forEach(osc => {
+                        if (osc) {
+                            try { osc.stop(); } catch (e) {}
+                            try { osc.disconnect(); } catch (e) {}
+                        }
+                    });
+                    osc1 = osc2 = null;
+                    isPlaying = false;
+                    if (audioCtx.state === 'running') {
+                        await audioCtx.suspend();
+                    }
+                    playToggle.textContent = '▶';   // 更新按钮
+                } else {
+                    // 启动（先创建振荡器再恢复上下文，确保移动端发声）
+                    const secondFreq = CENTRAL_C_FREQ * Math.pow(2, x);
+
+                    osc1 = audioCtx.createOscillator();
+                    osc1.type = 'sine';
+                    osc1.frequency.value = CENTRAL_C_FREQ;
+                    osc1.connect(gainNodeC);
+
+                    osc2 = audioCtx.createOscillator();
+                    osc2.type = 'sine';
+                    osc2.frequency.value = secondFreq;
+                    osc2.connect(gainNodeSecond);
+
+                    // 在上下文未恢复时 start 是安全的
+                    osc1.start();
+                    osc2.start();
+
+                    gainNodeC.gain.setValueAtTime(0.24, audioCtx.currentTime);
+                    gainNodeSecond.gain.setValueAtTime(0.12, audioCtx.currentTime);
+
+                    if (audioCtx.state === 'suspended') {
+                        await audioCtx.resume();
+                    } else if (audioCtx.state === 'closed') {
+                        // 极少情况，重新创建（简化处理，重新赋值）
+                        audioCtx = new AudioContext();
+                        // 重新连接（略，实际很少遇到）
+                    }
+
+                    isPlaying = true;
+                    playToggle.textContent = '⏸';   // 更新按钮
+                }
+
+                drawCanvas();            // 圆心颜色不再变化，但保留重绘
+                updateStatsAndAudio();
+            } finally {
+                window._toggling = false;
             }
-        } else {
-            // 启动：先创建振荡器并 start（此时上下文可能 suspended）
-            const secondFreq = CENTRAL_C_FREQ * Math.pow(2, x);
-
-            osc1 = audioCtx.createOscillator();
-            osc1.type = 'sine';
-            osc1.frequency.value = CENTRAL_C_FREQ;
-            osc1.connect(gainNodeC);
-
-            osc2 = audioCtx.createOscillator();
-            osc2.type = 'sine';
-            osc2.frequency.value = secondFreq;
-            osc2.connect(gainNodeSecond);
-
-            // 在上下文尚未恢复时 start 是安全的，声音会在恢复后出现
-            osc1.start();
-            osc2.start();
-
-            // 确保增益恢复（可能在停止时被设为零）
-            gainNodeC.gain.setValueAtTime(0.24, audioCtx.currentTime);
-            gainNodeSecond.gain.setValueAtTime(0.12, audioCtx.currentTime);
-
-            // 最后恢复音频上下文（如果处于 suspended）
-            if (audioCtx.state === 'suspended') {
-                await audioCtx.resume();  // 此时手势仍有效，resume 调用本身在同步代码中
-            } else if (audioCtx.state === 'closed') {
-                // 极少情况，重新创建上下文（略，可复用上面创建逻辑）
-            }
-
-            isPlaying = true;
         }
 
-        drawCanvas();
-        updateStatsAndAudio();
-    } finally {
-        window._toggling = false;
-    }
-}
-
-        // ---------- 鼠标/触摸交互 ----------
+        // ---------- 鼠标/触摸交互（圆心区域变为死区，不再响应点击）----------
         function handleDragStart(e) {
             e.preventDefault();
 
@@ -516,25 +482,18 @@ async function togglePlay() {
             if (mx === undefined) return;
 
             const distToCenter = Math.hypot(mx - centerX, my - centerY);
-            if (distToCenter <= buttonR + 6) {
-                togglePlay();
+
+            // 圆心纯色圆盘区域：不启动拖动，也不触发任何操作（死区）
+            if (distToCenter <= buttonR) {
                 return;
             }
 
-            // 检测指针端点 (使用 outerCircleR)
-            const endAngle = getEndAngleFromX(x);
-            const endX = centerX + outerCircleR * Math.cos(endAngle);
-            const endY = centerY + outerCircleR * Math.sin(endAngle);
-            const distToEnd = Math.hypot(mx - endX, my - endY);
-
-            if (true) {
-                isDragging = true;
-                const newX = computeRatioFromMouse(mx, my);
-                x = Math.min(1, Math.max(0, newX));
-                drawCanvas();
-                updateStatsAndAudio();
-                return;
-            }
+            // 其余位置启动拖动
+            isDragging = true;
+            const newX = computeRatioFromMouse(mx, my);
+            x = Math.min(1, Math.max(0, newX));
+            drawCanvas();
+            updateStatsAndAudio();
         }
 
         function handleDragMove(e) {
@@ -606,9 +565,13 @@ async function togglePlay() {
 
         // 初始化
         function init() {
+            // 设置默认 x（与原代码一致）
             x = 0.585;
             drawCanvas();
             updateStatsAndAudio();
+
+            // 绑定独立播放按钮
+            playToggle.addEventListener('click', togglePlay);
 
             attachEvents();
 
