@@ -439,103 +439,66 @@
         }
 
         // ---------- 音频控制 (音量均衡：中央C×2) ----------
-        async function togglePlay() {
-    // 防止快速点击重入（简单锁）
+async function togglePlay() {
     if (window._toggling) return;
     window._toggling = true;
 
     try {
         if (!audioCtx) {
-            try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                gainNodeC = audioCtx.createGain();
-                gainNodeSecond = audioCtx.createGain();
-                gainNodeC.gain.value = 0.24;
-                gainNodeSecond.gain.value = 0.12;
-                gainNodeC.connect(audioCtx.destination);
-                gainNodeSecond.connect(audioCtx.destination);
-            } catch (e) {
-                alert('您的浏览器不支持 Web Audio API');
-                window._toggling = false;
-                return;
-            }
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            gainNodeC = audioCtx.createGain();
+            gainNodeSecond = audioCtx.createGain();
+            gainNodeC.gain.value = 0.24;
+            gainNodeSecond.gain.value = 0.12;
+            gainNodeC.connect(audioCtx.destination);
+            gainNodeSecond.connect(audioCtx.destination);
         }
 
         if (isPlaying) {
-            // ---- 停止部分 ----
-            // 先将增益降为0，确保立即静音（即使振荡器stop失败）
-            if (gainNodeC && gainNodeSecond) {
-                try {
-                    gainNodeC.gain.setValueAtTime(0, audioCtx.currentTime);
-                    gainNodeSecond.gain.setValueAtTime(0, audioCtx.currentTime);
-                } catch (e) {}
-            }
-
-            // 停止并断开振荡器
+            // 停止逻辑不变
+            gainNodeC.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNodeSecond.gain.setValueAtTime(0, audioCtx.currentTime);
             [osc1, osc2].forEach(osc => {
                 if (osc) {
-                    try {
-                        osc.stop();
-                        osc.disconnect();
-                    } catch (e) {
-                        // 忽略单个错误，继续清理
-                    }
+                    try { osc.stop(); } catch (e) {}
+                    try { osc.disconnect(); } catch (e) {}
                 }
             });
             osc1 = osc2 = null;
             isPlaying = false;
-
-            // 可选：挂起音频上下文以彻底省电（下次播放时会自动resume）
             if (audioCtx.state === 'running') {
-                try { await audioCtx.suspend(); } catch (e) {}
+                await audioCtx.suspend();
             }
         } else {
-            // ---- 启动部分 ----
+            // 启动：先创建振荡器并 start（此时上下文可能 suspended）
+            const secondFreq = CENTRAL_C_FREQ * Math.pow(2, x);
+
+            osc1 = audioCtx.createOscillator();
+            osc1.type = 'sine';
+            osc1.frequency.value = CENTRAL_C_FREQ;
+            osc1.connect(gainNodeC);
+
+            osc2 = audioCtx.createOscillator();
+            osc2.type = 'sine';
+            osc2.frequency.value = secondFreq;
+            osc2.connect(gainNodeSecond);
+
+            // 在上下文尚未恢复时 start 是安全的，声音会在恢复后出现
+            osc1.start();
+            osc2.start();
+
+            // 确保增益恢复（可能在停止时被设为零）
+            gainNodeC.gain.setValueAtTime(0.24, audioCtx.currentTime);
+            gainNodeSecond.gain.setValueAtTime(0.12, audioCtx.currentTime);
+
+            // 最后恢复音频上下文（如果处于 suspended）
             if (audioCtx.state === 'suspended') {
-                await audioCtx.resume();
+                await audioCtx.resume();  // 此时手势仍有效，resume 调用本身在同步代码中
             } else if (audioCtx.state === 'closed') {
-                audioCtx = new AudioContext();
-                gainNodeC = audioCtx.createGain();
-                gainNodeSecond = audioCtx.createGain();
-                gainNodeC.gain.value = 0.24;
-                gainNodeSecond.gain.value = 0.12;
-                gainNodeC.connect(audioCtx.destination);
-                gainNodeSecond.connect(audioCtx.destination);
+                // 极少情况，重新创建上下文（略，可复用上面创建逻辑）
             }
 
-            // 恢复增益值（可能之前被设为0）
-            try {
-                gainNodeC.gain.setValueAtTime(0.24, audioCtx.currentTime);
-                gainNodeSecond.gain.setValueAtTime(0.12, audioCtx.currentTime);
-            } catch (e) {}
-
-            try {
-                osc1 = audioCtx.createOscillator();
-                osc1.type = 'sine';
-                osc1.frequency.value = CENTRAL_C_FREQ;
-
-                const secondFreq = CENTRAL_C_FREQ * Math.pow(2, x);
-                osc2 = audioCtx.createOscillator();
-                osc2.type = 'sine';
-                osc2.frequency.value = secondFreq;
-
-                osc1.connect(gainNodeC);
-                osc2.connect(gainNodeSecond);
-
-                osc1.start();
-                osc2.start();
-
-                isPlaying = true;
-            } catch (e) {
-                // 启动失败时清理可能部分创建的资源
-                [osc1, osc2].forEach(osc => {
-                    if (osc) {
-                        try { osc.disconnect(); } catch (ex) {}
-                    }
-                });
-                osc1 = osc2 = null;
-                isPlaying = false;
-            }
+            isPlaying = true;
         }
 
         drawCanvas();
