@@ -430,67 +430,110 @@
 
         // ---------- 音频控制 (音量均衡：中央C×2) ----------
         async function togglePlay() {
-            if (!audioCtx) {
-                try {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    gainNodeC = audioCtx.createGain();
-                    gainNodeSecond = audioCtx.createGain();
-                    gainNodeC.gain.value = 0.24;      // 中央C×2
-                    gainNodeSecond.gain.value = 0.12;
-                    gainNodeC.connect(audioCtx.destination);
-                    gainNodeSecond.connect(audioCtx.destination);
-                } catch (e) {
-                    alert('您的浏览器不支持 Web Audio API');
-                    return;
-                }
+    // 防止快速点击重入（简单锁）
+    if (window._toggling) return;
+    window._toggling = true;
+
+    try {
+        if (!audioCtx) {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                gainNodeC = audioCtx.createGain();
+                gainNodeSecond = audioCtx.createGain();
+                gainNodeC.gain.value = 0.24;
+                gainNodeSecond.gain.value = 0.12;
+                gainNodeC.connect(audioCtx.destination);
+                gainNodeSecond.connect(audioCtx.destination);
+            } catch (e) {
+                alert('您的浏览器不支持 Web Audio API');
+                window._toggling = false;
+                return;
             }
-
-            if (isPlaying) {
-                try {
-                    if (osc1) { osc1.stop(); osc1.disconnect(); osc1 = null; }
-                    if (osc2) { osc2.stop(); osc2.disconnect(); osc2 = null; }
-                } catch (e) {}
-                isPlaying = false;
-            } else {
-                if (audioCtx.state === 'suspended') {
-                    await audioCtx.resume();
-                } else if (audioCtx.state === 'closed') {
-                    audioCtx = new AudioContext();
-                    gainNodeC = audioCtx.createGain();
-                    gainNodeSecond = audioCtx.createGain();
-                    gainNodeC.gain.value = 0.24;
-                    gainNodeSecond.gain.value = 0.12;
-                    gainNodeC.connect(audioCtx.destination);
-                    gainNodeSecond.connect(audioCtx.destination);
-                }
-
-                try {
-                    osc1 = audioCtx.createOscillator();
-                    osc1.type = 'sine';
-                    osc1.frequency.value = CENTRAL_C_FREQ;
-
-                    const secondFreq = CENTRAL_C_FREQ * Math.pow(2, x);
-                    osc2 = audioCtx.createOscillator();
-                    osc2.type = 'sine';
-                    osc2.frequency.value = secondFreq;
-
-                    osc1.connect(gainNodeC);
-                    osc2.connect(gainNodeSecond);
-
-                    osc1.start();
-                    osc2.start();
-
-                    isPlaying = true;
-                } catch (e) {
-                    if (osc1) { osc1.disconnect(); osc1 = null; }
-                    if (osc2) { osc2.disconnect(); osc2 = null; }
-                    isPlaying = false;
-                }
-            }
-
-            drawCanvas();
-            updateStatsAndAudio();
         }
+
+        if (isPlaying) {
+            // ---- 停止部分 ----
+            // 先将增益降为0，确保立即静音（即使振荡器stop失败）
+            if (gainNodeC && gainNodeSecond) {
+                try {
+                    gainNodeC.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gainNodeSecond.gain.setValueAtTime(0, audioCtx.currentTime);
+                } catch (e) {}
+            }
+
+            // 停止并断开振荡器
+            [osc1, osc2].forEach(osc => {
+                if (osc) {
+                    try {
+                        osc.stop();
+                        osc.disconnect();
+                    } catch (e) {
+                        // 忽略单个错误，继续清理
+                    }
+                }
+            });
+            osc1 = osc2 = null;
+            isPlaying = false;
+
+            // 可选：挂起音频上下文以彻底省电（下次播放时会自动resume）
+            if (audioCtx.state === 'running') {
+                try { await audioCtx.suspend(); } catch (e) {}
+            }
+        } else {
+            // ---- 启动部分 ----
+            if (audioCtx.state === 'suspended') {
+                await audioCtx.resume();
+            } else if (audioCtx.state === 'closed') {
+                audioCtx = new AudioContext();
+                gainNodeC = audioCtx.createGain();
+                gainNodeSecond = audioCtx.createGain();
+                gainNodeC.gain.value = 0.24;
+                gainNodeSecond.gain.value = 0.12;
+                gainNodeC.connect(audioCtx.destination);
+                gainNodeSecond.connect(audioCtx.destination);
+            }
+
+            // 恢复增益值（可能之前被设为0）
+            try {
+                gainNodeC.gain.setValueAtTime(0.24, audioCtx.currentTime);
+                gainNodeSecond.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            } catch (e) {}
+
+            try {
+                osc1 = audioCtx.createOscillator();
+                osc1.type = 'sine';
+                osc1.frequency.value = CENTRAL_C_FREQ;
+
+                const secondFreq = CENTRAL_C_FREQ * Math.pow(2, x);
+                osc2 = audioCtx.createOscillator();
+                osc2.type = 'sine';
+                osc2.frequency.value = secondFreq;
+
+                osc1.connect(gainNodeC);
+                osc2.connect(gainNodeSecond);
+
+                osc1.start();
+                osc2.start();
+
+                isPlaying = true;
+            } catch (e) {
+                // 启动失败时清理可能部分创建的资源
+                [osc1, osc2].forEach(osc => {
+                    if (osc) {
+                        try { osc.disconnect(); } catch (ex) {}
+                    }
+                });
+                osc1 = osc2 = null;
+                isPlaying = false;
+            }
+        }
+
+        drawCanvas();
+        updateStatsAndAudio();
+    } finally {
+        window._toggling = false;
+    }
+}
 
         // ---------- 鼠标/触摸交互 ----------
         function handleDragStart(e) {
