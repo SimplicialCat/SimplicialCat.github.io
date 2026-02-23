@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音</title>
+    <style>
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        body {
+            background: #FAFBFC;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            margin: 0;
+            padding: 16px;
+        }
+        .main-canvas {
+            display: block;
+            
+            cursor: crosshair;
+            touch-action: none;
+        }
+        .info-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            color: #253055;
+            font-weight: 500;
+        }
+        .ratio-badge {
+            background: #3a3c4b;
+            padding: 6px 18px;
+            border-radius: 40px;
+            color: #b9bae6;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+        .hint {
+            color: #7f8196;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            text-align: center;
+        }
+        .waveform-label {
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 10px 0;
+            color: #a0a3c0;
+            font-size: 0.8rem;
+        }
+        .label-left {
+            color: #253055;
+        }
+        .label-right {
+            color: #253055;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <canvas id="circleCanvas" class="main-canvas" width="800" height="800"></canvas>
+    <div class="info-panel">
+        <span class="freq-value" id="ratioDisplay">频率比 1 : 1.000</span>
+    </div>
+    <canvas id="waveformCanvas" class="waveform-canvas" width="800" height="200"></canvas>
+</div>
+<script>
+    (function() {
+        // ---------- 画布与几何 ----------
+        const canvas = document.getElementById('circleCanvas');
+        const ctx = canvas.getContext('2d');
+        const w = 800, h = 800;
+        const centerX = 400, centerY = 400;
+        const bigR = 240;
+        const innerCircleR = bigR - 40;
+        const outerCircleR = bigR + 45;
+        const buttonR = 44;
+
+        // 固定起点：12点钟方向 (角度 -PI/2)
+        const START_ANGLE = -Math.PI / 2;
+
+        // 可变的终点参数：扇形占比 x (0~1)
+        let x = 0.38;
+
+        // ---------- 音频相关 ----------
+        let audioCtx = null;
+        let osc1 = null, osc2 = null;
+        let gainNodeC = null;      // 中央C的增益 (音量×2)
+        let gainNodeSecond = null; // 第二音的增益
+        let isPlaying = false;
+
+        const CENTRAL_C_FREQ = 261.6;
+
+        // ---------- 波形画布 ----------
+        const waveCanvas = document.getElementById('waveformCanvas');
+        const wCtx = waveCanvas.getContext('2d');
+        const waveWidth = 800, waveHeight = 200;
+
+        // ---------- 交互状态 ----------
+        let isDragging = false;
+        let dragListenersAttached = false;
+
+        // ---------- DOM 元素 ----------
+        const ratioDisplay = document.getElementById('ratioDisplay');
+
+        // ---------- 刻度定义 ----------
+        const INNER_TICK_LEN = 15;               // 向内刻度线长度
+        const RATIONAL_TICKS = [
+            { ratio: 9/8,  label: '9/8' },
+            { ratio: 6/5,  label: '6/5' },
+            { ratio: 5/4,  label: '5/4' },
+            { ratio: 4/3,  label: '4/3' },
+            { ratio: 7/5,  label: '7/5' },
+            { ratio: 3/2,  label: '3/2' },
+            { ratio: 8/5,  label: '8/5' },
+            { ratio: 5/3,  label: '5/3' },
+            { ratio: 15/8, label: '15/8' },
+            { ratio: 2/1,  label: '2/1' }
+        ];
+        const OUTER_INNER_TICK_LEN = 18;           // 外圈向内刻度线长度
+
+        const INNER_CIRCLE_TICK_LEN_INWARD = 15;    // 19平均律向内刻度线长度
+        const INNER_CIRCLE_COLOR = '#b87ad0';
+
+        const NOTE_NAMES = [
+            { index: 0, name: 'C' },
+            { index: 2, name: 'D' },
+            { index: 4, name: 'E' },
+            { index: 5, name: 'F' },
+            { index: 7, name: 'G' },
+            { index: 9, name: 'A' },
+            { index: 11, name: 'B' }
+        ];
+
+        // ---------- 辅助函数: 计算扇形占比 x 和终点角度 ----------
+        function computeRatioFromMouse(mx, my) {
+            const dx = mx - centerX;
+            const dy = my - centerY;
+            let rawAngle = Math.atan2(dy, dx);
+            let diff = (rawAngle - START_ANGLE + 2 * Math.PI) % (2 * Math.PI);
+            return diff / (2 * Math.PI);
+        }
+
+        function getEndAngleFromX(ratio) {
+            return START_ANGLE + ratio * 2 * Math.PI;
+        }
+
+        function normalizeAngle(angle) {
+            return (angle + 2 * Math.PI) % (2 * Math.PI);
+        }
+
+        // ---------- 更新显示文字及音频频率 ----------
+        function updateStatsAndAudio() {
+            //const percent = (x * 100).toFixed(1);
+            //xDisplay.innerText = `八度占比 ${percent}%`;
+
+            const ratio = Math.pow(2, x);
+            ratioDisplay.innerHTML = `频率比 : 2<sup>${x.toFixed(3)}</sup> = ${ratio.toFixed(3)}`;
+
+            if (isPlaying && osc2 && audioCtx) {
+                try {
+                    const secondFreq = CENTRAL_C_FREQ * ratio;
+                    osc2.frequency.setValueAtTime(secondFreq, audioCtx.currentTime);
+                } catch (e) {}
+            }
+        }
+
+        // ---------- 绘制主画布 ----------
+        function drawCanvas() {
+            ctx.clearRect(0, 0, w, h);
+
+            // ----- 绘制透明扇形 (代替圆弧) -----
+            const endAngle = getEndAngleFromX(x);
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, outerCircleR, START_ANGLE, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(20,20,255,0.05)'; // 半透明橙色
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = '#ffac6f40';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // ----- 大圆 (外边框) 实线 -----
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, bigR, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#6d6f8f';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([]); // 实线
+            ctx.stroke();
+
+            // ===== 绘制内圈 (19平均律参考圆) 和外圈 (有理数参考圆) 实线 =====
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, innerCircleR, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#4d4f6e';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([]); // 实线
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, outerCircleR, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#6e5f4d';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([]); // 实线
+            ctx.stroke();
+
+            // ===== 1. 12平均律向内刻度线 =====
+            ctx.lineWidth = 1.8;
+            ctx.strokeStyle = '#7c9fd0';
+            for (let k = 1; k <= 11; k++) {
+                const tickRatio = k / 12;
+                const angle = START_ANGLE + tickRatio * 2 * Math.PI;
+                const startX = centerX + bigR * Math.cos(angle);
+                const startY = centerY + bigR * Math.sin(angle);
+                const endX = centerX + (bigR - INNER_TICK_LEN) * Math.cos(angle);
+                const endY = centerY + (bigR - INNER_TICK_LEN) * Math.sin(angle);
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            }
+
+            // ===== 2. 19平均律刻度线 (从内圈向内) =====
+            ctx.lineWidth = 1.8;
+            ctx.strokeStyle = INNER_CIRCLE_COLOR;
+            for (let k = 1; k <= 18; k++) {
+                const tickRatio = k / 19;
+                const angle = START_ANGLE + tickRatio * 2 * Math.PI;
+                const startX = centerX + innerCircleR * Math.cos(angle);
+                const startY = centerY + innerCircleR * Math.sin(angle);
+                const endX = centerX + (innerCircleR - INNER_CIRCLE_TICK_LEN_INWARD) * Math.cos(angle);
+                const endY = centerY + (innerCircleR - INNER_CIRCLE_TICK_LEN_INWARD) * Math.sin(angle);
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            }
+
+            // ===== 3. 有理数向外刻度线 (从外圈向内) =====
+            ctx.lineWidth = 2.0;
+            ctx.strokeStyle = '#253055';
+            ctx.font = 'bold 14px "Segoe UI", "JetBrains Mono", monospace';
+            ctx.fillStyle = '#253055';
+            ctx.shadowBlur = 1;
+            ctx.shadowColor = '#25305580';
+            RATIONAL_TICKS.forEach(item => {
+                const ratio = item.ratio;
+                const xTick = Math.log2(ratio);
+                if (xTick < 0 || xTick > 1) return;
+
+                const angle = START_ANGLE + xTick * 2 * Math.PI;
+                const startX = centerX + outerCircleR * Math.cos(angle);
+                const startY = centerY + outerCircleR * Math.sin(angle);
+                const endX = centerX + (outerCircleR - OUTER_INNER_TICK_LEN) * Math.cos(angle);
+                const endY = centerY + (outerCircleR - OUTER_INNER_TICK_LEN) * Math.sin(angle);
+
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+
+                // 标签放在外圈外侧
+                const labelX = centerX + (outerCircleR + 16) * Math.cos(angle);
+                const labelY = centerY + (outerCircleR + 16) * Math.sin(angle);
+
+                const cosA = Math.cos(angle);
+                const sinA = Math.sin(angle);
+                if (cosA > 0.15) ctx.textAlign = 'left';
+                else if (cosA < -0.15) ctx.textAlign = 'right';
+                else ctx.textAlign = 'center';
+                if (sinA > 0.2) ctx.textBaseline = 'top';
+                else if (sinA < -0.2) ctx.textBaseline = 'bottom';
+                else ctx.textBaseline = 'middle';
+
+                ctx.fillText(item.label, labelX, labelY);
+            });
+            ctx.shadowBlur = 0;
+
+            // ===== 4. 12平均律音名标注 (CDEFGAB) =====
+            ctx.font = 'bold 16px "Segoe UI", "Arial", sans-serif';
+            ctx.fillStyle = '#465BAF';
+            ctx.shadowBlur = 1;
+            ctx.shadowColor = '#253055';
+            NOTE_NAMES.forEach(note => {
+                const tickRatio = note.index / 12;
+                const angle = START_ANGLE + tickRatio * 2 * Math.PI;
+                const textRadius = bigR - INNER_TICK_LEN - 18;
+                const textX = centerX + textRadius * Math.cos(angle);
+                const textY = centerY + textRadius * Math.sin(angle);
+
+                const cosA = Math.cos(angle);
+                const sinA = Math.sin(angle);
+                if (cosA > 0.1) ctx.textAlign = 'left';
+                else if (cosA < -0.1) ctx.textAlign = 'right';
+                else ctx.textAlign = 'center';
+                if (sinA > 0.1) ctx.textBaseline = 'top';
+                else if (sinA < -0.1) ctx.textBaseline = 'bottom';
+                else ctx.textBaseline = 'middle';
+
+                ctx.fillText(note.name, textX, textY);
+            });
+            ctx.shadowBlur = 0;
+
+            // ----- 起点标记 (绿色大圆点) -----
+            /*const startDotX = centerX + bigR * Math.cos(START_ANGLE);
+            const startDotY = centerY + bigR * Math.sin(START_ANGLE);
+            ctx.beginPath();
+            ctx.arc(startDotX, startDotY, 8, 0, 2*Math.PI);
+            ctx.fillStyle = '#73e7b0';
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = '#73e7b080';
+            ctx.fill();*/
+
+            // ===== 指针 (从圆心到最外圈 outerCircleR) =====
+            const endX = centerX + outerCircleR * Math.cos(endAngle);
+            const endY = centerY + outerCircleR * Math.sin(endAngle);
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(endX, endY);
+            ctx.strokeStyle = '#253055cc';
+            ctx.lineWidth = 2.5;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#25305560';
+            ctx.stroke();
+
+            // 指针端点 (细点)
+            /*ctx.beginPath();
+            ctx.arc(endX, endY, 4, 0, 2*Math.PI);
+            ctx.fillStyle = '#ffe570';
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = '#ffb570';
+            ctx.fill();
+            ctx.shadowBlur = 0;*/
+
+            // ----- 圆心按钮 -----
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, buttonR, 0, 2*Math.PI);
+            ctx.fillStyle = isPlaying ? '#5f4bb6' : '#42435a';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#00000060';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 播放/暂停图标
+            ctx.fillStyle = '#ffffffdd';
+            if (isPlaying) {
+                ctx.fillRect(centerX-12, centerY-11, 6, 22);
+                ctx.fillRect(centerX+6, centerY-11, 6, 22);
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(centerX-8, centerY-14);
+                ctx.lineTo(centerX-8, centerY+14);
+                ctx.lineTo(centerX+14, centerY);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+
+        // ---------- 绘制实时波形 (静止叠加, 约20个周期, 振幅减半) ----------
+        function drawWaveform() {
+            wCtx.clearRect(0, 0, waveWidth, waveHeight);
+            
+
+            const f1 = CENTRAL_C_FREQ;
+            const f2 = CENTRAL_C_FREQ * Math.pow(2, x);
+
+            // 显示约20个周期 (基于中央C)
+            const duration = 80 / f1;
+
+            // 静止显示，不随时间滑动 (baseTime = 0)
+            const steps = waveWidth * 4;
+            const timeStep = duration / steps;
+
+            // 中心线Y坐标
+            const centerY = waveHeight / 2; // 100
+            const amplitude = 40; // 振幅减半 (原80)
+
+            // 绘制零轴参考线
+            wCtx.strokeStyle = '#3e4055';
+            wCtx.lineWidth = 0.8;
+            wCtx.beginPath();
+            wCtx.moveTo(0, centerY);
+            wCtx.lineTo(waveWidth, centerY);
+            wCtx.stroke();
+
+            // 绘制两个波形 (叠加)
+            // 中央C
+            wCtx.beginPath();
+            wCtx.strokeStyle = '#465BAF';
+            wCtx.lineWidth = 2.2;
+            for (let i = 0; i < steps; i++) {
+                const t = i * timeStep;
+                const phase = 2 * Math.PI * f1 * t;
+                const y = centerY + Math.sin(phase) * amplitude;
+                const x = i;
+                if (i === 0) wCtx.moveTo(x, y);
+                else wCtx.lineTo(x, y);
+            }
+            wCtx.stroke();
+            // 第二音
+            wCtx.beginPath();
+            wCtx.strokeStyle = '#253055';
+            wCtx.lineWidth = 1.8;
+            for (let i = 0; i < steps; i++) {
+                const t = i * timeStep;
+                const phase = 2 * Math.PI * f2 * t;
+                const y = centerY + Math.sin(phase) * amplitude;
+                const x = i;
+                if (i === 0) wCtx.moveTo(x, y);
+                else wCtx.lineTo(x, y);
+            }
+            wCtx.stroke();
+
+            // 标注频率
+            wCtx.font = '12px "Segoe UI", monospace';
+            wCtx.fillStyle = '#465BAF';
+            wCtx.fillText('261.6 Hz', 10, 20);
+            wCtx.fillStyle = '#253055';
+            wCtx.fillText(`${f2.toFixed(1)} Hz`, 10, 40);
+        }
+
+        // ---------- 音频控制 (音量均衡：中央C×2) ----------
+        async function togglePlay() {
+            if (!audioCtx) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    gainNodeC = audioCtx.createGain();
+                    gainNodeSecond = audioCtx.createGain();
+                    gainNodeC.gain.value = 0.24;      // 中央C×2
+                    gainNodeSecond.gain.value = 0.12;
+                    gainNodeC.connect(audioCtx.destination);
+                    gainNodeSecond.connect(audioCtx.destination);
+                } catch (e) {
+                    alert('您的浏览器不支持 Web Audio API');
+                    return;
+                }
+            }
+
+            if (isPlaying) {
+                try {
+                    if (osc1) { osc1.stop(); osc1.disconnect(); osc1 = null; }
+                    if (osc2) { osc2.stop(); osc2.disconnect(); osc2 = null; }
+                } catch (e) {}
+                isPlaying = false;
+            } else {
+                if (audioCtx.state === 'suspended') {
+                    await audioCtx.resume();
+                } else if (audioCtx.state === 'closed') {
+                    audioCtx = new AudioContext();
+                    gainNodeC = audioCtx.createGain();
+                    gainNodeSecond = audioCtx.createGain();
+                    gainNodeC.gain.value = 0.24;
+                    gainNodeSecond.gain.value = 0.12;
+                    gainNodeC.connect(audioCtx.destination);
+                    gainNodeSecond.connect(audioCtx.destination);
+                }
+
+                try {
+                    osc1 = audioCtx.createOscillator();
+                    osc1.type = 'sine';
+                    osc1.frequency.value = CENTRAL_C_FREQ;
+
+                    const secondFreq = CENTRAL_C_FREQ * Math.pow(2, x);
+                    osc2 = audioCtx.createOscillator();
+                    osc2.type = 'sine';
+                    osc2.frequency.value = secondFreq;
+
+                    osc1.connect(gainNodeC);
+                    osc2.connect(gainNodeSecond);
+
+                    osc1.start();
+                    osc2.start();
+
+                    isPlaying = true;
+                } catch (e) {
+                    if (osc1) { osc1.disconnect(); osc1 = null; }
+                    if (osc2) { osc2.disconnect(); osc2 = null; }
+                    isPlaying = false;
+                }
+            }
+
+            drawCanvas();
+            updateStatsAndAudio();
+        }
+
+        // ---------- 鼠标/触摸交互 ----------
+        function handleDragStart(e) {
+            e.preventDefault();
+
+            const { mx, my } = getCanvasCoords(e);
+            if (mx === undefined) return;
+
+            const distToCenter = Math.hypot(mx - centerX, my - centerY);
+            if (distToCenter <= buttonR + 6) {
+                togglePlay();
+                return;
+            }
+
+            // 检测指针端点 (使用 outerCircleR)
+            const endAngle = getEndAngleFromX(x);
+            const endX = centerX + outerCircleR * Math.cos(endAngle);
+            const endY = centerY + outerCircleR * Math.sin(endAngle);
+            const distToEnd = Math.hypot(mx - endX, my - endY);
+
+            if (true) {
+                isDragging = true;
+                const newX = computeRatioFromMouse(mx, my);
+                x = Math.min(1, Math.max(0, newX));
+                drawCanvas();
+                updateStatsAndAudio();
+                return;
+            }
+        }
+
+        function handleDragMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+
+            const { mx, my } = getCanvasCoords(e);
+            if (mx === undefined) return;
+
+            const newX = computeRatioFromMouse(mx, my);
+            x = Math.min(1, Math.max(0, newX));
+            drawCanvas();
+            updateStatsAndAudio();
+        }
+
+        function handleDragEnd(e) {
+            if (isDragging) {
+                isDragging = false;
+                e.preventDefault();
+                drawCanvas();
+            }
+        }
+
+        function getCanvasCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+
+            let clientX, clientY;
+
+            if (e.touches) {
+                if (e.touches.length === 0) return { mx: undefined, my: undefined };
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            const offsetX = (clientX - rect.left) * scaleX;
+            const offsetY = (clientY - rect.top) * scaleY;
+
+            const mx = Math.min(w, Math.max(0, offsetX));
+            const my = Math.min(h, Math.max(0, offsetY));
+            return { mx, my };
+        }
+
+        function attachEvents() {
+            if (dragListenersAttached) return;
+
+            canvas.addEventListener('mousedown', handleDragStart);
+            canvas.addEventListener('mousemove', handleDragMove);
+            canvas.addEventListener('mouseup', handleDragEnd);
+            canvas.addEventListener('mouseleave', handleDragEnd);
+
+            canvas.addEventListener('touchstart', handleDragStart, { passive: false });
+            canvas.addEventListener('touchmove', handleDragMove, { passive: false });
+            canvas.addEventListener('touchend', handleDragEnd);
+            canvas.addEventListener('touchcancel', handleDragEnd);
+
+            dragListenersAttached = true;
+        }
+
+        // 动画循环 (波形静止，但需要持续重绘以响应频率变化)
+        function animateWaveform() {
+            drawWaveform();
+            requestAnimationFrame(animateWaveform);
+        }
+
+        // 初始化
+        function init() {
+            x = 0.32;
+            drawCanvas();
+            updateStatsAndAudio();
+
+            attachEvents();
+
+            window.addEventListener('mouseup', (e) => {
+                if (isDragging) {
+                    isDragging = false;
+                    drawCanvas();
+                }
+            });
+
+            animateWaveform();
+        }
+
+        init();
+    })();
+</script>
+</body>
+</html>
