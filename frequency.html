@@ -23,9 +23,19 @@
         }
         .main-canvas {
             display: block;
-            
             cursor: crosshair;
             touch-action: none;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .main-canvas,
+        .waveform-canvas {
+            max-width: 100%;
+            height: auto;
+            display: block;
         }
         .info-panel {
             display: flex;
@@ -633,7 +643,7 @@
 
         // 初始化
         function init() {
-            x = 0.32;
+            x = 0.585;
             drawCanvas();
             updateStatsAndAudio();
 
