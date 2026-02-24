@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吉他</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #FAFBFC;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            gap: 24px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), 0 8px 16px rgba(0, 0, 0, 0.02);
+            padding: 24px;
+            max-width: 1200px;
+        }
+
+        /* 左侧选择区 — 极简卡片 */
+        .selector-panel {
+            width: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .selector-panel h3 {
+            font-weight: 400;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            color: #5a5a5a;
+            margin-bottom: 4px;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 8px;
+        }
+
+        .note-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .note-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            color: #222;
+            cursor: default;
+            padding: 4px 0;
+            transition: background 0.1s;
+            border-radius: 40px;
+        }
+
+        .note-item:hover {
+            background: #f0f0f0;
+        }
+
+        .note-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #333;
+            margin: 0;
+            cursor: pointer;
+            border-radius: 4px;
+            border: 1px solid #aaa;
+        }
+
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+            flex-shrink: 0;
+        }
+
+        .note-name {
+            flex: 1;
+            font-weight: 300;
+            color: #1e1e1e;
+        }
+
+        .action-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .minimal-btn {
+            background: transparent;
+            border: 1px solid #cbcbcb33;
+            border-radius: 30px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #3a3a3a;
+            cursor: pointer;
+            transition: 0.1s;
+            flex: 1;
+            font-weight: 450;
+        }
+
+        .minimal-btn:hover {
+            background: #f0f0f0;
+            border-color: #9f9f9f33;
+        }
+
+        /* 右侧画布区 — 适应更长的指板 */
+        .fretboard-container {
+            border-radius: 20px;
+            padding: 8px 8px 8px 8px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        canvas {
+            display: block;
+            width: 300px;
+            height: auto;
+            border-radius: 16px;
+            background: #FAFBFC;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 左侧选择框 (多选) -->
+    <div class="selector-panel">
+        <h3>吉他</h3>
+        <div class="note-list" id="note-list"></div>
+        <div class="action-row">
+            <button class="minimal-btn" id="select-all">全选</button>
+            <button class="minimal-btn" id="deselect-all">取消</button>
+        </div>
+    </div>
+
+    <!-- 吉他指板画布 (高度加长至1000px) -->
+    <div class="fretboard-container">
+        <canvas id="fretboardCanvas" width="600" height="3000"></canvas>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- 吉他参数 -----
+        const STRINGS_COUNT = 6;
+        const FRETS_MAX = 24;           // 0~24品 (0为空弦)
+        // 标准调弦 (从粗弦6弦到细弦1弦) 音名索引 C=0, C#=1, D=2, D#=3, E=4, F=5, F#=6, G=7, G#=8, A=9, A#=10, B=11
+        const OPEN_NOTES = [4, 9, 2, 7, 11, 4]; // 6弦E(4), 5弦A(9), 4弦D(2), 3弦G(7), 2弦B(11), 1弦E(4)
+
+        // 十二音名 (升号表示, 符合#C=bD不显示)
+        const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
+        // 色轮: 12色调 (Hue从0开始, 间隔30度)  饱和度70%, 明度72% 舒适色盘
+        const NOTE_COLORS = NOTE_NAMES.map((_, i) => {
+            const hue = (i * 30) % 360;
+            return `hsl(${hue}, 70%, 72%)`;  // 柔和不刺眼
+        });
+
+        // ----- 计算品丝位置 (基于真实吉他弦长比例) -----
+        // 公式: 第n品位置比例 r = 1 - 2^(-n/12)    (设弦枕处n=0, r=0)
+        function getFretPositions(fretCount) {
+            const positions = [];
+            for (let n = 0; n <= fretCount; n++) {
+                // n=0 → 0 ; n=24 → 1 - 2^(-2) = 1 - 0.25 = 0.75
+                const r = 1 - Math.pow(2, -n / 12);
+                positions.push(r);
+            }
+            return positions;
+        }
+
+        const fretRatios = getFretPositions(FRETS_MAX); // 长度25 (0..24)
+        const MAX_RATIO = fretRatios[FRETS_MAX]; // 0.75
+
+        // ----- 画布尺寸 & 边距 (画布高度改为1000px) -----
+        const canvas = document.getElementById('fretboardCanvas');
+        const ctx = canvas.getContext('2d');
+        const CANVAS_W = canvas.width;   // 640
+        const CANVAS_H = canvas.height;  // 2000
+
+        // 弦的X范围 (从左到右: 6弦粗 → 1弦细)
+        const X_LEFT = 70;          // 6弦 (最粗)
+        const X_RIGHT = CANVAS_W - 70; // 1弦 (最细)
+        const STRING_X = [];
+        for (let s = 0; s < STRINGS_COUNT; s++) {
+            // 线性插值: s=0 -> X_LEFT, s=5 -> X_RIGHT
+            const x = X_LEFT + (X_RIGHT - X_LEFT) * (s / (STRINGS_COUNT - 1));
+            STRING_X.push(x);
+        }
+
+        // Y 方向: 琴枕(Y0) 和 第24品丝(Y24) 位置 (上下留白)
+        const Y0 = 140;               // 琴枕线 (0品丝)
+        const Y24 = CANVAS_H - 140;   // 第24品丝
+        const Y_RANGE = Y24 - Y0;
+
+        // 根据比例计算每个品丝的实际Y坐标
+        const fretY = fretRatios.map(r => Y0 + (r / MAX_RATIO) * Y_RANGE);
+
+        // 预计算所有音符信息 (弦, 品, 音名索引, x, y)
+        // 同时包含0品 (空弦) 作为一个特殊区域: 0品圆放置在琴枕上方 (Y0 - 间距/2)
+        const firstFretSpacing = fretY[1] - fretY[0]; // 0~1品间距
+
+        // 为了方便，将所有指位点存入 flat 数组，或者每次绘制时实时计算。实时计算即可，因为只有144个点
+        // 但为了简洁，我们写一个函数绘制所有音符
+
+        // ----- 辅助: 获取品中心Y (pitch 品格 0~24) -----
+        function getNoteY(fret) {
+            if (fret === 0) {
+                // 0品 (空弦) 位于琴枕线上方半个第一品格高度
+                return fretY[0] - firstFretSpacing * 0.5;
+            } else {
+                // 第1品在fretY[0]与fretY[1]中间，第2品在fretY[1]与fretY[2]中间，以此类推
+                return (fretY[fret - 1] + fretY[fret]) / 2;
+            }
+        }
+
+        // ----- 绘制指板 (根据选中的音名索引集合) -----
+        function renderFretboard(selectedNotesSet) {
+            ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+            // 1. 绘制所有品丝 (横线) — 极简细线
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#b0aaa0';
+            ctx.beginPath();
+            for (let f = 0; f <= FRETS_MAX; f++) {
+                const y = fretY[f];
+                ctx.moveTo(X_LEFT - 12, y);
+                ctx.lineTo(X_RIGHT + 12, y);
+            }
+            ctx.strokeStyle = '#cbc4e8';
+            ctx.stroke();
+
+            // 强调琴枕 (0品丝) 稍粗
+            ctx.beginPath();
+            ctx.moveTo(X_LEFT - 12, fretY[0]);
+            ctx.lineTo(X_RIGHT + 12, fretY[0]);
+            ctx.lineWidth = 2.2;
+            ctx.strokeStyle = '#7f6e5c';
+            ctx.stroke();
+
+            // 2. 绘制六根弦 (竖线) — 半透明，线条极简
+            ctx.lineWidth = 1.2;
+            ctx.strokeStyle = '#aaa2ce';
+            ctx.globalAlpha = 0.4;
+            ctx.beginPath();
+            for (let s = 0; s < STRINGS_COUNT; s++) {
+                const x = STRING_X[s];
+                // 弦从比0品略高画到比24品丝略低
+                ctx.moveTo(x, fretY[0] - firstFretSpacing * 0.8);
+                ctx.lineTo(x, fretY[FRETS_MAX] + firstFretSpacing * 0.3);
+            }
+            ctx.stroke();
+            ctx.globalAlpha = 1.0;
+
+            // 3. 绘制所有音符 (圆 + 音名)
+            const NOTE_RADIUS = 24;  // 略增大，适应更高画布
+
+            // 遍历所有弦和品
+            for (let s = 0; s < STRINGS_COUNT; s++) {
+                const stringX = STRING_X[s];
+                const openIdx = OPEN_NOTES[s];
+
+                for (let fret = 0; fret <= FRETS_MAX; fret++) {
+                    // 计算音名索引
+                    const noteIdx = (openIdx + fret) % 12;
+                    const centerY = getNoteY(fret);
+                    const color = NOTE_COLORS[noteIdx];
+
+                    // 判断是否高亮 (用户选中了该音类)
+                    const isSelected = selectedNotesSet.size === 0 ? true : selectedNotesSet.has(noteIdx);
+                    // 透明度: 如果没有任何选择 → 全显示(alpha=1) ; 有选择时，选中的不透明，其余透明度设为0.08 (极淡)
+                    let alpha = 1.0;
+                    if (selectedNotesSet.size > 0) {
+                        alpha = isSelected ? 1.0 : 0.08;   // 更透明，避免干扰
+                    }
+                    ctx.globalAlpha = alpha;
+
+                    // 绘制彩色圆
+                    ctx.beginPath();
+                    ctx.arc(stringX, centerY, NOTE_RADIUS, 0, 2 * Math.PI);
+                    ctx.fillStyle = color;
+                    ctx.shadowColor = 'rgba(0,0,0,0.48)';
+                    ctx.shadowBlur = 12;
+                    ctx.shadowOffsetY = 5;
+                    ctx.fill();
+                    ctx.shadowColor = 'transparent'; // 去掉边框阴影
+                    ctx.strokeStyle = '#44444422';
+                    ctx.lineWidth = 0.6;
+                    ctx.stroke();
+
+                    // 绘制音名
+                    const text = NOTE_NAMES[noteIdx];
+                    ctx.font = '200 24px "Inter", "Avenir", "Helvetica Neue", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = '#000000'; // 黑字在大多数浅色上清晰
+                    ctx.fillText(text, stringX, centerY);
+                }
+            }
+
+            // 4. 标记品位 (极简小数字 0, 3, 5, 7, 9, 12, 15, 17, 19, 21, 24)
+            ctx.globalAlpha = 1.0;
+            ctx.font = '300 28px "Inter"';
+            ctx.fillStyle = '#4d4d4d';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            const markerFrets = [0, 3, 5, 7, 9, 12, 15, 17, 19, 21, 24];
+            markerFrets.forEach(f => {
+                if (f > FRETS_MAX) return;
+                let y;
+                if (f === 0) y = getNoteY(0);        // 0品位置 (琴枕上方)
+                else y = (fretY[f - 1] + fretY[f]) / 2; // 品格中间
+                ctx.fillText(f, X_LEFT - 36, y);
+            });
+            ctx.globalAlpha = 1.0;
+
+            // 5. 标记弦粗细提示 (左侧小字 6弦 到 1弦)
+            /*ctx.font = '9px "Inter", sans-serif';
+            ctx.fillStyle = '#7f7f7f';
+            ctx.globalAlpha = 0.7;
+            ctx.textAlign = 'center';
+            ctx.fillText('⑥ 粗', X_LEFT - 10, fretY[0] - 25);
+            ctx.fillText('① 细', X_RIGHT + 10, fretY[0] - 25);
+            ctx.globalAlpha = 1.0;*/
+        }
+
+        // ----- 左侧复选框逻辑 (生成12音) -----
+        const noteListDiv = document.getElementById('note-list');
+        const checkboxes = [];
+
+        // 根据NOTE_NAMES生成选项
+        NOTE_NAMES.forEach((name, idx) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'note-item';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = idx;
+            checkbox.id = `note_${idx}`;
+
+            const dot = document.createElement('span');
+            dot.className = 'color-dot';
+            dot.style.backgroundColor = NOTE_COLORS[idx];
+
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'note-name';
+            labelSpan.textContent = name;
+
+            itemDiv.appendChild(checkbox);
+            itemDiv.appendChild(dot);
+            itemDiv.appendChild(labelSpan);
+            noteListDiv.appendChild(itemDiv);
+
+            checkboxes.push(checkbox);
+        });
+
+        // 当前选中的音名索引 Set
+        let selectedNotes = new Set();
+
+        // 更新画布 (根据checkbox状态构造Set)
+        function updateFromCheckboxes() {
+            const newSelected = new Set();
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    newSelected.add(parseInt(cb.value, 10));
+                }
+            });
+            selectedNotes = newSelected;
+            renderFretboard(selectedNotes);
+        }
+
+        // 初始化全不选 (所有音符正常显示)
+        checkboxes.forEach(cb => cb.checked = false);
+        updateFromCheckboxes();
+
+        // 监听checkbox变化
+        checkboxes.forEach(cb => cb.addEventListener('change', updateFromCheckboxes));
+
+        // 全选/无按钮
+        document.getElementById('select-all').addEventListener('click', () => {
+            checkboxes.forEach(cb => cb.checked = true);
+            updateFromCheckboxes();
+        });
+        document.getElementById('deselect-all').addEventListener('click', () => {
+            checkboxes.forEach(cb => cb.checked = false);
+            updateFromCheckboxes();
+        });
+
+        // 初次渲染
+        renderFretboard(selectedNotes);
+    })();
+</script>
+</body>
+</html>
