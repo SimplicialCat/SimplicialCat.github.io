@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜和弦</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f5f7fc;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        /* 芙宁娜色彩 */
+        :root {
+            --color-Furina-deep-navy: #253085;
+            --color-Furina-royal-blue: #465BCF;
+            --color-Furina-aqua-cyan: #6AC6E8;
+            --color-Furina-frost-white: #FAFBFC;
+            --color-Furina-misty-blue: #C4D7ED;
+            --color-Furina-vivid-sapphire: #5670E9;
+            --color-Furina-luminous-hydro: #70DBFF;
+            --color-Furina-bright-periwinkle: #8DA4F1;
+            --color-Furina-vintage-gold: #BD9368;
+            --color-Furina-vintage-gold-light: #DDB368;
+            --color-Furina-vintage-gold-ultra-light: #FDF388;
+        }
+
+        .game-container {
+            background-color: transparent;
+            width: 100%;
+            max-width: 900px;
+            padding: 1.8rem 1.2rem 2rem;
+            border: none;
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        /* 按钮行 — 仅下划线 */
+        .button-panel {
+            display: flex;
+            gap: 1.2rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            border: none;
+            background: none;
+            font-size: 1.2rem;
+            font-weight: 400;
+            padding: 0.5rem 0.2rem 0.3rem;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 90px;
+            line-height: 1.2;
+            gap: 0.3rem;
+            color: var(--color-Furina-deep-navy);
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.1s, color 0.1s;
+            box-shadow: none;
+            outline: none;
+        }
+
+        .action-btn:nth-child(1) { border-bottom: 2px solid var(--color-Furina-vintage-gold); }
+        .action-btn:nth-child(2) { border-bottom: 2px solid var(--color-Furina-vintage-gold-light); }
+        .action-btn:nth-child(3) { border-bottom: 2px solid var(--color-Furina-royal-blue); }
+        .action-btn:nth-child(4) { border-bottom: 2px solid var(--color-Furina-vivid-sapphire); }
+
+        .action-btn:hover {
+            color: var(--color-Furina-royal-blue);
+            border-bottom-width: 3px;
+        }
+
+        /* 钢琴容器 */
+        .piano-container {
+            background: none;
+            padding: 1rem 0.5rem 0.8rem 0.5rem;
+            margin-bottom: 1.5rem;
+            border: none;
+            box-shadow: none;
+            border-radius: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 键盘整体尺寸80% */
+        .piano-keys {
+            position: relative;
+            height: 160px;
+            min-width: 600px;
+            margin: 0 auto;
+        }
+
+        .piano-key {
+            position: absolute;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-end;     /* 文字靠底部显示 */
+            justify-content: center;
+            padding-bottom: 5px;
+            font-size: 0.65rem;
+            font-weight: 300;
+            user-select: none;
+            transition: background 0.05s, transform 0.05s;
+            box-sizing: border-box;
+            border: none;
+            box-shadow: none;
+            background: transparent;
+        }
+
+        .piano-key:active {
+            transform: scaleY(0.9);
+        }
+
+        /* 白键：底部固定，高度160，加右侧细线分隔 */
+        .white {
+            background: var(--color-Furina-frost-white);
+            height: 160px;
+            width: 6.6667%;
+            bottom: 0;                /* 白键底部对齐 */
+            color: var(--color-Furina-deep-navy);
+            border-right: 1px solid rgba(37, 48, 133, 0.12);
+            box-shadow: inset 0 -1px 0 rgba(37,48,133,0.05);
+        }
+        .white:last-child {
+            border-right: none;
+        }
+
+        /* 黑键：顶部固定，位于两白键之间，高度96，底部悬空 */
+        .black {
+            background: var(--color-Furina-deep-navy);
+            height: 96px;
+            width: 4%;
+            top: 0;                   /* 黑键顶部与白键顶部对齐 */
+            color: var(--color-Furina-frost-white);
+            z-index: 10;
+            font-size: 0.6rem;
+            padding-bottom: 5px;
+            align-items: flex-end;     /* 文字靠底部，符合视觉 */
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.2);
+        }
+
+        /* 选中状态 — 芙宁娜金色 */
+        .piano-key.selected {
+            background: var(--color-Furina-vintage-gold-light) !important;
+            color: var(--color-Furina-deep-navy) !important;
+            box-shadow: 0 -2px 0 var(--color-Furina-vintage-gold-ultra-light);
+        }
+
+        /* 成功消息 */
+        .success-message {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 450;
+            letter-spacing: 1px;
+            color: var(--color-Furina-vintage-gold);
+            background: rgba(253, 243, 136, 0.15);
+            padding: 0.5rem 1rem;
+            margin: 1rem 0 0.5rem;
+            transition: opacity 0.2s;
+            opacity: 0;
+            pointer-events: none;
+            border: none;
+            box-shadow: none;
+        }
+
+        .success-message.show {
+            opacity: 1;
+        }
+
+        .foot-note {
+            display: flex;
+            justify-content: flex-end;
+            color: var(--color-Furina-misty-blue);
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- 四个按钮，仅下划线 -->
+        <div class="button-panel">
+            <button class="action-btn" id="randomBtn">随机</button>
+            <button class="action-btn" id="replayTargetBtn">目标</button>
+            <button class="action-btn" id="userPlayBtn">播放所选</button>
+            <button class="action-btn" id="clearBtn">清空</button>
+        </div>
+
+        <!-- 钢琴键盘 -->
+        <div class="piano-container">
+            <div class="piano-keys" id="pianoKeys"></div>
+        </div>
+
+        <div class="success-message" id="successMsg">✓ 成功</div>
+        
+        <div class="foot-note"></div>
+    </div>
+
+    <script>
+        (function() {
+            let audioCtx = null;
+            let activeOscillators = new Set();
+            let targetChord = [];
+
+            const pianoKeys = document.getElementById('pianoKeys');
+            const randomBtn = document.getElementById('randomBtn');
+            const replayTargetBtn = document.getElementById('replayTargetBtn');
+            const userBtn = document.getElementById('userPlayBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const successMsg = document.getElementById('successMsg');
+
+            const pitchClasses = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+            function getAllNotes() {
+                const notes = [];
+                for (let midi = 60; midi <= 84; midi++) {
+                    const octave = Math.floor(midi / 12) - 1;
+                    const pc = pitchClasses[midi % 12];
+                    notes.push(pc + octave);
+                }
+                return notes;
+            }
+
+            const allNotes = getAllNotes();
+            const whiteNotes = allNotes.filter(n => !n.includes('#'));
+            const blackNotes = allNotes.filter(n => n.includes('#'));
+
+            // 获取黑键左边白键的索引
+            function getLeftWhiteIndex(blackNote) {
+                const noteName = blackNote.slice(0, -1);
+                const octave = blackNote.slice(-1);
+                let leftNote;
+                if (noteName === 'C#') leftNote = 'C' + octave;
+                else if (noteName === 'D#') leftNote = 'D' + octave;
+                else if (noteName === 'F#') leftNote = 'F' + octave;
+                else if (noteName === 'G#') leftNote = 'G' + octave;
+                else if (noteName === 'A#') leftNote = 'A' + octave;
+                else return -1;
+                return whiteNotes.indexOf(leftNote);
+            }
+
+            // 渲染钢琴键盘：黑键顶部对齐，位于两白键之间
+            function renderPiano() {
+                pianoKeys.innerHTML = '';
+
+                const whiteWidthPercent = 100 / 15; // 6.6667%
+                const blackWidthPercent = 4;        // 4%
+
+                // 白键
+                whiteNotes.forEach((note, index) => {
+                    const key = document.createElement('div');
+                    key.className = 'piano-key white';
+                    key.dataset.note = note;
+                    key.textContent = note;
+                    key.style.left = index * whiteWidthPercent + '%';
+                    key.style.width = whiteWidthPercent + '%';
+                    pianoKeys.appendChild(key);
+                });
+
+                // 黑键：左边缘位于左边白键的右半部，使其视觉上居中于两白键之间
+                blackNotes.forEach(note => {
+                    const leftIdx = getLeftWhiteIndex(note);
+                    if (leftIdx === -1) return;
+
+                    // 计算左偏移：让黑键中心大致在两个白键的分界线上
+                    // 左边白键的左边缘为 leftIdx * whiteWidthPercent，右边缘为 (leftIdx+1)*whiteWidthPercent
+                    // 分界线位置 = (leftIdx+1)*whiteWidthPercent
+                    // 我们希望黑键中心在分界线稍左一点（传统钢琴黑键略偏左），这里使用分界线向左偏移黑键宽度的1/4
+                    const boundary = (leftIdx + 1) * whiteWidthPercent;
+                    const leftPercent = boundary - blackWidthPercent * 0.5; // 调整系数使视觉居中
+                    // 限制边界防止溢出
+                    const finalLeft = Math.max(0, Math.min(100 - blackWidthPercent, leftPercent));
+
+                    const key = document.createElement('div');
+                    key.className = 'piano-key black';
+                    key.dataset.note = note;
+                    key.textContent = note;
+                    key.style.left = finalLeft + '%';
+                    key.style.width = blackWidthPercent + '%';
+                    pianoKeys.appendChild(key);
+                });
+            }
+
+            // 获取选中的音符
+            function getSelectedNotes() {
+                const selectedKeys = document.querySelectorAll('.piano-key.selected');
+                return Array.from(selectedKeys).map(k => k.dataset.note);
+            }
+
+            // 清空所有选中
+            function clearAllSelections() {
+                document.querySelectorAll('.piano-key.selected').forEach(k => k.classList.remove('selected'));
+            }
+
+            // 音名转MIDI
+            function noteNameToMidi(note) {
+                const match = note.match(/^([A-G]#?)(\d+)$/);
+                if (!match) return null;
+                const [, name, octaveStr] = match;
+                const octave = parseInt(octaveStr, 10);
+                const semitone = pitchClasses.indexOf(name);
+                if (semitone === -1) return null;
+                return 12 * (octave + 1) + semitone;
+            }
+
+            // 停止所有声音
+            function stopAllSounds() {
+                activeOscillators.forEach(osc => {
+                    try { osc.stop(); osc.disconnect(); } catch (e) {}
+                });
+                activeOscillators.clear();
+            }
+
+            // 播放和弦 (音高补偿)
+            async function playChord(noteNames) {
+                if (!noteNames || noteNames.length === 0) return;
+
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    await audioCtx.resume();
+                }
+
+                stopAllSounds();
+
+                const masterGain = audioCtx.createGain();
+                masterGain.gain.value = 0.3;
+                masterGain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+                const duration = 1.3;
+
+                noteNames.forEach(note => {
+                    const midi = noteNameToMidi(note);
+                    if (midi === null || midi < 60 || midi > 84) return;
+
+                    let gainFactor = 2 - (midi - 60) / 24;
+                    gainFactor = Math.min(2, Math.max(1, gainFactor));
+
+                    const freq = 440 * Math.pow(2, (midi - 69) / 12);
+
+                    const osc = audioCtx.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+
+                    const gainNode = audioCtx.createGain();
+                    gainNode.gain.setValueAtTime(0, now);
+                    gainNode.gain.linearRampToValueAtTime(0.22 * gainFactor, now + 0.025);
+                    gainNode.gain.linearRampToValueAtTime(0.18 * gainFactor, now + duration - 0.15);
+                    gainNode.gain.linearRampToValueAtTime(0, now + duration);
+
+                    osc.connect(gainNode);
+                    gainNode.connect(masterGain);
+
+                    osc.start(now);
+                    osc.stop(now + duration);
+
+                    activeOscillators.add(osc);
+                    osc.onended = () => {
+                        activeOscillators.delete(osc);
+                        try { gainNode.disconnect(); } catch (e) {}
+                    };
+                });
+            }
+
+            // 随机生成和弦
+            function generateRandomChord() {
+                const maxAttempts = 200;
+                for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                    const numNotes = Math.random() < 0.5 ? 3 : 4;
+                    const startMidi = Math.floor(Math.random() * 13) + 60;
+
+                    const chordMidi = [startMidi];
+                    let valid = true;
+
+                    for (let i = 1; i < numNotes; i++) {
+                        const prev = chordMidi[i-1];
+                        const step = Math.floor(Math.random() * 4) + 2;
+                        const next = prev + step;
+                        if (next > 84) {
+                            if (prev + 2 <= 84) {
+                                chordMidi.push(prev + 2);
+                            } else {
+                                valid = false;
+                                break;
+                            }
+                        } else {
+                            chordMidi.push(next);
+                        }
+                    }
+
+                    if (valid && chordMidi.length === numNotes) {
+                        return chordMidi.map(midi => {
+                            const octave = Math.floor(midi / 12) - 1;
+                            const pc = pitchClasses[midi % 12];
+                            return pc + octave;
+                        });
+                    }
+                }
+                return ['C4', 'E4', 'G4'];
+            }
+
+            // 更新成功显示
+            function updateSuccessState() {
+                const selected = getSelectedNotes();
+                const sortedSelected = [...selected].sort();
+                const sortedTarget = [...targetChord].sort();
+                const isMatch = sortedSelected.length === sortedTarget.length && 
+                                sortedSelected.every((v, i) => v === sortedTarget[i]);
+                if (isMatch) successMsg.classList.add('show');
+                else successMsg.classList.remove('show');
+            }
+
+            // 开始新回合
+            function startNewRound() {
+                targetChord = generateRandomChord();
+                playChord(targetChord);
+                clearAllSelections();
+                successMsg.classList.remove('show');
+            }
+
+            // 事件绑定
+            pianoKeys.addEventListener('click', (e) => {
+                const key = e.target.closest('.piano-key');
+                if (!key) return;
+                key.classList.toggle('selected');
+                updateSuccessState();
+            });
+
+            randomBtn.addEventListener('click', startNewRound);
+
+            replayTargetBtn.addEventListener('click', () => {
+                if (targetChord.length === 0) {
+                    targetChord = generateRandomChord();
+                }
+                playChord(targetChord);
+            });
+
+            userBtn.addEventListener('click', async () => {
+                const selected = getSelectedNotes();
+                if (selected.length === 0) return;
+                await playChord(selected);
+                updateSuccessState();
+            });
+
+            clearBtn.addEventListener('click', () => {
+                clearAllSelections();
+                updateSuccessState();
+            });
+
+            // 初始化
+            renderPiano();
+            targetChord = generateRandomChord();
+            clearAllSelections();
+            successMsg.classList.remove('show');
+
+            window.addEventListener('beforeunload', () => {
+                if (audioCtx) audioCtx.close();
+            });
+        })();
+    </script>
+</body>
+</html>
