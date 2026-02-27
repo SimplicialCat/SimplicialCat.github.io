@@ -60,7 +60,7 @@
             border: none;
             background: none;
             font-size: 1.2rem;
-            font-weight: 400;
+            font-weight: 300;
             padding: 0.5rem 0.2rem 0.3rem;
             cursor: pointer;
             letter-spacing: 0.3px;
@@ -198,10 +198,10 @@
     <div class="game-container">
         <!-- 四个按钮，仅下划线 -->
         <div class="button-panel">
-            <button class="action-btn" id="randomBtn">随机</button>
-            <button class="action-btn" id="replayTargetBtn">目标</button>
+            <button class="action-btn" id="randomBtn">生成目标</button>
+            <button class="action-btn" id="replayTargetBtn">播放目标</button>
             <button class="action-btn" id="userPlayBtn">播放所选</button>
-            <button class="action-btn" id="clearBtn">清空</button>
+            <button class="action-btn" id="clearBtn">清空所选</button>
         </div>
 
         <!-- 钢琴键盘 -->
@@ -382,6 +382,44 @@
                 });
             }
 
+            // 播放单个音符（不停止其他声音）
+            async function playNote(noteName) {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    await audioCtx.resume();
+                }
+                const midi = noteNameToMidi(noteName);
+                if (midi === null || midi < 60 || midi > 84) return;
+                
+                const freq = 440 * Math.pow(2, (midi - 69) / 12);
+                const now = audioCtx.currentTime;
+                const duration = 0.6; // 单音时长
+
+                const osc = audioCtx.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+
+                const gainNode = audioCtx.createGain();
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.1, now + 0.01);   // 峰值音量（可调节）
+                gainNode.gain.linearRampToValueAtTime(0.08, now + duration - 0.1);
+                gainNode.gain.linearRampToValueAtTime(0, now + duration);
+
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + duration);
+
+                activeOscillators.add(osc);
+                osc.onended = () => {
+                    activeOscillators.delete(osc);
+                    try { gainNode.disconnect(); } catch (e) {}
+                };
+            }
+
             // 随机生成和弦
             function generateRandomChord() {
                 const maxAttempts = 200;
@@ -439,11 +477,12 @@
             }
 
             // 事件绑定
-            pianoKeys.addEventListener('click', (e) => {
+            pianoKeys.addEventListener('click', async (e) => {
                 const key = e.target.closest('.piano-key');
                 if (!key) return;
                 key.classList.toggle('selected');
                 updateSuccessState();
+                await playNote(key.dataset.note);
             });
 
             randomBtn.addEventListener('click', startNewRound);
