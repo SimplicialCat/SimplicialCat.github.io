@@ -427,29 +427,50 @@
 
         // ---------- 极小极大 (alpha-beta) 机器最大化，玩家最小化 ----------
         function getBestMove(boardState, depth) {
-            let bestScore = -Infinity;
-            let bestMove = -1;
             const emptyIndices = [];
             for (let i = 0; i < boardState.length; i++) {
                 if (boardState[i] === 'empty') emptyIndices.push(i);
             }
             if (emptyIndices.length === 0) return -1;
 
+            // 1. 检查立即获胜的着法
+            const winningMoves = [];
             for (let idx of emptyIndices) {
                 const newBoard = [...boardState];
                 newBoard[idx] = 'machine';
-
                 const { winner } = checkWinnerAndLines(newBoard);
-                if (winner === 'machine') return idx;
-
-                const score = minimax(newBoard, depth - 1, -Infinity, Infinity, false);
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestMove = idx;
+                if (winner === 'machine') {
+                    winningMoves.push(idx);
                 }
             }
+            if (winningMoves.length > 0) {
+                // 随机选择一个立即获胜的着法
+                return winningMoves[Math.floor(Math.random() * winningMoves.length)];
+            }
 
-            return bestMove !== -1 ? bestMove : emptyIndices[0];
+            // 2. 评估每个着法的得分
+            const movesWithScores = [];
+            for (let idx of emptyIndices) {
+                const newBoard = [...boardState];
+                newBoard[idx] = 'machine';
+                const score = minimax(newBoard, depth - 1, -Infinity, Infinity, false);
+                movesWithScores.push({ idx, score });
+            }
+
+            // 3. 找出最高得分
+            let maxScore = -Infinity;
+            for (let move of movesWithScores) {
+                if (move.score > maxScore) maxScore = move.score;
+            }
+
+            // 4. 收集所有得分为最高得分的着法
+            const bestMoves = [];
+            for (let move of movesWithScores) {
+                if (move.score === maxScore) bestMoves.push(move.idx);
+            }
+
+            // 5. 随机选择一个最优着法
+            return bestMoves[Math.floor(Math.random() * bestMoves.length)];
         }
 
         function minimax(boardState, depth, alpha, beta, isMaximizing) {
