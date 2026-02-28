@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F₅P²</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --color-Furina-deep-navy: #253085;
+            --color-Furina-royal-blue: #465BCF;
+            --color-Furina-aqua-cyan: #6AC6E8;
+            --color-Furina-frost-white: #FAFBFC;
+            --color-Furina-misty-blue: #C4D7ED;
+            --color-Furina-vivid-sapphire: #5670E9;
+            --color-Furina-luminous-hydro: #70DBFF;
+            --color-Furina-bright-periwinkle: #8DA4F1;
+            --color-Furina-vintage-gold: #BD9368;
+            --color-Furina-vintage-gold-light: #DDB368;
+            --color-Furina-vintage-gold-ultra-light: #FDF388;
+
+            --bg-main: var(--color-Furina-frost-white);
+            --grid-line: var(--color-Furina-misty-blue);
+            --player-color: var(--color-Furina-royal-blue);
+            --machine-color: var(--color-Furina-vintage-gold);
+            --highlight-bg: var(--color-Furina-vintage-gold-ultra-light);
+            --text-dark: var(--color-Furina-deep-navy);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 16px;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            width: fit-content;
+        }
+
+        .board-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .affine-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 56px);
+            grid-template-rows: repeat(5, 56px);
+            gap: 2px;
+            background-color: var(--grid-line);
+            border: 2px solid var(--grid-line);
+        }
+
+        .affine-cell {
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .affine-cell:hover {
+            background-color: var(--color-Furina-misty-blue);
+        }
+
+        .affine-cell.highlight,
+        .infinite-cell.highlight {
+            background-color: var(--highlight-bg);
+        }
+
+        .infinite-column {
+            display: flex;
+            flex-direction: column-reverse;  /* 斜率0在最下，∞在最上 */
+            gap: 2px;
+        }
+
+        .infinite-row {
+            display: flex;
+            align-items: center;
+            height: 56px;
+            gap: 6px;
+        }
+
+        .slope-label {
+            width: 48px;
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--color-Furina-vintage-gold);
+            letter-spacing: 0.3px;
+            font-weight: 450;
+        }
+
+        .infinite-cell {
+            width: 56px;
+            height: 56px;
+            background-color: white;
+            border: 1px solid var(--grid-line);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .infinite-cell:hover {
+            background-color: var(--color-Furina-misty-blue);
+        }
+
+        .piece {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .piece.player {
+            background-color: var(--player-color);
+        }
+
+        .piece.machine {
+            background-color: var(--machine-color);
+        }
+
+        .status-bar {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .new-game-btn {
+            background: none;
+            border: none;
+            padding: 6px 0 2px 0;
+            font-size: 1rem;
+            color: var(--color-Furina-deep-navy);
+            border-bottom: 1px solid var(--color-Furina-vintage-gold);
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s;
+        }
+
+        .new-game-btn:hover {
+            color: var(--color-Furina-vivid-sapphire);
+            border-bottom-color: var(--color-Furina-vivid-sapphire);
+        }
+
+        .turn-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .turn-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: var(--player-color);
+        }
+
+        .turn-dot.machine {
+            background-color: var(--machine-color);
+        }
+
+        .small-note {
+            color: var(--color-Furina-bright-periwinkle);
+            font-size: 0.75rem;
+        }
+
+        .infinity-symbol {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <div class="board-row">
+        <div class="affine-grid" id="affineGrid"></div>
+        <div class="infinite-column" id="infiniteColumn"></div>
+    </div>
+
+    <div class="status-bar">
+        <div class="turn-indicator" id="turnIndicator">
+            <span id="turnText">你的回合</span>
+            <span class="turn-dot" id="turnDot"></span>
+        </div>
+        <button class="new-game-btn" id="newGameBtn">新游戏</button>
+    </div>
+    <div class="small-note">先占满一条直线上的5点即胜 (高亮显示)</div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 射影平面 F₅ 点索引 ----------
+        // 0-24: 仿射点 (y*5 + x), 25-30: 无穷远点 (斜率0,1,2,3,4,∞)
+        const SLOPES = [0, 1, 2, 3, 4, '∞'];
+        const INF_INDICES = [25, 26, 27, 28, 29, 30]; // 斜率0→25, 1→26, 2→27, 3→28, 4→29, ∞→30
+
+        // ---------- 预计算所有31条直线 (每条6个点) ----------
+        const lines = [];
+
+        // 1. 有限斜率直线：y = -k*x + b (mod 5)  使得斜率k表示向右一格向上一格 (屏幕坐标y向下为正，向上为负)
+        for (let k = 0; k < 5; k++) {
+            for (let b = 0; b < 5; b++) {
+                const points = [];
+                for (let x = 0; x < 5; x++) {
+                    // 计算 y = (-k*x + b) mod 5 (保证非负)
+                    const y = ((-k * x + b) % 5 + 5) % 5;
+                    points.push(y * 5 + x);
+                }
+                points.push(25 + k); // 对应斜率k的无穷远点
+                lines.push(points);
+            }
+        }
+
+        // 2. 竖直直线 x = c (c=0..4) + 无穷远点斜率∞ (索引30)
+        for (let c = 0; c < 5; c++) {
+            const points = [];
+            for (let y = 0; y < 5; y++) {
+                points.push(y * 5 + c);
+            }
+            points.push(30); // 斜率∞
+            lines.push(points);
+        }
+
+        // 3. 无穷远直线 (所有无穷远点)
+        lines.push([25, 26, 27, 28, 29, 30]);
+
+        // ---------- 游戏状态 ----------
+        let board = new Array(31).fill('empty');   // 'empty', 'player', 'machine'
+        let gameOver = false;
+        let turn = 'player';        // 'player' 或 'machine'
+        let winningLines = [];       // 存储当前获胜的所有直线 (每条直线为索引数组)
+        let aiTimeout = null;
+
+        // DOM 元素
+        const affineGridEl = document.getElementById('affineGrid');
+        const infiniteColumnEl = document.getElementById('infiniteColumn');
+        const turnText = document.getElementById('turnText');
+        const turnDot = document.getElementById('turnDot');
+        const newGameBtn = document.getElementById('newGameBtn');
+
+        // ---------- 辅助: 检查胜者及获胜直线 ----------
+        function checkWinnerAndLines(boardState) {
+            const playerLines = [];
+            const machineLines = [];
+
+            for (let line of lines) {
+                let pCnt = 0, mCnt = 0;
+                for (let idx of line) {
+                    if (boardState[idx] === 'player') pCnt++;
+                    else if (boardState[idx] === 'machine') mCnt++;
+                }
+                if (pCnt >= 5) playerLines.push(line);
+                if (mCnt >= 5) machineLines.push(line);
+            }
+
+            if (machineLines.length > 0) {
+                return { winner: 'machine', lines: machineLines };
+            } else if (playerLines.length > 0) {
+                return { winner: 'player', lines: playerLines };
+            } else {
+                const isFull = boardState.every(cell => cell !== 'empty');
+                if (isFull) return { winner: 'tie', lines: [] };
+                return { winner: null, lines: [] };
+            }
+        }
+
+        // ---------- 渲染棋盘 (带高亮) ----------
+        function renderBoard() {
+            affineGridEl.innerHTML = '';
+            infiniteColumnEl.innerHTML = '';
+
+            const highlightIndices = new Set();
+            for (let line of winningLines) {
+                for (let idx of line) {
+                    highlightIndices.add(idx);
+                }
+            }
+
+            // 绘制仿射5x5
+            for (let y = 0; y < 5; y++) {
+                for (let x = 0; x < 5; x++) {
+                    const idx = y * 5 + x;
+                    const cell = document.createElement('div');
+                    cell.className = 'affine-cell';
+                    if (highlightIndices.has(idx)) cell.classList.add('highlight');
+                    cell.dataset.index = idx;
+
+                    const piece = board[idx];
+                    if (piece !== 'empty') {
+                        const pieceDiv = document.createElement('div');
+                        pieceDiv.className = `piece ${piece}`;
+                        cell.appendChild(pieceDiv);
+                    }
+
+                    affineGridEl.appendChild(cell);
+                }
+            }
+
+            // 绘制无穷远列 (column-reverse 使得斜率0在底部)
+            for (let i = 0; i < 6; i++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'infinite-row';
+
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'slope-label';
+                let slopeText = SLOPES[i];
+                if (slopeText === '∞') {
+                    labelSpan.innerHTML = '<span class="infinity-symbol">∞</span>';
+                } else {
+                    labelSpan.textContent = `斜率${slopeText}`;
+                }
+                rowDiv.appendChild(labelSpan);
+
+                const cell = document.createElement('div');
+                cell.className = 'infinite-cell';
+                const idx = INF_INDICES[i];
+                if (highlightIndices.has(idx)) cell.classList.add('highlight');
+                cell.dataset.index = idx;
+
+                const piece = board[idx];
+                if (piece !== 'empty') {
+                    const pieceDiv = document.createElement('div');
+                    pieceDiv.className = `piece ${piece}`;
+                    cell.appendChild(pieceDiv);
+                }
+
+                rowDiv.appendChild(cell);
+                infiniteColumnEl.appendChild(rowDiv);
+            }
+
+            updateTurnDisplay();
+        }
+
+        function updateTurnDisplay() {
+            if (gameOver) {
+                const { winner } = checkWinnerAndLines(board);
+                if (winner === 'player') {
+                    turnText.innerText = '你赢了';
+                } else if (winner === 'machine') {
+                    turnText.innerText = '机器赢了';
+                } else {
+                    turnText.innerText = '平局';
+                }
+                turnDot.className = 'turn-dot';
+                return;
+            }
+
+            turnText.innerText = turn === 'player' ? '你的回合' : '机器思考';
+            turnDot.className = turn === 'player' ? 'turn-dot player' : 'turn-dot machine';
+        }
+
+        // ---------- 处理落子后更新状态 ----------
+        function afterMove() {
+            const { winner, lines: winLines } = checkWinnerAndLines(board);
+            winningLines = winLines;
+
+            if (winner === 'player' || winner === 'machine' || winner === 'tie') {
+                gameOver = true;
+                renderBoard();
+                return true;
+            }
+
+            renderBoard();
+            return false;
+        }
+
+        // ---------- 玩家点击 (事件委托) ----------
+        function handlePlayerMove(index) {
+            if (gameOver) return false;
+            if (turn !== 'player') return false;
+            if (board[index] !== 'empty') return false;
+
+            board[index] = 'player';
+            const ended = afterMove();
+            if (ended) return true;
+
+            turn = 'machine';
+            updateTurnDisplay();
+
+            if (aiTimeout) clearTimeout(aiTimeout);
+            aiTimeout = setTimeout(() => machineMove(), 120);
+            return true;
+        }
+
+        // ---------- 机器走步 (启发式搜索 depth=3) ----------
+        function machineMove() {
+            if (gameOver) return;
+            if (turn !== 'machine') return;
+
+            if (board.every(cell => cell !== 'empty')) {
+                afterMove();
+                return;
+            }
+
+            const bestMove = getBestMove(board, 3);
+            if (bestMove === undefined || bestMove === -1) return;
+
+            board[bestMove] = 'machine';
+            const ended = afterMove();
+            if (ended) return;
+
+            turn = 'player';
+            updateTurnDisplay();
+        }
+
+        // ---------- 极小极大 (alpha-beta) 机器最大化，玩家最小化 ----------
+        function getBestMove(boardState, depth) {
+            let bestScore = -Infinity;
+            let bestMove = -1;
+            const emptyIndices = [];
+            for (let i = 0; i < boardState.length; i++) {
+                if (boardState[i] === 'empty') emptyIndices.push(i);
+            }
+            if (emptyIndices.length === 0) return -1;
+
+            for (let idx of emptyIndices) {
+                const newBoard = [...boardState];
+                newBoard[idx] = 'machine';
+
+                const { winner } = checkWinnerAndLines(newBoard);
+                if (winner === 'machine') return idx;
+
+                const score = minimax(newBoard, depth - 1, -Infinity, Infinity, false);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = idx;
+                }
+            }
+
+            return bestMove !== -1 ? bestMove : emptyIndices[0];
+        }
+
+        function minimax(boardState, depth, alpha, beta, isMaximizing) {
+            const { winner } = checkWinnerAndLines(boardState);
+            if (winner === 'machine') return 1000000 + depth;
+            if (winner === 'player') return -1000000 - depth;
+            if (winner === 'tie' || depth === 0) {
+                return evaluate(boardState);
+            }
+
+            const emptyIndices = [];
+            for (let i = 0; i < boardState.length; i++) {
+                if (boardState[i] === 'empty') emptyIndices.push(i);
+            }
+            if (emptyIndices.length === 0) return evaluate(boardState);
+
+            if (isMaximizing) {
+                let maxEval = -Infinity;
+                for (let idx of emptyIndices) {
+                    const newBoard = [...boardState];
+                    newBoard[idx] = 'machine';
+                    const evalScore = minimax(newBoard, depth - 1, alpha, beta, false);
+                    maxEval = Math.max(maxEval, evalScore);
+                    alpha = Math.max(alpha, evalScore);
+                    if (beta <= alpha) break;
+                }
+                return maxEval;
+            } else {
+                let minEval = Infinity;
+                for (let idx of emptyIndices) {
+                    const newBoard = [...boardState];
+                    newBoard[idx] = 'player';
+                    const evalScore = minimax(newBoard, depth - 1, alpha, beta, true);
+                    minEval = Math.min(minEval, evalScore);
+                    beta = Math.min(beta, evalScore);
+                    if (beta <= alpha) break;
+                }
+                return minEval;
+            }
+        }
+
+        // 启发式评估 (机器视角)
+        function evaluate(boardState) {
+            let score = 0;
+            for (let line of lines) {
+                let m = 0, p = 0;
+                for (let idx of line) {
+                    if (boardState[idx] === 'machine') m++;
+                    else if (boardState[idx] === 'player') p++;
+                }
+                if (m > 0 && p > 0) continue;
+                if (m > 0) score += Math.pow(m, 4);
+                if (p > 0) score -= Math.pow(p, 4);
+            }
+            return score;
+        }
+
+        // ---------- 重置游戏 ----------
+        function resetGame() {
+            if (aiTimeout) clearTimeout(aiTimeout);
+            board = new Array(31).fill('empty');
+            winningLines = [];
+            gameOver = false;
+            turn = 'player';
+            renderBoard();
+        }
+
+        // ---------- 事件委托 ----------
+        function setupEventDelegation() {
+            document.querySelector('.board-row').addEventListener('click', (e) => {
+                const cell = e.target.closest('.affine-cell, .infinite-cell');
+                if (!cell) return;
+                const index = parseInt(cell.dataset.index);
+                handlePlayerMove(index);
+            });
+        }
+
+        // 初始化
+        function init() {
+            renderBoard();
+            setupEventDelegation();
+            newGameBtn.addEventListener('click', resetGame);
+        }
+
+        init();
+    })();
+</script>
+</body>
+</html>
