@@ -2,13 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>双色生命</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生命游戏</title>
     <style>
         * {
             box-sizing: border-box;
             user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -21,9 +20,9 @@
             width: 100vw;
             display: flex;
             flex-direction: column;
-            touch-action: pan-y pinch-zoom; /* 允许浏览器处理双指缩放？我们将自己处理，所以 canvas 会覆盖 */
         }
 
+        /* 芙宁娜色调变量 */
         :root {
             --color-Furina-deep-navy: #253085;
             --color-Furina-royal-blue: #465BCF;
@@ -38,12 +37,13 @@
             --color-Furina-vintage-gold-ultra-light: #FDF388;
         }
 
+        /* 画布占据主要空间 */
         .canvas-wrapper {
             flex: 1;
             position: relative;
             overflow: hidden;
             background-color: var(--color-Furina-frost-white);
-            touch-action: none; /* 禁止默认滚动/缩放，由我们自己处理 */
+            cursor: crosshair;
         }
 
         canvas {
@@ -51,51 +51,44 @@
             width: 100%;
             height: 100%;
             background-color: var(--color-Furina-frost-white);
-            touch-action: none;
         }
 
-        /* 底部控制栏 — 极简，按钮可触摸 */
+        /* 底部控制栏 — 极简，仅文字+下划线 */
         .controls {
             display: flex;
             flex-wrap: wrap;
-            align-items: center;
+            align-items: baseline;
             justify-content: center;
-            gap: 0.8rem 1.2rem;
-            padding: 0.5rem 0.8rem;
+            gap: 1.8rem 1.2rem;
+            padding: 0.75rem 1.5rem 0.5rem;
             background-color: var(--color-Furina-frost-white);
             border-top: 1px solid var(--color-Furina-misty-blue);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 400;
             color: var(--color-Furina-deep-navy);
             letter-spacing: 0.01em;
-            min-height: 60px; /* 保证高度容纳手指 */
         }
 
+        /* 按钮基座：只有文字 + 下方细线 */
         .ctrl-btn {
             position: relative;
             cursor: pointer;
             color: var(--color-Furina-deep-navy);
             transition: color 0.1s ease;
             white-space: nowrap;
-            padding: 0.4rem 0.2rem;
+            padding: 0.2rem 0;
             border: none;
             background: none;
             font-size: inherit;
             font-family: inherit;
             line-height: 1.2;
-            min-height: 44px;        /* 移动端最小点击区域 */
-            min-width: 44px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
         }
 
+        /* 下方细横线 (默认透明，hover/active显现) */
         .ctrl-btn::after {
             content: '';
             position: absolute;
-            bottom: 0px;
+            bottom: -2px;
             left: 0;
             right: 0;
             height: 1.5px;
@@ -111,6 +104,7 @@
             background-color: var(--color-Furina-aqua-cyan);
         }
 
+        /* 选中状态：金色下划线 + 可能金色文字 */
         .ctrl-btn.active {
             color: var(--color-Furina-vintage-gold);
         }
@@ -119,49 +113,40 @@
             background-color: var(--color-Furina-vintage-gold);
         }
 
+        /* 世代计数单独样式 — 也是纯文字+细线，但不带交互 */
         .generation {
             display: inline-block;
-            margin-left: 0.2rem;
+            margin-left: 0.5rem;
             color: var(--color-Furina-vivid-sapphire);
             font-feature-settings: "tnum";
-            min-width: 70px;          /* 稳定宽度 */
-            text-align: center;
         }
 
         .generation::after {
-            background-color: transparent !important;
+            background-color: transparent !important; /* 不显示下划线 */
         }
 
+        /* 颜色小标记 (纯粹为了视觉对应) */
         .color-indicator {
             display: inline-block;
-            width: 0.8rem;
-            height: 0.8rem;
+            width: 0.7rem;
+            height: 0.7rem;
             border-radius: 1px;
             margin-left: 0.2rem;
             background-color: currentColor;
             vertical-align: middle;
         }
 
+        /* 分割线风格 */
         .separator {
             width: 1px;
-            height: 1.5rem;
+            height: 1.2rem;
             background-color: var(--color-Furina-misty-blue);
             margin: 0 0.2rem;
         }
 
+        /* 移除所有阴影、内容块 */
         button:focus {
             outline: none;
-        }
-
-        /* 移动端横屏或极小设备调整字号 */
-        @media (max-width: 480px) {
-            .controls {
-                gap: 0.5rem 0.8rem;
-                font-size: 0.9rem;
-            }
-            .ctrl-btn {
-                padding: 0.3rem 0.1rem;
-            }
         }
     </style>
 </head>
@@ -171,19 +156,25 @@
     </div>
 
     <div class="controls">
+        <!-- 随机 -->
         <button class="ctrl-btn" id="randomBtn">随机</button>
+        <!-- 清空 -->
         <button class="ctrl-btn" id="clearBtn">清空</button>
+        <!-- 播放/暂停 共用按钮 -->
         <button class="ctrl-btn" id="playPauseBtn">▶</button>
+        <!-- 世代计数 -->
         <span class="ctrl-btn generation" id="genCounter">世代 0</span>
 
+        <!-- 分隔符 (纯粹装饰) -->
         <span class="separator"></span>
 
+        <!-- 绘制面板: 玩家1 (蓝) 玩家2 (金) 擦除 -->
         <button class="ctrl-btn" id="colorABtn" data-mode="A">
-            <span>蓝</span>
+            <span>颜色</span>
             <span class="color-indicator" style="color: var(--color-Furina-royal-blue);"></span>
         </button>
         <button class="ctrl-btn" id="colorBBtn" data-mode="B">
-            <span>金</span>
+            <span>颜色</span>
             <span class="color-indicator" style="color: var(--color-Furina-vintage-gold);"></span>
         </button>
         <button class="ctrl-btn" id="eraseBtn" data-mode="erase">
@@ -195,9 +186,10 @@
     <script>
         (function() {
             // ----- 颜色 & 常量 -----
-            const COLOR_A = 'A';
-            const COLOR_B = 'B';
+            const COLOR_A = 'A';       // 蓝色玩家
+            const COLOR_B = 'B';       // 金色玩家
 
+            // 芙宁娜色调映射到颜色值
             const COLOR_MAP = {
                 [COLOR_A]: '#465BCF',   // Furina-royal-blue
                 [COLOR_B]: '#BD9368'    // Furina-vintage-gold
@@ -207,40 +199,31 @@
             const canvas = document.getElementById('gameCanvas');
             const ctx = canvas.getContext('2d');
 
-            let cells = new Map();          // "x,y" -> 'A' 或 'B'
+            // 网格数据: 键 "x,y" -> 颜色字符 'A' 或 'B'
+            let cells = new Map();
+
             let generation = 0;
 
-            // 视图参数 (初始 cellSize 调小，显示更大范围)
-            let viewportX = 0.0;
-            let viewportY = 0.0;
-            let cellSize = 8;                // 默认更小，显示范围更大
-            const MIN_CELL_SIZE = 5;          // 缩放范围稍宽，但不过分
-            const MAX_CELL_SIZE = 30;
+            // 视图参数
+            let viewportX = 0.0;          // 视口左上角世界 X (格子坐标)
+            let viewportY = 0.0;           // 视口左上角世界 Y
+            let cellSize = 20;              // 格子像素大小 (会随滚轮变化)
+            const MIN_CELL_SIZE = 6;         // 不要缩放得太小
+            const MAX_CELL_SIZE = 36;        // 不要放得太大
 
+            // 画布尺寸 (物理像素)
             let canvasWidth = window.innerWidth;
-            let canvasHeight = window.innerHeight - 60; // 大致控制栏高度
+            let canvasHeight = window.innerHeight - 60; // 减去控制栏高度粗略值，动态调整
 
-            // 交互状态 (鼠标 + 触摸)
+            // 交互状态
             let isPlaying = false;
             let playInterval = null;
-            let drawMode = 'A';                // 'A', 'B', 'erase'
-
-            // 鼠标/触摸绘制
-            let isDrawing = false;              // 鼠标左键/单指触摸绘制中
-            let lastGridX = null, lastGridY = null;
-
-            // 右键拖拽平移 (鼠标)
-            let isDragging = false;
+            let drawMode = 'A';              // 'A', 'B', 'erase'
+            let isDragging = false;           // 右键拖拽平移
+            let isDrawing = false;             // 左键绘制中
+            let lastGridX = null, lastGridY = null; // 用于避免同一格重复绘制
             let dragStartX = 0, dragStartY = 0;
             let viewportStartX = 0, viewportStartY = 0;
-
-            // 触摸双指操作
-            let touchActive = false;
-            let pinchStartDist = 0;
-            let pinchStartCellSize = cellSize;
-            let pinchCenterScreenX = 0, pinchCenterScreenY = 0;
-            let pinchCenterWorldX = 0, pinchCenterWorldY = 0;
-            let isPinching = false;
 
             // 按钮元素
             const randomBtn = document.getElementById('randomBtn');
@@ -250,32 +233,52 @@
             const colorABtn = document.getElementById('colorABtn');
             const colorBBtn = document.getElementById('colorBBtn');
             const eraseBtn = document.getElementById('eraseBtn');
+
+            // 所有模式按钮用于激活样式
             const modeBtns = [colorABtn, colorBBtn, eraseBtn];
 
-            // ----- 辅助函数 -----
+            // ----- 初始化画布尺寸 (响应式) -----
+            function resizeCanvas() {
+                const wrapper = document.querySelector('.canvas-wrapper');
+                const rect = wrapper.getBoundingClientRect();
+                canvasWidth = rect.width;
+                canvasHeight = rect.height;
+                canvas.width = canvasWidth;
+                canvas.height = canvasHeight;
+                drawGrid();
+            }
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+            });
+
+            // ----- 辅助函数: 坐标转换 -----
             function screenToGrid(screenX, screenY) {
                 const worldX = viewportX + screenX / cellSize;
                 const worldY = viewportY + screenY / cellSize;
-                return { x: Math.floor(worldX), y: Math.floor(worldY) };
+                const gridX = Math.floor(worldX);
+                const gridY = Math.floor(worldY);
+                return { x: gridX, y: gridY };
             }
 
+            // 从网格坐标获得屏幕矩形 (用于绘制)
             function gridToScreenRect(gridX, gridY) {
                 const left = (gridX - viewportX) * cellSize;
                 const top = (gridY - viewportY) * cellSize;
                 return { left, top, width: cellSize, height: cellSize };
             }
 
-            // 绘制网格和细胞
+            // ----- 绘制网格和活细胞 -----
             function drawGrid() {
                 ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
+                // 计算可见格子范围 (向外扩展1格防止边缘空缺)
                 const startCol = Math.floor(viewportX);
                 const endCol = Math.ceil(viewportX + canvasWidth / cellSize);
                 const startRow = Math.floor(viewportY);
                 const endRow = Math.ceil(viewportY + canvasHeight / cellSize);
 
-                // 网格线
-                ctx.strokeStyle = '#C4D7ED';
+                // 绘制网格线 (极浅细线)
+                ctx.strokeStyle = '#C4D7ED'; // misty-blue
                 ctx.lineWidth = 0.5;
                 for (let i = startCol; i <= endCol; i++) {
                     const x = (i - viewportX) * cellSize;
@@ -283,6 +286,7 @@
                     ctx.beginPath();
                     ctx.moveTo(x, 0);
                     ctx.lineTo(x, canvasHeight);
+                    ctx.strokeStyle = '#C4D7ED';
                     ctx.stroke();
                 }
                 for (let i = startRow; i <= endRow; i++) {
@@ -291,34 +295,39 @@
                     ctx.beginPath();
                     ctx.moveTo(0, y);
                     ctx.lineTo(canvasWidth, y);
+                    ctx.strokeStyle = '#C4D7ED';
                     ctx.stroke();
                 }
 
-                // 活细胞
+                // 绘制活细胞
                 cells.forEach((color, key) => {
                     const [xStr, yStr] = key.split(',');
                     const x = parseInt(xStr, 10);
                     const y = parseInt(yStr, 10);
-                    if (x < startCol - 1 || x > endCol + 1 || y < startRow - 1 || y > endRow + 1) return;
+                    if (x < startCol - 1 || x > endCol + 1 || y < startRow - 1 || y > endRow + 1) return; // 视口外不绘制
+
                     const { left, top, width, height } = gridToScreenRect(x, y);
-                    ctx.fillStyle = COLOR_MAP[color] || '#465BCF';
-                    ctx.fillRect(left, top, width - 0.5, height - 0.5);
+                    ctx.fillStyle = COLOR_MAP[color] || '#465BCF'; // fallback
+                    ctx.fillRect(left, top, width - 0.5, height - 0.5); // 留一点缝隙看见网格
                 });
             }
 
+            // ----- 更新世代显示 -----
             function updateGenerationDisplay() {
                 genSpan.textContent = `世代 ${generation}`;
             }
 
-            // ----- 演化规则 (不变) -----
+            // ----- 演化一代 (双色规则) -----
             function nextGeneration() {
-                const neighborCount = new Map();
+                const neighborCount = new Map(); // key -> { total, a, b }
 
+                // 遍历所有活细胞，为邻居增加计数
                 cells.forEach((color, key) => {
                     const [xStr, yStr] = key.split(',');
                     const x = parseInt(xStr, 10);
                     const y = parseInt(yStr, 10);
 
+                    // 八个方向
                     for (let dx = -1; dx <= 1; dx++) {
                         for (let dy = -1; dy <= 1; dy++) {
                             if (dx === 0 && dy === 0) continue;
@@ -338,35 +347,46 @@
 
                 const nextCells = new Map();
 
+                // 处理所有有邻居计数的格子 (可能诞生或存活)
                 neighborCount.forEach((count, key) => {
                     const [xStr, yStr] = key.split(',');
                     const x = parseInt(xStr, 10);
                     const y = parseInt(yStr, 10);
-                    const currentColor = cells.get(key);
+                    const currentColor = cells.get(key); // undefined 如果死亡
 
                     if (currentColor) {
+                        // 存活细胞规则：邻居为2或3则存活，否则死
                         if (count.total === 2 || count.total === 3) {
-                            nextCells.set(key, currentColor);
+                            nextCells.set(key, currentColor); // 颜色不变
                         }
                     } else {
+                        // 死亡细胞诞生：恰好3个活邻居
                         if (count.total === 3) {
+                            // 多数颜色 (count.total=3 且 a+b=3, 必有 majority)
                             const newColor = count.a > count.b ? COLOR_A : COLOR_B;
                             nextCells.set(key, newColor);
                         }
                     }
                 });
 
+                // 此外: 当前活细胞但没有任何邻居计数(即孤立, total=0) -> 死亡, 已不在neighborCount中, 无需处理
+                // 但还要检查一些活细胞可能在neighborCount中但因为规则死亡, 已经没加入nextCells, 正确。
+
+                // 更新 cells 和世代
                 cells = nextCells;
                 generation++;
                 updateGenerationDisplay();
                 drawGrid();
             }
 
+            // 定时演化
             function togglePlay() {
                 isPlaying = !isPlaying;
                 if (isPlaying) {
-                    playPauseBtn.textContent = '⏸';
-                    playInterval = setInterval(() => { nextGeneration(); }, 150);
+                    playPauseBtn.textContent = '⏸️';
+                    playInterval = setInterval(() => {
+                        nextGeneration();
+                    }, 150); // 适中速度
                 } else {
                     playPauseBtn.textContent = '▶';
                     clearInterval(playInterval);
@@ -374,16 +394,19 @@
                 }
             }
 
+            // 停止播放 (清空、随机时)
             function pause() {
-                if (isPlaying) togglePlay();
+                if (isPlaying) {
+                    togglePlay();
+                }
             }
 
-            // ----- 随机 / 清空 -----
+            // ----- 随机生成 (有限范围) -----
             function randomize() {
                 pause();
                 cells.clear();
-                const range = 80;
-                const count = 10000;
+                const range = 40; // -40 .. 40 区间
+                const count = 2400; // 不太密
                 for (let i = 0; i < count; i++) {
                     const x = Math.floor(Math.random() * (range * 2)) - range;
                     const y = Math.floor(Math.random() * (range * 2)) - range;
@@ -395,6 +418,7 @@
                 drawGrid();
             }
 
+            // 清空
             function clearAll() {
                 pause();
                 cells.clear();
@@ -403,13 +427,17 @@
                 drawGrid();
             }
 
-            // ----- 绘制操作 -----
+            // ----- 绘制/擦除操作 (根据drawMode) -----
             function applyDrawAt(gridX, gridY) {
                 const key = `${gridX},${gridY}`;
                 if (drawMode === 'erase') {
-                    return cells.delete(key);
+                    if (cells.delete(key)) {
+                        return true;
+                    }
                 } else {
-                    if (cells.get(key) !== drawMode) {
+                    // 绘制颜色 A 或 B
+                    const current = cells.get(key);
+                    if (current !== drawMode) {
                         cells.set(key, drawMode);
                         return true;
                     }
@@ -417,41 +445,34 @@
                 return false;
             }
 
-            // ----- 调整画布大小 -----
-            function resizeCanvas() {
-                const wrapper = document.querySelector('.canvas-wrapper');
-                const rect = wrapper.getBoundingClientRect();
-                canvasWidth = rect.width;
-                canvasHeight = rect.height;
-                canvas.width = canvasWidth;
-                canvas.height = canvasHeight;
-                drawGrid();
-            }
-            window.addEventListener('resize', resizeCanvas);
-
-            // ----- 鼠标事件 (保持不变，但为了与触摸共存，保留) -----
-            function initMouseEvents() {
+            // ----- 事件绑定 -----
+            function initEvents() {
+                // 鼠标滚轮缩放 (基于鼠标位置)
                 canvas.addEventListener('wheel', (e) => {
                     e.preventDefault();
                     const rect = canvas.getBoundingClientRect();
                     const mouseX = e.clientX - rect.left;
                     const mouseY = e.clientY - rect.top;
 
+                    // 鼠标所在世界坐标 (保持不变)
                     const worldX = viewportX + mouseX / cellSize;
                     const worldY = viewportY + mouseY / cellSize;
 
-                    let delta = e.deltaY > 0 ? -1.5 : 1.5;
+                    // 调整cellSize
+                    const delta = e.deltaY > 0 ? -1.5 : 1.5; // 平滑
                     let newSize = cellSize + delta;
                     newSize = Math.min(MAX_CELL_SIZE, Math.max(MIN_CELL_SIZE, newSize));
                     if (newSize === cellSize) return;
                     cellSize = newSize;
 
+                    // 重新计算视口，使鼠标下方世界坐标不变
                     viewportX = worldX - mouseX / cellSize;
                     viewportY = worldY - mouseY / cellSize;
 
                     drawGrid();
                 }, { passive: false });
 
+                // 右键拖拽平移 (阻止默认菜单)
                 canvas.addEventListener('mousedown', (e) => {
                     if (e.button === 2) {
                         e.preventDefault();
@@ -462,14 +483,15 @@
                         viewportStartY = viewportY;
                         canvas.style.cursor = 'grabbing';
                     } else if (e.button === 0) {
+                        // 左键绘制
                         isDrawing = true;
                         const rect = canvas.getBoundingClientRect();
                         const mouseX = e.clientX - rect.left;
                         const mouseY = e.clientY - rect.top;
-                        const { x, y } = screenToGrid(mouseX, mouseY);
-                        applyDrawAt(x, y);
-                        lastGridX = x;
-                        lastGridY = y;
+                        const { x: gridX, y: gridY } = screenToGrid(mouseX, mouseY);
+                        applyDrawAt(gridX, gridY);
+                        lastGridX = gridX;
+                        lastGridY = gridY;
                         drawGrid();
                     }
                 });
@@ -486,12 +508,14 @@
                         const rect = canvas.getBoundingClientRect();
                         const mouseX = e.clientX - rect.left;
                         const mouseY = e.clientY - rect.top;
-                        const { x, y } = screenToGrid(mouseX, mouseY);
-                        if (x !== lastGridX || y !== lastGridY) {
-                            applyDrawAt(x, y);
-                            drawGrid();
-                            lastGridX = x;
-                            lastGridY = y;
+                        const { x: gridX, y: gridY } = screenToGrid(mouseX, mouseY);
+                        // 避免同一格反复重绘
+                        if (gridX !== lastGridX || gridY !== lastGridY) {
+                            if (applyDrawAt(gridX, gridY)) {
+                                drawGrid();
+                            }
+                            lastGridX = gridX;
+                            lastGridY = gridY;
                         }
                     }
                 });
@@ -512,147 +536,15 @@
                     canvas.style.cursor = 'crosshair';
                 });
 
+                // 禁止右键菜单
                 canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-            }
 
-            // ----- 触摸事件 (移动端) -----
-            function initTouchEvents() {
-                let touchStartDistance = 0;
-                let touchStartCellSize = cellSize;
-                let touchStartViewportX = viewportX;
-                let touchStartViewportY = viewportY;
-                let touchStartCenter = { x: 0, y: 0 }; // 屏幕坐标中心
-                let isMultiTouch = false;
-
-                canvas.addEventListener('touchstart', (e) => {
-                    e.preventDefault(); // 阻止滚动
-                    const touches = e.touches;
-                    if (touches.length === 1) {
-                        // 单指绘制
-                        isDrawing = true;
-                        isMultiTouch = false;
-                        const rect = canvas.getBoundingClientRect();
-                        const touchX = touches[0].clientX - rect.left;
-                        const touchY = touches[0].clientY - rect.top;
-                        const { x, y } = screenToGrid(touchX, touchY);
-                        applyDrawAt(x, y);
-                        lastGridX = x;
-                        lastGridY = y;
-                        drawGrid();
-                    } else if (touches.length === 2) {
-                        // 双指开始：进入平移/缩放模式，停止绘制
-                        isDrawing = false;
-                        isMultiTouch = true;
-                        lastGridX = lastGridY = null;
-
-                        // 记录两指中点屏幕坐标
-                        const rect = canvas.getBoundingClientRect();
-                        const x1 = touches[0].clientX - rect.left;
-                        const y1 = touches[0].clientY - rect.top;
-                        const x2 = touches[1].clientX - rect.left;
-                        const y2 = touches[1].clientY - rect.top;
-                        const centerX = (x1 + x2) / 2;
-                        const centerY = (y1 + y2) / 2;
-                        touchStartCenter = { x: centerX, y: centerY };
-
-                        // 记录当前世界坐标中心点
-                        pinchCenterWorldX = viewportX + centerX / cellSize;
-                        pinchCenterWorldY = viewportY + centerY / cellSize;
-
-                        // 记录初始距离
-                        const dx = x2 - x1;
-                        const dy = y2 - y1;
-                        touchStartDistance = Math.hypot(dx, dy);
-                        touchStartCellSize = cellSize;
-                        touchStartViewportX = viewportX;
-                        touchStartViewportY = viewportY;
-                    }
-                }, { passive: false });
-
-                canvas.addEventListener('touchmove', (e) => {
-                    e.preventDefault();
-                    const touches = e.touches;
-                    if (isDrawing && touches.length === 1) {
-                        // 单指移动绘制
-                        const rect = canvas.getBoundingClientRect();
-                        const touchX = touches[0].clientX - rect.left;
-                        const touchY = touches[0].clientY - rect.top;
-                        const { x, y } = screenToGrid(touchX, touchY);
-                        if (x !== lastGridX || y !== lastGridY) {
-                            applyDrawAt(x, y);
-                            drawGrid();
-                            lastGridX = x;
-                            lastGridY = y;
-                        }
-                    } else if (isMultiTouch && touches.length === 2) {
-                        // 双指平移缩放
-                        const rect = canvas.getBoundingClientRect();
-                        const x1 = touches[0].clientX - rect.left;
-                        const y1 = touches[0].clientY - rect.top;
-                        const x2 = touches[1].clientX - rect.left;
-                        const y2 = touches[1].clientY - rect.top;
-
-                        // 当前中心点
-                        const centerX = (x1 + x2) / 2;
-                        const centerY = (y1 + y2) / 2;
-
-                        // 当前距离
-                        const dx = x2 - x1;
-                        const dy = y2 - y1;
-                        const currentDist = Math.hypot(dx, dy);
-
-                        if (touchStartDistance > 0) {
-                            // 缩放因子
-                            const scale = currentDist / touchStartDistance;
-                            let newCellSize = touchStartCellSize * scale;
-                            newCellSize = Math.min(MAX_CELL_SIZE, Math.max(MIN_CELL_SIZE, newCellSize));
-                            if (newCellSize !== cellSize) {
-                                cellSize = newCellSize;
-                                // 重新计算视口，使得中心点世界坐标不变
-                                viewportX = pinchCenterWorldX - centerX / cellSize;
-                                viewportY = pinchCenterWorldY - centerY / cellSize;
-                            } else {
-                                // 仅平移 (基于初始视口 + 偏移)
-                                const deltaX = (centerX - touchStartCenter.x) / cellSize;
-                                const deltaY = (centerY - touchStartCenter.y) / cellSize;
-                                viewportX = touchStartViewportX - deltaX;
-                                viewportY = touchStartViewportY - deltaY;
-                            }
-                        }
-                        drawGrid();
-                    }
-                }, { passive: false });
-
-                canvas.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    const touches = e.touches;
-                    if (touches.length === 0) {
-                        // 所有手指抬起
-                        isDrawing = false;
-                        isMultiTouch = false;
-                        lastGridX = lastGridY = null;
-                    } else if (touches.length === 1) {
-                        // 从双指变为单指: 停止多指模式，进入绘制模式（可选），但为避免误触，我们退出绘制
-                        isMultiTouch = false;
-                        isDrawing = false; // 需要重新按下才开始绘制
-                        lastGridX = lastGridY = null;
-                    }
-                });
-
-                canvas.addEventListener('touchcancel', (e) => {
-                    e.preventDefault();
-                    isDrawing = false;
-                    isMultiTouch = false;
-                    lastGridX = lastGridY = null;
-                });
-            }
-
-            // ----- 按钮事件 -----
-            function initUI() {
+                // 按钮事件
                 randomBtn.addEventListener('click', randomize);
                 clearBtn.addEventListener('click', clearAll);
                 playPauseBtn.addEventListener('click', togglePlay);
 
+                // 模式切换: 激活样式
                 function setActiveMode(mode) {
                     drawMode = mode;
                     modeBtns.forEach(btn => btn.classList.remove('active'));
@@ -665,29 +557,31 @@
                 colorBBtn.addEventListener('click', () => setActiveMode('B'));
                 eraseBtn.addEventListener('click', () => setActiveMode('erase'));
 
+                // 默认激活A
                 setActiveMode('A');
             }
 
-            // ----- 初始化视图 (中心原点，cellSize较小) -----
-            function initialView() {
-                randomize();  // 生成随机细胞
-                // 将视口中心设置为 (0,0)，考虑到 cellSize 较小，能看到较大范围
+            // 额外：重置视角到原点附近（可选，但随机后可能视野丢失，用户可平移）
+            // 我们可以在随机后保持当前视图不变，但若空白可以重置
+            // 增加一个微调：第一次打开随机一组并居中
+            function initialRandomAndCenter() {
+                randomize(); // 包含cells填充，generation=0
+                // 将视口中心设为 (0,0)
                 viewportX = - (canvasWidth / cellSize) / 2;
                 viewportY = - (canvasHeight / cellSize) / 2;
                 drawGrid();
             }
 
+            // 启动一切
             function init() {
                 resizeCanvas();
-                initMouseEvents();
-                initTouchEvents();
-                initUI();
-                initialView();
+                initEvents();
+                initialRandomAndCenter(); // 给用户初始图案
             }
 
             init();
 
-            // 辅助调试 (可选)
+            // 暴露给窗口便于调试 (可选)
             window._cells = cells;
         })();
     </script>
