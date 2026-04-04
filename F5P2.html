@@ -641,9 +641,8 @@
 
         // ---------- 模式选择事件 ----------
         function setupModeSelectors() {
-            gameModeSelect.addEventListener('change', (e) => {
-                gameMode = e.target.value;
-                // 显示/隐藏先手选择
+            // 显示/隐藏逻辑提取为独立函数
+            function updateModeSelectorVisibility() {
                 if (gameMode === 'pve') {
                     firstPlayerSelect.style.display = 'inline-block';
                     firstPlayerLabel.style.display = 'inline';
@@ -651,6 +650,11 @@
                     firstPlayerSelect.style.display = 'none';
                     firstPlayerLabel.style.display = 'none';
                 }
+            }
+
+            gameModeSelect.addEventListener('change', (e) => {
+                gameMode = e.target.value;
+                updateModeSelectorVisibility();
                 resetGame();
             });
 
@@ -658,6 +662,9 @@
                 firstPlayer = e.target.value;
                 resetGame();
             });
+            
+            // 🎯 初始化时立即执行一次，确保首次加载状态正确
+            updateModeSelectorVisibility();
         }
 
         // 初始化
