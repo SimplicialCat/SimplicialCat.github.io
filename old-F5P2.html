@@ -87,7 +87,7 @@
 
         .infinite-column {
             display: flex;
-            flex-direction: column-reverse;
+            flex-direction: column-reverse;  /* 斜率0在最下，∞在最上 */
             gap: 2px;
         }
 
@@ -138,11 +138,6 @@
             background-color: var(--machine-color);
         }
 
-        /* 双人模式下玩家2使用金色 */
-        .piece.player2 {
-            background-color: var(--machine-color);
-        }
-
         .status-bar {
             font-size: 0.95rem;
             color: var(--text-dark);
@@ -150,31 +145,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 16px;
-        }
-
-        .mode-selector {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-        }
-
-        .mode-selector select {
-            background: white;
-            border: 1px solid var(--color-Furina-misty-blue);
-            border-radius: 4px;
-            padding: 4px 8px;
-            font-size: 0.85rem;
-            color: var(--text-dark);
-            cursor: pointer;
-            outline: none;
-            transition: border-color 0.15s;
-        }
-
-        .mode-selector select:hover,
-        .mode-selector select:focus {
-            border-color: var(--color-Furina-vivid-sapphire);
+            gap: 32px;
         }
 
         .new-game-btn {
@@ -210,10 +181,6 @@
             background-color: var(--machine-color);
         }
 
-        .turn-dot.player2 {
-            background-color: var(--machine-color);
-        }
-
         .small-note {
             color: var(--color-Furina-bright-periwinkle);
             font-size: 0.75rem;
@@ -237,21 +204,6 @@
             <span id="turnText">你的回合</span>
             <span class="turn-dot" id="turnDot"></span>
         </div>
-        
-        <!-- 新增：游戏模式选择 -->
-        <div class="mode-selector">
-            <label for="gameMode">模式:</label>
-            <select id="gameMode">
-                <option value="pve">人机对战</option>
-                <option value="pvp">双人对战</option>
-            </select>
-            <span id="firstPlayerLabel" style="margin-left: 4px;">先手:</span>
-            <select id="firstPlayer" style="display: none;">
-                <option value="player">人先</option>
-                <option value="machine">机先</option>
-            </select>
-        </div>
-        
         <button class="new-game-btn" id="newGameBtn">新游戏</button>
     </div>
     <div class="small-note">先占据一条直线上的 5 点即胜</div>
@@ -260,45 +212,46 @@
 <script>
     (function() {
         // ---------- 射影平面 F₅ 点索引 ----------
+        // 0-24: 仿射点 (y*5 + x), 25-30: 无穷远点 (斜率0,1,2,3,4,∞)
         const SLOPES = [0, 1, 2, 3, 4, '∞'];
-        const INF_INDICES = [25, 26, 27, 28, 29, 30];
+        const INF_INDICES = [25, 26, 27, 28, 29, 30]; // 斜率0→25, 1→26, 2→27, 3→28, 4→29, ∞→30
 
-        // ---------- 预计算所有31条直线 ----------
+        // ---------- 预计算所有31条直线 (每条6个点) ----------
         const lines = [];
 
+        // 1. 有限斜率直线：y = -k*x + b (mod 5)  使得斜率k表示向右一格向上一格 (屏幕坐标y向下为正，向上为负)
         for (let k = 0; k < 5; k++) {
             for (let b = 0; b < 5; b++) {
                 const points = [];
                 for (let x = 0; x < 5; x++) {
+                    // 计算 y = (-k*x + b) mod 5 (保证非负)
                     const y = ((-k * x + b) % 5 + 5) % 5;
                     points.push(y * 5 + x);
                 }
-                points.push(25 + k);
+                points.push(25 + k); // 对应斜率k的无穷远点
                 lines.push(points);
             }
         }
 
+        // 2. 竖直直线 x = c (c=0..4) + 无穷远点斜率∞ (索引30)
         for (let c = 0; c < 5; c++) {
             const points = [];
             for (let y = 0; y < 5; y++) {
                 points.push(y * 5 + c);
             }
-            points.push(30);
+            points.push(30); // 斜率∞
             lines.push(points);
         }
 
+        // 3. 无穷远直线 (所有无穷远点)
         lines.push([25, 26, 27, 28, 29, 30]);
 
         // ---------- 游戏状态 ----------
-        let board = new Array(31).fill('empty');
+        let board = new Array(31).fill('empty');   // 'empty', 'player', 'machine'
         let gameOver = false;
-        let turn = 'player';
-        let winningLines = [];
+        let turn = 'player';        // 'player' 或 'machine'
+        let winningLines = [];       // 存储当前获胜的所有直线 (每条直线为索引数组)
         let aiTimeout = null;
-        
-        // 新增：游戏配置
-        let gameMode = 'pve';        // 'pve' 或 'pvp'
-        let firstPlayer = 'player';  // 'player' 或 'machine'
 
         // DOM 元素
         const affineGridEl = document.getElementById('affineGrid');
@@ -306,11 +259,8 @@
         const turnText = document.getElementById('turnText');
         const turnDot = document.getElementById('turnDot');
         const newGameBtn = document.getElementById('newGameBtn');
-        const gameModeSelect = document.getElementById('gameMode');
-        const firstPlayerSelect = document.getElementById('firstPlayer');
-        const firstPlayerLabel = document.getElementById('firstPlayerLabel');
 
-        // ---------- 辅助: 检查胜者 ----------
+        // ---------- 辅助: 检查胜者及获胜直线 ----------
         function checkWinnerAndLines(boardState) {
             const playerLines = [];
             const machineLines = [];
@@ -318,31 +268,25 @@
             for (let line of lines) {
                 let pCnt = 0, mCnt = 0;
                 for (let idx of line) {
-                    if (boardState[idx] === 'player' || boardState[idx] === 'player2') {
-                        // 双人模式下，两个玩家都算作"对手"，分别检查
-                        if (boardState[idx] === 'player') pCnt++;
-                        else if (boardState[idx] === 'player2') mCnt++; // 借用mCnt计数玩家2
-                    } else if (boardState[idx] === 'machine') mCnt++;
+                    if (boardState[idx] === 'player') pCnt++;
+                    else if (boardState[idx] === 'machine') mCnt++;
                 }
                 if (pCnt >= 5) playerLines.push(line);
                 if (mCnt >= 5) machineLines.push(line);
             }
 
-            // 根据游戏模式判断胜者
-            if (gameMode === 'pvp') {
-                if (machineLines.length > 0) return { winner: 'player2', lines: machineLines };
-                if (playerLines.length > 0) return { winner: 'player', lines: playerLines };
+            if (machineLines.length > 0) {
+                return { winner: 'machine', lines: machineLines };
+            } else if (playerLines.length > 0) {
+                return { winner: 'player', lines: playerLines };
             } else {
-                if (machineLines.length > 0) return { winner: 'machine', lines: machineLines };
-                if (playerLines.length > 0) return { winner: 'player', lines: playerLines };
+                const isFull = boardState.every(cell => cell !== 'empty');
+                if (isFull) return { winner: 'tie', lines: [] };
+                return { winner: null, lines: [] };
             }
-            
-            const isFull = boardState.every(cell => cell !== 'empty');
-            if (isFull) return { winner: 'tie', lines: [] };
-            return { winner: null, lines: [] };
         }
 
-        // ---------- 渲染棋盘 ----------
+        // ---------- 渲染棋盘 (带高亮) ----------
         function renderBoard() {
             affineGridEl.innerHTML = '';
             infiniteColumnEl.innerHTML = '';
@@ -366,9 +310,7 @@
                     const piece = board[idx];
                     if (piece !== 'empty') {
                         const pieceDiv = document.createElement('div');
-                        // 双人模式下玩家2使用不同class
-                        const pieceClass = (gameMode === 'pvp' && piece === 'player2') ? 'player2' : piece;
-                        pieceDiv.className = `piece ${pieceClass}`;
+                        pieceDiv.className = `piece ${piece}`;
                         cell.appendChild(pieceDiv);
                     }
 
@@ -376,7 +318,7 @@
                 }
             }
 
-            // 绘制无穷远列
+            // 绘制无穷远列 (column-reverse 使得斜率0在底部)
             for (let i = 0; i < 6; i++) {
                 const rowDiv = document.createElement('div');
                 rowDiv.className = 'infinite-row';
@@ -400,8 +342,7 @@
                 const piece = board[idx];
                 if (piece !== 'empty') {
                     const pieceDiv = document.createElement('div');
-                    const pieceClass = (gameMode === 'pvp' && piece === 'player2') ? 'player2' : piece;
-                    pieceDiv.className = `piece ${pieceClass}`;
+                    pieceDiv.className = `piece ${piece}`;
                     cell.appendChild(pieceDiv);
                 }
 
@@ -416,9 +357,7 @@
             if (gameOver) {
                 const { winner } = checkWinnerAndLines(board);
                 if (winner === 'player') {
-                    turnText.innerText = gameMode === 'pvp' ? '玩家1赢了' : '你赢了';
-                } else if (winner === 'player2') {
-                    turnText.innerText = '玩家2赢了';
+                    turnText.innerText = '你赢了';
                 } else if (winner === 'machine') {
                     turnText.innerText = '机器赢了';
                 } else {
@@ -428,32 +367,16 @@
                 return;
             }
 
-            // 根据模式和当前回合更新显示
-            if (gameMode === 'pvp') {
-                if (turn === 'player') {
-                    turnText.innerText = '玩家1的回合';
-                    turnDot.className = 'turn-dot player';
-                } else {
-                    turnText.innerText = '玩家2的回合';
-                    turnDot.className = 'turn-dot player2';
-                }
-            } else {
-                if (turn === 'player') {
-                    turnText.innerText = '你的回合';
-                    turnDot.className = 'turn-dot player';
-                } else {
-                    turnText.innerText = '机器思考';
-                    turnDot.className = 'turn-dot machine';
-                }
-            }
+            turnText.innerText = turn === 'player' ? '你的回合' : '机器思考';
+            turnDot.className = turn === 'player' ? 'turn-dot player' : 'turn-dot machine';
         }
 
-        // ---------- 落子后更新状态 ----------
+        // ---------- 处理落子后更新状态 ----------
         function afterMove() {
             const { winner, lines: winLines } = checkWinnerAndLines(board);
             winningLines = winLines;
 
-            if (winner === 'player' || winner === 'player2' || winner === 'machine' || winner === 'tie') {
+            if (winner === 'player' || winner === 'machine' || winner === 'tie') {
                 gameOver = true;
                 renderBoard();
                 return true;
@@ -463,35 +386,28 @@
             return false;
         }
 
-        // ---------- 玩家点击处理 ----------
-        function handlePlayerMove(index, player) {
+        // ---------- 玩家点击 (事件委托) ----------
+        function handlePlayerMove(index) {
             if (gameOver) return false;
-            if (turn !== player) return false;
+            if (turn !== 'player') return false;
             if (board[index] !== 'empty') return false;
 
-            board[index] = player;
+            board[index] = 'player';
             const ended = afterMove();
             if (ended) return true;
 
-            // 切换回合
-            if (gameMode === 'pvp') {
-                turn = (turn === 'player') ? 'player2' : 'player';
-            } else {
-                turn = 'machine';
-            }
+            turn = 'machine';
             updateTurnDisplay();
 
-            // 人机模式下，如果是机器回合则延迟执行
-            if (gameMode === 'pve' && turn === 'machine' && !ended) {
-                if (aiTimeout) clearTimeout(aiTimeout);
-                aiTimeout = setTimeout(() => machineMove(), 120);
-            }
+            if (aiTimeout) clearTimeout(aiTimeout);
+            aiTimeout = setTimeout(() => machineMove(), 120);
             return true;
         }
 
-        // ---------- 机器走步 ----------
+        // ---------- 机器走步 (启发式搜索 depth=3) ----------
         function machineMove() {
-            if (gameOver || turn !== 'machine') return;
+            if (gameOver) return;
+            if (turn !== 'machine') return;
 
             if (board.every(cell => cell !== 'empty')) {
                 afterMove();
@@ -509,7 +425,7 @@
             updateTurnDisplay();
         }
 
-        // ---------- 极小极大搜索 ----------
+        // ---------- 极小极大 (alpha-beta) 机器最大化，玩家最小化 ----------
         function getBestMove(boardState, depth) {
             const emptyIndices = [];
             for (let i = 0; i < boardState.length; i++) {
@@ -517,19 +433,22 @@
             }
             if (emptyIndices.length === 0) return -1;
 
-            // 检查立即获胜
+            // 1. 检查立即获胜的着法
             const winningMoves = [];
             for (let idx of emptyIndices) {
                 const newBoard = [...boardState];
                 newBoard[idx] = 'machine';
                 const { winner } = checkWinnerAndLines(newBoard);
-                if (winner === 'machine') winningMoves.push(idx);
+                if (winner === 'machine') {
+                    winningMoves.push(idx);
+                }
             }
             if (winningMoves.length > 0) {
+                // 随机选择一个立即获胜的着法
                 return winningMoves[Math.floor(Math.random() * winningMoves.length)];
             }
 
-            // 评估着法
+            // 2. 评估每个着法的得分
             const movesWithScores = [];
             for (let idx of emptyIndices) {
                 const newBoard = [...boardState];
@@ -538,20 +457,29 @@
                 movesWithScores.push({ idx, score });
             }
 
+            // 3. 找出最高得分
             let maxScore = -Infinity;
             for (let move of movesWithScores) {
                 if (move.score > maxScore) maxScore = move.score;
             }
 
-            const bestMoves = movesWithScores.filter(m => m.score === maxScore).map(m => m.idx);
+            // 4. 收集所有得分为最高得分的着法
+            const bestMoves = [];
+            for (let move of movesWithScores) {
+                if (move.score === maxScore) bestMoves.push(move.idx);
+            }
+
+            // 5. 随机选择一个最优着法
             return bestMoves[Math.floor(Math.random() * bestMoves.length)];
         }
 
         function minimax(boardState, depth, alpha, beta, isMaximizing) {
             const { winner } = checkWinnerAndLines(boardState);
             if (winner === 'machine') return 1000000 + depth;
-            if (winner === 'player' || winner === 'player2') return -1000000 - depth;
-            if (winner === 'tie' || depth === 0) return evaluate(boardState);
+            if (winner === 'player') return -1000000 - depth;
+            if (winner === 'tie' || depth === 0) {
+                return evaluate(boardState);
+            }
 
             const emptyIndices = [];
             for (let i = 0; i < boardState.length; i++) {
@@ -574,7 +502,7 @@
                 let minEval = Infinity;
                 for (let idx of emptyIndices) {
                     const newBoard = [...boardState];
-                    newBoard[idx] = (gameMode === 'pvp') ? 'player2' : 'player';
+                    newBoard[idx] = 'player';
                     const evalScore = minimax(newBoard, depth - 1, alpha, beta, true);
                     minEval = Math.min(minEval, evalScore);
                     beta = Math.min(beta, evalScore);
@@ -584,13 +512,14 @@
             }
         }
 
+        // 启发式评估 (机器视角)
         function evaluate(boardState) {
             let score = 0;
             for (let line of lines) {
                 let m = 0, p = 0;
                 for (let idx of line) {
                     if (boardState[idx] === 'machine') m++;
-                    else if (boardState[idx] === 'player' || boardState[idx] === 'player2') p++;
+                    else if (boardState[idx] === 'player') p++;
                 }
                 if (m > 0 && p > 0) continue;
                 if (m > 0) score += Math.pow(m, 4);
@@ -605,20 +534,8 @@
             board = new Array(31).fill('empty');
             winningLines = [];
             gameOver = false;
-            
-            // 根据配置设置初始回合
-            if (gameMode === 'pve') {
-                turn = firstPlayer;
-            } else {
-                turn = 'player'; // 双人模式总是玩家1先
-            }
-            
+            turn = 'player';
             renderBoard();
-            
-            // 如果是人机模式且机器先手，延迟执行机器第一步
-            if (gameMode === 'pve' && firstPlayer === 'machine' && !gameOver) {
-                setTimeout(() => machineMove(), 300);
-            }
         }
 
         // ---------- 事件委托 ----------
@@ -627,48 +544,14 @@
                 const cell = e.target.closest('.affine-cell, .infinite-cell');
                 if (!cell) return;
                 const index = parseInt(cell.dataset.index);
-                
-                // 根据模式处理不同玩家
-                if (gameMode === 'pvp') {
-                    // 双人模式：当前轮到谁就谁下
-                    handlePlayerMove(index, turn);
-                } else {
-                    // 人机模式：只有玩家能点击
-                    handlePlayerMove(index, 'player');
-                }
-            });
-        }
-
-        // ---------- 模式选择事件 ----------
-        function setupModeSelectors() {
-            gameModeSelect.addEventListener('change', (e) => {
-                gameMode = e.target.value;
-                // 显示/隐藏先手选择
-                if (gameMode === 'pve') {
-                    firstPlayerSelect.style.display = 'inline-block';
-                    firstPlayerLabel.style.display = 'inline';
-                } else {
-                    firstPlayerSelect.style.display = 'none';
-                    firstPlayerLabel.style.display = 'none';
-                }
-                resetGame();
-            });
-
-            firstPlayerSelect.addEventListener('change', (e) => {
-                firstPlayer = e.target.value;
-                resetGame();
+                handlePlayerMove(index);
             });
         }
 
         // 初始化
         function init() {
-            // 同步配置状态
-            gameMode = gameModeSelect.value;
-            firstPlayer = firstPlayerSelect.value;
-            
             renderBoard();
             setupEventDelegation();
-            setupModeSelectors();
             newGameBtn.addEventListener('click', resetGame);
         }
 
