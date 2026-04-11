@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>数学价值观测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--color-Furina-frost-white);
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+            color: var(--color-Furina-deep-navy);
+            line-height: 1.4;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 芙宁娜色彩主题 */
+        :root {
+            --color-Furina-deep-navy: #253085;
+            --color-Furina-royal-blue: #465BCF;
+            --color-Furina-aqua-cyan: #6AC6E8;
+            --color-Furina-frost-white: #FAFBFC;
+            --color-Furina-misty-blue: #C4D7ED;
+            --color-Furina-vivid-sapphire: #5670E9;
+            --color-Furina-luminous-hydro: #70DBFF;
+            --color-Furina-bright-periwinkle: #8DA4F1;
+            --color-Furina-vintage-gold: #BD9368;
+            --color-Furina-vintage-gold-light: #DDB368;
+            --color-Furina-vintage-gold-ultra-light: #FDF388;
+        }
+
+        .container {
+            max-width: 780px;
+            width: 100%;
+            margin: 0 auto;
+            background: transparent;
+        }
+
+        /* 极简卡片 — 无阴影，无边界块，仅靠文字和分割线 */
+        .test-panel {
+            background: transparent;
+            border: none;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--color-Furina-misty-blue);
+            padding-bottom: 0.75rem;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            color: var(--color-Furina-deep-navy);
+        }
+
+        .header .sub {
+            font-size: 0.85rem;
+            color: var(--color-Furina-royal-blue);
+            margin-top: 0.3rem;
+            font-weight: 350;
+        }
+
+        /* 进度指示 */
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 2rem;
+            font-size: 0.85rem;
+            color: var(--color-Furina-deep-navy);
+            border-bottom: none;
+        }
+        .progress span:first-child {
+            font-weight: 450;
+        }
+        .progress-bar {
+            width: 60%;
+            height: 1px;
+            background: var(--color-Furina-misty-blue);
+            position: relative;
+        }
+        .progress-fill {
+            height: 1px;
+            background: var(--color-Furina-vintage-gold);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        /* 问题区域 */
+        .question-area {
+            margin-bottom: 2.2rem;
+        }
+        .question-text {
+            font-size: 1.35rem;
+            font-weight: 470;
+            line-height: 1.4;
+            color: var(--color-Furina-deep-navy);
+            margin-bottom: 2rem;
+            padding-right: 0.5rem;
+        }
+
+        /* 双选项布局 */
+        .options-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 1.5rem;
+            margin: 1.8rem 0 1.2rem 0;
+        }
+        .option-left, .option-right {
+            flex: 1;
+            font-size: 0.95rem;
+            font-weight: 400;
+            line-height: 1.4;
+            color: var(--color-Furina-royal-blue);
+            border-top: 1px solid transparent;
+            padding-top: 0.2rem;
+        }
+        .option-left {
+            text-align: left;
+            padding-right: 0.5rem;
+        }
+        .option-right {
+            text-align: right;
+            padding-left: 0.5rem;
+        }
+        .option-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-Furina-vintage-gold);
+            margin-bottom: 0.25rem;
+            font-weight: 400;
+        }
+
+        /* 滑块区域 */
+        .slider-container {
+            margin: 1.5rem 0 1.2rem 0;
+            padding: 0.2rem 0;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 2px;
+            -webkit-appearance: none;
+            background: var(--color-Furina-misty-blue);
+            border-radius: 0;
+            outline: none;
+        }
+        input[type="range"]:focus {
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 0;
+            background: var(--color-Furina-vintage-gold);
+            border: none;
+            cursor: pointer;
+            box-shadow: none;
+            transition: 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--color-Furina-vintage-gold-light);
+            transform: scale(1.2);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 0;
+            background: var(--color-Furina-vintage-gold);
+            border: none;
+            cursor: pointer;
+        }
+        .value-indicator {
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 0.6rem;
+            color: var(--color-Furina-deep-navy);
+            font-weight: 450;
+            letter-spacing: 0.3px;
+        }
+        .value-indicator span {
+            color: var(--color-Furina-vintage-gold);
+            font-weight: 500;
+        }
+
+        /* 极简按钮组 — 只有一条下划线 */
+        .nav-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin: 2rem 0 1.5rem 0;
+            flex-wrap: wrap;
+        }
+        .btn-line {
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--color-Furina-misty-blue);
+            font-size: 0.9rem;
+            padding: 0.4rem 0.2rem;
+            cursor: pointer;
+            color: var(--color-Furina-deep-navy);
+            transition: border-color 0.2s, color 0.2s;
+            font-weight: 400;
+        }
+        .btn-line:hover {
+            border-bottom-color: var(--color-Furina-vintage-gold);
+            color: var(--color-Furina-vivid-sapphire);
+        }
+        .btn-line:active {
+            transform: translateY(1px);
+        }
+
+        .result-area {
+            margin-top: 2.5rem;
+            border-top: 1px solid var(--color-Furina-misty-blue);
+            padding-top: 1.8rem;
+        }
+        .result-title {
+            font-size: 1rem;
+            font-weight: 450;
+            margin-bottom: 1rem;
+            color: var(--color-Furina-deep-navy);
+        }
+        .mathematician-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .match-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            font-size: 1rem;
+            border-bottom: 1px dotted var(--color-Furina-misty-blue);
+            padding-bottom: 0.5rem;
+        }
+        .match-name {
+            font-weight: 500;
+            color: var(--color-Furina-deep-navy);
+        }
+        .match-distance {
+            font-size: 0.7rem;
+            color: var(--color-Furina-vintage-gold);
+            font-family: monospace;
+        }
+        .reset-btn {
+            margin-top: 1.5rem;
+            text-align: right;
+        }
+        .footnote {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--color-Furina-misty-blue);
+            border-top: none;
+        }
+
+        @media (max-width: 600px) {
+            .question-text {
+                font-size: 1.2rem;
+            }
+            .options-row {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            .option-left, .option-right {
+                text-align: left;
+                border-left: 1px solid var(--color-Furina-misty-blue);
+                padding-left: 0.7rem;
+            }
+            .option-right {
+                text-align: left;
+            }
+            .nav-buttons {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="test-panel">
+        <div class="header">
+            <h1>数学价值观</h1>
+            <div class="sub"></div>
+        </div>
+
+        <div class="progress">
+            <span id="qCounter">第1 / 11题</span>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+
+        <div class="question-area">
+            <div class="question-text" id="questionText">加载中...</div>
+            <div class="options-row">
+                <div class="option-left">
+                    <div class="option-label">◈ 倾向左端 (-3)</div>
+                    <span id="leftOptionText">—</span>
+                </div>
+                <div class="option-right">
+                    <div class="option-label">倾向右端 (3) ◈</div>
+                    <span id="rightOptionText">—</span>
+                </div>
+            </div>
+            <div class="slider-container">
+                <input type="range" id="scoreSlider" min="-3" max="3" step="1" value="0">
+                <div class="value-indicator">
+                    当前倾向 · <span id="sliderValue">0</span> 
+                    <span style="font-weight: normal;">（ -3 : 强烈左翼 · 3 : 强烈右翼 ）</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="btn-line" id="prevBtn">◀ 上一题</button>
+            <button class="btn-line" id="nextBtn">下一题 ▶</button>
+            <button class="btn-line" id="viewResultBtn">✦ 提交答案 ✦</button>
+            <button class="btn-line" id="resetTestBtn">⟳ 重置全部</button>
+        </div>
+
+        <div class="result-area" id="resultArea" style="display: none;">
+            <div class="result-title">⟡ 与你精神最接近的数学家 ⟡</div>
+            <div class="mathematician-list" id="matchList"></div>
+            <div class="reset-btn">
+                <button class="btn-line" id="newTestFromResult">重新测试</button>
+            </div>
+        </div>
+        <div class="footnote">—— 本测试仅供娱乐 ——</div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // 原始数据 (基于提供的 JSON，共 11 个问题)
+    // --------------------------------------------------------------
+    const questionsData = [
+      {
+        "question": "对于强大的 \"黑箱\" 定理, 你",
+        "options": [
+          { "text": "至少希望对其证明有基本的直观", "mathematicians": ["Alain Connes", "Paul Erdős", "Kurt Gödel", "Alexander Grothendieck", "G. H. Hardy", "David Hilbert", "John Milnor", "Emmy Noether", "Henri Poincaré", "Laurent Schwartz", "Jean-Pierre Serre", "William Thurston", "Vladimir Voevodsky", "André Weil", "Hermann Weyl"] },
+          { "text": "能欣然接受, 尽管对其证明没有任何理解", "mathematicians": ["John von Neumann", "Terence Tao", "Srinivasa Ramanujan"] }
+        ]
+      },
+      {
+        "question": "你认为数学的意义更接近于",
+        "options": [
+          { "text": "人类心智的荣耀; 重视理论的精巧结构与自洽性", "mathematicians": ["Alain Connes", "Paul Erdős", "Kurt Gödel", "Alexander Grothendieck", "G. H. Hardy", "David Hilbert", "John Milnor", "Emmy Noether", "Srinivasa Ramanujan", "Jean-Pierre Serre", "William Thurston", "Vladimir Voevodsky", "André Weil"] },
+          { "text": "解释世界, 乃至改造世界; 重视与其它学科的连接", "mathematicians": ["John von Neumann", "Henri Poincaré", "Hermann Weyl", "Terence Tao", "Laurent Schwartz"] }
+        ]
+      },
+      {
+        "question": "你更认同以下哪种说法?",
+        "options": [
+          { "text": "将已有的结果用新的数学工具证明, 用新的数学语言陈述, 本身就是有价值的", "mathematicians": ["Alain Connes", "Kurt Gödel", "Alexander Grothendieck", "David Hilbert", "John von Neumann", "Emmy Noether", "Laurent Schwartz", "Jean-Pierre Serre", "Terence Tao", "William Thurston", "Vladimir Voevodsky", "André Weil", "Hermann Weyl"] },
+          { "text": "新的数学工具和数学语言, 只有通过证明新的定理才能展现出价值", "mathematicians": ["Paul Erdős", "G. H. Hardy", "Srinivasa Ramanujan", "John Milnor", "Henri Poincaré"] }
+        ]
+      },
+      {
+        "question": "对于数学论证所依赖的数学基础, 你",
+        "options": [
+          { "text": "会适当关注, 并区分使用不同数学基础的证明", "mathematicians": ["Alain Connes", "Kurt Gödel", "Alexander Grothendieck", "David Hilbert", "John von Neumann", "Emmy Noether", "Henri Poincaré", "Jean-Pierre Serre", "Terence Tao", "Vladimir Voevodsky", "André Weil", "Hermann Weyl"] },
+          { "text": "不太关注, 认为不会影响论证的价值", "mathematicians": ["Paul Erdős", "G. H. Hardy", "Srinivasa Ramanujan", "John Milnor", "William Thurston", "Laurent Schwartz"] }
+        ]
+      },
+      {
+        "question": "在讨论/演讲/授课时, 你更重视",
+        "options": [
+          { "text": "指出所讲内容背后深刻的道理, 在更大的故事中扮演的角色, 即使其中包含不严格的想法", "mathematicians": ["Alexander Grothendieck", "William Thurston", "Henri Poincaré", "Alain Connes", "Hermann Weyl", "Terence Tao", "Paul Erdős", "Srinivasa Ramanujan", "Kurt Gödel", "Vladimir Voevodsky"] },
+          { "text": "使用更具体, 熟悉的概念, 确保逻辑链条完整", "mathematicians": ["G. H. Hardy", "David Hilbert", "John Milnor", "John von Neumann", "Emmy Noether", "Laurent Schwartz", "Jean-Pierre Serre", "André Weil"] }
+        ]
+      },
+      {
+        "question": "对于计算机辅助证明与形式化工具如 Lean, Coq, 你的态度更接近",
+        "options": [
+          { "text": "保持审慎距离, 认为数学的核心是人类直觉与创造性", "mathematicians": ["Alain Connes", "Paul Erdős", "Kurt Gödel", "Alexander Grothendieck", "G. H. Hardy", "John Milnor", "Emmy Noether", "Henri Poincaré", "Srinivasa Ramanujan", "Laurent Schwartz", "Jean-Pierre Serre", "William Thurston", "André Weil", "Hermann Weyl"] },
+          { "text": "欣然拥抱, 认为它们是未来数学的基石", "mathematicians": ["Vladimir Voevodsky", "Terence Tao", "John von Neumann", "David Hilbert"] }
+        ]
+      },
+      {
+        "question": "对于历史悠久的数学概念, 你更看重",
+        "options": [
+          { "text": "现代重构, 认为历史包袱是理解的障碍", "mathematicians": ["Alain Connes", "Paul Erdős", "Kurt Gödel", "Alexander Grothendieck", "David Hilbert", "John Milnor", "John von Neumann", "Emmy Noether", "Laurent Schwartz", "Jean-Pierre Serre", "Terence Tao", "Vladimir Voevodsky", "André Weil"] },
+          { "text": "原始动机与历史脉络, 认为脱离背景会丢失数学的灵魂", "mathematicians": ["Henri Poincaré", "G. H. Hardy", "Srinivasa Ramanujan", "William Thurston", "Hermann Weyl"] }
+        ]
+      },
+      {
+        "question": "你认为数学进步的主要标志是",
+        "options": [
+          { "text": "建立连接不同领域的统一框架或新范式", "mathematicians": ["Alain Connes", "Kurt Gödel", "Alexander Grothendieck", "G. H. Hardy", "David Hilbert", "Emmy Noether", "Laurent Schwartz", "Jean-Pierre Serre", "William Thurston", "Vladimir Voevodsky", "André Weil", "Hermann Weyl"] },
+          { "text": "解决长期悬而未决的具体猜想", "mathematicians": ["Paul Erdős", "Srinivasa Ramanujan", "John Milnor", "Terence Tao", "John von Neumann", "Henri Poincaré"] }
+        ]
+      },
+      {
+        "question": "当你发现一个现有概念的例子, 它的构造极其复杂且完全违背直觉, 你感到",
+        "options": [
+          { "text": "厌恶, 认为这个概念定义得不够好, 偏离了数学的本质", "mathematicians": ["Alexander Grothendieck", "G. H. Hardy", "Hermann Weyl", "Emmy Noether", "David Hilbert", "Alain Connes", "André Weil"] },
+          { "text": "兴奋, 认为这揭示了人类直觉的局限, 展示了数学疆域的真实复杂性", "mathematicians": ["Paul Erdős", "Kurt Gödel", "John Milnor", "John von Neumann", "Henri Poincaré", "Srinivasa Ramanujan", "Laurent Schwartz", "Jean-Pierre Serre", "Terence Tao", "William Thurston", "Vladimir Voevodsky"] }
+        ]
+      },
+      {
+        "question": "对于陌生的概念, 你希望首先",
+        "options": [
+          { "text": "从抽象性质中获得直观", "mathematicians": ["Alain Connes", "Kurt Gödel", "Alexander Grothendieck", "David Hilbert", "Emmy Noether", "Vladimir Voevodsky", "André Weil", "Hermann Weyl"] },
+          { "text": "具体例子中获得直观", "mathematicians": ["John Milnor", "Jean-Pierre Serre", "Terence Tao", "Henri Poincaré", "Srinivasa Ramanujan", "Paul Erdős", "Laurent Schwartz", "William Thurston", "G. H. Hardy", "John von Neumann"] }
+        ]
+      }
+    ];
+
+    // 完整的数学家列表 (16位核心，全部涵盖)
+    const allMathematicians = [
+        "Alain Connes", "Paul Erdős", "Kurt Gödel", "Alexander Grothendieck", "G. H. Hardy",
+        "David Hilbert", "John Milnor", "John von Neumann", "Emmy Noether", "Henri Poincaré",
+        "Srinivasa Ramanujan", "Laurent Schwartz", "Jean-Pierre Serre", "Terence Tao",
+        "William Thurston", "Vladimir Voevodsky", "André Weil", "Hermann Weyl"
+    ];
+
+    // 构建每位数学家的倾向向量 (长度 = 问题数，每个值为 -3 或 3，若不在任何选项中则保持0，但数据完整)
+    const numQuestions = questionsData.length;
+    // 初始化: 每位数学家一个长度为 numQuestions 的数组，默认0
+    let mathematicianProfiles = {};
+    allMathematicians.forEach(math => {
+        mathematicianProfiles[math] = new Array(numQuestions).fill(0);
+    });
+
+    // 填充倾向: 对于每个问题，对于每个选项，将其数学家映射到对应倾向值 (-3 左选项，3 右选项)
+    questionsData.forEach((q, idx) => {
+        const leftOpt = q.options[0];
+        const rightOpt = q.options[1];
+        if (leftOpt && leftOpt.mathematicians) {
+            leftOpt.mathematicians.forEach(name => {
+                if (mathematicianProfiles[name] && mathematicianProfiles[name][idx] === 0) {
+                    mathematicianProfiles[name][idx] = -3;
+                }
+            });
+        }
+        if (rightOpt && rightOpt.mathematicians) {
+            rightOpt.mathematicians.forEach(name => {
+                if (mathematicianProfiles[name] && mathematicianProfiles[name][idx] === 0) {
+                    mathematicianProfiles[name][idx] = 3;
+                }
+            });
+        }
+    });
+
+    // 后处理: 极少数未覆盖的情况（保证完整性），但根据数据已经覆盖所有数学家每题，不过可做防护: 仍然保持0表示中性，不影响距离比较（罕见）
+    
+    // ---------- 测试者状态 ----------
+    let userAnswers = new Array(numQuestions).fill(0);   // -3..3, 默认0 (中立)
+    let currentIndex = 0;          // 0-based
+
+    // DOM 元素
+    const questionTextEl = document.getElementById("questionText");
+    const leftOptionTextEl = document.getElementById("leftOptionText");
+    const rightOptionTextEl = document.getElementById("rightOptionText");
+    const scoreSlider = document.getElementById("scoreSlider");
+    const sliderValueSpan = document.getElementById("sliderValue");
+    const qCounterSpan = document.getElementById("qCounter");
+    const progressFill = document.getElementById("progressFill");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const viewResultBtn = document.getElementById("viewResultBtn");
+    const resetTestBtn = document.getElementById("resetTestBtn");
+    const resultArea = document.getElementById("resultArea");
+    const matchListDiv = document.getElementById("matchList");
+    const newTestFromResult = document.getElementById("newTestFromResult");
+
+    // 更新当前题目的UI
+    function updateCurrentQuestion() {
+        const q = questionsData[currentIndex];
+        questionTextEl.textContent = q.question;
+        leftOptionTextEl.textContent = q.options[0].text;
+        rightOptionTextEl.textContent = q.options[1].text;
+        // 滑块显示已存储的答案
+        const currentVal = userAnswers[currentIndex];
+        scoreSlider.value = currentVal;
+        sliderValueSpan.textContent = currentVal;
+        // 更新进度显示
+        qCounterSpan.textContent = `第${currentIndex+1} / ${numQuestions}题`;
+        const percent = ((currentIndex+1) / numQuestions) * 100;
+        progressFill.style.width = `${percent}%`;
+    }
+
+    // 滑块变动时存储
+    function handleSliderChange() {
+        const val = parseInt(scoreSlider.value, 10);
+        sliderValueSpan.textContent = val;
+        userAnswers[currentIndex] = val;
+    }
+
+    // 上一题
+    function prevQuestion() {
+        if (currentIndex > 0) {
+            // 先保存当前滑块的值（已经实时保存）
+            currentIndex--;
+            updateCurrentQuestion();
+        }
+    }
+
+    // 下一题
+    function nextQuestion() {
+        if (currentIndex < numQuestions - 1) {
+            currentIndex++;
+            updateCurrentQuestion();
+        } else {
+            // 已是最后一题，再次点击可显示结果（或轻提示）
+            if (confirm("已是最后一题，是否提交答案？")) {
+                computeAndShowResults();
+            }
+        }
+    }
+
+    // 计算与所有数学家的欧几里得距离，排序取前三
+    function computeSimilarities() {
+        let distances = [];
+        for (let math of allMathematicians) {
+            const profile = mathematicianProfiles[math];
+            let sumSq = 0;
+            for (let i = 0; i < numQuestions; i++) {
+                const diff = userAnswers[i] - profile[i];
+                sumSq += diff * diff;
+            }
+            const distance = Math.sqrt(sumSq);
+            distances.push({ name: math, dist: distance });
+        }
+        distances.sort((a,b) => a.dist - b.dist);
+        return distances.slice(0, 3);
+    }
+
+    // 显示结果区域，隐藏主面板？但保持可见，结果区域展现
+    function computeAndShowResults() {
+        const top3 = computeSimilarities();
+        matchListDiv.innerHTML = "";
+        top3.forEach((match, idx) => {
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "match-item";
+            itemDiv.innerHTML = `
+                <span class="match-name">${idx+1}. ${match.name}</span>
+                <span class="match-distance">相似指数 · ${match.dist.toFixed(2)}</span>
+            `;
+            matchListDiv.appendChild(itemDiv);
+        });
+        resultArea.style.display = "block";
+        // 平滑滚动到结果区域
+        resultArea.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // 重置整个测试 (清空答案至0，重置索引，隐藏结果区域)
+    function resetTest() {
+        userAnswers.fill(0);
+        currentIndex = 0;
+        // 重置滑块显示
+        updateCurrentQuestion();
+        resultArea.style.display = "none";
+        // 额外将滑块同步一下值
+        scoreSlider.value = 0;
+        sliderValueSpan.textContent = 0;
+        // 如果隐藏结果后，确保进度条和题目正确
+    }
+
+    // 绑定事件
+    function bindEvents() {
+        scoreSlider.addEventListener("input", handleSliderChange);
+        prevBtn.addEventListener("click", prevQuestion);
+        nextBtn.addEventListener("click", nextQuestion);
+        viewResultBtn.addEventListener("click", computeAndShowResults);
+        resetTestBtn.addEventListener("click", resetTest);
+        if (newTestFromResult) {
+            newTestFromResult.addEventListener("click", () => {
+                resetTest();
+                resultArea.style.display = "none";
+            });
+        }
+    }
+
+    // 初始化页面，渲染第一题
+    function init() {
+        bindEvents();
+        updateCurrentQuestion();
+        // 确保结果区域初始隐藏
+        resultArea.style.display = "none";
+        // 可选: 显示一个极简提示无阴影
+    }
+
+    init();
+</script>
+</body>
+</html>
