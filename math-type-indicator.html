@@ -288,11 +288,51 @@
                 gap: 1rem;
             }
         }
+        /* 欢迎页面极简样式 */
+        .welcome-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh;
+            text-align: center;
+        }
+        .welcome-content h2 {
+            font-size: 1.8rem;
+            font-weight: 450;
+            color: var(--color-Furina-deep-navy);
+            margin-bottom: 1rem;
+        }
+        .welcome-content p {
+            font-size: 1rem;
+            color: var(--color-Furina-royal-blue);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+        .start-btn {
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid var(--color-Furina-vintage-gold);
+            cursor: pointer;
+            background: none;
+        }
+        .start-btn:hover {
+            border-bottom-color: var(--color-Furina-vintage-gold-light);
+            color: var(--color-Furina-vivid-sapphire);
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="test-panel">
+    <!-- 欢迎页面 -->
+    <div id="welcomePage" class="welcome-page">
+        <div class="welcome-content">
+            <h2>数学价值观</h2>
+            <p>探寻与你精神共鸣的数学家</p>
+            <button class="btn-line start-btn" id="startTestBtn">⟡ 开始测试 ⟡</button>
+            <div class="footnote" style="margin-top: 2rem;">本测试仅供娱乐</div>
+        </div>
+    </div>
+    <div id="testPanel" class="test-panel" style="display: none;">
         <div class="header">
             <h1>数学价值观</h1>
             <div class="sub"></div>
@@ -594,6 +634,22 @@
         // 可选: 显示一个极简提示无阴影
     }
 
+    // 欢迎页面开始按钮逻辑
+    const startBtn = document.getElementById('startTestBtn');
+    const welcomePage = document.getElementById('welcomePage');
+    const testPanel = document.getElementById('testPanel');
+
+    function startTest() {
+        welcomePage.style.display = 'none';
+        testPanel.style.display = 'block';
+        // 可选：重置测试状态（让用户从头开始）
+        resetTest();          // 调用已有的重置函数，清空答案和标记
+        // 确保滑块显示第一题（resetTest 已包含 updateCurrentQuestion）
+    }
+
+    if (startBtn) {
+        startBtn.addEventListener('click', startTest);
+    }
     init();
 </script>
 </body>
