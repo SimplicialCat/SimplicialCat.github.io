@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吉他指板 · 音阶与和弦</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #FAFBFC;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            gap: 24px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), 0 8px 16px rgba(0, 0, 0, 0.02);
+            padding: 24px;
+            max-width: 1200px;
+        }
+
+        /* 左侧选择区 — 完全保留原始样式，宽度不改变 */
+        .selector-panel {
+            width: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .selector-panel h3 {
+            font-weight: 400;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            color: #5a5a5a;
+            margin-bottom: 4px;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 8px;
+        }
+
+        .note-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .note-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            color: #222;
+            cursor: default;
+            padding: 4px 0;
+            transition: background 0.1s;
+            border-radius: 40px;
+        }
+
+        .note-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #333;
+            margin: 0;
+            cursor: pointer;
+            border-radius: 4px;
+            border: 1px solid #aaa;
+        }
+
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+            flex-shrink: 0;
+        }
+
+        .note-name {
+            flex: 1;
+            font-weight: 300;
+            color: #1e1e1e;
+        }
+
+        .action-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .minimal-btn {
+            background: transparent;
+            border: 1px solid #cbcbcb33;
+            border-radius: 30px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #3a3a3a;
+            cursor: pointer;
+            transition: 0.1s;
+            flex: 1;
+            font-weight: 450;
+            text-align: center;
+        }
+
+        .minimal-btn:hover {
+            background: #f0f0f0;
+            border-color: #9f9f9f33;
+        }
+
+        /* 右侧画布区 + 新增工具栏（不改变左侧宽度，不改变原画布表现） */
+        .fretboard-container {
+            border-radius: 20px;
+            padding: 8px 8px 8px 8px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            background: #FAFBFC;
+        }
+
+        /* 新增工具栏 — 极简风格，完全匹配原字体/按钮样式 */
+        .quick-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #ffffffcc;
+            backdrop-filter: blur(2px);
+            border-radius: 48px;
+            padding: 8px 16px;
+            margin-bottom: 16px;
+            align-self: flex-start;
+            border: 1px solid #ececec;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #2c2c2c;
+        }
+
+        .tool-label {
+            font-weight: 440;
+            letter-spacing: 0.2px;
+            font-size: 12px;
+            color: #5f5f5f;
+        }
+
+        .compact-select {
+            background: transparent;
+            border: 1px solid #d0d0d0;
+            border-radius: 32px;
+            padding: 5px 10px;
+            font-size: 12px;
+            font-family: inherit;
+            color: #1e1e1e;
+            cursor: pointer;
+            outline: none;
+            transition: 0.1s;
+        }
+
+        .compact-select:hover {
+            border-color: #a0a0a0;
+            background: #f9f9f9;
+        }
+
+        .tool-btn {
+            background: transparent;
+            border: 1px solid #cbcbcb;
+            border-radius: 32px;
+            padding: 5px 14px;
+            font-size: 12px;
+            font-weight: 470;
+            color: #2d2d2d;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .tool-btn:hover {
+            background: #f0f2f5;
+            border-color: #9b9b9b;
+        }
+
+        canvas {
+            display: block;
+            width: 300px;
+            max-width: 100%;
+            height: auto;
+            border-radius: 16px;
+            background: #FAFBFC;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 左侧选择区 (完全原始风格，宽度80px) -->
+    <div class="selector-panel">
+        <h3>吉他</h3>
+        <div class="note-list" id="note-list"></div>
+        <div class="action-row">
+            <button class="minimal-btn" id="select-all">全选</button>
+            <button class="minimal-btn" id="deselect-all">取消</button>
+        </div>
+    </div>
+
+    <!-- 右侧指板区 + 新增音阶/和弦工具栏 -->
+    <div class="fretboard-container">
+        <!-- 新增快速高亮栏：完全不影响左侧宽度，保持原始字体形式 -->
+        <div class="quick-toolbar">
+            <div class="tool-group">
+                <span class="tool-label">根音</span>
+                <select id="rootSelect" class="compact-select"></select>
+            </div>
+            <div class="tool-group">
+                <span class="tool-label">类型</span>
+                <select id="typeSelect" class="compact-select"></select>
+            </div>
+            <button id="applyHighlightBtn" class="tool-btn">确定</button>
+        </div>
+        <div class="quick-toolbar">
+            <span class="tool-label">色轮显示模式</span>
+            <button id="toggleColorMode" class="tool-btn">半音阶</button>
+        </div>
+        <canvas id="fretboardCanvas" width="600" height="3000"></canvas>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- 吉他参数 (完全保留原始逻辑) -----
+        const STRINGS_COUNT = 6;
+        const FRETS_MAX = 24;           // 0~24品 (0为空弦)
+        // 标准调弦 (从粗弦6弦到细弦1弦) 音名索引 C=0, C#=1, D=2, D#=3, E=4, F=5, F#=6, G=7, G#=8, A=9, A#=10, B=11
+        const OPEN_NOTES = [4, 9, 2, 7, 11, 4]; // 6弦E(4), 5弦A(9), 4弦D(2), 3弦G(7), 2弦B(11), 1弦E(4)
+
+        // 十二音名 (升号表示)
+        const NOTE_NAMES = ["C", "C#=Db", "D", "D#=Eb", "E", "F", "F#=Gb", "G", "G#=Ab", "A", "A#=Bb", "B"];
+
+        // 色轮: 12色调 (Hue间隔30度) 柔和色盘
+        let colorMode = 'chromatic'; // 'chromatic' 或 'circle'
+let noteColors = [];
+
+function updateNoteColors() {
+    noteColors = NOTE_NAMES.map((_, i) => {
+        let hue;
+        if (colorMode === 'chromatic') {
+            hue = (i * 30) % 360;           // 半音阶
+        } else {
+            hue = (i * 210) % 360;           // 五度圈
+        }
+        return `hsl(${hue}, 70%, 72%)`;
+    });
+}
+updateNoteColors(); // 初始化
+
+        // ----- 品丝位置计算 (基于真实吉他弦长比例) -----
+        function getFretPositions(fretCount) {
+            const positions = [];
+            for (let n = 0; n <= fretCount; n++) {
+                const r = 1 - Math.pow(2, -n / 12);
+                positions.push(r);
+            }
+            return positions;
+        }
+
+        const fretRatios = getFretPositions(FRETS_MAX);
+        const MAX_RATIO = fretRatios[FRETS_MAX]; // 0.75
+
+        const canvas = document.getElementById('fretboardCanvas');
+        const ctx = canvas.getContext('2d');
+        const CANVAS_W = canvas.width;   // 600
+        const CANVAS_H = canvas.height;  // 3000
+
+        // 弦的X范围 (从左到右: 6弦粗 → 1弦细)
+        const X_LEFT = 70;
+        const X_RIGHT = CANVAS_W - 70;
+        const STRING_X = [];
+        for (let s = 0; s < STRINGS_COUNT; s++) {
+            const x = X_LEFT + (X_RIGHT - X_LEFT) * (s / (STRINGS_COUNT - 1));
+            STRING_X.push(x);
+        }
+
+        // Y方向: 琴枕(Y0) 和 第24品丝(Y24)
+        const Y0 = 140;
+        const Y24 = CANVAS_H - 140;
+        const Y_RANGE = Y24 - Y0;
+
+        const fretY = fretRatios.map(r => Y0 + (r / MAX_RATIO) * Y_RANGE);
+        const firstFretSpacing = fretY[1] - fretY[0];
+
+        function getNoteY(fret) {
+            if (fret === 0) {
+                return fretY[0] - firstFretSpacing * 0.5;
+            } else {
+                return (fretY[fret - 1] + fretY[fret]) / 2;
+            }
+        }
+
+        // ----- 指板渲染 (基于选中的音名集合) -----
+        function renderFretboard(selectedNotesSet) {
+            ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+            // 1. 绘制所有品丝 (横线)
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#b0aaa0';
+            ctx.beginPath();
+            for (let f = 0; f <= FRETS_MAX; f++) {
+                const y = fretY[f];
+                ctx.moveTo(X_LEFT - 12, y);
+                ctx.lineTo(X_RIGHT + 12, y);
+            }
+            ctx.strokeStyle = '#cbc4e8';
+            ctx.stroke();
+
+            // 强调琴枕
+            ctx.beginPath();
+            ctx.moveTo(X_LEFT - 12, fretY[0]);
+            ctx.lineTo(X_RIGHT + 12, fretY[0]);
+            ctx.lineWidth = 7.2;
+            ctx.strokeStyle = '#777';
+            ctx.stroke();
+
+            // 2. 绘制六根弦 (竖线)
+            ctx.lineWidth = 1.2;
+            ctx.strokeStyle = '#aaa2ce';
+            ctx.globalAlpha = 0.4;
+            ctx.beginPath();
+            for (let s = 0; s < STRINGS_COUNT; s++) {
+                const x = STRING_X[s];
+                ctx.moveTo(x, fretY[0] - firstFretSpacing * 0.8);
+                ctx.lineTo(x, fretY[FRETS_MAX] + firstFretSpacing * 0.3);
+            }
+            ctx.stroke();
+            ctx.globalAlpha = 1.0;
+
+            // 3. 绘制所有音符 (圆 + 音名)
+            const NOTE_RADIUS = 24;
+            for (let s = 0; s < STRINGS_COUNT; s++) {
+                const stringX = STRING_X[s];
+                const openIdx = OPEN_NOTES[s];
+
+                for (let fret = 0; fret <= FRETS_MAX; fret++) {
+                    const noteIdx = (openIdx + fret) % 12;
+                    const centerY = getNoteY(fret);
+                    const color = noteColors[noteIdx];
+                    
+                    let alpha = 1.0;
+                    if (selectedNotesSet.size > 0) {
+                        alpha = selectedNotesSet.has(noteIdx) ? 1.0 : 0.08;
+                    }
+                    ctx.globalAlpha = alpha;
+
+                    ctx.beginPath();
+                    ctx.arc(stringX, centerY, NOTE_RADIUS, 0, 2 * Math.PI);
+                    ctx.fillStyle = color;
+                    ctx.shadowColor = 'rgba(0,0,0,0.48)';
+                    ctx.shadowBlur = 12;
+                    ctx.shadowOffsetY = 5;
+                    ctx.fill();
+                    ctx.shadowColor = 'transparent';
+                    ctx.strokeStyle = '#44444422';
+                    ctx.lineWidth = 0.6;
+                    ctx.stroke();
+
+                    const text = NOTE_NAMES[noteIdx];
+                    ctx.font = '200 24px "Inter", "Avenir", "Helvetica Neue", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = '#000000';
+                    ctx.fillText(text, stringX, centerY);
+                }
+            }
+
+            // 4. 品位标记
+            ctx.globalAlpha = 1.0;
+            ctx.font = '300 28px "Inter"';
+            ctx.fillStyle = '#4d4d4d';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            const markerFrets = [0, 3, 5, 7, 9, 12, 15, 17, 19, 21, 24];
+            markerFrets.forEach(f => {
+                if (f > FRETS_MAX) return;
+                let y;
+                if (f === 0) y = getNoteY(0);
+                else y = (fretY[f - 1] + fretY[f]) / 2;
+                ctx.fillText(f, X_LEFT - 36, y);
+            });
+            ctx.globalAlpha = 1.0;
+        }
+
+        // ----- 左侧复选框逻辑 (完全保留原始交互) -----
+        const noteListDiv = document.getElementById('note-list');
+        const checkboxes = [];
+
+        NOTE_NAMES.forEach((name, idx) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'note-item';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = idx;
+            checkbox.id = `note_${idx}`;
+
+            const dot = document.createElement('span');
+            dot.className = 'color-dot';
+            dot.style.backgroundColor = noteColors[idx];
+
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'note-name';
+            labelSpan.textContent = name;
+
+            itemDiv.appendChild(checkbox);
+            itemDiv.appendChild(dot);
+            itemDiv.appendChild(labelSpan);
+            noteListDiv.appendChild(itemDiv);
+
+            checkboxes.push(checkbox);
+        });
+
+        let selectedNotes = new Set();
+
+        function updateFromCheckboxes() {
+            const newSelected = new Set();
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    newSelected.add(parseInt(cb.value, 10));
+                }
+            });
+            selectedNotes = newSelected;
+            renderFretboard(selectedNotes);
+        }
+
+        // 初始化全不选
+        checkboxes.forEach(cb => cb.checked = false);
+        updateFromCheckboxes();
+
+        checkboxes.forEach(cb => cb.addEventListener('change', updateFromCheckboxes));
+        document.getElementById('select-all').addEventListener('click', () => {
+            checkboxes.forEach(cb => cb.checked = true);
+            updateFromCheckboxes();
+        });
+        document.getElementById('deselect-all').addEventListener('click', () => {
+            checkboxes.forEach(cb => cb.checked = false);
+            updateFromCheckboxes();
+        });
+
+        // ---------- 新增功能：大调音阶 & 常用和弦 定义 (基于根音音程) ----------
+        const SCALE_CHORD_LIB = {
+            majorScale:   { name: "大调音阶", intervals: [0, 2, 4, 5, 7, 9, 11] },
+            minorScale:   { name: "小调音阶", intervals: [0, 2, 3, 5, 7, 8, 10] },
+            majorTriad:   { name: "大三和弦", intervals: [0, 4, 7] },
+            minorTriad:   { name: "小三和弦", intervals: [0, 3, 7] },
+            major7:       { name: "大七和弦", intervals: [0, 4, 7, 11] },
+            minor7:       { name: "小七和弦", intervals: [0, 3, 7, 10] },
+            dominant7:    { name: "属七和弦", intervals: [0, 4, 7, 10] },
+            halfDiminished: { name: "半减七和弦", intervals: [0, 3, 6, 10] },
+            diminished7:  { name: "减七和弦", intervals: [0, 3, 6, 9] }
+        };
+
+        // 构建根音下拉 (C, C# ... B)
+        const rootSelect = document.getElementById('rootSelect');
+        NOTE_NAMES.forEach((name, idx) => {
+            const option = document.createElement('option');
+            option.value = idx;
+            option.textContent = name;
+            rootSelect.appendChild(option);
+        });
+        rootSelect.value = "0";  // 默认C
+
+        // 构建类型下拉 (保持可读性，但不破坏界面紧凑)
+        const typeSelect = document.getElementById('typeSelect');
+        const typeOptions = [
+            { id: "majorScale", label: "大调音阶" },
+            { id: "minorScale", label: "小调音阶" },
+            { id: "majorTriad", label: "大三和弦" },
+            { id: "minorTriad", label: "小三和弦" },
+            { id: "major7", label: "大七和弦" },
+            { id: "minor7", label: "小七和弦" },
+            { id: "dominant7", label: "属七和弦" },
+            { id: "halfDiminished", label: "半减七" },
+            { id: "diminished7", label: "减七和弦" }
+        ];
+        typeOptions.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.id;
+            option.textContent = opt.label;
+            typeSelect.appendChild(option);
+        });
+        typeSelect.value = "majorScale";
+
+        // 根据根音和类型获取需要高亮的音名集合
+        function getNotesFromRootAndType(rootIdx, typeId) {
+            const definition = SCALE_CHORD_LIB[typeId];
+            if (!definition) return new Set();
+            const intervals = definition.intervals;
+            const noteSet = new Set();
+            for (let semitone of intervals) {
+                const note = (rootIdx + semitone) % 12;
+                noteSet.add(note);
+            }
+            return noteSet;
+        }
+
+        // 一键高亮：根据当前选择的根音和类型，更新左侧checkbox状态并刷新画板
+        function applyScaleOrChordHighlight() {
+            const rootIdx = parseInt(rootSelect.value, 10);
+            const typeId = typeSelect.value;
+            const targetNoteSet = getNotesFromRootAndType(rootIdx, typeId);
+            
+            // 更新所有checkbox的选中状态：只勾选目标音名集合内的
+            checkboxes.forEach(cb => {
+                const noteIdx = parseInt(cb.value, 10);
+                cb.checked = targetNoteSet.has(noteIdx);
+            });
+            // 触发重新渲染
+            updateFromCheckboxes();
+        }
+
+        // 绑定高亮按钮事件
+        const applyBtn = document.getElementById('applyHighlightBtn');
+        applyBtn.addEventListener('click', () => {
+            applyScaleOrChordHighlight();
+        });
+
+        const toggleBtn = document.getElementById('toggleColorMode');
+toggleBtn.addEventListener('click', () => {
+    // 切换模式
+    colorMode = colorMode === 'chromatic' ? 'circle' : 'chromatic';
+    // 更新按钮文字
+    toggleBtn.textContent = colorMode === 'chromatic' ? '半音阶' : '五度圈';
+    // 重新计算颜色数组
+    updateNoteColors();
+    // 更新左侧所有色点的颜色
+    const colorDots = document.querySelectorAll('.color-dot');
+    colorDots.forEach((dot, idx) => {
+        dot.style.backgroundColor = noteColors[idx];
+    });
+    // 重新渲染画板（使用当前的选中集）
+    renderFretboard(selectedNotes);
+});
+
+        // 可选: 增加额外的用户反馈，保持与原界面行为一致
+        // 预置初始渲染 (所有音符可见)
+        renderFretboard(selectedNotes);
+        
+        // 注: 完全保留了原始左侧布局、字体、宽度，新工具栏位于右侧上方，不干扰原始设计。
+        // 所有和弦/音阶定义准确:
+        // 大调音阶: 全全半全全全半 (0,2,4,5,7,9,11)
+        // 大三: 1 3 5, 小三: 1 b3 5, 大七: 1 3 5 7, 小七: 1 b3 5 b7,
+        // 属七: 1 3 5 b7, 半减七: 1 b3 b5 b7, 减七: 1 b3 b5 bb7
+        // 音程索引均基于半音数，完美匹配十二平均律。
+    })();
+</script>
+</body>
+</html>
