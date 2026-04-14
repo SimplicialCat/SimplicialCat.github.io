@@ -151,29 +151,6 @@
     display: none;         /* 隐藏标题文字 */
 }
 
-        /* 标签基础样式 */
-        .globe-label {
-            transform-origin: center center !important;
-            will-change: transform, opacity, color, text-shadow;
-        }
-
-        /* 标记容器 */
-        .globe-marker-container {
-            position: absolute;
-            pointer-events: none;
-            transform-origin: center center;
-        }
-
-        /* 标签文本 */
-        .globe-label-text {
-            color: white;
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-            font-weight: 500;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 1px 2px rgba(0,0,0,0.5);
-            white-space: nowrap;
-        }
-
     </style>
     <!-- 导入映射（可替换为国内镜像） -->
     <script type="importmap">
@@ -209,6 +186,7 @@
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
         // ==================== 用户自定义数据 ====================
         // 1. 图片尺寸 (用于计算UV)
@@ -254,7 +232,15 @@
         renderer.setPixelRatio(window.devicePixelRatio);
         document.body.appendChild(renderer.domElement);
 
-        // 标签现在直接添加到document.body，不需要单独的容器
+        // --- CSS2D 渲染器 (用于文字) ---
+        const labelRenderer = new CSS2DRenderer();
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        labelRenderer.domElement.style.position = 'absolute';
+        labelRenderer.domElement.style.top = '0px';
+        labelRenderer.domElement.style.left = '0px';
+        labelRenderer.domElement.style.pointerEvents = 'none';
+        labelRenderer.domElement.classList.add('css2d-renderer');
+        document.body.appendChild(labelRenderer.domElement);
 
         // --- 轨道控制器 ---
         const controls = new OrbitControls(camera, renderer.domElement);
@@ -277,8 +263,8 @@
         // --- 主球体 (带纹理) ---
         const geometry = new THREE.SphereGeometry(1, 64, 64);
         const textureLoader = new THREE.TextureLoader();
-        // 使用在线地球贴图（多个备选方案）
-        const textureUrl = 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg';
+        // 请替换为您的图片URL (可以是相对路径或网络图片)
+        const textureUrl = 'earth_atmos_2048.jpg';
         const material = new THREE.MeshBasicMaterial({
             map: textureLoader.load(textureUrl),
             side: THREE.DoubleSide  // 如需仅外部可见可删除
@@ -303,9 +289,6 @@
         const customGroup = new THREE.Group();
         scene.add(customGroup);
 
-        // 存储所有标签的数组，用于更新
-        const allLabels = [];
-
         // 获取DOM元素
         const markerInput = document.getElementById('markerInput');
         const updateBtn = document.getElementById('updateMarkersBtn');
@@ -314,7 +297,7 @@
         // 复用原有的创建逻辑，但将生成的对象添加到customGroup
         function createCustomMarker(lon, lat, labelText) {
             const calibratedLon = lon + lonOffset; // 应用同样的经度偏移
-
+            
             // 小球位置 (半径1.02)
             const spherePos = lonLatToPosition(calibratedLon, lat, 1.00);
             const sphereGeo = new THREE.SphereGeometry(0.007, 16, 16);
@@ -328,74 +311,20 @@
             smallSphere.position.copy(spherePos);
             customGroup.add(smallSphere);
 
-            // 创建标签容器
-            const markerContainer = document.createElement('div');
-            markerContainer.className = 'globe-marker-container';
-            markerContainer.style.position = 'absolute';
-            markerContainer.style.pointerEvents = 'none';
-            markerContainer.style.zIndex = '1000';
-
-            // 创建引导线
-            const leaderLine = document.createElement('div');
-            leaderLine.className = 'globe-leader-line';
-            leaderLine.style.position = 'absolute';
-            leaderLine.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-            leaderLine.style.height = '2px';
-            leaderLine.style.transformOrigin = 'left center';
-            leaderLine.style.transition = 'all 0.1s ease';
-            leaderLine.style.boxShadow = '0 0 4px rgba(255, 255, 255, 0.5)';
-
-            // 创建标签背景
-            const labelBg = document.createElement('div');
-            labelBg.className = 'globe-label-bg';
-            labelBg.style.position = 'absolute';
-            labelBg.style.backgroundColor = 'rgba(10, 10, 20, 0.95)';
-            labelBg.style.border = '1px solid rgba(255, 255, 255, 0.3)';
-            labelBg.style.borderRadius = '4px';
-            labelBg.style.padding = '5px 10px';
-            labelBg.style.boxShadow = '0 2px 10px rgba(0,0,0,0.6)';
-            labelBg.style.whiteSpace = 'nowrap';
-
-            // 创建标签文本
-            const labelDiv = document.createElement('div');
-            labelDiv.className = 'globe-label-text';
-            labelDiv.textContent = labelText;
-            labelDiv.style.color = 'white';
-            labelDiv.style.fontFamily = 'Arial, sans-serif';
-            labelDiv.style.fontSize = '16px';
-            labelDiv.style.fontWeight = '500';
-            labelDiv.style.textShadow = '0 2px 4px rgba(0,0,0,0.8), 0 1px 2px rgba(0,0,0,0.5)';
-            labelDiv.style.whiteSpace = 'nowrap';
-
-            // 添加标签到容器
-            markerContainer.appendChild(labelDiv);
-            markerContainer.id = 'marker-container-' + Date.now() + '-' + Math.random();
-
-            // 添加到DOM
-            document.body.appendChild(markerContainer);
-
-            // 存储标签信息
+            // 文字div (样式与原有完全一致)
+            const div = document.createElement('div');
+            div.textContent = labelText;
+            div.style.color = 'white';
+            div.style.fontFamily = 'sans-serif';
+            div.style.fontSize = '16px';
+            div.style.fontWeight = 'bold';
+            div.style.textShadow = '1px 1px 2px black';
+            div.style.whiteSpace = 'nowrap';
+            
             const textPos = lonLatToPosition(calibratedLon, lat, 1.01);
-            const labelData = {
-                container: markerContainer,
-                labelText: labelDiv,
-                calibratedLon: calibratedLon,
-                lat: lat,
-                position: textPos,
-                labelWidth: 0,
-                labelHeight: 0
-            };
-            allLabels.push(labelData);
-
-            // 预计算标签尺寸
-            setTimeout(() => {
-                const rect = labelDiv.getBoundingClientRect();
-                labelData.labelWidth = rect.width;
-                labelData.labelHeight = rect.height;
-            }, 100);
-
-            // 添加调试信息
-            console.log('标签已添加:', labelText, '距离:', camera.position.distanceTo(textPos));
+            const labelObj = new CSS2DObject(div);
+            labelObj.position.copy(textPos);
+            customGroup.add(labelObj);
         }
 
         // 解析输入框内容并更新自定义标记
@@ -405,23 +334,13 @@
                 customGroup.remove(customGroup.children[0]);
             }
 
-            // 清理DOM中的标签元素
-            allLabels.forEach(labelData => {
-                if (labelData.container && labelData.container.parentNode) {
-                    labelData.container.parentNode.removeChild(labelData.container);
-                }
-            });
-
-            // 清空标签数组
-            allLabels.length = 0;
-
             const rawText = markerInput.value;
             const lines = rawText.split(/\r?\n/);
-
+            
             lines.forEach(line => {
                 line = line.trim();
                 if (line === '') return;
-
+                
                 // 更健壮的解析：支持经度 纬度 标签（标签可以包含空格）
                 // 格式: 可选的符号 + 数字 (整数或小数) , 然后空白, 同样纬度, 然后空白, 剩下全部作为标签
                 const match = line.match(/^([+-]?\d+(?:\.\d+)?)\s+([+-]?\d+(?:\.\d+)?)\s+(.+)$/);
@@ -445,78 +364,6 @@
             while(customGroup.children.length > 0) {
                 customGroup.remove(customGroup.children[0]);
             }
-
-            // 清理DOM中的标签元素
-            allLabels.forEach(labelData => {
-                if (labelData.container && labelData.container.parentNode) {
-                    labelData.container.parentNode.removeChild(labelData.container);
-                }
-            });
-
-            // 清空标签数组
-            allLabels.length = 0;
-        }
-
-        // 更新标签样式和大小
-        function updateLabels() {
-            const cameraPos = camera.position.clone();
-
-            allLabels.forEach((labelData, index) => {
-                // 重新计算标签位置（因为地球可能在旋转）
-                const spherePos = lonLatToPosition(labelData.calibratedLon, labelData.lat, 1.00);
-                const textPos = lonLatToPosition(labelData.calibratedLon, labelData.lat, 1.05);
-
-                // 将3D坐标转换为屏幕坐标
-                const sphereVector = spherePos.clone();
-                const textVector = textPos.clone();
-
-                sphereVector.project(camera);
-                textVector.project(camera);
-
-                // 转换为屏幕坐标
-                const sphereX = (sphereVector.x * 0.5 + 0.5) * window.innerWidth;
-                const sphereY = (sphereVector.y * -0.5 + 0.5) * window.innerHeight;
-                const textX = (textVector.x * 0.5 + 0.5) * window.innerWidth;
-                const textY = (textVector.y * -0.5 + 0.5) * window.innerHeight;
-
-                // 计算距离和深度
-                const cameraToMarker = textPos.clone().sub(cameraPos);
-                const distance = cameraToMarker.length();
-
-                // 计算"深度因子"
-                const cameraLook = new THREE.Vector3(0, 0, -1);
-                cameraLook.applyQuaternion(camera.quaternion);
-                const cameraToSphere = spherePos.clone().normalize();
-                const depthFactor = Math.max(0, -cameraLook.dot(cameraToSphere));
-
-                // 根据深度设置透明度
-                let opacity = 1;
-                if (depthFactor < 0.3) {
-                    opacity = 0.3;
-                } else if (depthFactor < 0.6) {
-                    opacity = 0.7;
-                }
-
-                // 基于距离的缩放
-                const scaleFactor = Math.max(0.5, Math.min(2.0, 2.5 / distance));
-
-                // 计算引导线
-                const dx = textX - sphereX;
-                const dy = textY - sphereY;
-                const lineLength = Math.sqrt(dx * dx + dy * dy);
-                const lineAngle = Math.atan2(dy, dx) * 180 / Math.PI;
-
-                // 更新容器位置
-                labelData.container.style.left = sphereX + 'px';
-                labelData.container.style.top = sphereY + 'px';
-                labelData.container.style.transform = `translate(-50%, -50%) scale(${scaleFactor})`;
-                labelData.container.style.opacity = opacity;
-
-                // 调试信息
-                if (index === 0 && Math.floor(Date.now() / 1000) % 2 === 0) {
-                    console.log(`标签 ${index}: 距离=${distance.toFixed(1)}, 缩放=${scaleFactor.toFixed(2)}, 透明度=${opacity}`);
-                }
-            });
         }
 
         // 绑定事件
@@ -542,9 +389,9 @@ toggleBtn.addEventListener('click', () => {
         // ==================== 动画循环 ====================
         function animate() {
             requestAnimationFrame(animate);
-            updateLabels(); // 更新标签样式和大小
             controls.update();
             renderer.render(scene, camera);
+            labelRenderer.render(scene, camera);
         }
         animate();
 
@@ -554,6 +401,7 @@ toggleBtn.addEventListener('click', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
         }
     </script>
 </body>
