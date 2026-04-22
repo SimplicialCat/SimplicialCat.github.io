@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>19平均律·芙宁娜钢琴键盘</title>
+    <style>
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: pan-y;
+        }
+
+        :root {
+            --color-Furina-deep-navy: #253085;
+            --color-Furina-royal-blue: #465BCF;
+            --color-Furina-aqua-cyan: #6AC6E8;
+            --color-Furina-frost-white: #FAFBFC;
+            --color-Furina-misty-blue: #C4D7ED;
+            --color-Furina-vivid-sapphire: #5670E9;
+            --color-Furina-luminous-hydro: #70DBFF;
+            --color-Furina-bright-periwinkle: #8DA4F1;
+            --color-Furina-vintage-gold: #BD9368;
+            --color-Furina-vintage-gold-light: #DDB368;
+            --color-Furina-vintage-gold-ultra-light: #FDF388;
+
+            --white-key-width: 58px;
+            --white-key-height: 200px;
+            --black-key-width: 34px;
+            --black-key-radius: 5px;
+            --gold-glow: 0 0 0 2px var(--color-Furina-vintage-gold-ultra-light), 0 0 0 4px rgba(189, 147, 104, 0.35);
+        }
+
+        @media (max-width: 800px) {
+            :root {
+                --white-key-width: 50px;
+                --white-key-height: 170px;
+                --black-key-width: 30px;
+            }
+        }
+        @media (max-width: 600px) {
+            :root {
+                --white-key-width: 44px;
+                --white-key-height: 150px;
+                --black-key-width: 26px;
+            }
+        }
+        @media (max-width: 480px) {
+            :root {
+                --white-key-width: 40px;
+                --white-key-height: 140px;
+                --black-key-width: 24px;
+            }
+        }
+
+        body {
+            background: linear-gradient(145deg, #eef2f9 0%, #e0e8f2 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, 'Segoe UI', sans-serif;
+            padding: 20px 12px;
+            box-sizing: border-box;
+        }
+
+        .piano-scroll {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: visible;
+            border-radius: 28px;
+            background: rgba(255,255,250,0.15);
+            padding: 16px 0 20px 0;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            scroll-behavior: smooth;
+        }
+
+        .piano-scroll::-webkit-scrollbar {
+            height: 8px;
+            background: #d1ddee;
+            border-radius: 10px;
+        }
+        .piano-scroll::-webkit-scrollbar-thumb {
+            background: var(--color-Furina-vintage-gold);
+            border-radius: 10px;
+        }
+
+        .piano {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 0;
+            background: transparent;
+            border-bottom: 2px solid rgba(189,147,104,0.3);
+        }
+
+        .octave {
+            position: relative;
+            display: inline-block;
+            background: transparent;
+            box-shadow: inset -1px 0 0 rgba(69, 91, 207, 0.1);
+        }
+
+        .white-keys {
+            display: flex;
+            flex-direction: row;
+            gap: 0;
+            background: transparent;
+        }
+
+        .white-key {
+            width: var(--white-key-width);
+            height: var(--white-key-height);
+            background: linear-gradient(145deg, #FFFFFF 0%, var(--color-Furina-frost-white) 100%);
+            border: 1px solid rgba(69, 91, 207, 0.15);
+            border-top: none;
+            border-right: 1px solid rgba(69, 91, 207, 0.2);
+            border-left: none;
+            border-bottom: 2px solid rgba(189,147,104,0.3);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), inset 0 1px 0 #fff;
+            cursor: pointer;
+            transition: all 0.04s linear;
+            position: relative;
+            z-index: 1;
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+
+        .octave:first-child .white-key:first-child {
+            border-radius: 0 0 0 12px;
+            border-left: 1px solid rgba(69, 91, 207, 0.2);
+        }
+        .octave:last-child .white-key:last-child {
+            border-radius: 0 0 12px 0;
+            border-right: 1px solid rgba(69, 91, 207, 0.2);
+        }
+
+        .black-keys {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .accidental-key {
+            position: absolute;
+            pointer-events: auto;
+            cursor: pointer;
+            border-radius: 0 0 var(--black-key-radius) var(--black-key-radius);
+            transition: all 0.04s linear;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
+            top: 0;
+            background-clip: padding-box;
+            will-change: transform;
+            border: none;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            width: var(--black-key-width);
+        }
+
+        .key-purple {
+            background: linear-gradient(135deg, var(--color-Furina-royal-blue), var(--color-Furina-vivid-sapphire));
+            height: 120px;
+            border-bottom: 2px solid rgba(37, 48, 133, 0.4);
+        }
+
+        .key-blue {
+            background: linear-gradient(135deg, var(--color-Furina-luminous-hydro), var(--color-Furina-aqua-cyan));
+            height: 84px;
+            border-bottom: 2px solid rgba(106, 198, 232, 0.6);
+        }
+
+        .key-active {
+            filter: brightness(1.02) saturate(1.05);
+            box-shadow: var(--gold-glow), inset 0 1px 2px rgba(255,215,130,0.8);
+            transform: scale(0.98);
+        }
+
+        .white-key.key-active {
+            background: linear-gradient(145deg, #fff8ed, #fff2e0);
+            box-shadow: var(--gold-glow), inset 0 1px 0 #ffe6b3;
+        }
+
+        .accidental-key.key-active {
+            filter: brightness(1.08);
+            box-shadow: var(--gold-glow), inset 0 0 3px rgba(255,235,140,0.9);
+        }
+
+        .octave::after {
+            content: '';
+            position: absolute;
+            right: -1px;
+            top: 15%;
+            bottom: 15%;
+            width: 2px;
+            background: radial-gradient(ellipse, var(--color-Furina-vintage-gold-light), transparent);
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.6;
+        }
+        .octave:last-child::after { display: none; }
+    </style>
+</head>
+<body>
+<div class="piano-scroll">
+    <div class="piano" id="pianoContainer"></div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 19平均律参数 ----------
+        const SEMITONE_RATIO = Math.pow(2, 1/19);
+        const REF_FREQ = 261.6256;   // 中央C (中央1)
+
+        // 根据题目要求: 间隔模式 "大大小大大大小" 对应 大,大,小,大,大,小,小
+        // 白紫蓝白紫蓝白紫白紫蓝白紫蓝白紫蓝白紫  共19个音
+        // 直接硬编码序列确保100%符合描述
+        const OCTAVE_SEQUENCE = [
+            "white",  // 1
+            "purple", // 间隔1 大 -> 紫
+            "blue",   // 大 -> 蓝
+            "white",  // 2
+            "purple", // 间隔2 大 -> 紫
+            "blue",   // 大 -> 蓝
+            "white",  // 3
+            "purple", // 间隔3 小 -> 紫 (只有紫)
+            "white",  // 4
+            "purple", // 间隔4 大 -> 紫
+            "blue",   // 大 -> 蓝
+            "white",  // 5
+            "purple", // 间隔5 大 -> 紫
+            "blue",   // 大 -> 蓝
+            "white",  // 6
+            "purple", // 间隔6 小 -> 紫
+            "blue",   // 注意: 题目中“白紫蓝白紫蓝白紫白紫蓝白紫蓝白紫蓝白紫”
+            // 仔细数: 1白 2紫 3蓝 4白 5紫 6蓝 7白 8紫 9白 10紫 11蓝 12白 13紫 14蓝 15白 16紫 17蓝 18白 19紫
+            // 检查间隔: 1-2 (大:紫蓝),2-3(大:紫蓝),3-4(小:紫),4-5(大:紫蓝),5-6(大:紫蓝),6-7(小:紫),7-下一白(无后续白键,但序列结束)
+            // 但上述序列最后一个音是紫,符合“白紫蓝白紫蓝白紫白紫蓝白紫蓝白紫蓝白紫” 最后为紫(19音)
+            // 调整上面 push 逻辑:
+        ];
+        
+        // 手动构造精确序列 (根据题目描述)
+        // 白(1) 紫 蓝 白(2) 紫 蓝 白(3) 紫 白(4) 紫 蓝 白(5) 紫 蓝 白(6) 紫 蓝 白(7) 紫
+        // 对应间隔: 
+        // 1-2: 紫蓝 (大)  2-3: 紫蓝 (大)  3-4: 紫 (小)  4-5: 紫蓝 (大)  5-6: 紫蓝 (大)  6-7: 紫 (小)  7结束
+        const SEQUENCE_19 = [
+            "white",  // 1
+            "purple", "blue",   // 1-2
+            "white",  // 2
+            "purple", "blue",   // 2-3
+            "white",  // 3
+            "purple",           // 3-4 (小)
+            "white",  // 4
+            "purple", "blue",   // 4-5
+            "white",  // 5
+            "purple", "blue",   // 5-6
+            "white",  // 6
+            "purple", "blue",   // 6-7
+            "white",  // 7
+            "purple"            // 最后一个紫 (无后续白键，但题目序列以紫结束)
+        ];
+        
+        // 验证长度应为19
+        console.assert(SEQUENCE_19.length === 19, "序列长度错误");
+        
+        // 构建三个八度完整键数据 (含频率)
+        function buildFullKeyData(octaveCount = 3) {
+            const fullKeys = [];
+            for (let oct = 0; oct < octaveCount; oct++) {
+                for (let i = 0; i < SEQUENCE_19.length; i++) {
+                    fullKeys.push({
+                        type: SEQUENCE_19[i],
+                        octave: oct,
+                        localIdx: i,
+                    });
+                }
+            }
+            // 定位中央C: 第二个八度(oct=1) 第一个白键 (localIdx=0 且 type=white)
+            let centralIndex = -1;
+            for (let idx = 0; idx < fullKeys.length; idx++) {
+                if (fullKeys[idx].octave === 1 && fullKeys[idx].localIdx === 0 && fullKeys[idx].type === "white") {
+                    centralIndex = idx;
+                    break;
+                }
+            }
+            if (centralIndex === -1) centralIndex = 19; // fallback
+            for (let idx = 0; idx < fullKeys.length; idx++) {
+                const semitoneOffset = idx - centralIndex;
+                const freq = REF_FREQ * Math.pow(SEMITONE_RATIO, semitoneOffset);
+                fullKeys[idx].freq = freq;
+                fullKeys[idx].globalIdx = idx;
+            }
+            return fullKeys;
+        }
+        
+        // ---------- 音频引擎 (支持多点触控) ----------
+        let audioCtx = null;
+        let audioInitialized = false;
+        const activeSounds = new Map();  // key: `${globalIdx}_${pointerId}`
+        
+        function initAudio() {
+            if (audioCtx && audioCtx.state !== 'closed') return audioCtx;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            return audioCtx;
+        }
+        
+        function playNote(frequency, keyId, pointerId) {
+            if (!audioCtx || audioCtx.state === 'closed') return null;
+            if (audioCtx.state === 'suspended') audioCtx.resume().catch(e => console.warn);
+            const now = audioCtx.currentTime;
+            const gainNode = audioCtx.createGain();
+            const oscillator = audioCtx.createOscillator();
+            oscillator.type = 'sine';
+            oscillator.frequency.value = frequency;
+            gainNode.gain.value = 0.28;
+            gainNode.gain.setValueAtTime(0.0001, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.28, now + 0.008);
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            const soundObj = { oscillator, gainNode, keyId, pointerId };
+            const mapKey = `${keyId}_${pointerId}`;
+            activeSounds.set(mapKey, soundObj);
+            setTimeout(() => {
+                const still = activeSounds.get(mapKey);
+                if (still && still.oscillator) {
+                    try {
+                        still.gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.08);
+                        still.oscillator.stop(audioCtx.currentTime + 0.1);
+                    } catch(e) {}
+                    activeSounds.delete(mapKey);
+                }
+            }, 5000);
+            return soundObj;
+        }
+        
+        function stopNote(keyId, pointerId) {
+            const mapKey = `${keyId}_${pointerId}`;
+            const sound = activeSounds.get(mapKey);
+            if (sound && audioCtx) {
+                const now = audioCtx.currentTime;
+                try {
+                    sound.gainNode.gain.cancelScheduledValues(now);
+                    sound.gainNode.gain.setValueAtTime(sound.gainNode.gain.value, now);
+                    sound.gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+                    sound.oscillator.stop(now + 0.08);
+                } catch(e) {}
+                activeSounds.delete(mapKey);
+            }
+        }
+        
+        // ---------- 钢琴布局: 横向对齐精确修正 ----------
+        // 所有白键等宽，所有黑键等宽
+        // 单黑键(紫)中心位于左白键中心右侧 0.62倍白键宽
+        // 双黑键: 紫中心0.36, 蓝中心0.72 (蓝更靠右)
+        function computeOctaveLayout(octaveKeys, whiteWidthPx, blackWidthPx) {
+            const whiteKeys = octaveKeys.filter(k => k.type === "white");
+            const blackKeysLayout = [];
+            let whiteCursor = 0;
+            
+            for (let i = 0; i < octaveKeys.length; i++) {
+                const key = octaveKeys[i];
+                if (key.type === "white") {
+                    whiteCursor++;
+                    continue;
+                }
+                // 收集连续黑键
+                let blackGroup = [];
+                let j = i;
+                while (j < octaveKeys.length && octaveKeys[j].type !== "white") {
+                    blackGroup.push(octaveKeys[j]);
+                    j++;
+                }
+                if (blackGroup.length === 0) continue;
+                
+                const leftWhiteIdx = whiteCursor - 1;
+                const leftCenterX = leftWhiteIdx * whiteWidthPx + whiteWidthPx / 2;
+                const intervalSpan = whiteWidthPx;
+                const blackWidth = blackWidthPx;
+                
+                if (blackGroup.length === 1) {
+                    // 单个紫键，中心偏右
+                    const centerRatio = 0.45;
+                    const centerX = leftCenterX + intervalSpan * centerRatio;
+                    let leftPx = centerX - blackWidth / 2;
+                    const minLeft = leftWhiteIdx * whiteWidthPx + 2;
+                    const maxLeft = (leftWhiteIdx + 1) * whiteWidthPx - blackWidth;
+                    //leftPx = Math.min(Math.max(leftPx, minLeft), maxLeft);
+                    blackKeysLayout.push({
+                        type: blackGroup[0].type,
+                        freq: blackGroup[0].freq,
+                        globalIdx: blackGroup[0].globalIdx,
+                        leftPx: leftPx,
+                        widthPx: blackWidth,
+                        heightClass: "key-purple"
+                    });
+                } else if (blackGroup.length === 2) {
+                    // 紫键中心0.36，蓝键中心0.72
+                    const purpleCenterRatio = 0.3;
+                    const blueCenterRatio = 0.6;
+                    const purpleCenterX = leftCenterX + intervalSpan * purpleCenterRatio;
+                    const blueCenterX = leftCenterX + intervalSpan * blueCenterRatio;
+                    let purpleLeft = purpleCenterX - blackWidth / 2;
+                    let blueLeft = blueCenterX - blackWidth / 2;
+                    const leftBoundary = leftWhiteIdx * whiteWidthPx + 2;
+                    const rightBoundary = (leftWhiteIdx + 1) * whiteWidthPx - blackWidth;
+                    //purpleLeft = Math.min(Math.max(purpleLeft, leftBoundary), rightBoundary);
+                    //blueLeft = Math.min(Math.max(blueLeft, leftBoundary), rightBoundary);
+                    //if (purpleLeft + blackWidth + 2 > blueLeft) {
+                    //    blueLeft = purpleLeft + blackWidth + 2;
+                    //    if (blueLeft + blackWidth > (leftWhiteIdx + 1) * whiteWidthPx) {
+                    //        blueLeft = (leftWhiteIdx + 1) * whiteWidthPx - blackWidth;
+                    //    }
+                    //}
+                    blackKeysLayout.push({
+                        type: blackGroup[0].type,
+                        freq: blackGroup[0].freq,
+                        globalIdx: blackGroup[0].globalIdx,
+                        leftPx: purpleLeft,
+                        widthPx: blackWidth,
+                        heightClass: "key-purple"
+                    });
+                    blackKeysLayout.push({
+                        type: blackGroup[1].type,
+                        freq: blackGroup[1].freq,
+                        globalIdx: blackGroup[1].globalIdx,
+                        leftPx: blueLeft,
+                        widthPx: blackWidth,
+                        heightClass: "key-blue"
+                    });
+                }
+                i = j - 1;
+            }
+            return { whiteKeys, blackKeys: blackKeysLayout };
+        }
+        
+        // 渲染整个键盘
+        const fullKeyData = buildFullKeyData(3);
+        const keysPerOctave = 19;
+        const octavesData = [];
+        for (let oct = 0; oct < 3; oct++) {
+            octavesData.push(fullKeyData.slice(oct * keysPerOctave, (oct+1) * keysPerOctave));
+        }
+        
+        const pianoContainer = document.getElementById("pianoContainer");
+        let allKeyElements = [];
+        
+        function renderPiano() {
+            pianoContainer.innerHTML = "";
+            allKeyElements = [];
+            const whiteWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--white-key-width').trim());
+            const blackWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--black-key-width').trim());
+            const whitePerOct = 7;
+            const octaveTotalWidth = whitePerOct * whiteWidth;
+            
+            for (let octIdx = 0; octIdx < octavesData.length; octIdx++) {
+                const octKeys = octavesData[octIdx];
+                const octaveDiv = document.createElement("div");
+                octaveDiv.className = "octave";
+                octaveDiv.style.width = octaveTotalWidth + "px";
+                
+                // 白键层
+                const whiteDiv = document.createElement("div");
+                whiteDiv.className = "white-keys";
+                const whiteKeyInfos = octKeys.filter(k => k.type === "white");
+                const whiteElements = [];
+                whiteKeyInfos.forEach((key) => {
+                    const wDom = document.createElement("div");
+                    wDom.className = "white-key";
+                    wDom.setAttribute("data-global-idx", key.globalIdx);
+                    wDom.setAttribute("data-type", "white");
+                    wDom.setAttribute("data-freq", key.freq);
+                    whiteDiv.appendChild(wDom);
+                    whiteElements.push({ dom: wDom, globalIdx: key.globalIdx, type: "white", freq: key.freq });
+                });
+                octaveDiv.appendChild(whiteDiv);
+                
+                // 黑键布局
+                const { blackKeys } = computeOctaveLayout(octKeys, whiteWidth, blackWidth);
+                const blackLayer = document.createElement("div");
+                blackLayer.className = "black-keys";
+                const blackElems = [];
+                blackKeys.forEach(black => {
+                    const bDom = document.createElement("div");
+                    bDom.className = `accidental-key ${black.heightClass}`;
+                    bDom.style.left = black.leftPx + "px";
+                    bDom.style.width = black.widthPx + "px";
+                    bDom.setAttribute("data-global-idx", black.globalIdx);
+                    bDom.setAttribute("data-type", black.type);
+                    bDom.setAttribute("data-freq", black.freq);
+                    blackLayer.appendChild(bDom);
+                    blackElems.push({ dom: bDom, globalIdx: black.globalIdx, type: black.type, freq: black.freq });
+                });
+                octaveDiv.appendChild(blackLayer);
+                pianoContainer.appendChild(octaveDiv);
+                
+                allKeyElements.push(...whiteElements);
+                allKeyElements.push(...blackElems);
+            }
+            attachEventsToAllKeys();
+        }
+        
+        // 多点触控 + 鼠标事件绑定
+        function attachEventsToAllKeys() {
+            for (const item of allKeyElements) {
+                const dom = item.dom;
+                const globalIdx = item.globalIdx;
+                const freq = item.freq;
+                
+                dom.addEventListener("touchstart", (e) => {
+                    e.preventDefault();
+                    if (!audioInitialized) {
+                        initAudio();
+                        audioInitialized = true;
+                        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                    } else if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                    const touches = e.changedTouches;
+                    for (let i = 0; i < touches.length; i++) {
+                        const touch = touches[i];
+                        const pointerId = `touch_${touch.identifier}`;
+                        if (activeSounds.has(`${globalIdx}_${pointerId}`)) continue;
+                        playNote(freq, globalIdx, pointerId);
+                        dom.classList.add("key-active");
+                    }
+                });
+                
+                dom.addEventListener("touchend", (e) => {
+                    e.preventDefault();
+                    const touches = e.changedTouches;
+                    for (let i = 0; i < touches.length; i++) {
+                        const touch = touches[i];
+                        const pointerId = `touch_${touch.identifier}`;
+                        stopNote(globalIdx, pointerId);
+                        let hasOther = false;
+                        for (let [key, sound] of activeSounds.entries()) {
+                            if (sound.keyId === globalIdx && !key.endsWith(pointerId)) {
+                                hasOther = true;
+                                break;
+                            }
+                        }
+                        if (!hasOther) dom.classList.remove("key-active");
+                    }
+                });
+                
+                dom.addEventListener("touchcancel", (e) => {
+                    e.preventDefault();
+                    const touches = e.changedTouches;
+                    for (let i = 0; i < touches.length; i++) {
+                        const touch = touches[i];
+                        const pointerId = `touch_${touch.identifier}`;
+                        stopNote(globalIdx, pointerId);
+                        let has = false;
+                        for (let [key, sound] of activeSounds.entries()) {
+                            if (sound.keyId === globalIdx) { has = true; break; }
+                        }
+                        if (!has) dom.classList.remove("key-active");
+                    }
+                });
+                
+                dom.addEventListener("touchmove", (e) => {
+                    e.preventDefault();
+                    const touch = e.changedTouches[0];
+                    if (!touch) return;
+                    const pointerId = `touch_${touch.identifier}`;
+                    const rect = dom.getBoundingClientRect();
+                    const inside = (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                                    touch.clientY >= rect.top && touch.clientY <= rect.bottom);
+                    if (!inside) {
+                        stopNote(globalIdx, pointerId);
+                        let stillActive = false;
+                        for (let [key, sound] of activeSounds.entries()) {
+                            if (sound.keyId === globalIdx && !key.endsWith(pointerId)) {
+                                stillActive = true; break;
+                            }
+                        }
+                        if (!stillActive) dom.classList.remove("key-active");
+                    }
+                });
+                
+                // 鼠标支持
+                dom.addEventListener("mousedown", (e) => {
+                    e.preventDefault();
+                    if (!audioInitialized) {
+                        initAudio();
+                        audioInitialized = true;
+                        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                    } else if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                    const pointerId = `mouse_${e.button}`;
+                    if (activeSounds.has(`${globalIdx}_${pointerId}`)) return;
+                    playNote(freq, globalIdx, pointerId);
+                    dom.classList.add("key-active");
+                    
+                    const onMouseUp = (upEvent) => {
+                        stopNote(globalIdx, pointerId);
+                        dom.classList.remove("key-active");
+                        document.removeEventListener("mouseup", onMouseUp);
+                        document.removeEventListener("mousemove", onLeave);
+                    };
+                    const onLeave = (moveEvent) => {
+                        const rect = dom.getBoundingClientRect();
+                        const inside = (moveEvent.clientX >= rect.left && moveEvent.clientX <= rect.right &&
+                                        moveEvent.clientY >= rect.top && moveEvent.clientY <= rect.bottom);
+                        if (!inside) {
+                            stopNote(globalIdx, pointerId);
+                            dom.classList.remove("key-active");
+                            document.removeEventListener("mouseup", onMouseUp);
+                            document.removeEventListener("mousemove", onLeave);
+                        }
+                    };
+                    document.addEventListener("mouseup", onMouseUp);
+                    document.addEventListener("mousemove", onLeave);
+                });
+                dom.addEventListener("dragstart", (e) => e.preventDefault());
+            }
+        }
+        
+        // 音频预热
+        function warmAudio() {
+            const handler = () => {
+                if (!audioInitialized) {
+                    initAudio();
+                    audioInitialized = true;
+                    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+                }
+                document.removeEventListener('touchstart', warmAudio);
+                document.removeEventListener('mousedown', warmAudio);
+            };
+            document.addEventListener('touchstart', warmAudio);
+            document.addEventListener('mousedown', warmAudio);
+        }
+        warmAudio();
+        
+        // 页面可见性处理
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden && audioCtx && audioCtx.state === 'running') {
+                for (let [key, sound] of activeSounds.entries()) {
+                    try {
+                        sound.gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
+                        sound.oscillator.stop(audioCtx.currentTime + 0.08);
+                    } catch(e) {}
+                }
+                activeSounds.clear();
+                allKeyElements.forEach(k => k.dom.classList.remove("key-active"));
+                if (audioCtx) audioCtx.suspend();
+            } else if (!document.hidden && audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume().catch(e=>console.log);
+            }
+        });
+        
+        renderPiano();
+        let resizeTimer;
+        window.addEventListener("resize", () => {
+            if (resizeTimer) clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => { renderPiano(); }, 120);
+        });
+    })();
+</script>
+</body>
+</html>
