@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>极简可编辑海报</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs2@0.0.2/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #eaeef3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            padding: 2rem;
+        }
+        .toolbar {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 48px;
+            padding: 12px 24px;
+            display: flex;
+            gap: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            z-index: 100;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .toolbar input {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            border: 1px solid #ccc;
+            border-radius: 40px;
+            width: 260px;
+            outline: none;
+            font-family: monospace;
+        }
+        .toolbar button {
+            background: #111;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .toolbar button:hover {
+            background: #333;
+        }
+        .poster {
+            width: 600px;
+            background: #FFFFFF;
+            padding: 48px 40px 52px 40px;
+            border-radius: 0px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .site-name {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: #000000;
+            margin-bottom: 8px;
+            cursor: text; /* 提示可编辑 */
+        }
+        .site-tagline {
+            font-size: 14px;
+            color: #6c6c6c;
+            font-weight: 400;
+            margin-bottom: 32px;
+            border-bottom: 1px solid #eaeef3;
+            display: inline-block;
+            padding-bottom: 6px;
+            cursor: text;
+        }
+        .qrcode-container {
+            display: flex;
+            justify-content: center;
+            margin: 24px 0 28px 0;
+        }
+        #qrcode img {
+            width: 200px;
+            height: 200px;
+            display: block;
+            margin: 0 auto;
+        }
+        #qrcode {
+            display: inline-block;
+        }
+        .website-url {
+            font-size: 18px;
+            font-weight: 500;
+            color: #1a1a1a;
+            background: #F8F8F8;
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            word-break: break-all;
+            cursor: text;
+        }
+        .callout {
+            font-size: 13px;
+            color: #8e8e8e;
+            margin-top: 16px;
+            letter-spacing: 0.3px;
+            cursor: text;
+        }
+        .divider-light {
+            width: 48px;
+            height: 1px;
+            background: #e0e0e0;
+            margin: 24px auto 16px auto;
+        }
+        @media (max-width: 680px) {
+            .poster { width: 92%; padding: 32px 24px; transform: scale(0.98); }
+            .toolbar input { width: 180px; }
+            .site-name { font-size: 24px; }
+            #qrcode img { width: 160px; height: 160px; }
+        }
+        /* 可编辑元素获得焦点时加一个淡提示 */
+        [contenteditable="true"]:focus {
+            outline: 1px dashed #ccc;
+            background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <div class="poster" id="posterContainer">
+        <!-- 添加 contenteditable="true" 让文字可编辑 -->
+        <div class="site-name" contenteditable="true">YOUR NAME</div>
+        <div class="site-tagline" contenteditable="true">Personal website</div>
+        
+        <div class="qrcode-container">
+            <div id="qrcode"></div>
+        </div>
+        
+        <div class="website-url" id="urlDisplay" contenteditable="true">yourwebsite.com</div>
+        <div class="divider-light"></div>
+        <div class="callout" contenteditable="true">SCAN · EXPLORE · CONNECT</div>
+    </div>
+</div>
+
+<div class="toolbar">
+    <input type="text" id="websiteInput" placeholder="https://yourwebsite.com" value="https://yourwebsite.com">
+    <button id="generateBtn">⟳ 生成二维码</button>
+    <button id="saveBtn">⬇ 保存为图片</button>
+</div>
+
+<script>
+    let currentQR = null;
+    const qrcodeDiv = document.getElementById('qrcode');
+    const urlDisplaySpan = document.getElementById('urlDisplay');
+    const websiteInput = document.getElementById('websiteInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const saveBtn = document.getElementById('saveBtn');
+
+    function formatUrlForDisplay(url) {
+        let clean = url.replace(/^https?:\/\//, '');
+        clean = clean.replace(/\/$/, '');
+        return clean;
+    }
+
+    function generateQR(url) {
+        if (!url) return;
+        let finalUrl = url;
+        if (!/^https?:\/\//i.test(finalUrl)) {
+            finalUrl = 'https://' + finalUrl;
+        }
+        qrcodeDiv.innerHTML = "";
+        new QRCode(qrcodeDiv, {
+            text: finalUrl,
+            width: 200,
+            height: 200,
+            colorDark: "#000000",
+            colorLight: "#FFFFFF",
+            correctLevel: QRCode.CorrectLevel.M
+        });
+        // 更新显示区域（但不要覆盖用户正在编辑的状态）
+        if (document.activeElement !== urlDisplaySpan) {
+            urlDisplaySpan.innerText = formatUrlForDisplay(finalUrl);
+        }
+    }
+
+    function updatePosterFromInput() {
+        let rawUrl = websiteInput.value.trim();
+        if (rawUrl === "") {
+            rawUrl = "https://yourwebsite.com";
+            websiteInput.value = rawUrl;
+        }
+        generateQR(rawUrl);
+        // 同步显示区域
+        urlDisplaySpan.innerText = formatUrlForDisplay(rawUrl);
+    }
+
+    // 监听网址显示区域的编辑事件
+    urlDisplaySpan.addEventListener('blur', function() {
+        let newUrlText = this.innerText.trim();
+        if (newUrlText === "") return;
+        let finalUrl = newUrlText;
+        if (!/^https?:\/\//i.test(finalUrl)) {
+            finalUrl = 'https://' + finalUrl;
+        }
+        // 同步到输入框
+        websiteInput.value = finalUrl;
+        // 重新生成二维码
+        generateQR(finalUrl);
+        // 确保显示格式统一
+        this.innerText = formatUrlForDisplay(finalUrl);
+    });
+
+    // 其他可编辑元素无需特殊处理，但为了保存图片时内容是最新的，html2canvas会自动捕捉
+    generateBtn.addEventListener('click', () => {
+        updatePosterFromInput();
+    });
+    saveBtn.addEventListener('click', () => {
+        const element = document.getElementById('posterContainer');
+        html2canvas(element, {
+            scale: 3,
+            backgroundColor: '#FFFFFF',
+            logging: false,
+            useCORS: false
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'minimalist_poster.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }).catch(error => {
+            console.error('截图失败: ', error);
+            alert('生成失败，可刷新页面重试');
+        });
+    });
+
+    // 初始化
+    updatePosterFromInput();
+
+    websiteInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            updatePosterFromInput();
+        }
+    });
+</script>
+</body>
+</html>
