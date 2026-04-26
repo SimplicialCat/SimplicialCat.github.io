@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超级井字棋</title>
+    <style>
+:root {
+    /* 蓝色色阶 */
+    --blue-50: #e3f2fd;
+    --blue-100: #bbdefb;
+    --blue-200: #90caf9;
+    --blue-300: #64b5f6;
+    --blue-400: #42a5f5;
+    --blue-500: #2196f3;
+    --blue-600: #1e88e5;
+    --blue-700: #1976d2;
+    --blue-800: #1565c0;
+    --blue-900: #0d47a1;
+
+    /* 中性色 */
+    --white: #ffffff;
+    --gray-50: #fafafa;
+    --gray-100: #f5f5f5;
+    --gray-200: #eeeeee;
+    --gray-300: #e0e0e0;
+    --cell-bg: #FAFBFC;
+
+    /* 间距 */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+
+    /* 字体 */
+    --font-size-sm: 12px;
+    --font-size-md: 14px;
+    --font-size-lg: 18px;
+    --font-size-xl: 24px;
+    --font-size-xxl: 32px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--blue-50);
+    color: var(--blue-900);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    max-width: 600px;
+    width: 100%;
+    padding: var(--spacing-lg);
+}
+
+/* 标题 */
+.game-header {
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.game-header h1 {
+    font-size: var(--font-size-xl);
+    font-weight: 300;
+    color: var(--blue-700);
+    letter-spacing: 2px;
+}
+
+/* 分数面板 */
+.score-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--white);
+    border-radius: 8px;
+}
+
+.score-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    position: relative;
+}
+
+.score-item.active .player-symbol::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background: var(--blue-600);
+    border-radius: 2px;
+}
+
+.player-symbol {
+    font-size: var(--font-size-xxl);
+    font-weight: 300;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.score-value {
+    font-size: var(--font-size-xl);
+    font-weight: 300;
+    color: var(--blue-800);
+    min-width: 30px;
+    text-align: center;
+}
+
+.score-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--blue-200);
+}
+
+/* 游戏棋盘 */
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    aspect-ratio: 1;
+}
+
+/* 大格 */
+.big-cell {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+}
+
+/* 小格 */
+.small-cell {
+    background: var(--cell-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    aspect-ratio: 1;
+    position: relative;
+}
+
+.small-cell:hover {
+    background: var(--blue-100);
+}
+
+/* 棋子SVG */
+.small-cell svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.small-cell.x svg {
+    opacity: 1;
+}
+
+.small-cell.o svg {
+    opacity: 1;
+}
+
+/* 获胜线短暂高亮 */
+.small-cell.winning-flash {
+    animation: flashHighlight 2s ease-out;
+}
+
+@keyframes flashHighlight {
+    0% {
+        background: var(--blue-300);
+    }
+    50% {
+        background: var(--blue-400);
+    }
+    100% {
+        background: var(--blue-100);
+    }
+}
+
+/* 控制面板 */
+.control-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+/* 模式选择器 */
+.mode-selector {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+/* 细横线按钮样式 */
+.mode-btn,
+.undo-btn,
+.restart-btn {
+    background: transparent;
+    border: none;
+    color: var(--blue-700);
+    font-size: var(--font-size-md);
+    font-weight: 400;
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.mode-btn::after,
+.undo-btn::after,
+.restart-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--blue-400);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+}
+
+.mode-btn:hover::after,
+.undo-btn:hover::after,
+.restart-btn:hover::after,
+.mode-btn.active::after {
+    transform: scaleX(1);
+}
+
+.mode-btn.active {
+    color: var(--blue-900);
+    font-weight: 500;
+}
+
+.mode-btn:disabled,
+.undo-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.mode-btn:disabled::after,
+.undo-btn:disabled::after {
+    display: none;
+}
+
+/* 状态消息 */
+.status-message {
+    text-align: center;
+    font-size: var(--font-size-md);
+    color: var(--blue-700);
+    min-height: 24px;
+}
+
+/* 规则说明按钮 */
+.tutorial-btn {
+    order: -1;
+}
+
+/* 教程说明面板 */
+.tutorial-panel {
+    margin-bottom: var(--spacing-md);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tutorial-panel .tutorial-content {
+    background: linear-gradient(135deg, var(--blue-100) 0%, var(--blue-200) 100%);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.tutorial-panel p {
+    color: var(--blue-900);
+    font-size: var(--font-size-md);
+    flex: 1;
+    min-width: 200px;
+}
+
+.tutorial-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.tutorial-next-btn,
+.tutorial-exit-btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.tutorial-next-btn {
+    background: var(--blue-600);
+    color: var(--white);
+}
+
+.tutorial-next-btn:hover {
+    background: var(--blue-700);
+}
+
+.tutorial-exit-btn {
+    background: var(--white);
+    color: var(--blue-700);
+}
+
+.tutorial-exit-btn:hover {
+    background: var(--blue-50);
+}
+
+/* 教程模式下的控制按钮禁用 */
+.game-state-tutorial .mode-btn,
+.game-state-tutorial .undo-btn {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-md);
+    }
+
+    .game-header h1 {
+        font-size: var(--font-size-lg);
+    }
+
+    .game-board {
+        gap: var(--spacing-xs);
+    }
+
+    .mode-selector {
+        gap: var(--spacing-md);
+    }
+
+    .score-panel {
+        gap: var(--spacing-md);
+        padding: var(--spacing-sm);
+    }
+
+    .player-symbol {
+        font-size: var(--font-size-xl);
+    }
+
+    .score-value {
+        font-size: var(--font-size-xl);
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="game-header">
+            <h1>超级井字棋</h1>
+        </header>
+
+        <div class="score-panel">
+            <div class="score-item active" id="score-item-x">
+                <span class="player-symbol">✕</span>
+                <span class="score-value" id="score-x">0</span>
+            </div>
+            <div class="score-divider"></div>
+            <div class="score-item" id="score-item-o">
+                <span class="player-symbol">○</span>
+                <span class="score-value" id="score-o">0</span>
+            </div>
+        </div>
+
+        <main class="game-board" id="game-board"></main>
+
+        <div class="control-panel">
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="pve">人机对战</button>
+                <button class="mode-btn" data-mode="pvp">双人对战</button>
+                <button class="mode-btn" id="tutorial-btn">规则说明</button>
+            </div>
+            <button class="undo-btn" id="undo-btn">悔棋</button>
+            <button class="restart-btn" id="restart-btn">重新开始</button>
+        </div>
+
+        <div class="status-message" id="status-message">
+            游戏进行中
+        </div>
+
+        <div class="tutorial-panel" id="tutorial-panel" style="display: none;">
+            <div class="tutorial-content">
+                <p id="tutorial-description"></p>
+                <button class="tutorial-next-btn" id="tutorial-next-btn">下一步</button>
+                <button class="tutorial-exit-btn" id="tutorial-exit-btn">退出演示</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// ==================== 获胜线生成 ====================
+function generateAllWinningLines() {
+    const lines = [];
+
+    // 单个大格内的获胜模式
+    const inBigCellPatterns = [
+        // 横向
+        [[0, 0], [0, 1], [0, 2]],
+        [[1, 0], [1, 1], [1, 2]],
+        [[2, 0], [2, 1], [2, 2]],
+        // 竖向
+        [[0, 0], [1, 0], [2, 0]],
+        [[0, 1], [1, 1], [2, 1]],
+        [[0, 2], [1, 2], [2, 2]],
+        // 斜向
+        [[0, 0], [1, 1], [2, 2]],
+        [[0, 2], [1, 1], [2, 0]]
+    ];
+
+    // 跨大格的获胜模式
+    const acrossBigCellsPatterns = [
+        // 大格横向
+        [{ br: 0, bc: 0 }, { br: 0, bc: 1 }, { br: 0, bc: 2 }],
+        [{ br: 1, bc: 0 }, { br: 1, bc: 1 }, { br: 1, bc: 2 }],
+        [{ br: 2, bc: 0 }, { br: 2, bc: 1 }, { br: 2, bc: 2 }],
+        // 大格竖向
+        [{ br: 0, bc: 0 }, { br: 1, bc: 0 }, { br: 2, bc: 0 }],
+        [{ br: 0, bc: 1 }, { br: 1, bc: 1 }, { br: 2, bc: 1 }],
+        [{ br: 0, bc: 2 }, { br: 1, bc: 2 }, { br: 2, bc: 2 }],
+        // 大格斜向
+        [{ br: 0, bc: 0 }, { br: 1, bc: 1 }, { br: 2, bc: 2 }],
+        [{ br: 0, bc: 2 }, { br: 1, bc: 1 }, { br: 2, bc: 0 }]
+    ];
+
+    // 生成单个大格内的获胜线
+    for (let br = 0; br < 3; br++) {
+        for (let bc = 0; bc < 3; bc++) {
+            for (const pattern of inBigCellPatterns) {
+                const line = pattern.map(([sr, sc]) => ({
+                    bigRow: br,
+                    bigCol: bc,
+                    smallRow: sr,
+                    smallCol: sc
+                }));
+                lines.push(line);
+            }
+        }
+    }
+
+    // 生成跨大格的获胜线
+    for (const pattern of acrossBigCellsPatterns) {
+        for (let sr = 0; sr < 3; sr++) {
+            for (let sc = 0; sc < 3; sc++) {
+                const line = pattern.map(({ br, bc }) => ({
+                    bigRow: br,
+                    bigCol: bc,
+                    smallRow: sr,
+                    smallCol: sc
+                }));
+                lines.push(line);
+            }
+        }
+    }
+
+    return lines;
+}
+
+// ==================== GameState 类 ====================
+class GameState {
+    constructor() {
+        this.board = [];
+        this.currentPlayer = 'X';
+        this.gameMode = 'pve';
+        this.scores = { X: 0, O: 0 };
+        this.isGameOver = false;
+        this.moveHistory = [];
+        this.tutorialMode = false;
+        this.initBoard();
+    }
+
+    initBoard() {
+        this.board = [];
+        for (let br = 0; br < 3; br++) {
+            for (let bc = 0; bc < 3; bc++) {
+                for (let sr = 0; sr < 3; sr++) {
+                    for (let sc = 0; sc < 3; sc++) {
+                        this.board.push({
+                            bigRow: br,
+                            bigCol: bc,
+                            smallRow: sr,
+                            smallCol: sc,
+                            value: null,
+                            element: null
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    getCell(bigRow, bigCol, smallRow, smallCol) {
+        return this.board.find(cell =>
+            cell.bigRow === bigRow &&
+            cell.bigCol === bigCol &&
+            cell.smallRow === smallRow &&
+            cell.smallCol === smallCol
+        );
+    }
+
+    setCell(bigRow, bigCol, smallRow, smallCol, value) {
+        const cell = this.getCell(bigRow, bigCol, smallRow, smallCol);
+        if (cell) {
+            cell.value = value;
+        }
+    }
+
+    isValidMove(bigRow, bigCol, smallRow, smallCol) {
+        const cell = this.getCell(bigRow, bigCol, smallRow, smallCol);
+        return cell && cell.value === null && !this.isGameOver;
+    }
+
+    switchPlayer() {
+        this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+    }
+
+    addToHistory(move, wins) {
+        this.moveHistory.push({
+            ...move,
+            player: this.currentPlayer,
+            wins: wins
+        });
+    }
+
+    reset() {
+        this.board.forEach(cell => {
+            cell.value = null;
+        });
+        this.currentPlayer = 'X';
+        this.isGameOver = false;
+        this.moveHistory = [];
+        this.scores = { X: 0, O: 0 };
+    }
+}
+
+// ==================== WinChecker 类 ====================
+class WinChecker {
+    constructor(winningLines) {
+        this.winningLines = winningLines;
+        this.completedLines = new Set();
+    }
+
+    checkWin(board) {
+        const newWins = [];
+
+        for (let i = 0; i < this.winningLines.length; i++) {
+            if (this.completedLines.has(i)) continue;
+
+            const line = this.winningLines[i];
+            const winner = this.checkLine(board, line);
+
+            if (winner) {
+                this.completedLines.add(i);
+                newWins.push({
+                    lineIndex: i,
+                    cells: line,
+                    winner: winner
+                });
+            }
+        }
+
+        return newWins;
+    }
+
+    checkLine(board, line) {
+        const firstCell = board.find(c =>
+            c.bigRow === line[0].bigRow &&
+            c.bigCol === line[0].bigCol &&
+            c.smallRow === line[0].smallRow &&
+            c.smallCol === line[0].smallCol
+        );
+
+        if (!firstCell || !firstCell.value) return null;
+
+        for (let i = 1; i < line.length; i++) {
+            const cell = board.find(c =>
+                c.bigRow === line[i].bigRow &&
+                c.bigCol === line[i].bigCol &&
+                c.smallRow === line[i].smallRow &&
+                c.smallCol === line[i].smallCol
+            );
+            if (!cell || cell.value !== firstCell.value) return null;
+        }
+
+        return firstCell.value;
+    }
+
+    isBoardFull(board) {
+        return board.every(cell => cell.value !== null);
+    }
+
+    reset() {
+        this.completedLines.clear();
+    }
+}
+
+// ==================== SuperTicTacToeAI 类 ====================
+class SuperTicTacToeAI {
+    constructor(gameState, winChecker) {
+        this.gameState = gameState;
+        this.winChecker = winChecker;
+        this.depth = 3;
+    }
+
+    makeMove() {
+        const validMoves = this.getValidMoves();
+
+        if (validMoves.length === 0) return null;
+
+        const scoredMoves = [];
+
+        for (const move of validMoves) {
+            const score = this.minimax(
+                this.cloneBoard(),
+                move,
+                this.depth - 1,
+                false,
+                -Infinity,
+                Infinity
+            );
+            scoredMoves.push({ move, score });
+        }
+
+        scoredMoves.sort((a, b) => b.score - a.score);
+
+        const topMoves = scoredMoves.slice(0, Math.min(5, scoredMoves.length));
+        const selected = topMoves[Math.floor(Math.random() * topMoves.length)];
+
+        return selected.move;
+    }
+
+    minimax(board, move, depth, isMaximizing, alpha, beta) {
+        const cellIndex = this.getCellIndex(move);
+        board[cellIndex].value = this.gameState.currentPlayer;
+
+        // 为AI搜索创建独立的WinChecker实例，避免污染全局状态
+        const tempWinChecker = new WinChecker(this.winChecker.winningLines);
+        const wins = tempWinChecker.checkWin(board);
+
+        if (wins.length > 0) {
+            const myWins = wins.filter(w => w.winner === this.gameState.currentPlayer);
+            const opponentWins = wins.filter(w => w.winner !== this.gameState.currentPlayer);
+
+            board[cellIndex].value = null;
+            return myWins.length * 1000 - opponentWins.length * 1000;
+        }
+
+        if (depth === 0) {
+            const score = this.evaluateBoard(board);
+            board[cellIndex].value = null;
+            return score;
+        }
+
+        const validMoves = this.getValidMovesForBoard(board);
+
+        if (validMoves.length === 0) {
+            board[cellIndex].value = null;
+            return 0;
+        }
+
+        if (isMaximizing) {
+            let maxEval = -Infinity;
+            for (const nextMove of validMoves) {
+                const evaluation = this.minimax(
+                    board,
+                    nextMove,
+                    depth - 1,
+                    false,
+                    alpha,
+                    beta
+                );
+                maxEval = Math.max(maxEval, evaluation);
+                alpha = Math.max(alpha, evaluation);
+                if (beta <= alpha) break;
+            }
+            board[cellIndex].value = null;
+            return maxEval;
+        } else {
+            let minEval = Infinity;
+            for (const nextMove of validMoves) {
+                const evaluation = this.minimax(
+                    board,
+                    nextMove,
+                    depth - 1,
+                    true,
+                    alpha,
+                    beta
+                );
+                minEval = Math.min(minEval, evaluation);
+                beta = Math.min(beta, evaluation);
+                if (beta <= alpha) break;
+            }
+            board[cellIndex].value = null;
+            return minEval;
+        }
+    }
+
+    evaluateBoard(board) {
+        let score = 0;
+        const player = this.gameState.currentPlayer;
+        const opponent = player === 'X' ? 'O' : 'X';
+
+        for (const line of this.winChecker.winningLines) {
+            const lineScore = this.evaluateLine(board, line, player, opponent);
+            score += lineScore;
+        }
+
+        return score;
+    }
+
+    evaluateLine(board, line, player, opponent) {
+        let playerCount = 0;
+        let opponentCount = 0;
+        let emptyCount = 0;
+
+        for (const coords of line) {
+            const cell = board.find(c =>
+                c.bigRow === coords.bigRow &&
+                c.bigCol === coords.bigCol &&
+                c.smallRow === coords.smallRow &&
+                c.smallCol === coords.smallCol
+            );
+            if (cell.value === player) playerCount++;
+            else if (cell.value === opponent) opponentCount++;
+            else emptyCount++;
+        }
+
+        if (playerCount === 3) return 1000;
+        if (opponentCount === 3) return -1000;
+        if (playerCount === 2 && emptyCount === 1) return 100;
+        if (opponentCount === 2 && emptyCount === 1) return -100;
+        if (playerCount === 1 && emptyCount === 2) return 10;
+        if (opponentCount === 1 && emptyCount === 2) return -10;
+
+        return 0;
+    }
+
+    getValidMoves() {
+        return this.gameState.board
+            .filter(cell => cell.value === null)
+            .map(cell => ({
+                bigRow: cell.bigRow,
+                bigCol: cell.bigCol,
+                smallRow: cell.smallRow,
+                smallCol: cell.smallCol
+            }));
+    }
+
+    getValidMovesForBoard(board) {
+        return board
+            .filter(cell => cell.value === null)
+            .map(cell => ({
+                bigRow: cell.bigRow,
+                bigCol: cell.bigCol,
+                smallRow: cell.smallRow,
+                smallCol: cell.smallCol
+            }));
+    }
+
+    getCellIndex(move) {
+        return move.bigRow * 27 + move.bigCol * 9 +
+               move.smallRow * 3 + move.smallCol;
+    }
+
+    cloneBoard() {
+        return this.gameState.board.map(cell => ({ ...cell }));
+    }
+}
+
+// ==================== GameController 类 ====================
+class GameController {
+    constructor() {
+        this.gameState = new GameState();
+        this.winningLines = generateAllWinningLines();
+        this.winChecker = new WinChecker(this.winningLines);
+        this.ai = new SuperTicTacToeAI(this.gameState, this.winChecker);
+
+        this.initBoard();
+        this.bindEvents();
+        this.updateUI();
+    }
+
+    initBoard() {
+        const boardElement = document.getElementById('game-board');
+        boardElement.innerHTML = '';
+
+        for (let br = 0; br < 3; br++) {
+            for (let bc = 0; bc < 3; bc++) {
+                const bigCell = document.createElement('div');
+                bigCell.className = 'big-cell';
+                bigCell.dataset.bigRow = br;
+                bigCell.dataset.bigCol = bc;
+
+                for (let sr = 0; sr < 3; sr++) {
+                    for (let sc = 0; sc < 3; sc++) {
+                        const smallCell = document.createElement('div');
+                        smallCell.className = 'small-cell';
+                        smallCell.dataset.bigRow = br;
+                        smallCell.dataset.bigCol = bc;
+                        smallCell.dataset.smallRow = sr;
+                        smallCell.dataset.smallCol = sc;
+                        bigCell.appendChild(smallCell);
+
+                        const cell = this.gameState.getCell(br, bc, sr, sc);
+                        if (cell) {
+                            cell.element = smallCell;
+                        }
+                    }
+                }
+
+                boardElement.appendChild(bigCell);
+            }
+        }
+    }
+
+    bindEvents() {
+        const boardElement = document.getElementById('game-board');
+
+        boardElement.addEventListener('click', (e) => {
+            const cell = e.target.closest('.small-cell');
+            if (cell) {
+                this.handleCellClick(cell);
+            }
+        });
+
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.switchMode(e.target.dataset.mode);
+            });
+        });
+
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            this.restart();
+        });
+
+        document.getElementById('undo-btn').addEventListener('click', () => {
+            this.undo();
+        });
+
+        document.getElementById('tutorial-btn').addEventListener('click', () => {
+            this.startTutorial();
+        });
+
+        document.getElementById('tutorial-next-btn').addEventListener('click', () => {
+            this.nextTutorialStep();
+        });
+
+        document.getElementById('tutorial-exit-btn').addEventListener('click', () => {
+            this.exitTutorial();
+        });
+    }
+
+    handleCellClick(cellElement) {
+        if (this.gameState.tutorialMode) {
+            return;
+        }
+
+        if (this.gameState.gameMode === 'pve' &&
+            this.gameState.currentPlayer === 'O') {
+            return;
+        }
+
+        const bigRow = parseInt(cellElement.dataset.bigRow);
+        const bigCol = parseInt(cellElement.dataset.bigCol);
+        const smallRow = parseInt(cellElement.dataset.smallRow);
+        const smallCol = parseInt(cellElement.dataset.smallCol);
+
+        if (!this.gameState.isValidMove(bigRow, bigCol, smallRow, smallCol)) {
+            return;
+        }
+
+        this.makeMove(bigRow, bigCol, smallRow, smallCol);
+    }
+
+    makeMove(bigRow, bigCol, smallRow, smallCol) {
+        const currentPlayer = this.gameState.currentPlayer;
+
+        this.gameState.setCell(bigRow, bigCol, smallRow, smallCol,
+                              this.gameState.currentPlayer);
+
+        this.updateCellUI(bigRow, bigCol, smallRow, smallCol);
+
+        const newWins = this.winChecker.checkWin(this.gameState.board);
+
+        if (newWins.length > 0) {
+            this.handleWins(newWins);
+        }
+
+        const move = { bigRow, bigCol, smallRow, smallCol };
+        this.gameState.addToHistory(move, newWins);
+
+        if (this.winChecker.isBoardFull(this.gameState.board)) {
+            this.gameState.isGameOver = true;
+            this.updateStatusMessage('游戏结束');
+            this.updateUndoButton();
+            return;
+        }
+
+        this.gameState.switchPlayer();
+        this.updateUI();
+
+        if (this.gameState.gameMode === 'pve' &&
+            this.gameState.currentPlayer === 'O' &&
+            !this.gameState.isGameOver) {
+            setTimeout(() => this.aiMove(), 500);
+        }
+    }
+
+    aiMove() {
+        const move = this.ai.makeMove();
+
+        if (move) {
+            this.makeMove(move.bigRow, move.bigCol,
+                         move.smallRow, move.smallCol);
+        }
+    }
+
+    handleWins(wins) {
+        for (const win of wins) {
+            this.gameState.scores[win.winner]++;
+
+            for (const coords of win.cells) {
+                const cell = this.gameState.getCell(
+                    coords.bigRow, coords.bigCol,
+                    coords.smallRow, coords.smallCol
+                );
+                if (cell && cell.element) {
+                    cell.element.classList.add('winning-flash');
+                    setTimeout(() => {
+                        cell.element.classList.remove('winning-flash');
+                    }, 2000);
+                }
+            }
+        }
+
+        this.updateScores();
+    }
+
+    updateCellUI(bigRow, bigCol, smallRow, smallCol) {
+        const cell = this.gameState.getCell(bigRow, bigCol, smallRow, smallCol);
+
+        if (!cell.element) {
+            const selector = `.small-cell[data-big-row="${bigRow}"][data-big-col="${bigCol}"]` +
+                           `[data-small-row="${smallRow}"][data-small-col="${smallCol}"]`;
+            cell.element = document.querySelector(selector);
+        }
+
+        cell.element.classList.add(cell.value.toLowerCase());
+
+        if (cell.value === 'X') {
+            cell.element.innerHTML = `
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="20" y1="20" x2="80" y2="80" stroke="#1976d2" stroke-width="8" stroke-linecap="round"/>
+                    <line x1="80" y1="20" x2="20" y2="80" stroke="#1976d2" stroke-width="8" stroke-linecap="round"/>
+                </svg>
+            `;
+        } else if (cell.value === 'O') {
+            cell.element.innerHTML = `
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="35" stroke="#2196f3" stroke-width="8" fill="none"/>
+                </svg>
+            `;
+        }
+    }
+
+    updateUI() {
+        const playerName = this.gameState.currentPlayer;
+
+        // 更新分数面板上的active状态
+        const scoreItemX = document.getElementById('score-item-x');
+        const scoreItemO = document.getElementById('score-item-o');
+
+        if (playerName === 'X') {
+            scoreItemX.classList.add('active');
+            scoreItemO.classList.remove('active');
+        } else {
+            scoreItemX.classList.remove('active');
+            scoreItemO.classList.add('active');
+        }
+
+        this.updateUndoButton();
+    }
+
+    updateStatusMessage(message) {
+        document.getElementById('status-message').textContent = message;
+    }
+
+    updateScores() {
+        document.getElementById('score-x').textContent =
+            this.gameState.scores.X;
+        document.getElementById('score-o').textContent =
+            this.gameState.scores.O;
+    }
+
+    updateUndoButton() {
+        const undoBtn = document.getElementById('undo-btn');
+
+        if (this.gameState.isGameOver) {
+            undoBtn.disabled = true;
+        } else if (this.gameState.gameMode === 'pve') {
+            undoBtn.disabled = this.gameState.moveHistory.length < 2;
+        } else {
+            undoBtn.disabled = this.gameState.moveHistory.length < 1;
+        }
+    }
+
+    undo() {
+        if (this.gameState.isGameOver) return;
+
+        if (this.gameState.gameMode === 'pve') {
+            if (this.gameState.moveHistory.length < 2) return;
+
+            const aiMove = this.gameState.moveHistory.pop();
+            const playerMove = this.gameState.moveHistory.pop();
+
+            this.clearMove(aiMove);
+            this.clearMove(playerMove);
+
+            this.gameState.currentPlayer = 'X';
+        } else {
+            if (this.gameState.moveHistory.length < 1) return;
+
+            const lastMove = this.gameState.moveHistory.pop();
+            this.clearMove(lastMove);
+
+            this.gameState.currentPlayer = lastMove.player;
+        }
+
+        this.updateUI();
+        this.updateScores();
+    }
+
+    clearMove(move) {
+        const cell = this.gameState.getCell(
+            move.bigRow, move.bigCol,
+            move.smallRow, move.smallCol
+        );
+
+        if (cell) {
+            cell.value = null;
+            if (cell.element) {
+                cell.element.innerHTML = '';
+                cell.element.classList.remove('x', 'o');
+            }
+        }
+
+        for (const win of move.wins) {
+            this.gameState.scores[win.winner]--;
+            this.winChecker.completedLines.delete(win.lineIndex);
+        }
+    }
+
+    switchMode(mode) {
+        this.gameState.gameMode = mode;
+
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.mode === mode);
+        });
+
+        this.restart();
+    }
+
+    restart() {
+        this.gameState.reset();
+        this.winChecker.reset();
+
+        document.querySelectorAll('.small-cell').forEach(cell => {
+            cell.innerHTML = '';
+            cell.className = 'small-cell';
+        });
+
+        this.updateScores();
+        this.updateUI();
+        this.updateStatusMessage('游戏进行中');
+    }
+
+    // ==================== 教程功能 ====================
+    initTutorial() {
+        this.tutorialSteps = [
+            {
+                description: '同一大格内共线的三小格, 记一分',
+                moves: [
+                    {bigRow: 1, bigCol: 1, smallRow: 0, smallCol: 0, player: 'X'},
+                    {bigRow: 1, bigCol: 1, smallRow: 0, smallCol: 1, player: 'X'},
+                    {bigRow: 1, bigCol: 1, smallRow: 0, smallCol: 2, player: 'X'}
+                ]
+            },
+            {
+                description: '共线的三大格内同一位置的小格, 记一分',
+                moves: [
+                    {bigRow: 0, bigCol: 0, smallRow: 1, smallCol: 1, player: 'O'},
+                    {bigRow: 1, bigCol: 1, smallRow: 1, smallCol: 1, player: 'O'},
+                    {bigRow: 2, bigCol: 2, smallRow: 1, smallCol: 1, player: 'O'}
+                ]
+            },
+            {
+                description: '每步允许重复计分',
+                moves: [
+                    {bigRow: 1, bigCol: 1, smallRow: 0, smallCol: 0, player: 'X'},
+                    {bigRow: 1, bigCol: 1, smallRow: 2, smallCol: 2, player: 'X'},
+                    {bigRow: 0, bigCol: 2, smallRow: 1, smallCol: 1, player: 'X'},
+                    {bigRow: 2, bigCol: 0, smallRow: 1, smallCol: 1, player: 'X'},
+                    {bigRow: 1, bigCol: 1, smallRow: 1, smallCol: 1, player: 'X'}
+                ]
+            }
+        ];
+
+        this.currentTutorialStep = 0;
+    }
+
+    startTutorial() {
+        this.initTutorial();
+        this.gameState.tutorialMode = true;
+        this.currentTutorialStep = 0;
+
+        // 清空棋盘
+        document.querySelectorAll('.small-cell').forEach(cell => {
+            cell.innerHTML = '';
+            cell.className = 'small-cell';
+        });
+
+        // 禁用游戏控制
+        document.querySelector('.container').classList.add('game-state-tutorial');
+
+        // 显示教程面板
+        document.getElementById('tutorial-panel').style.display = 'block';
+
+        // 演示第一步
+        setTimeout(() => {
+            this.runTutorialDemo(this.tutorialSteps[0].moves);
+            this.updateTutorialUI();
+        }, 300);
+    }
+
+    runTutorialDemo(moves) {
+        moves.forEach((move, index) => {
+            setTimeout(() => {
+                this.gameState.setCell(
+                    move.bigRow, move.bigCol,
+                    move.smallRow, move.smallCol,
+                    move.player
+                );
+                this.updateCellUI(move.bigRow, move.bigCol, move.smallRow, move.smallCol);
+
+                // 最后一个棋子放置后，触发获胜高亮
+                if (index === moves.length - 1 && moves.length > 0) {
+                    setTimeout(() => {
+                        this.flashWinningLine(moves);
+                    }, 200);
+                }
+            }, index * 400);
+        });
+    }
+
+    flashWinningLine(moves) {
+        moves.forEach(move => {
+            const cell = this.gameState.getCell(
+                move.bigRow, move.bigCol,
+                move.smallRow, move.smallCol
+            );
+            if (cell && cell.element) {
+                cell.element.classList.add('winning-flash');
+                setTimeout(() => {
+                    cell.element.classList.remove('winning-flash');
+                }, 2000);
+            }
+        });
+    }
+
+    updateTutorialUI() {
+        const step = this.tutorialSteps[this.currentTutorialStep];
+        document.getElementById('tutorial-description').textContent = step.description;
+
+        const nextBtn = document.getElementById('tutorial-next-btn');
+        if (this.currentTutorialStep === this.tutorialSteps.length - 1) {
+            nextBtn.textContent = '开始游戏';
+        } else {
+            nextBtn.textContent = `下一步 (${this.currentTutorialStep + 1}/${this.tutorialSteps.length - 1})`;
+        }
+    }
+
+    nextTutorialStep() {
+        // 清空棋盘
+        document.querySelectorAll('.small-cell').forEach(cell => {
+            cell.innerHTML = '';
+            cell.className = 'small-cell';
+        });
+
+        if (this.currentTutorialStep < this.tutorialSteps.length - 1) {
+            this.currentTutorialStep++;
+            setTimeout(() => {
+                this.runTutorialDemo(this.tutorialSteps[this.currentTutorialStep].moves);
+                this.updateTutorialUI();
+            }, 200);
+        } else {
+            this.exitTutorial();
+        }
+    }
+
+    exitTutorial() {
+        this.gameState.tutorialMode = false;
+        document.getElementById('tutorial-panel').style.display = 'none';
+        document.querySelector('.container').classList.remove('game-state-tutorial');
+
+        // 重置游戏并切换到人机对战模式
+        this.gameState.gameMode = 'pve';
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.mode === 'pve');
+        });
+
+        this.restart();
+    }
+}
+
+// 启动游戏
+document.addEventListener('DOMContentLoaded', () => {
+    new GameController();
+});
+    </script>
+</body>
+</html>
