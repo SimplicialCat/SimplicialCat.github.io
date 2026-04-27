@@ -767,12 +767,12 @@ class SuperTicTacToeAI {
             else emptyCount++;
         }
 
-        if (playerCount === 3) return 1000;
-        if (opponentCount === 3) return -1000;
-        if (playerCount === 2 && emptyCount === 1) return 100;
-        if (opponentCount === 2 && emptyCount === 1) return -100;
-        if (playerCount === 1 && emptyCount === 2) return 10;
-        if (opponentCount === 1 && emptyCount === 2) return -10;
+        if (playerCount === 3) return 3;
+        if (opponentCount === 3) return -3;
+        if (playerCount === 2 && emptyCount === 1) return 2;
+        if (opponentCount === 2 && emptyCount === 1) return -2;
+        if (playerCount === 1 && emptyCount === 2) return 1;
+        if (opponentCount === 1 && emptyCount === 2) return -1;
 
         return 0;
     }
