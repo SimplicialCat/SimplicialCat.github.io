@@ -190,13 +190,13 @@ body {
 
 @keyframes flashHighlight {
     0% {
-        background: var(--blue-300);
+        background: #FFD700;
     }
     50% {
-        background: var(--blue-400);
+        background: #FFC107;
     }
     100% {
-        background: var(--blue-100);
+        background: #FFF8E1;
     }
 }
 
@@ -217,6 +217,7 @@ body {
 
 /* 细横线按钮样式 */
 .mode-btn,
+.peek-btn,
 .undo-btn,
 .restart-btn {
     background: transparent;
@@ -231,6 +232,7 @@ body {
 }
 
 .mode-btn::after,
+.peek-btn::after,
 .undo-btn::after,
 .restart-btn::after {
     content: '';
@@ -245,13 +247,16 @@ body {
 }
 
 .mode-btn:hover::after,
+.peek-btn:hover::after,
 .undo-btn:hover::after,
 .restart-btn:hover::after,
-.mode-btn.active::after {
+.mode-btn.active::after,
+.peek-btn.peek-active::after {
     transform: scaleX(1);
 }
 
-.mode-btn.active {
+.mode-btn.active,
+.peek-btn.peek-active {
     color: var(--blue-900);
     font-weight: 500;
 }
@@ -411,6 +416,7 @@ body {
             <div class="mode-selector">
                 <button class="mode-btn active" data-mode="pve">人机对战</button>
                 <button class="mode-btn" data-mode="pvp">双人对战</button>
+                <button class="peek-btn" id="peek-btn">窥探模式</button>
                 <button class="mode-btn" id="tutorial-btn">规则说明</button>
             </div>
             <button class="undo-btn" id="undo-btn">悔棋</button>
@@ -508,6 +514,7 @@ class GameState {
         this.isGameOver = false;
         this.moveHistory = [];
         this.tutorialMode = false;
+        this.peekMode = false;
         this.initBoard();
     }
 
@@ -642,6 +649,19 @@ class SuperTicTacToeAI {
         this.gameState = gameState;
         this.winChecker = winChecker;
         this.depth = 3;
+        this.winningLineIndices = this.precomputeLineIndices();
+    }
+
+    precomputeLineIndices() {
+        const lines = [];
+        for (const line of this.winChecker.winningLines) {
+            const indices = line.map(coords =>
+                coords.bigRow * 27 + coords.bigCol * 9 +
+                coords.smallRow * 3 + coords.smallCol
+            );
+            lines.push(indices);
+        }
+        return lines;
     }
 
     makeMove() {
@@ -649,13 +669,27 @@ class SuperTicTacToeAI {
 
         if (validMoves.length === 0) return null;
 
+        // 根据空格子数量动态调整搜索深度
+        const emptyCount = validMoves.length;
+        let dynamicDepth = this.depth;
+
+        if (emptyCount > 60) {
+            dynamicDepth = 1;  // 开局：只看一步
+        } else if (emptyCount > 40) {
+            dynamicDepth = 2;  // 中前期：看两步
+        } else if (emptyCount > 20) {
+            dynamicDepth = 3;  // 中后期：看三步
+        } else {
+            dynamicDepth = 4;  // 残局：看四步
+        }
+
         const scoredMoves = [];
 
         for (const move of validMoves) {
             const score = this.minimax(
                 this.cloneBoard(),
                 move,
-                this.depth - 1,
+                dynamicDepth - 1,
                 false,
                 -Infinity,
                 Infinity
@@ -663,10 +697,15 @@ class SuperTicTacToeAI {
             scoredMoves.push({ move, score });
         }
 
+        // 按分数排序
         scoredMoves.sort((a, b) => b.score - a.score);
 
-        const topMoves = scoredMoves.slice(0, Math.min(5, scoredMoves.length));
-        const selected = topMoves[Math.floor(Math.random() * topMoves.length)];
+        // 找出最高分
+        const maxScore = scoredMoves[0].score;
+
+        // 筛选出所有最高分的moves，从所有最佳moves中随机选择
+        const bestMoves = scoredMoves.filter(m => m.score === maxScore);
+        const selected = bestMoves[Math.floor(Math.random() * bestMoves.length)];
 
         return selected.move;
     }
@@ -694,6 +733,9 @@ class SuperTicTacToeAI {
         }
 
         const validMoves = this.getValidMovesForBoard(board);
+
+        // 随机打乱moves顺序以消除搜索顺序偏向
+        this.shuffleArray(validMoves);
 
         if (validMoves.length === 0) {
             board[cellIndex].value = null;
@@ -737,13 +779,21 @@ class SuperTicTacToeAI {
         }
     }
 
+    shuffleArray(array) {
+        // Fisher-Yates洗牌算法，随机打乱数组顺序
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
     evaluateBoard(board) {
         let score = 0;
         const player = this.gameState.currentPlayer;
         const opponent = player === 'X' ? 'O' : 'X';
 
-        for (const line of this.winChecker.winningLines) {
-            const lineScore = this.evaluateLine(board, line, player, opponent);
+        for (const lineIndices of this.winningLineIndices) {
+            const lineScore = this.evaluateLineByIndex(board, lineIndices, player, opponent);
             score += lineScore;
         }
 
@@ -762,6 +812,28 @@ class SuperTicTacToeAI {
                 c.smallRow === coords.smallRow &&
                 c.smallCol === coords.smallCol
             );
+            if (cell.value === player) playerCount++;
+            else if (cell.value === opponent) opponentCount++;
+            else emptyCount++;
+        }
+
+        if (playerCount === 3) return 3;
+        if (opponentCount === 3) return -3;
+        if (playerCount === 2 && emptyCount === 1) return 2;
+        if (opponentCount === 2 && emptyCount === 1) return -2;
+        if (playerCount === 1 && emptyCount === 2) return 1;
+        if (opponentCount === 1 && emptyCount === 2) return -1;
+
+        return 0;
+    }
+
+    evaluateLineByIndex(board, lineIndices, player, opponent) {
+        let playerCount = 0;
+        let opponentCount = 0;
+        let emptyCount = 0;
+
+        for (const index of lineIndices) {
+            const cell = board[index];
             if (cell.value === player) playerCount++;
             else if (cell.value === opponent) opponentCount++;
             else emptyCount++;
@@ -806,6 +878,14 @@ class SuperTicTacToeAI {
 
     cloneBoard() {
         return this.gameState.board.map(cell => ({ ...cell }));
+    }
+
+    evaluateSingleMove(move) {
+        const board = this.cloneBoard();
+        const cellIndex = this.getCellIndex(move);
+        board[cellIndex].value = this.gameState.currentPlayer;
+
+        return this.evaluateBoard(board);
     }
 }
 
@@ -883,6 +963,10 @@ class GameController {
             this.startTutorial();
         });
 
+        document.getElementById('peek-btn').addEventListener('click', () => {
+            this.togglePeekMode();
+        });
+
         document.getElementById('tutorial-next-btn').addEventListener('click', () => {
             this.nextTutorialStep();
         });
@@ -935,6 +1019,9 @@ class GameController {
             this.gameState.isGameOver = true;
             this.updateStatusMessage('游戏结束');
             this.updateUndoButton();
+            if (this.gameState.peekMode) {
+                this.updatePeekVisualization();
+            }
             return;
         }
 
@@ -944,7 +1031,7 @@ class GameController {
         if (this.gameState.gameMode === 'pve' &&
             this.gameState.currentPlayer === 'O' &&
             !this.gameState.isGameOver) {
-            setTimeout(() => this.aiMove(), 500);
+            setTimeout(() => this.aiMove(), 1500);
         }
     }
 
@@ -992,14 +1079,14 @@ class GameController {
         if (cell.value === 'X') {
             cell.element.innerHTML = `
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <line x1="20" y1="20" x2="80" y2="80" stroke="#1976d2" stroke-width="8" stroke-linecap="round"/>
-                    <line x1="80" y1="20" x2="20" y2="80" stroke="#1976d2" stroke-width="8" stroke-linecap="round"/>
+                    <line x1="20" y1="20" x2="80" y2="80" stroke="#0d47a1" stroke-width="8" stroke-linecap="round"/>
+                    <line x1="80" y1="20" x2="20" y2="80" stroke="#0d47a1" stroke-width="8" stroke-linecap="round"/>
                 </svg>
             `;
         } else if (cell.value === 'O') {
             cell.element.innerHTML = `
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="50" r="35" stroke="#2196f3" stroke-width="8" fill="none"/>
+                    <circle cx="50" cy="50" r="35" stroke="#0d47a1" stroke-width="8" fill="none"/>
                 </svg>
             `;
         }
@@ -1021,6 +1108,11 @@ class GameController {
         }
 
         this.updateUndoButton();
+
+        // 如果窥探模式开启，更新显示（因为切换玩家后评估视角变了）
+        if (this.gameState.peekMode) {
+            this.updatePeekVisualization();
+        }
     }
 
     updateStatusMessage(message) {
@@ -1070,6 +1162,10 @@ class GameController {
 
         this.updateUI();
         this.updateScores();
+
+        if (this.gameState.peekMode) {
+            this.updatePeekVisualization();
+        }
     }
 
     clearMove(move) {
@@ -1251,6 +1347,75 @@ class GameController {
         });
 
         this.restart();
+    }
+
+    // ==================== 窥探模式功能 ====================
+    togglePeekMode() {
+        this.gameState.peekMode = !this.gameState.peekMode;
+
+        const peekBtn = document.getElementById('peek-btn');
+        peekBtn.classList.toggle('peek-active', this.gameState.peekMode);
+
+        if (this.gameState.peekMode) {
+            this.updatePeekVisualization();
+        } else {
+            this.clearPeekVisualization();
+        }
+    }
+
+    updatePeekVisualization() {
+        if (!this.gameState.peekMode) return;
+
+        // 第一步：清除所有格子的背景色（包括已走过的格子）
+        this.gameState.board.forEach(cell => {
+            if (cell.element) {
+                cell.element.style.backgroundColor = '';
+            }
+        });
+
+        // 第二步：只为空格子设置新的背景色
+        const validMoves = this.ai.getValidMoves();
+
+        const scoredMoves = [];
+        for (const move of validMoves) {
+            const score = this.ai.evaluateSingleMove(move);
+            scoredMoves.push({ move, score });
+        }
+
+        const scores = scoredMoves.map(m => m.score);
+        const minScore = Math.min(...scores);
+        const maxScore = Math.max(...scores);
+        const scoreRange = maxScore - minScore || 1;
+
+        for (const { move, score } of scoredMoves) {
+            const cell = this.gameState.getCell(
+                move.bigRow, move.bigCol,
+                move.smallRow, move.smallCol
+            );
+
+            if (cell && cell.element) {
+                const backgroundColor = this.calculatePeekColor(score, minScore, maxScore, scoreRange);
+                cell.element.style.backgroundColor = backgroundColor;
+            }
+        }
+    }
+
+    calculatePeekColor(score, minScore, maxScore, scoreRange) {
+        // 将分数映射到0-1范围
+        const normalized = (score - minScore) / scoreRange;
+
+        // 使用蓝色渐变：最差(最浅) → 最好(最深)
+        const alpha = 0.1 + normalized * 0.8;
+        return `rgba(33, 150, 243, ${alpha})`;
+    }
+
+    clearPeekVisualization() {
+        // 只清除空格子的背景色，保留非空格子的默认样式
+        this.gameState.board.forEach(cell => {
+            if (cell.value === null && cell.element) {
+                cell.element.style.backgroundColor = '';
+            }
+        });
     }
 }
 
