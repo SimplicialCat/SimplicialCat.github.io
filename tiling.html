@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aperiodic Rhombus Tiling</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+
+        .controls {
+            width: 300px;
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 100;
+            transition: transform 0.3s ease;
+            transform: translateX(-100%);
+            position: absolute;
+            height: 100%;
+        }
+
+        .controls:not(.collapsed) {
+            transform: translateX(0);
+        }
+
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: #ecf0f3;
+        }
+
+        canvas {
+            display: block;
+            cursor: grab;
+        }
+
+        canvas:active {
+            cursor: grabbing;
+        }
+
+        .menu-toggle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+            background: #3498db;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 6px 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: filter 0.3s, z-index 0.3s;
+            line-height: 1;
+            width: auto;
+            height: auto;
+            display: inline-block;
+        }
+
+        .controls:not(.collapsed) ~ .canvas-container .menu-toggle {
+            z-index: 1;
+            opacity: 0.3;
+        }
+
+        .controls:not(.collapsed) ~ .canvas-container .menu-toggle:hover {
+            opacity: 1;
+        }
+
+        .menu-toggle:hover {
+            filter: brightness(0.9);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #1a5490;
+            font-weight: 600;
+            flex: 1;
+            line-height: 1.3;
+        }
+
+        h1 small {
+            font-size: 13px;
+            font-weight: 400;
+            color: #7f8c8d;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .control-group h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #1a5490;
+            font-weight: 600;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            background: white;
+            border: 1px solid #ced4da;
+            color: #2c3e50;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+
+        button:hover {
+            filter: brightness(0.9);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        #closeMenu {
+            width: auto;
+            padding: 8px 15px !important;
+            margin: 0 !important;
+            background: #d4e6f1 !important;
+            color: #2980b9 !important;
+        }
+
+        #closeMenu:hover {
+            filter: brightness(0.95) !important;
+        }
+
+        .value-display {
+            font-size: 12px;
+            color: #1a5490;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .info {
+            font-size: 11px;
+            color: #7f8c8d;
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            background: #3498db;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .zoom-btn:hover {
+            filter: brightness(0.9);
+        }
+
+        .param-slider-group {
+            margin-bottom: 12px;
+        }
+
+        .param-slider-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .param-slider-group input[type="range"] {
+            width: 100%;
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .param-value {
+            font-weight: 600;
+            color: #3498db;
+            font-size: 11px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #d4e6f1;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .controls {
+                width: 280px;
+                max-width: 85vw;
+            }
+
+            h1 {
+                font-size: 18px;
+            }
+
+            h1 small {
+                font-size: 11px;
+            }
+
+            .control-group {
+                padding: 12px;
+            }
+        }
+
+        /* Overlay when menu is open */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+
+    <div class="container">
+        <div class="controls collapsed" id="controls">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1 style="margin: 0; text-align: left;">非周期镶嵌<br><small style="font-size: 14px; font-weight: 400; color: #7f8c8d;">Aperiodic Tiling</small></h1>
+                <button id="closeMenu" style="width: auto; padding: 8px 15px; margin: 0; background: #d4e6f1; color: #2980b9;">✕</button>
+            </div>
+
+            <div class="control-group">
+                <h3>参数 / Parameters</h3>
+                <label for="n-value">n (奇数 ≥ 3, odd integer ≥ 3):</label>
+                <input type="number" id="n-value" value="5" min="3" max="15" step="2">
+
+                <div id="a-params-container" style="margin-top: 15px;">
+                    <!-- Sliders for a_k parameters will be dynamically added here -->
+                </div>
+
+                <button id="randomize-a">随机化所有参数 / Randomize All Parameters</button>
+                <button id="regenerate">重新生成 / Regenerate Tiling</button>
+            </div>
+
+            <div class="control-group">
+                <h3>网格范围 / Grid Range</h3>
+                <label for="grid-size">网格大小 / Grid Size:</label>
+                <input type="range" id="grid-size" min="5" max="20" value="10">
+                <div class="value-display">大小 / Size: <span id="grid-size-value">10</span></div>
+            </div>
+
+            <div class="control-group">
+                <h3>颜色主题 / Color Theme</h3>
+                <label for="hue-slider">色相 / Hue (0°-360°):</label>
+                <input type="range" id="hue-slider" min="0" max="360" value="210">
+                <div class="value-display">色相 / Hue: <span id="hue-value">210</span>°</div>
+            </div>
+
+            <div class="control-group">
+                <h3>统计 / Statistics</h3>
+                <div class="value-display" id="stats">菱形数量 / Rhombuses: 0</div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <canvas id="canvas"></canvas>
+            <div class="zoom-controls">
+                <button class="zoom-btn" id="zoom-in">+</button>
+                <button class="zoom-btn" id="zoom-out">−</button>
+                <button class="zoom-btn" id="reset-view">⌂</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Complex number utilities
+        function complex(re, im) {
+            return { re, im };
+        }
+
+        function addComplex(z1, z2) {
+            return complex(z1.re + z2.re, z1.im + z2.im);
+        }
+
+        function subtractComplex(z1, z2) {
+            return complex(z1.re - z2.re, z1.im - z2.im);
+        }
+
+        function multiplyComplex(z1, z2) {
+            return complex(
+                z1.re * z2.re - z1.im * z2.im,
+                z1.re * z2.im + z1.im * z2.re
+            );
+        }
+
+        function multiplyComplexScalar(z, scalar) {
+            return complex(z.re * scalar, z.im * scalar);
+        }
+
+        function conjugate(z) {
+            return complex(z.re, -z.im);
+        }
+
+        // Global state
+        let n = 5;
+        let a = [];
+        let zeta = [];
+        let gridSize = 10;
+        let zoom = 50;
+        let panX = 0;
+        let panY = 0;
+        let baseHue = 210; // Base hue for color theme (blue)
+        let isDragging = false;
+        let lastMouseX, lastMouseY;
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Initialize zeta values (nth roots of unity)
+        function initZeta() {
+            zeta = [];
+            for (let k = 0; k < n; k++) {
+                const angle = 2 * Math.PI * k / n;
+                zeta.push(complex(Math.cos(angle), Math.sin(angle)));
+            }
+        }
+
+        // Initialize a parameters randomly
+        function initA() {
+            a = [];
+            for (let k = 0; k < n; k++) {
+                a.push(Math.random());
+            }
+        }
+
+        // Create sliders for a_k parameters
+        function createParamSliders() {
+            const container = document.getElementById('a-params-container');
+            container.innerHTML = ''; // Clear existing sliders
+
+            for (let k = 0; k < n; k++) {
+                const group = document.createElement('div');
+                group.className = 'param-slider-group';
+
+                const label = document.createElement('label');
+                label.innerHTML = `<span>参数 ${k} (parameter ${k}):</span><span class="param-value" id="a${k}-value">${a[k].toFixed(3)}</span>`;
+
+                const slider = document.createElement('input');
+                slider.type = 'range';
+                slider.min = '0';
+                slider.max = '1';
+                slider.step = '0.001';
+                slider.value = a[k];
+                slider.id = `a${k}-slider`;
+
+                slider.addEventListener('input', function() {
+                    a[k] = parseFloat(this.value);
+                    document.getElementById(`a${k}-value`).textContent = a[k].toFixed(3);
+                    generateTiling();
+                });
+
+                group.appendChild(label);
+                group.appendChild(slider);
+                container.appendChild(group);
+            }
+        }
+
+        // Update sliders when a array changes
+        function updateSliders() {
+            for (let k = 0; k < n; k++) {
+                const slider = document.getElementById(`a${k}-slider`);
+                const valueDisplay = document.getElementById(`a${k}-value`);
+                if (slider && valueDisplay) {
+                    slider.value = a[k];
+                    valueDisplay.textContent = a[k].toFixed(3);
+                }
+            }
+        }
+
+        // Update UI colors based on baseHue
+        function updateUIColors() {
+            try {
+                // Update CSS variables or directly update elements
+                const primaryColor = `hsl(${baseHue}, 85%, 52%)`;
+                const secondaryColor = `hsl(${baseHue}, 80%, 45%)`;
+                const lightColor = `hsl(${baseHue}, 75%, 93%)`;
+                const textColor = `hsl(${baseHue}, 70%, 35%)`;
+
+                // Update title color
+                const title = document.querySelector('h1');
+                if (title) title.style.color = textColor;
+
+                // Update param value colors
+                document.querySelectorAll('.param-value').forEach(el => {
+                    el.style.color = primaryColor;
+                });
+
+                // Update value-display colors
+                document.querySelectorAll('.value-display').forEach(el => {
+                    el.style.color = textColor;
+                });
+
+                // Update control-group h3 colors
+                document.querySelectorAll('.control-group h3').forEach(el => {
+                    el.style.color = textColor;
+                });
+
+                // Update buttons
+                document.querySelectorAll('button:not(.zoom-btn):not(#closeMenu):not(#menuToggle)').forEach(btn => {
+                    btn.style.background = primaryColor;
+                });
+
+                // Update zoom buttons
+                document.querySelectorAll('.zoom-btn').forEach(btn => {
+                    btn.style.background = primaryColor;
+                });
+
+                // Update menu toggle
+                const menuToggle = document.getElementById('menuToggle');
+                if (menuToggle) menuToggle.style.background = primaryColor;
+
+                // Update close menu button
+                const closeMenu = document.getElementById('closeMenu');
+                if (closeMenu) {
+                    closeMenu.style.background = lightColor;
+                    closeMenu.style.color = textColor;
+                }
+
+                // Update range slider thumbs
+                const style = document.createElement('style');
+                style.textContent = `
+                    input[type="range"]::-webkit-slider-thumb {
+                        background: ${primaryColor} !important;
+                    }
+                    input[type="range"]::-moz-range-thumb {
+                        background: ${primaryColor} !important;
+                    }
+                `;
+                // Remove old style if exists
+                const oldStyle = document.getElementById('dynamic-slider-style');
+                if (oldStyle) oldStyle.remove();
+                style.id = 'dynamic-slider-style';
+                document.head.appendChild(style);
+            } catch (error) {
+                console.error('Error updating UI colors:', error);
+            }
+        }
+
+        // Compute fₖ(z) = Re(z/ζₙᵏ)
+        function computeF(z, k) {
+            const zetaK = zeta[k];
+            const conjZeta = conjugate(zetaK);
+            const result = multiplyComplex(z, conjZeta);
+            return result.re;
+        }
+
+        // Compute all f values for a point z
+        function computeFAll(z) {
+            const f = [];
+            for (let k = 0; k < n; k++) {
+                f.push(computeF(z, k));
+            }
+            return f;
+        }
+
+        // Compute g(f) = Σₖ ζₙᵏ * floor(aₖ + fₖ)
+        function computeG(f) {
+            let result = complex(0, 0);
+            for (let k = 0; k < n; k++) {
+                const floorVal = Math.floor(a[k] + f[k]);
+                const term = multiplyComplexScalar(zeta[k], floorVal);
+                result = addComplex(result, term);
+            }
+            return result;
+        }
+
+        // Compute vertex without floor for special coordinates l and m
+        // For k = l or k = m: use a_k + f_k directly (which is integer) + epsilon/eta
+        // For k != l and k != m: use floor(a_k + f_k)
+        function computeVertexWithoutFloor(z, l, m, epsilon, eta) {
+            let result = complex(0, 0);
+            const f = computeFAll(z);
+
+            for (let k = 0; k < n; k++) {
+                if (k === l) {
+                    // Use a_l + f_l directly (already integer) + epsilon
+                    const term = multiplyComplexScalar(zeta[k], a[k] + f[k] + epsilon);
+                    result = addComplex(result, term);
+                } else if (k === m) {
+                    // Use a_m + f_m directly (already integer) + eta
+                    const term = multiplyComplexScalar(zeta[k], a[k] + f[k] + eta);
+                    result = addComplex(result, term);
+                } else {
+                    // Use floor for other components
+                    const floorVal = Math.floor(a[k] + f[k]);
+                    const term = multiplyComplexScalar(zeta[k], floorVal);
+                    result = addComplex(result, term);
+                }
+            }
+            return result;
+        }
+
+        // Solve for z given constraints on two coordinates
+        function solveForZ(l, m, i, j) {
+            // We need to find z = x + iy such that:
+            // aₗ + Re(z/ζₙˡ) = i
+            // aₘ + Re(z/ζₙᵐ) = j
+
+            // Re(z/ζ) where z = x + iy and ζ = u + iv:
+            // z/ζ = (x + iy) / (u + iv)
+            //      = (x + iy)(u - iv) / (u² + v²)
+            //      = (xu + yv) / (u² + v²) + i(yu - xv) / (u² + v²)
+            // Since ζ is a unit root, u² + v² = 1
+            // So: Re(z/ζ) = xu + yv = x*Re(ζ) + y*Im(ζ)
+
+            const zetaL = zeta[l];
+            const zetaM = zeta[m];
+
+            // Re(z/ζ_n^l) = x * zetaL.re + y * zetaL.im
+            // Re(z/ζ_n^m) = x * zetaM.re + y * zetaM.im
+
+            const a11 = zetaL.re;
+            const a12 = zetaL.im;
+            const a21 = zetaM.re;
+            const a22 = zetaM.im;
+
+            const b1 = i - a[l];
+            const b2 = j - a[m];
+
+            // Solve the 2x2 system:
+            // a11*x + a12*y = b1
+            // a21*x + a22*y = b2
+
+            const det = a11 * a22 - a12 * a21;
+
+            if (Math.abs(det) < 1e-10) {
+                return null; // Singular system
+            }
+
+            const x = (b1 * a22 - b2 * a12) / det;  // Fixed: was a21, should be a12
+            const y = (a11 * b2 - a21 * b1) / det;
+
+            return complex(x, y);
+        }
+
+        // Generate rhombus vertices for a given point and pair (l, m)
+        function generateRhombus(z, l, m) {
+            // Use the corrected formula: for l,m components use a_k+f_k directly (no floor)
+            // and add epsilon, eta ∈ {0,-1}. For other components use floor.
+            // Order vertices to go around the rhombus
+            const vertices = [
+                computeVertexWithoutFloor(z, l, m, 0, 0),   // ε=0, η=0
+                computeVertexWithoutFloor(z, l, m, -1, 0),  // ε=-1, η=0
+                computeVertexWithoutFloor(z, l, m, -1, -1), // ε=-1, η=-1
+                computeVertexWithoutFloor(z, l, m, 0, -1)   // ε=0, η=-1
+            ];
+            return vertices;
+        }
+
+        // Get color for a given (l, m) pair - monochromatic gradient
+        function getColor(l, m) {
+            // Use base hue with varying lightness
+            // Wider range: 30% (darkest) to 85% (lightest)
+            const lightnessVariation = ((l * n + m) * 7) % 55; // 0-55 variation
+            const lightness = 30 + lightnessVariation; // Range: 30-85
+            return `hsl(${baseHue}, 85%, ${lightness}%)`;
+        }
+
+        // Transform complex coordinate to canvas coordinate
+        function complexToCanvas(z) {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            return {
+                x: centerX + panX + z.re * zoom,
+                y: centerY + panY - z.im * zoom // Flip Y axis
+            };
+        }
+
+        // Draw a rhombus
+        function drawRhombus(vertices, color) {
+            ctx.beginPath();
+            const start = complexToCanvas(vertices[0]);
+            ctx.moveTo(start.x, start.y);
+
+            for (let i = 1; i < vertices.length; i++) {
+                const point = complexToCanvas(vertices[i]);
+                ctx.lineTo(point.x, point.y);
+            }
+
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+
+            // Use the base hue for stroke color
+            const strokeColor = `hsla(${baseHue}, 85%, 52%, 0.4)`;
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Check which coordinates are integers (or very close to integers)
+        function findIntegerCoordinates(z, threshold = 1e-6) {
+            const f = computeFAll(z);
+            const intCoords = [];
+
+            for (let k = 0; k < n; k++) {
+                const val = a[k] + f[k];
+                const rounded = Math.round(val);
+                if (Math.abs(val - rounded) < threshold) {
+                    intCoords.push(k);
+                }
+            }
+
+            return intCoords;
+        }
+
+        // Generate and draw all rhombuses
+        function generateTiling() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            let rhombusCount = 0;
+            const processedPoints = new Set();
+
+            // Iterate over all pairs (l, m) where 0 <= l < m < n
+            for (let l = 0; l < n; l++) {
+                for (let m = l + 1; m < n; m++) {
+                    // Iterate over grid points
+                    for (let i = -gridSize; i <= gridSize; i++) {
+                        for (let j = -gridSize; j <= gridSize; j++) {
+                            const z = solveForZ(l, m, i, j);
+
+                            if (z !== null) {
+                                // Find all coordinates that are integers for this point
+                                const f = computeFAll(z);
+                                const intCoords = [];
+                                for (let k = 0; k < n; k++) {
+                                    const val = a[k] + f[k];
+                                    if (Math.abs(val - Math.round(val)) < 1e-6) {
+                                        intCoords.push(k);
+                                    }
+                                }
+
+                                // Only generate if EXACTLY these two (l, m) are integers
+                                // This ensures each point generates at most one rhombus
+                                if (intCoords.length === 2 &&
+                                    intCoords.includes(l) &&
+                                    intCoords.includes(m)) {
+
+                                    const pointKey = `${z.re.toFixed(10)},${z.im.toFixed(10)}`;
+                                    if (!processedPoints.has(pointKey)) {
+                                        processedPoints.add(pointKey);
+
+                                        const color = getColor(l, m);
+                                        const vertices = generateRhombus(z, l, m);
+                                        drawRhombus(vertices, color);
+                                        rhombusCount++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            document.getElementById('stats').textContent = `Rhombuses: ${rhombusCount}`;
+        }
+
+        // Resize canvas
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            generateTiling();
+        }
+
+        // Event listeners
+        document.getElementById('n-value').addEventListener('change', function() {
+            let value = parseInt(this.value);
+            if (value < 3) value = 3;
+            if (value > 15) value = 15;
+            if (value % 2 === 0) value++; // Ensure odd
+            this.value = value;
+            n = value;
+            initZeta();
+            initA();
+            createParamSliders();
+            generateTiling();
+        });
+
+        document.getElementById('randomize-a').addEventListener('click', function() {
+            initA();
+            updateSliders();
+            generateTiling();
+        });
+
+        document.getElementById('regenerate').addEventListener('click', function() {
+            generateTiling();
+        });
+
+        document.getElementById('grid-size').addEventListener('input', function() {
+            gridSize = parseInt(this.value);
+            document.getElementById('grid-size-value').textContent = gridSize;
+            generateTiling();
+        });
+
+        document.getElementById('hue-slider').addEventListener('input', function() {
+            baseHue = parseInt(this.value);
+            document.getElementById('hue-value').textContent = baseHue;
+            updateUIColors();
+            generateTiling();
+        });
+
+        document.getElementById('zoom-in').addEventListener('click', function() {
+            zoom *= 1.2;
+            generateTiling();
+        });
+
+        document.getElementById('zoom-out').addEventListener('click', function() {
+            zoom /= 1.2;
+            generateTiling();
+        });
+
+        document.getElementById('reset-view').addEventListener('click', function() {
+            zoom = 50;
+            panX = 0;
+            panY = 0;
+            generateTiling();
+        });
+
+        // Mouse events for pan
+        canvas.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        });
+
+        canvas.addEventListener('mousemove', function(e) {
+            if (isDragging) {
+                const dx = e.clientX - lastMouseX;
+                const dy = e.clientY - lastMouseY;
+                panX += dx;
+                panY += dy;
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+                generateTiling();
+            }
+        });
+
+        canvas.addEventListener('mouseup', function() {
+            isDragging = false;
+        });
+
+        canvas.addEventListener('mouseleave', function() {
+            isDragging = false;
+        });
+
+        canvas.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+            zoom *= zoomFactor;
+            generateTiling();
+        });
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // Menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const controls = document.getElementById('controls');
+        const overlay = document.getElementById('overlay');
+        let isMenuOpen = false;
+
+        function toggleMenu() {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                controls.classList.remove('collapsed');
+                overlay.classList.add('active');
+            } else {
+                controls.classList.add('collapsed');
+                overlay.classList.remove('active');
+            }
+        }
+
+        menuToggle.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        document.getElementById('closeMenu').addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleMenu();
+        });
+
+        // Initialize
+        try {
+            initZeta();
+            initA();
+            createParamSliders();
+            resizeCanvas();
+            updateUIColors();
+        } catch (error) {
+            console.error('Initialization error:', error);
+        }
+    </script>
+</body>
+</html>
