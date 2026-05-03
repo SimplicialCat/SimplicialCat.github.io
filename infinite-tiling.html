@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aperiodic Rhombus Tiling</title>
+    <title>Infinite Aperiodic Rhombus Tiling</title>
     <style>
         * {
             margin: 0;
@@ -16,6 +16,7 @@
             background: #f5f7fa;
             color: #2c3e50;
             overflow: hidden;
+            touch-action: none; /* Prevent default touch actions for mobile */
         }
 
         .container {
@@ -313,7 +314,7 @@
     <div class="container">
         <div class="controls collapsed" id="controls">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h1 style="margin: 0; text-align: left;">非周期镶嵌<br><small style="font-size: 14px; font-weight: 400; color: #7f8c8d;">Aperiodic Tiling</small></h1>
+                <h1 style="margin: 0; text-align: left;">无限非周期镶嵌<br><small style="font-size: 14px; font-weight: 400; color: #7f8c8d;">Infinite Aperiodic Tiling</small></h1>
                 <button id="closeMenu" style="width: auto; padding: 8px 15px; margin: 0; background: #d4e6f1; color: #2980b9;">✕</button>
             </div>
 
@@ -331,10 +332,11 @@
             </div>
 
             <div class="control-group">
-                <h3>网格范围 / Grid Range</h3>
-                <label for="grid-size">网格大小 / Grid Size:</label>
-                <input type="range" id="grid-size" min="5" max="20" value="10">
-                <div class="value-display">大小 / Size: <span id="grid-size-value">10</span></div>
+                <h3>渲染范围 / Render Range</h3>
+                <label for="d-value">搜索半径 / Search Radius (D):</label>
+                <input type="range" id="d-value" min="10" max="20" step="0.5" value="12">
+                <div class="value-display">D = <span id="d-display">12</span></div>
+                <div class="value-display">中心坐标 / Center: <span id="center-coords">(0.00, 0.00)</span></div>
             </div>
 
             <div class="control-group">
@@ -348,14 +350,13 @@
                 <h3>统计 / Statistics</h3>
                 <div class="value-display" id="stats">菱形数量 / Rhombuses: 0</div>
             </div>
+
         </div>
 
         <div class="canvas-container">
             <button class="menu-toggle" id="menuToggle">☰</button>
             <canvas id="canvas"></canvas>
             <div class="zoom-controls">
-                <button class="zoom-btn" id="zoom-in">+</button>
-                <button class="zoom-btn" id="zoom-out">−</button>
                 <button class="zoom-btn" id="reset-view">⌂</button>
             </div>
         </div>
@@ -394,7 +395,7 @@
         let n = 5;
         let a = [];
         let zeta = [];
-        let gridSize = 10;
+        let D = 12; // Search radius
         let zoom = 50;
         let panX = 0;
         let panY = 0;
@@ -648,12 +649,10 @@
 
         // Get color for a given (l, m) pair - monochromatic gradient
         function getColor(l, m) {
-            // Use base hue with varying lightness based on orientation
-            // Lightness varies smoothly with rhombus orientation (l+m)/n
-            // Wider range: 10% (darkest) to 90% (lightest)
-            const normalizedSum = (l + m) / (2 * n - 3); // Normalized to [0, 1]
-            const lightnessVariation = normalizedSum * 80; // 0-80 variation
-            const lightness = 10 + lightnessVariation; // Range: 10-90
+            // Use base hue with varying lightness
+            // Wider range: 30% (darkest) to 85% (lightest)
+            const lightnessVariation = ((l * n + m) * 7) % 55; // 0-55 variation
+            const lightness = 30 + lightnessVariation; // Range: 30-85
             return `hsl(${baseHue}, 85%, ${lightness}%)`;
         }
 
@@ -683,11 +682,11 @@
             ctx.fillStyle = color;
             ctx.fill();
 
-            // Border removed - no stroke
-            // const strokeColor = `hsla(${baseHue}, 85%, 52%, 0.4)`;
-            // ctx.strokeStyle = strokeColor;
-            // ctx.lineWidth = 1;
-            // ctx.stroke();
+            // Use the base hue for stroke color
+            const strokeColor = `hsla(${baseHue}, 85%, 52%, 0.4)`;
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = 1;
+            ctx.stroke();
         }
 
         // Check which coordinates are integers (or very close to integers)
@@ -706,47 +705,89 @@
             return intCoords;
         }
 
-        // Generate and draw all rhombuses
+        // Generate and draw all rhombuses in the visible range
         function generateTiling() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Apply circular clipping
+            ctx.save();
+            ctx.beginPath();
+            const clipRadius = D * zoom;
+            ctx.arc(canvas.width / 2, canvas.height / 2, clipRadius, 0, Math.PI * 2);
+            ctx.clip();
 
             let rhombusCount = 0;
             const processedPoints = new Set();
 
+            // Calculate current viewport center w (in screen coordinates, then convert to complex plane)
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const w = complex((-panX) / zoom, panY / zoom);
+
+            // According to 算法.md: z ≈ (2/n) * w
+            const zCenter = multiplyComplexScalar(w, 2.0 / n);
+
             // Iterate over all pairs (l, m) where 0 <= l < m < n
             for (let l = 0; l < n; l++) {
                 for (let m = l + 1; m < n; m++) {
-                    // Iterate over grid points
-                    for (let i = -gridSize; i <= gridSize; i++) {
-                        for (let j = -gridSize; j <= gridSize; j++) {
+                    const zetaL = zeta[l];
+                    const zetaM = zeta[m];
+
+                    // Estimate the range of i, j values near zCenter
+                    // fₖ(z) = Re(z/ζₙᵏ) = z.re · zeta[k].re + z.im · zeta[k].im
+                    const fL_center = zCenter.re * zetaL.re + zCenter.im * zetaL.im;
+                    const fM_center = zCenter.re * zetaM.re + zCenter.im * zetaM.im;
+
+                    const iCenter = a[l] + fL_center;
+                    const jCenter = a[m] + fM_center;
+
+                    // Estimate range based on D
+                    const margin = D * 1.5;
+                    const iMin = Math.floor(iCenter - margin);
+                    const iMax = Math.ceil(iCenter + margin);
+                    const jMin = Math.floor(jCenter - margin);
+                    const jMax = Math.ceil(jCenter + margin);
+
+                    // Iterate over the estimated range
+                    for (let i = iMin; i <= iMax; i++) {
+                        for (let j = jMin; j <= jMax; j++) {
                             const z = solveForZ(l, m, i, j);
 
-                            if (z !== null) {
-                                // Find all coordinates that are integers for this point
-                                const f = computeFAll(z);
-                                const intCoords = [];
-                                for (let k = 0; k < n; k++) {
-                                    const val = a[k] + f[k];
-                                    if (Math.abs(val - Math.round(val)) < 1e-6) {
-                                        intCoords.push(k);
-                                    }
+                            if (z === null) {
+                                continue;
+                            }
+
+                            // Check if z is within range D of zCenter
+                            const dz = subtractComplex(z, zCenter);
+                            const distSquared = dz.re * dz.re + dz.im * dz.im;
+                            if (distSquared > D * D) {
+                                continue;
+                            }
+
+                            // Find all coordinates that are integers for this point
+                            const f = computeFAll(z);
+                            const intCoords = [];
+                            for (let k = 0; k < n; k++) {
+                                const val = a[k] + f[k];
+                                if (Math.abs(val - Math.round(val)) < 1e-6) {
+                                    intCoords.push(k);
                                 }
+                            }
 
-                                // Only generate if EXACTLY these two (l, m) are integers
-                                // This ensures each point generates at most one rhombus
-                                if (intCoords.length === 2 &&
-                                    intCoords.includes(l) &&
-                                    intCoords.includes(m)) {
+                            // Only generate if EXACTLY these two (l, m) are integers
+                            // This ensures each point generates at most one rhombus
+                            if (intCoords.length === 2 &&
+                                intCoords.includes(l) &&
+                                intCoords.includes(m)) {
 
-                                    const pointKey = `${z.re.toFixed(10)},${z.im.toFixed(10)}`;
-                                    if (!processedPoints.has(pointKey)) {
-                                        processedPoints.add(pointKey);
+                                const pointKey = `${z.re.toFixed(10)},${z.im.toFixed(10)}`;
+                                if (!processedPoints.has(pointKey)) {
+                                    processedPoints.add(pointKey);
 
-                                        const color = getColor(l, m);
-                                        const vertices = generateRhombus(z, l, m);
-                                        drawRhombus(vertices, color);
-                                        rhombusCount++;
-                                    }
+                                    const color = getColor(l, m);
+                                    const vertices = generateRhombus(z, l, m);
+                                    drawRhombus(vertices, color);
+                                    rhombusCount++;
                                 }
                             }
                         }
@@ -754,7 +795,25 @@
                 }
             }
 
-            document.getElementById('stats').textContent = `Rhombuses: ${rhombusCount}`;
+            // Restore context to remove clipping
+            ctx.restore();
+
+            // Draw smoother fading circular boundary using radial gradient
+            // Create fade effect from 80% of radius to edge (wider range for smoother transition)
+            const gradient = ctx.createRadialGradient(
+                canvas.width / 2, canvas.height / 2, clipRadius * 0.8,
+                canvas.width / 2, canvas.height / 2, clipRadius
+            );
+            gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            gradient.addColorStop(0.7, 'rgba(0, 0, 0, 0.3)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 1)');
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Display stats
+            document.getElementById('stats').textContent = `菱形数量 / Rhombuses: ${rhombusCount}`;
+            document.getElementById('center-coords').textContent = `(${w.re.toFixed(2)}, ${w.im.toFixed(2)})`;
         }
 
         // Resize canvas
@@ -789,9 +848,9 @@
             generateTiling();
         });
 
-        document.getElementById('grid-size').addEventListener('input', function() {
-            gridSize = parseInt(this.value);
-            document.getElementById('grid-size-value').textContent = gridSize;
+        document.getElementById('d-value').addEventListener('input', function() {
+            D = parseFloat(this.value);
+            document.getElementById('d-display').textContent = D;
             generateTiling();
         });
 
@@ -799,16 +858,6 @@
             baseHue = parseInt(this.value);
             document.getElementById('hue-value').textContent = baseHue;
             updateUIColors();
-            generateTiling();
-        });
-
-        document.getElementById('zoom-in').addEventListener('click', function() {
-            zoom *= 1.2;
-            generateTiling();
-        });
-
-        document.getElementById('zoom-out').addEventListener('click', function() {
-            zoom /= 1.2;
             generateTiling();
         });
 
@@ -846,11 +895,32 @@
             isDragging = false;
         });
 
-        canvas.addEventListener('wheel', function(e) {
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', function(e) {
             e.preventDefault();
-            const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-            zoom *= zoomFactor;
-            generateTiling();
+            if (e.touches.length === 1) {
+                isDragging = true;
+                lastMouseX = e.touches[0].clientX;
+                lastMouseY = e.touches[0].clientY;
+            }
+        });
+
+        canvas.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            if (isDragging && e.touches.length === 1) {
+                const dx = e.touches[0].clientX - lastMouseX;
+                const dy = e.touches[0].clientY - lastMouseY;
+                panX += dx;
+                panY += dy;
+                lastMouseX = e.touches[0].clientX;
+                lastMouseY = e.touches[0].clientY;
+                generateTiling();
+            }
+        });
+
+        canvas.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            isDragging = false;
         });
 
         window.addEventListener('resize', resizeCanvas);
@@ -887,6 +957,10 @@
             createParamSliders();
             resizeCanvas();
             updateUIColors();
+
+            // Set initial D value
+            document.getElementById('d-value').value = D;
+            document.getElementById('d-display').textContent = D;
         } catch (error) {
             console.error('Initialization error:', error);
         }
