@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOOO - Three Player Hexagonal Go</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #404040;
+            overflow-x: hidden;
+            padding: 5px;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 8vw, 3rem);
+            margin: 10px 0;
+            letter-spacing: 8px;
+            font-weight: 300;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            padding: 5px;
+            max-width: 1200px;
+        }
+
+        .board-container {
+            position: relative;
+        }
+
+        #gameCanvas {
+            cursor: pointer;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 200px;
+        }
+
+        /* Player info panel - always horizontal */
+        .side-panel:first-of-type {
+            flex-direction: row;
+            justify-content: center;
+            gap: 15px;
+            min-width: auto;
+            width: 100%;
+        }
+
+        .side-panel:first-of-type .player-info {
+            min-width: 100px;
+        }
+
+        .player-info {
+            background: #e8e8e8;
+            padding: 20px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .player-info.active {
+            background: #d8d8d8;
+        }
+
+        .player-indicator {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+        }
+
+        .player-indicator.red { background: #d04040; }
+        .player-indicator.yellow { background: #d0a040; }
+        .player-indicator.blue { background: #4070d0; }
+
+        .stone-count {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Buttons panel - always centered */
+        .side-panel:last-of-type {
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: normal;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pass-btn {
+            background: #90a0c0;
+            color: #404040;
+        }
+
+        .pass-btn:hover:not(:disabled) {
+            background: #a0b0d0;
+        }
+
+        .restart-btn {
+            background: #c09090;
+            color: #404040;
+        }
+
+        .restart-btn:hover {
+            background: #d0a0a0;
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Mobile devices */
+        @media (max-width: 768px) {
+            .side-panel:first-of-type {
+                gap: 10px;
+            }
+
+            .side-panel:first-of-type .player-info {
+                min-width: 80px;
+                padding: 10px;
+            }
+
+            .player-indicator {
+                width: 40px;
+                height: 40px;
+            }
+
+            .stone-count {
+                font-size: 1.5rem;
+            }
+
+            #gameCanvas {
+                max-width: 100%;
+                height: auto;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .buttons {
+                justify-content: center;
+            }
+        }
+
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            h1 {
+                letter-spacing: 4px;
+            }
+
+            .player-indicator {
+                width: 35px;
+                height: 35px;
+            }
+
+            .stone-count {
+                font-size: 1.2rem;
+            }
+
+            button {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>GOOO</h1>
+
+    <div class="game-container">
+        <div class="side-panel">
+            <div class="player-info" id="player0">
+                <div class="player-indicator red"></div>
+                <div class="stone-count" id="count0">0</div>
+            </div>
+
+            <div class="player-info" id="player1">
+                <div class="player-indicator yellow"></div>
+                <div class="stone-count" id="count1">0</div>
+            </div>
+
+            <div class="player-info" id="player2">
+                <div class="player-indicator blue"></div>
+                <div class="stone-count" id="count2">0</div>
+            </div>
+        </div>
+
+        <div class="board-container">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+
+        <div class="side-panel">
+            <div class="buttons">
+                <button class="pass-btn" id="passBtn">Pass</button>
+                <button class="restart-btn" id="restartBtn">Restart</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Game constants
+        let GRID_SIZE = 50;
+        const BOARD_RADIUS = 3;
+        let CENTER_X = 400;
+        let CENTER_Y = 400;
+
+        // Responsive canvas setup
+        function resizeCanvas() {
+            const containerWidth = Math.min(window.innerWidth - 20, 500);
+            const size = containerWidth;
+            canvas.width = size;
+            canvas.height = size;
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
+            CENTER_X = size / 2;
+            CENTER_Y = size / 2;
+            GRID_SIZE = size / 13; // Adjust grid size based on canvas size
+            drawBoard();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        const PLAYER_COLORS = [
+            { main: '#d04040' },  // Red
+            { main: '#d0a040' },  // Yellow
+            { main: '#4070d0' }   // Blue
+        ];
+
+        const PLAYER_NAMES = ['Red', 'Yellow', 'Blue'];
+
+        // Hexagonal grid directions
+        const DIRECTIONS = [
+            [1, 0, -1], [0, 1, -1], [-1, 1, 0],
+            [-1, 0, 1], [0, -1, 1], [1, -1, 0]
+        ];
+
+        // Game state
+        class HexGrid {
+            constructor(radius) {
+                this.radius = radius;
+                this.grid = new Map();
+                this.initialize();
+            }
+
+            initialize() {
+                for (let q = -this.radius; q <= this.radius; q++) {
+                    for (let r = Math.max(-this.radius, -q - this.radius);
+                         r <= Math.min(this.radius, -q + this.radius); r++) {
+                        const s = -q - r;
+                        if (Math.abs(s) <= this.radius) {
+                            this.grid.set(`${q},${r},${s}`, 0);
+                        }
+                    }
+                }
+            }
+
+            getAllCells() {
+                return Array.from(this.grid.keys()).map(key => {
+                    const [q, r, s] = key.split(',').map(Number);
+                    return [q, r, s];
+                });
+            }
+
+            getNeighbors(q, r, s) {
+                const neighbors = [];
+                for (const [dq, dr, ds] of DIRECTIONS) {
+                    const nq = q + dq;
+                    const nr = r + dr;
+                    const ns = s + ds;
+                    if (this.grid.has(`${nq},${nr},${ns}`)) {
+                        neighbors.push([nq, nr, ns]);
+                    }
+                }
+                return neighbors;
+            }
+
+            getCellState(q, r, s) {
+                return this.grid.get(`${q},${r},${s}`) ?? -1;
+            }
+
+            setCellState(q, r, s, state) {
+                if (this.grid.has(`${q},${r},${s}`)) {
+                    this.grid.set(`${q},${r},${s}`, state);
+                    return true;
+                }
+                return false;
+            }
+
+            findConnectedGroup(q, r, s) {
+                const state = this.getCellState(q, r, s);
+                if (state <= 0) return new Set();
+
+                const visited = new Set();
+                const queue = [[q, r, s]];
+                const group = new Set();
+
+                while (queue.length > 0) {
+                    const [cq, cr, cs] = queue.shift();
+                    const key = `${cq},${cr},${cs}`;
+
+                    if (visited.has(key)) continue;
+                    visited.add(key);
+                    group.add(key);
+
+                    for (const [nq, nr, ns] of this.getNeighbors(cq, cr, cs)) {
+                        const nkey = `${nq},${nr},${ns}`;
+                        if (!visited.has(nkey) && this.getCellState(nq, nr, ns) === state) {
+                            queue.push([nq, nr, ns]);
+                        }
+                    }
+                }
+
+                return group;
+            }
+
+            hasLiberty(group) {
+                for (const key of group) {
+                    const [q, r, s] = key.split(',').map(Number);
+                    for (const [nq, nr, ns] of this.getNeighbors(q, r, s)) {
+                        if (this.getCellState(nq, nr, ns) === 0) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            removeGroup(group) {
+                for (const key of group) {
+                    const [q, r, s] = key.split(',').map(Number);
+                    this.setCellState(q, r, s, 0);
+                }
+            }
+        }
+
+        class Game {
+            constructor() {
+                this.grid = new HexGrid(BOARD_RADIUS);
+                this.currentPlayer = 0;
+                this.selectedCell = null;
+                this.gameOver = false;
+                this.lastMove = null;
+                this.captured = [0, 0, 0];
+                this.passes = [false, false, false];
+                this.consecutivePasses = 0;
+            }
+
+            switchPlayer() {
+                this.currentPlayer = (this.currentPlayer + 1) % 3;
+            }
+
+            placeStone(q, r, s) {
+                if (this.grid.getCellState(q, r, s) !== 0) {
+                    return false;
+                }
+
+                // Try placing the stone
+                this.grid.setCellState(q, r, s, this.currentPlayer + 1);
+                this.lastMove = { q, r, s };
+
+                this.passes[this.currentPlayer] = false;
+                this.consecutivePasses = 0;
+
+                // Check for captures
+                const deadGroups = [];
+                for (const [nq, nr, ns] of this.grid.getNeighbors(q, r, s)) {
+                    const state = this.grid.getCellState(nq, nr, ns);
+                    if (state > 0 && state !== this.currentPlayer + 1) {
+                        const group = this.grid.findConnectedGroup(nq, nr, ns);
+                        if (!this.grid.hasLiberty(group)) {
+                            for (const key of group) {
+                                deadGroups.push(key);
+                            }
+                            this.captured[this.currentPlayer] += group.size;
+                        }
+                    }
+                }
+
+                // Remove captured stones
+                for (const key of deadGroups) {
+                    const [cq, cr, cs] = key.split(',').map(Number);
+                    this.grid.setCellState(cq, cr, cs, 0);
+                }
+
+                // Check if the placed stone has liberties
+                const group = this.grid.findConnectedGroup(q, r, s);
+                if (!this.grid.hasLiberty(group)) {
+                    this.grid.setCellState(q, r, s, 0);
+                    return false;
+                }
+
+                return true;
+            }
+
+            playerPass() {
+                this.passes[this.currentPlayer] = true;
+                this.consecutivePasses++;
+
+                if (this.passes.every(p => p) || this.consecutivePasses >= 3) {
+                    this.endGame();
+                }
+            }
+
+            endGame() {
+                this.gameOver = true;
+            }
+
+            countStones(player) {
+                let count = 0;
+                for (const state of this.grid.grid.values()) {
+                    if (state === player) count++;
+                }
+                return count;
+            }
+
+            checkGameOver() {
+                const emptyCells = Array.from(this.grid.grid.values()).filter(s => s === 0).length;
+                return emptyCells < 1;
+            }
+        }
+
+        let game = new Game();
+
+        // Convert hex coordinates to pixel coordinates
+        function hexToPixel(q, r, s) {
+            const x = GRID_SIZE * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r) + CENTER_X;
+            const y = GRID_SIZE * (3 / 2 * r) + CENTER_Y;
+            return { x, y };
+        }
+
+        // Convert pixel coordinates to hex coordinates
+        function pixelToHex(x, y) {
+            const px = x - CENTER_X;
+            const py = y - CENTER_Y;
+
+            const q = (px * Math.sqrt(3) / 3 - py / 3) / GRID_SIZE;
+            const r = (py * 2 / 3) / GRID_SIZE;
+            const s = -q - r;
+
+            let rq = Math.round(q);
+            let rr = Math.round(r);
+            let rs = Math.round(s);
+
+            const dq = Math.abs(rq - q);
+            const dr = Math.abs(rr - r);
+            const ds = Math.abs(rs - s);
+
+            if (dq > dr && dq > ds) {
+                rq = -rr - rs;
+            } else if (dr > ds) {
+                rr = -rq - rs;
+            } else {
+                rs = -rq - rr;
+            }
+
+            return { q: rq, r: rr, s: rs };
+        }
+
+        // Draw a hexagon
+        function drawHexagon(x, y, size, fillColor) {
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const angleDeg = 60 * i - 30;
+                const angleRad = angleDeg * Math.PI / 180;
+                const px = x + size * Math.cos(angleRad);
+                const py = y + size * Math.sin(angleRad);
+
+                if (i === 0) {
+                    ctx.moveTo(px, py);
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            ctx.closePath();
+
+            ctx.fillStyle = fillColor;
+            ctx.fill();
+        }
+
+        // Draw the game board
+        function drawBoard() {
+            // Clear canvas
+            ctx.fillStyle = '#f5f5f5';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw all hexagons
+            for (const cell of game.grid.getAllCells()) {
+                const [q, r, s] = cell;
+                const { x, y } = hexToPixel(q, r, s);
+
+                const state = game.grid.getCellState(q, r, s);
+                let fillColor;
+
+                if (state === 0) {
+                    fillColor = '#d8d8d8';
+                } else {
+                    fillColor = PLAYER_COLORS[state - 1].main;
+                }
+
+                drawHexagon(x, y, GRID_SIZE - 3, fillColor);
+
+                // Highlight last move
+                if (game.lastMove && game.lastMove.q === q && game.lastMove.r === r && game.lastMove.s === s) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, GRID_SIZE / 4, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(100, 100, 100, 0.4)';
+                    ctx.fill();
+                }
+            }
+
+            // Highlight selected cell
+            if (game.selectedCell) {
+                const { q, r, s } = game.selectedCell;
+                const { x, y } = hexToPixel(q, r, s);
+                ctx.beginPath();
+                ctx.arc(x, y, GRID_SIZE / 2.5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(100, 100, 100, 0.2)';
+                ctx.fill();
+            }
+        }
+
+        // Update UI
+        function updateUI() {
+            // Update player info
+            for (let i = 0; i < 3; i++) {
+                const playerDiv = document.getElementById(`player${i}`);
+                const countDiv = document.getElementById(`count${i}`);
+
+                if (i === game.currentPlayer && !game.gameOver) {
+                    playerDiv.classList.add('active');
+                } else {
+                    playerDiv.classList.remove('active');
+                }
+
+                countDiv.textContent = game.countStones(i + 1);
+            }
+
+            // Update buttons
+            document.getElementById('passBtn').disabled = game.gameOver;
+        }
+
+        // Handle canvas click/touch
+        function handleCanvasInteraction(x, y) {
+            if (game.gameOver) return;
+
+            const { q, r, s } = pixelToHex(x, y);
+
+            if (game.grid.getCellState(q, r, s) >= 0) {
+                game.selectedCell = { q, r, s };
+
+                if (game.placeStone(q, r, s)) {
+                    game.switchPlayer();
+
+                    if (game.checkGameOver()) {
+                        game.endGame();
+                    }
+                }
+
+                drawBoard();
+                updateUI();
+            }
+        }
+
+        // Mouse click
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+            handleCanvasInteraction(x, y);
+        });
+
+        // Touch events
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (touch.clientX - rect.left) * scaleX;
+            const y = (touch.clientY - rect.top) * scaleY;
+            handleCanvasInteraction(x, y);
+        }, { passive: false });
+
+        // Pass button
+        document.getElementById('passBtn').addEventListener('click', () => {
+            if (!game.gameOver) {
+                game.playerPass();
+                game.switchPlayer();
+                drawBoard();
+                updateUI();
+            }
+        });
+
+        // Restart button
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            game = new Game();
+            drawBoard();
+            updateUI();
+        });
+
+        // Initialize game
+        window.addEventListener('load', () => {
+            resizeCanvas();
+            updateUI();
+        });
+    </script>
+</body>
+</html>
