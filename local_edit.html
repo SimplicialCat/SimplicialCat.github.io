@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>图片剪贴工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .upload-area {
+            background: white;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover, .upload-area.drag-over {
+            border-color: #999;
+            background: #fafafa;
+        }
+
+        .upload-area p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .upload-area .hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .canvas-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .canvas-container.active {
+            display: block;
+        }
+
+        #mainCanvas {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            cursor: move;
+            touch-action: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .controls.hidden {
+            display: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        button:hover {
+            background: #d0d0d0;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button.primary {
+            background: #007AFF;
+            color: white;
+        }
+
+        button.primary:hover {
+            background: #0051D5;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .info {
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+            margin-top: 15px;
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.error {
+            background: #FF3B30;
+        }
+
+        .message.success {
+            background: #34C759;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .upload-area {
+                padding: 20px;
+            }
+
+            .canvas-container {
+                padding: 10px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        .selection-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .clipboard-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .clipboard-preview {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed #ddd;
+            border-radius: 6px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .clipboard-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .clipboard-preview.empty {
+            color: #999;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .clipboard-info {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .clipboard-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .clipboard-section {
+                flex-direction: column;
+            }
+
+            .clipboard-buttons {
+                width: 100%;
+            }
+
+            .clipboard-buttons button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>图片剪贴工具</h1>
+
+        <div class="upload-area" id="uploadArea">
+            <p>点击或拖拽上传图片</p>
+            <p class="hint">图片尺寸至少 1024×1024 像素</p>
+        </div>
+
+        <div class="canvas-container" id="canvasContainer">
+            <canvas id="mainCanvas"></canvas>
+            <div class="selection-info">
+                <span id="positionInfo">位置: (0, 0)</span>
+                <span>|</span>
+                <span>尺寸: 1024×1024</span>
+            </div>
+            <div class="controls" id="controls">
+                <button class="primary" id="downloadBtn">下载选中区域</button>
+                <button id="replaceBtn">替换选中区域</button>
+                <button id="saveAllBtn">保存完整图片</button>
+                <button id="resetBtn">重新上传</button>
+            </div>
+            <div class="clipboard-section">
+                <div class="clipboard-preview empty" id="clipboardPreview">
+                    <span>剪贴板<br>预览</span>
+                </div>
+                <div class="clipboard-info">
+                    <div>尺寸: <span id="clipboardSize">-</span></div>
+                </div>
+                <div class="clipboard-buttons">
+                    <button id="copyBtn">复制到剪贴板</button>
+                    <button id="pasteBtn">从剪贴板粘贴</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <input type="file" id="fileInput" class="hidden-input" accept="image/*">
+    <input type="file" id="replaceInput" class="hidden-input" accept="image/*">
+
+    <script>
+        // 应用状态（所有坐标使用整数）
+        const state = {
+            image: null,
+            imageX: Math.floor(0),
+            imageY: Math.floor(0),
+            imageScale: 1,
+            selectionX: Math.floor(0),
+            selectionY: Math.floor(0),
+            selectionSize: 1024,
+            isDragging: false,
+            dragStartX: Math.floor(0),
+            dragStartY: Math.floor(0),
+            canvasOffsetX: Math.floor(0),
+            canvasOffsetY: Math.floor(0),
+            clipboardImage: null,
+            clipboardSize: '-'
+        };
+
+        // DOM 元素
+        const uploadArea = document.getElementById('uploadArea');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const mainCanvas = document.getElementById('mainCanvas');
+        const ctx = mainCanvas.getContext('2d');
+        const fileInput = document.getElementById('fileInput');
+        const replaceInput = document.getElementById('replaceInput');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const replaceBtn = document.getElementById('replaceBtn');
+        const saveAllBtn = document.getElementById('saveAllBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const pasteBtn = document.getElementById('pasteBtn');
+        const clipboardPreview = document.getElementById('clipboardPreview');
+        const clipboardSize = document.getElementById('clipboardSize');
+        const messageEl = document.getElementById('message');
+        const positionInfo = document.getElementById('positionInfo');
+
+        // 显示消息
+        function showMessage(text, type = 'info') {
+            messageEl.textContent = text;
+            messageEl.className = `message ${type} show`;
+
+            setTimeout(() => {
+                messageEl.className = 'message';
+            }, 3000);
+        }
+
+        // 处理图片上传
+        function handleImageUpload(file) {
+            if (!file || !file.type.startsWith('image/')) {
+                showMessage('请选择图片文件', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    if (img.width < 1024 || img.height < 1024) {
+                        showMessage('图片尺寸至少为 1024×1024 像素', 'error');
+                        return;
+                    }
+
+                    state.image = img;
+                    state.selectionX = Math.floor(0);
+                    state.selectionY = Math.floor(0);
+
+                    uploadArea.style.display = 'none';
+                    canvasContainer.classList.add('active');
+
+                    fitCanvasToScreen();
+                    draw();
+                    showMessage('图片加载成功', 'success');
+                };
+                img.onerror = () => {
+                    showMessage('图片加载失败', 'error');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 适配画布到屏幕
+        function fitCanvasToScreen() {
+            const maxWidth = window.innerWidth - 60;
+            const maxHeight = window.innerHeight - 300;
+
+            const scaleX = maxWidth / state.image.width;
+            const scaleY = maxHeight / state.image.height;
+            state.imageScale = Math.min(scaleX, scaleY, 1);
+
+            mainCanvas.width = Math.floor(state.image.width * state.imageScale);
+            mainCanvas.height = Math.floor(state.image.height * state.imageScale);
+
+            const rect = mainCanvas.getBoundingClientRect();
+            state.canvasOffsetX = Math.floor(rect.left);
+            state.canvasOffsetY = Math.floor(rect.top);
+        }
+
+        // 绘制画布
+        function draw() {
+            ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+
+            // 绘制图片
+            ctx.drawImage(
+                state.image,
+                0, 0,
+                mainCanvas.width,
+                mainCanvas.height
+            );
+
+            // 绘制选择框（使用整数坐标）
+            const selectionScale = state.imageScale;
+            const sx = Math.floor(state.selectionX * selectionScale);
+            const sy = Math.floor(state.selectionY * selectionScale);
+            const ssize = Math.floor(state.selectionSize * selectionScale);
+
+            // 半透明遮罩
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.fillRect(0, 0, mainCanvas.width, sy);
+            ctx.fillRect(0, sy + ssize, mainCanvas.width, mainCanvas.height - sy - ssize);
+            ctx.fillRect(0, sy, sx, ssize);
+            ctx.fillRect(sx + ssize, sy, mainCanvas.width - sx - ssize, ssize);
+
+            // 选择框边框
+            ctx.strokeStyle = '#007AFF';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(sx, sy, ssize, ssize);
+            ctx.setLineDash([]);
+
+            // 角落标记
+            const cornerSize = 10;
+            ctx.strokeStyle = '#007AFF';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([]);
+
+            // 左上
+            ctx.beginPath();
+            ctx.moveTo(sx, sy + cornerSize);
+            ctx.lineTo(sx, sy);
+            ctx.lineTo(sx + cornerSize, sy);
+            ctx.stroke();
+
+            // 右上
+            ctx.beginPath();
+            ctx.moveTo(sx + ssize - cornerSize, sy);
+            ctx.lineTo(sx + ssize, sy);
+            ctx.lineTo(sx + ssize, sy + cornerSize);
+            ctx.stroke();
+
+            // 右下
+            ctx.beginPath();
+            ctx.moveTo(sx + ssize, sy + ssize - cornerSize);
+            ctx.lineTo(sx + ssize, sy + ssize);
+            ctx.lineTo(sx + ssize - cornerSize, sy + ssize);
+            ctx.stroke();
+
+            // 左下
+            ctx.beginPath();
+            ctx.moveTo(sx + cornerSize, sy + ssize);
+            ctx.lineTo(sx, sy + ssize);
+            ctx.lineTo(sx, sy + ssize - cornerSize);
+            ctx.stroke();
+
+            // 更新位置信息
+            positionInfo.textContent = `位置: (${state.selectionX}, ${state.selectionY})`;
+        }
+
+        // 将屏幕坐标转换为原图坐标（返回整数）
+        function screenToImageCoords(screenX, screenY) {
+            const rect = mainCanvas.getBoundingClientRect();
+            const x = Math.floor((screenX - rect.left) / state.imageScale);
+            const y = Math.floor((screenY - rect.top) / state.imageScale);
+            return { x, y };
+        }
+
+        // 更新选择框位置（使用整数坐标）
+        function updateSelectionPosition(clientX, clientY) {
+            const coords = screenToImageCoords(clientX, clientY);
+            const maxX = state.image.width - state.selectionSize;
+            const maxY = state.image.height - state.selectionSize;
+
+            state.selectionX = Math.floor(Math.max(0, Math.min(maxX, coords.x - state.selectionSize / 2)));
+            state.selectionY = Math.floor(Math.max(0, Math.min(maxY, coords.y - state.selectionSize / 2)));
+
+            requestAnimationFrame(draw);
+        }
+
+        // 鼠标事件
+        mainCanvas.addEventListener('mousedown', (e) => {
+            state.isDragging = true;
+            updateSelectionPosition(e.clientX, e.clientY);
+        });
+
+        mainCanvas.addEventListener('mousemove', (e) => {
+            if (state.isDragging) {
+                e.preventDefault();
+                updateSelectionPosition(e.clientX, e.clientY);
+            }
+        });
+
+        mainCanvas.addEventListener('mouseup', () => {
+            state.isDragging = false;
+        });
+
+        mainCanvas.addEventListener('mouseleave', () => {
+            state.isDragging = false;
+        });
+
+        // 触摸事件
+        mainCanvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                e.preventDefault();
+                state.isDragging = true;
+                const touch = e.touches[0];
+                updateSelectionPosition(touch.clientX, touch.clientY);
+            }
+        }, { passive: false });
+
+        mainCanvas.addEventListener('touchmove', (e) => {
+            if (state.isDragging && e.touches.length === 1) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                updateSelectionPosition(touch.clientX, touch.clientY);
+            }
+        }, { passive: false });
+
+        mainCanvas.addEventListener('touchend', () => {
+            state.isDragging = false;
+        });
+
+        // 上传区域事件
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            handleImageUpload(file);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            handleImageUpload(file);
+        });
+
+        // 下载选中区域（使用整数坐标）
+        downloadBtn.addEventListener('click', () => {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = state.selectionSize;
+            tempCanvas.height = state.selectionSize;
+            const tempCtx = tempCanvas.getContext('2d');
+
+            tempCtx.drawImage(
+                state.image,
+                Math.floor(state.selectionX),
+                Math.floor(state.selectionY),
+                Math.floor(state.selectionSize),
+                Math.floor(state.selectionSize),
+                0, 0,
+                Math.floor(state.selectionSize),
+                Math.floor(state.selectionSize)
+            );
+
+            tempCanvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `selection_${Math.floor(state.selectionX)}_${Math.floor(state.selectionY)}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showMessage('下载成功', 'success');
+            });
+        });
+
+        // 替换选中区域
+        replaceBtn.addEventListener('click', () => {
+            replaceInput.click();
+        });
+
+        replaceInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file || !file.type.startsWith('image/')) {
+                showMessage('请选择图片文件', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    if (img.width !== 1024 || img.height !== 1024) {
+                        showMessage('替换图片必须为 1024×1024 像素', 'error');
+                        return;
+                    }
+
+                    // 在原图尺寸的画布上进行合并操作（使用整数坐标）
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = state.image.width;
+                    tempCanvas.height = state.image.height;
+                    const tempCtx = tempCanvas.getContext('2d');
+
+                    // 先绘制原图
+                    tempCtx.drawImage(state.image, 0, 0);
+
+                    // 在选中区域绘制替换图片（使用原图整数坐标）
+                    tempCtx.drawImage(
+                        img,
+                        Math.floor(state.selectionX),
+                        Math.floor(state.selectionY),
+                        Math.floor(state.selectionSize),
+                        Math.floor(state.selectionSize)
+                    );
+
+                    // 更新状态中的图片
+                    const newImg = new Image();
+                    newImg.onload = () => {
+                        state.image = newImg;
+                        draw();
+                        showMessage('替换成功', 'success');
+                    };
+                    newImg.src = tempCanvas.toDataURL();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // 保存完整图片
+        saveAllBtn.addEventListener('click', () => {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = state.image.width;
+            tempCanvas.height = state.image.height;
+            const tempCtx = tempCanvas.getContext('2d');
+
+            tempCtx.drawImage(state.image, 0, 0);
+
+            tempCanvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'merged_image.png';
+                a.click();
+                URL.revokeObjectURL(url);
+                showMessage('保存成功', 'success');
+            });
+        });
+
+        // 更新剪贴板预览
+        function updateClipboardPreview(image) {
+            if (image) {
+                clipboardPreview.innerHTML = '';
+                // 如果传入的是 Image 对象，直接使用
+                if (image instanceof HTMLImageElement) {
+                    const img = document.createElement('img');
+                    img.src = image.src;
+                    clipboardPreview.appendChild(img);
+                    clipboardPreview.classList.remove('empty');
+                    clipboardSize.textContent = `${image.width}×${image.height}`;
+                } else if (typeof image === 'string') {
+                    // 如果传入的是 URL 字符串
+                    const img = document.createElement('img');
+                    img.src = image;
+                    clipboardPreview.appendChild(img);
+                    clipboardPreview.classList.remove('empty');
+                    img.onload = () => {
+                        clipboardSize.textContent = `${img.width}×${img.height}`;
+                    };
+                }
+            } else {
+                clipboardPreview.innerHTML = '<span>剪贴板<br>预览</span>';
+                clipboardPreview.classList.add('empty');
+                clipboardSize.textContent = '-';
+            }
+        }
+
+        // 复制到剪贴板
+        copyBtn.addEventListener('click', async () => {
+            if (!state.image) {
+                showMessage('请先上传图片', 'error');
+                return;
+            }
+
+            try {
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = Math.floor(state.selectionSize);
+                tempCanvas.height = Math.floor(state.selectionSize);
+                const tempCtx = tempCanvas.getContext('2d');
+
+                tempCtx.drawImage(
+                    state.image,
+                    Math.floor(state.selectionX),
+                    Math.floor(state.selectionY),
+                    Math.floor(state.selectionSize),
+                    Math.floor(state.selectionSize),
+                    0, 0,
+                    Math.floor(state.selectionSize),
+                    Math.floor(state.selectionSize)
+                );
+
+                tempCanvas.toBlob(async (blob) => {
+                    try {
+                        await navigator.clipboard.write([
+                            new ClipboardItem({ 'image/png': blob })
+                        ]);
+                        showMessage('已复制到剪贴板', 'success');
+
+                        // 更新预览
+                        const img = new Image();
+                        img.onload = () => {
+                            state.clipboardImage = img;
+                            updateClipboardPreview(img);
+                        };
+                        img.src = URL.createObjectURL(blob);
+                    } catch (err) {
+                        console.error(err);
+                        showMessage('复制失败: ' + err.message, 'error');
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+                showMessage('复制失败: ' + err.message, 'error');
+            }
+        });
+
+        // 从剪贴板粘贴
+        pasteBtn.addEventListener('click', async () => {
+            if (!state.image) {
+                showMessage('请先上传图片', 'error');
+                return;
+            }
+
+            try {
+                const clipboardItems = await navigator.clipboard.read();
+                for (const item of clipboardItems) {
+                    for (const type of item.types) {
+                        if (type.startsWith('image/')) {
+                            const blob = await item.getType(type);
+                            const img = new Image();
+                            img.onload = () => {
+                                if (img.width !== 1024 || img.height !== 1024) {
+                                    showMessage('剪贴板图片必须为 1024×1024 像素', 'error');
+                                    return;
+                                }
+
+                                // 在原图尺寸的画布上进行合并操作（使用整数坐标）
+                                const tempCanvas = document.createElement('canvas');
+                                tempCanvas.width = state.image.width;
+                                tempCanvas.height = state.image.height;
+                                const tempCtx = tempCanvas.getContext('2d');
+
+                                // 先绘制原图
+                                tempCtx.drawImage(state.image, 0, 0);
+
+                                // 在选中区域绘制剪贴板图片（使用原图整数坐标）
+                                tempCtx.drawImage(
+                                    img,
+                                    Math.floor(state.selectionX),
+                                    Math.floor(state.selectionY),
+                                    Math.floor(state.selectionSize),
+                                    Math.floor(state.selectionSize)
+                                );
+
+                                // 更新状态中的图片
+                                const newImg = new Image();
+                                newImg.onload = () => {
+                                    state.image = newImg;
+                                    state.clipboardImage = img;
+                                    draw();
+                                    updateClipboardPreview(img);
+                                    showMessage('已从剪贴板粘贴', 'success');
+                                };
+                                newImg.src = tempCanvas.toDataURL();
+                            };
+                            img.src = URL.createObjectURL(blob);
+                            return;
+                        }
+                    }
+                }
+                showMessage('剪贴板中没有图片', 'error');
+            } catch (err) {
+                console.error(err);
+                if (err.name === 'NotAllowedError') {
+                    showMessage('请允许剪贴板权限', 'error');
+                } else {
+                    showMessage('粘贴失败: ' + err.message, 'error');
+                }
+            }
+        });
+
+        // 重置（使用整数坐标）
+        resetBtn.addEventListener('click', () => {
+            state.image = null;
+            state.selectionX = Math.floor(0);
+            state.selectionY = Math.floor(0);
+            canvasContainer.classList.remove('active');
+            uploadArea.style.display = 'block';
+            fileInput.value = '';
+            replaceInput.value = '';
+        });
+
+        // 窗口大小变化时重新适配
+        window.addEventListener('resize', () => {
+            if (state.image) {
+                fitCanvasToScreen();
+                draw();
+            }
+        });
+    </script>
+</body>
+</html>
