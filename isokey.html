@@ -102,6 +102,9 @@
       align-items: flex-start;
       padding-bottom: var(--key-size);
       touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
 
     .key-row {
@@ -131,6 +134,8 @@
       cursor: pointer;
       touch-action: none;
       user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
       -webkit-tap-highlight-color: transparent;
       transition: filter 120ms ease, scale 120ms ease, box-shadow 120ms ease;
     }
@@ -413,6 +418,9 @@
       event.preventDefault();
       keyboard.setPointerCapture(event.pointerId);
       movePointerToKey(event);
+    });
+    keyboard.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
     });
     keyboard.addEventListener("pointermove", (event) => {
       if (!activePointers.has(event.pointerId)) return;
