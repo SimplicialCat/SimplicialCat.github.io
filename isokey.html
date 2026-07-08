@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Isomorphic Keyboard</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0f1115;
+      --panel: #171a20;
+      --text: #e9edf2;
+      --muted: #8f98a8;
+      --key-size: 42px;
+      --key-gap: 7px;
+      --row-step: calc((var(--key-size) + var(--key-gap)) * 0.866);
+      --col-step: calc(var(--key-size) + var(--key-gap));
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 18px 22px;
+      border-bottom: 1px solid #252a33;
+      background: var(--panel);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 560;
+      letter-spacing: 0;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+    }
+
+    .setting {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .setting {
+      min-width: min(290px, 100%);
+    }
+
+    input[type="range"] {
+      width: min(190px, 42vw);
+      accent-color: #78dcca;
+    }
+
+    .setting-value {
+      width: 46px;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    main {
+      min-width: 0;
+      overflow: auto;
+      padding: 34px;
+      overscroll-behavior: contain;
+    }
+
+    .keyboard-shell {
+      width: max-content;
+      min-width: 100%;
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+    }
+
+    .keyboard {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding-bottom: var(--key-size);
+      touch-action: none;
+    }
+
+    .key-row {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--key-gap);
+      height: var(--row-step);
+      padding-left: calc(var(--row-offset, 0) * var(--col-step));
+    }
+
+    .key-row:nth-child(even) {
+      padding-left: calc((var(--row-offset, 0) + 0.5) * var(--col-step));
+    }
+
+    .key {
+      width: var(--key-size);
+      height: var(--key-size);
+      flex: 0 0 var(--key-size);
+      display: block;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: var(--key-color);
+      box-shadow:
+        inset 0 0 0 1px rgb(255 255 255 / 0.08),
+        0 10px 22px rgb(0 0 0 / 0.22);
+      cursor: pointer;
+      touch-action: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: filter 120ms ease, scale 120ms ease, box-shadow 120ms ease;
+    }
+
+    .key:hover,
+    .key:focus-visible {
+      filter: brightness(1.16) saturate(1.08);
+      scale: 1.08;
+      outline: none;
+      box-shadow:
+        inset 0 0 0 1px rgb(255 255 255 / 0.18),
+        0 13px 28px rgb(0 0 0 / 0.28);
+    }
+
+    .key:active,
+    .key.is-playing {
+      filter: brightness(1.3) saturate(1.15);
+      scale: 0.96;
+    }
+
+    @media (max-width: 720px) {
+      :root {
+        --key-gap: 6px;
+      }
+
+      header {
+        align-items: flex-start;
+        padding: 14px 16px;
+      }
+
+      .controls {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .setting {
+        width: 100%;
+      }
+
+      input[type="range"] {
+        flex: 1;
+      }
+
+      main {
+        padding: 22px 16px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      header {
+        gap: 12px;
+      }
+
+      .setting {
+        gap: 7px;
+      }
+
+      .setting-value {
+        width: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Isomorphic Keyboard</h1>
+    <div class="controls" aria-label="Keyboard settings">
+      <label class="setting">
+        Key size
+        <input id="keySizeSlider" type="range" min="24" max="72" step="1" aria-label="Key size">
+        <span id="keySizeValue" class="setting-value" aria-live="polite"></span>
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <div class="keyboard-shell">
+      <div id="keyboard" class="keyboard" aria-label="12EDO isomorphic keyboard"></div>
+    </div>
+  </main>
+
+  <script>
+    const keyboardConfig = {
+      name: "12EDO",
+      edo: 12,
+      rows: 11,
+      columns: 17,
+      anchor: {
+        row: 4,
+        column: 4,
+        midi: 60
+      },
+      horizontalStep: 2,
+      downwardStep: 1,
+      colors: [
+        "#e8edf4",
+        "#78dcca",
+        "#8eb9ff",
+        "#d99dff",
+        "#ff97bb",
+        "#ffb06b",
+        "#efd96a",
+        "#a7e06f",
+        "#66d6a6",
+        "#6cc7f2",
+        "#b2a2ff",
+        "#f58fd6"
+      ]
+    };
+
+    const keyboard = document.querySelector("#keyboard");
+    const keySizeSlider = document.querySelector("#keySizeSlider");
+    const keySizeValue = document.querySelector("#keySizeValue");
+    let audioContext;
+    const activeVoices = new Map();
+    const activePointers = new Map();
+
+    function midiToFrequency(midi) {
+      return 440 * 2 ** ((midi - 69) / 12);
+    }
+
+    function keyboardExtent() {
+      return {
+        rows: keyboardConfig.rows,
+        columns: keyboardConfig.columns
+      };
+    }
+
+    function defaultKeySize() {
+      const { rows, columns } = keyboardExtent();
+      const availableWidth = Math.max(260, window.innerWidth - 32);
+      const availableHeight = Math.max(260, window.innerHeight - 128);
+      const gap = window.matchMedia("(max-width: 720px)").matches ? 6 : 7;
+      const widthFit = availableWidth / (columns + 0.5) - gap;
+      const heightFit = availableHeight / Math.max(1, (rows - 1) * 0.866 + 1) - gap;
+      const fitted = Math.min(widthFit, heightFit, 48);
+
+      return Math.round(Math.min(72, Math.max(24, fitted)));
+    }
+
+    function setKeySize(size) {
+      const roundedSize = Math.round(Number(size));
+
+      document.documentElement.style.setProperty("--key-size", `${roundedSize}px`);
+      keySizeSlider.value = String(roundedSize);
+      keySizeValue.textContent = `${roundedSize}px`;
+    }
+
+    function initializeKeySize() {
+      setKeySize(defaultKeySize());
+    }
+
+    function noteAt(row, column) {
+      const anchor = keyboardConfig.anchor;
+      const rowDelta = row - anchor.row;
+      const doubledX = column * 2 + (row % 2);
+      const anchorDoubledX = anchor.column * 2 + (anchor.row % 2);
+      const horizontalDelta = (doubledX - anchorDoubledX - rowDelta) / 2;
+
+      return anchor.midi
+        + horizontalDelta * keyboardConfig.horizontalStep
+        + rowDelta * keyboardConfig.downwardStep;
+    }
+
+    function stopVoice(pointerId) {
+      const voice = activeVoices.get(pointerId);
+      if (!voice || !audioContext) return;
+
+      const now = audioContext.currentTime;
+      voice.gain.gain.cancelScheduledValues(now);
+      voice.gain.gain.setValueAtTime(Math.max(voice.gain.gain.value, 0.0001), now);
+      voice.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+      voice.oscillator.stop(now + 0.95);
+      voice.key.classList.remove("is-playing");
+      activeVoices.delete(pointerId);
+    }
+
+    function startTone(midi, key, pointerId) {
+      audioContext ??= new AudioContext();
+      if (audioContext.state === "suspended") {
+        audioContext.resume();
+      }
+      stopVoice(pointerId);
+
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      const now = audioContext.currentTime;
+
+      oscillator.type = "sine";
+      oscillator.frequency.value = midiToFrequency(midi);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.2, now + 0.025);
+      gain.gain.setTargetAtTime(0.16, now + 0.025, 0.18);
+
+      oscillator.connect(gain).connect(audioContext.destination);
+      oscillator.start(now);
+
+      key.classList.add("is-playing");
+      activeVoices.set(pointerId, { oscillator, gain, key });
+    }
+
+    function keyFromPoint(clientX, clientY) {
+      let nearestKey = null;
+      let nearestDistance = Infinity;
+      const maxDistance = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--key-size")) * 0.62;
+
+      for (const key of keyboard.querySelectorAll(".key")) {
+        const rect = key.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const distance = Math.hypot(clientX - centerX, clientY - centerY);
+
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestKey = key;
+        }
+      }
+
+      return nearestDistance <= maxDistance ? nearestKey : null;
+    }
+
+    function movePointerToKey(event) {
+      const key = keyFromPoint(event.clientX, event.clientY);
+      const lastKey = activePointers.get(event.pointerId);
+
+      if (key === lastKey) return;
+
+      stopVoice(event.pointerId);
+      activePointers.set(event.pointerId, key);
+
+      if (key) {
+        startTone(Number(key.dataset.midi), key, event.pointerId);
+      }
+    }
+
+    function releasePointer(event) {
+      stopVoice(event.pointerId);
+      activePointers.delete(event.pointerId);
+    }
+
+    function renderKeyboard() {
+      keyboard.replaceChildren();
+      keyboard.setAttribute("aria-label", `${keyboardConfig.name} isomorphic keyboard`);
+
+      const rows = Array.from({ length: keyboardConfig.rows }, () => ({
+        columns: keyboardConfig.columns,
+        offset: 0
+      }));
+
+      for (let row = 0; row < rows.length; row += 1) {
+        const rowConfig = rows[row];
+        const columns = rowConfig.columns;
+        const rowElement = document.createElement("div");
+        rowElement.className = "key-row";
+        rowElement.style.setProperty("--row-offset", rowConfig.offset ?? 0);
+
+        for (let column = 0; column < columns; column += 1) {
+          const midi = noteAt(row, column);
+          const pitchClass = ((midi % keyboardConfig.edo) + keyboardConfig.edo) % keyboardConfig.edo;
+          const key = document.createElement("button");
+
+          key.className = "key";
+          key.type = "button";
+          key.style.setProperty("--key-color", keyboardConfig.colors[pitchClass]);
+          key.setAttribute("aria-label", `Pitch class ${pitchClass}`);
+          key.dataset.midi = String(midi);
+          key.dataset.pitchClass = String(pitchClass);
+
+          rowElement.append(key);
+        }
+
+        keyboard.append(rowElement);
+      }
+    }
+
+    initializeKeySize();
+    renderKeyboard();
+    keySizeSlider.addEventListener("input", () => setKeySize(keySizeSlider.value));
+    keyboard.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      keyboard.setPointerCapture(event.pointerId);
+      movePointerToKey(event);
+    });
+    keyboard.addEventListener("pointermove", (event) => {
+      if (!activePointers.has(event.pointerId)) return;
+
+      event.preventDefault();
+      movePointerToKey(event);
+    });
+    keyboard.addEventListener("pointerup", releasePointer);
+    keyboard.addEventListener("pointercancel", releasePointer);
+    keyboard.addEventListener("lostpointercapture", releasePointer);
+  </script>
+</body>
+</html>
