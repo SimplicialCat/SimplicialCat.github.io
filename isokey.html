@@ -29,6 +29,7 @@
       background: var(--bg);
       color: var(--text);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overscroll-behavior: none;
     }
 
     header {
@@ -86,6 +87,12 @@
       overflow: auto;
       padding: 34px;
       overscroll-behavior: contain;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    main::-webkit-scrollbar {
+      display: none;
     }
 
     .keyboard-shell {
@@ -136,6 +143,7 @@
       user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
+      -webkit-user-drag: none;
       -webkit-tap-highlight-color: transparent;
       transition: filter 120ms ease, scale 120ms ease, box-shadow 120ms ease;
     }
@@ -154,6 +162,53 @@
     .key.is-playing {
       filter: brightness(1.3) saturate(1.15);
       scale: 0.96;
+    }
+
+    .edge-scrollbar {
+      position: fixed;
+      z-index: 20;
+      border-radius: 999px;
+      background: rgb(255 255 255 / 0.08);
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    .edge-scrollbar.is-hidden {
+      display: none;
+    }
+
+    .edge-scrollbar-y {
+      top: var(--scrollbar-top, 82px);
+      right: 10px;
+      bottom: 20px;
+      width: 9px;
+    }
+
+    .edge-scrollbar-x {
+      right: 26px;
+      bottom: 10px;
+      left: 20px;
+      height: 9px;
+    }
+
+    .scroll-thumb {
+      position: absolute;
+      inset: 0 auto auto 0;
+      border-radius: inherit;
+      background: rgb(120 220 202 / 0.82);
+      box-shadow: 0 0 0 1px rgb(255 255 255 / 0.13);
+    }
+
+    .edge-scrollbar-y .scroll-thumb {
+      width: 100%;
+      min-height: 36px;
+    }
+
+    .edge-scrollbar-x .scroll-thumb {
+      height: 100%;
+      min-width: 36px;
     }
 
     @media (max-width: 720px) {
@@ -211,11 +266,18 @@
     </div>
   </header>
 
-  <main>
+  <main id="viewport">
     <div class="keyboard-shell">
       <div id="keyboard" class="keyboard" aria-label="12EDO isomorphic keyboard"></div>
     </div>
   </main>
+
+  <div id="scrollbarY" class="edge-scrollbar edge-scrollbar-y" aria-hidden="true">
+    <div id="thumbY" class="scroll-thumb"></div>
+  </div>
+  <div id="scrollbarX" class="edge-scrollbar edge-scrollbar-x" aria-hidden="true">
+    <div id="thumbX" class="scroll-thumb"></div>
+  </div>
 
   <script>
     const keyboardConfig = {
@@ -247,8 +309,14 @@
     };
 
     const keyboard = document.querySelector("#keyboard");
+    const viewport = document.querySelector("#viewport");
     const keySizeSlider = document.querySelector("#keySizeSlider");
     const keySizeValue = document.querySelector("#keySizeValue");
+    const scrollbarY = document.querySelector("#scrollbarY");
+    const scrollbarX = document.querySelector("#scrollbarX");
+    const thumbY = document.querySelector("#thumbY");
+    const thumbX = document.querySelector("#thumbX");
+    const header = document.querySelector("header");
     let audioContext;
     const activeVoices = new Map();
     const activePointers = new Map();
@@ -282,6 +350,7 @@
       document.documentElement.style.setProperty("--key-size", `${roundedSize}px`);
       keySizeSlider.value = String(roundedSize);
       keySizeValue.textContent = `${roundedSize}px`;
+      requestAnimationFrame(updateScrollbars);
     }
 
     function initializeKeySize() {
@@ -376,6 +445,71 @@
       activePointers.delete(event.pointerId);
     }
 
+    function updateScrollbars() {
+      const maxScrollTop = viewport.scrollHeight - viewport.clientHeight;
+      const maxScrollLeft = viewport.scrollWidth - viewport.clientWidth;
+      const headerBottom = header.getBoundingClientRect().bottom;
+
+      document.documentElement.style.setProperty("--scrollbar-top", `${Math.ceil(headerBottom + 10)}px`);
+      scrollbarY.classList.toggle("is-hidden", maxScrollTop <= 1);
+      scrollbarX.classList.toggle("is-hidden", maxScrollLeft <= 1);
+
+      if (maxScrollTop > 1) {
+        const trackHeight = scrollbarY.clientHeight;
+        const thumbHeight = Math.max(36, trackHeight * viewport.clientHeight / viewport.scrollHeight);
+        const thumbTop = (trackHeight - thumbHeight) * viewport.scrollTop / maxScrollTop;
+
+        thumbY.style.height = `${thumbHeight}px`;
+        thumbY.style.transform = `translateY(${thumbTop}px)`;
+      }
+
+      if (maxScrollLeft > 1) {
+        const trackWidth = scrollbarX.clientWidth;
+        const thumbWidth = Math.max(36, trackWidth * viewport.clientWidth / viewport.scrollWidth);
+        const thumbLeft = (trackWidth - thumbWidth) * viewport.scrollLeft / maxScrollLeft;
+
+        thumbX.style.width = `${thumbWidth}px`;
+        thumbX.style.transform = `translateX(${thumbLeft}px)`;
+      }
+    }
+
+    function jumpScroll(axis, clientPosition) {
+      if (axis === "y") {
+        const track = scrollbarY.getBoundingClientRect();
+        const thumbHeight = thumbY.getBoundingClientRect().height;
+        const maxThumbTop = Math.max(1, track.height - thumbHeight);
+        const maxScrollTop = Math.max(1, viewport.scrollHeight - viewport.clientHeight);
+        const thumbTop = Math.min(maxThumbTop, Math.max(0, clientPosition - track.top - thumbHeight / 2));
+
+        viewport.scrollTop = thumbTop / maxThumbTop * maxScrollTop;
+      } else {
+        const track = scrollbarX.getBoundingClientRect();
+        const thumbWidth = thumbX.getBoundingClientRect().width;
+        const maxThumbLeft = Math.max(1, track.width - thumbWidth);
+        const maxScrollLeft = Math.max(1, viewport.scrollWidth - viewport.clientWidth);
+        const thumbLeft = Math.min(maxThumbLeft, Math.max(0, clientPosition - track.left - thumbWidth / 2));
+
+        viewport.scrollLeft = thumbLeft / maxThumbLeft * maxScrollLeft;
+      }
+
+      updateScrollbars();
+    }
+
+    function bindScrollbarDrag(track, axis) {
+      track.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        track.setPointerCapture(event.pointerId);
+        jumpScroll(axis, axis === "y" ? event.clientY : event.clientX);
+      });
+
+      track.addEventListener("pointermove", (event) => {
+        if (!track.hasPointerCapture(event.pointerId)) return;
+
+        event.preventDefault();
+        jumpScroll(axis, axis === "y" ? event.clientY : event.clientX);
+      });
+    }
+
     function renderKeyboard() {
       keyboard.replaceChildren();
       keyboard.setAttribute("aria-label", `${keyboardConfig.name} isomorphic keyboard`);
@@ -395,10 +529,11 @@
         for (let column = 0; column < columns; column += 1) {
           const midi = noteAt(row, column);
           const pitchClass = ((midi % keyboardConfig.edo) + keyboardConfig.edo) % keyboardConfig.edo;
-          const key = document.createElement("button");
+          const key = document.createElement("div");
 
           key.className = "key";
-          key.type = "button";
+          key.setAttribute("role", "button");
+          key.tabIndex = 0;
           key.style.setProperty("--key-color", keyboardConfig.colors[pitchClass]);
           key.setAttribute("aria-label", `Pitch class ${pitchClass}`);
           key.dataset.midi = String(midi);
@@ -414,6 +549,10 @@
     initializeKeySize();
     renderKeyboard();
     keySizeSlider.addEventListener("input", () => setKeySize(keySizeSlider.value));
+    viewport.addEventListener("scroll", updateScrollbars, { passive: true });
+    window.addEventListener("resize", updateScrollbars);
+    bindScrollbarDrag(scrollbarY, "y");
+    bindScrollbarDrag(scrollbarX, "x");
     keyboard.addEventListener("pointerdown", (event) => {
       event.preventDefault();
       keyboard.setPointerCapture(event.pointerId);
@@ -431,6 +570,7 @@
     keyboard.addEventListener("pointerup", releasePointer);
     keyboard.addEventListener("pointercancel", releasePointer);
     keyboard.addEventListener("lostpointercapture", releasePointer);
+    requestAnimationFrame(updateScrollbars);
   </script>
 </body>
 </html>
