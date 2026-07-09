@@ -24,8 +24,6 @@
     body {
       min-height: 100vh;
       margin: 0;
-      display: grid;
-      grid-template-rows: auto 1fr;
       background: var(--bg);
       color: var(--text);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -33,29 +31,58 @@
     }
 
     header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 30;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 10px;
       flex-wrap: wrap;
-      padding: 18px 22px;
+      padding: 8px 12px;
       border-bottom: 1px solid #252a33;
-      background: var(--panel);
+      background: rgb(23 26 32 / 0.94);
+      backdrop-filter: blur(10px);
     }
 
     h1 {
       margin: 0;
-      font-size: 15px;
+      font-size: 12px;
       font-weight: 560;
       letter-spacing: 0;
+      line-height: 1;
     }
 
     .controls {
       display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-      gap: 12px 18px;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 12px;
+    }
+
+    .settings-details {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .settings-details summary {
+      width: max-content;
+      border: 1px solid #303644;
+      border-radius: 7px;
+      background: #101319;
+      color: var(--text);
+      padding: 8px 10px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .settings-details[open] .controls {
+      margin-top: 12px;
     }
 
     .setting {
@@ -67,6 +94,7 @@
     }
 
     .setting {
+      width: 100%;
       min-width: min(290px, 100%);
     }
 
@@ -92,10 +120,83 @@
       text-align: right;
     }
 
+    .palette-panel {
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      justify-items: start;
+      gap: 10px 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pitch-grid,
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 24px);
+      gap: 7px;
+      align-items: center;
+    }
+
+    .pitch-swatch,
+    .color-swatch {
+      width: 24px;
+      height: 24px;
+      border: 0;
+      border-radius: 50%;
+      padding: 0;
+      background: var(--swatch-color);
+      box-shadow:
+        inset 0 0 0 1px rgb(255 255 255 / 0.16),
+        0 4px 10px rgb(0 0 0 / 0.22);
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .pitch-swatch {
+      position: relative;
+    }
+
+    .pitch-swatch.is-selected,
+    .color-swatch.is-selected {
+      outline: 2px solid #e9edf2;
+      outline-offset: 3px;
+    }
+
+    .pitch-swatch::after {
+      content: attr(data-label);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #0f1115;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 1;
+      text-shadow: 0 1px 4px rgb(255 255 255 / 0.35);
+      pointer-events: none;
+    }
+
+    .reset-button {
+      border: 1px solid #303644;
+      border-radius: 7px;
+      background: #101319;
+      color: var(--text);
+      padding: 8px 10px;
+      font: inherit;
+      cursor: pointer;
+    }
+
     main {
+      position: fixed;
+      inset: 0;
       min-width: 0;
-      overflow: auto;
-      padding: 34px;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      padding: 0;
       overscroll-behavior: contain;
       scrollbar-width: none;
       -ms-overflow-style: none;
@@ -106,40 +207,28 @@
     }
 
     .keyboard-shell {
-      width: max-content;
+      width: 100%;
       min-width: 100%;
       min-height: 100%;
+      height: 100%;
       display: grid;
-      place-items: center;
     }
 
     .keyboard {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      padding-bottom: var(--key-size);
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       touch-action: none;
       user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
     }
 
-    .key-row {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--key-gap);
-      height: var(--row-step);
-      padding-left: calc(var(--row-offset, 0) * var(--col-step));
-    }
-
-    .key-row:nth-child(even) {
-      padding-left: calc((var(--row-offset, 0) + 0.5) * var(--col-step));
-    }
-
     .key {
+      position: absolute;
       width: var(--key-size);
       height: var(--key-size);
-      flex: 0 0 var(--key-size);
       display: block;
       padding: 0;
       border: 0;
@@ -155,13 +244,12 @@
       -webkit-touch-callout: none;
       -webkit-user-drag: none;
       -webkit-tap-highlight-color: transparent;
-      transition: filter 120ms ease, scale 120ms ease, box-shadow 120ms ease;
+      transition: filter 120ms ease, opacity 120ms ease, box-shadow 120ms ease;
     }
 
     .key:hover,
     .key:focus-visible {
       filter: brightness(1.16) saturate(1.08);
-      scale: 1.08;
       outline: none;
       box-shadow:
         inset 0 0 0 1px rgb(255 255 255 / 0.18),
@@ -171,54 +259,19 @@
     .key:active,
     .key.is-playing {
       filter: brightness(1.3) saturate(1.15);
-      scale: 0.96;
     }
 
-    .edge-scrollbar {
-      position: fixed;
-      z-index: 20;
-      border-radius: 999px;
-      background: rgb(255 255 255 / 0.08);
-      touch-action: none;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-touch-callout: none;
+    .key.is-muted {
+      opacity: 0.22;
+      filter: grayscale(0.75) brightness(0.55);
+      box-shadow:
+        inset 0 0 0 1px rgb(255 255 255 / 0.05),
+        0 10px 22px rgb(0 0 0 / 0.24);
     }
 
-    .edge-scrollbar.is-hidden {
-      display: none;
-    }
-
-    .edge-scrollbar-y {
-      top: var(--scrollbar-top, 82px);
-      right: 10px;
-      bottom: 20px;
-      width: 9px;
-    }
-
-    .edge-scrollbar-x {
-      right: 26px;
-      bottom: 10px;
-      left: 20px;
-      height: 9px;
-    }
-
-    .scroll-thumb {
-      position: absolute;
-      inset: 0 auto auto 0;
-      border-radius: inherit;
-      background: rgb(120 220 202 / 0.82);
-      box-shadow: 0 0 0 1px rgb(255 255 255 / 0.13);
-    }
-
-    .edge-scrollbar-y .scroll-thumb {
-      width: 100%;
-      min-height: 36px;
-    }
-
-    .edge-scrollbar-x .scroll-thumb {
-      height: 100%;
-      min-width: 36px;
+    .key.is-muted:hover,
+    .key.is-muted:focus-visible {
+      filter: grayscale(0.75) brightness(0.65);
     }
 
     @media (max-width: 720px) {
@@ -228,7 +281,7 @@
 
       header {
         align-items: flex-start;
-        padding: 14px 16px;
+        padding: 7px 10px;
       }
 
       .controls {
@@ -236,8 +289,21 @@
         justify-content: flex-start;
       }
 
+      .settings-details {
+        width: 100%;
+      }
+
       .setting {
         width: 100%;
+      }
+
+      .palette-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .pitch-grid,
+      .color-grid {
+        grid-template-columns: repeat(6, 24px);
       }
 
       select,
@@ -246,13 +312,13 @@
       }
 
       main {
-        padding: 22px 16px;
+        padding: 0;
       }
     }
 
     @media (max-width: 420px) {
       header {
-        gap: 12px;
+        gap: 8px;
       }
 
       .setting {
@@ -262,23 +328,45 @@
       .setting-value {
         width: 40px;
       }
+
+      .pitch-grid,
+      .color-grid {
+        grid-template-columns: repeat(6, 22px);
+        gap: 6px;
+      }
+
+      .pitch-swatch,
+      .color-swatch {
+        width: 22px;
+        height: 22px;
+      }
     }
   </style>
 </head>
 <body>
   <header>
     <h1>Isomorphic Keyboard</h1>
-    <div class="controls" aria-label="Keyboard settings">
-      <label class="setting">
-        Mode
-        <select id="modeSelect" aria-label="Keyboard mode"></select>
-      </label>
-      <label class="setting">
-        Key size
-        <input id="keySizeSlider" type="range" min="24" max="72" step="1" aria-label="Key size">
-        <span id="keySizeValue" class="setting-value" aria-live="polite"></span>
-      </label>
-    </div>
+    <details class="settings-details">
+      <summary>Settings</summary>
+      <div class="controls" aria-label="Keyboard settings">
+        <label class="setting">
+          Mode
+          <select id="modeSelect" aria-label="Keyboard mode"></select>
+        </label>
+        <label class="setting">
+          Key size
+          <input id="keySizeSlider" type="range" min="24" max="72" step="1" aria-label="Key size">
+          <span id="keySizeValue" class="setting-value" aria-live="polite"></span>
+        </label>
+        <div class="palette-panel" aria-label="Palette editor">
+          <span>Pitch color</span>
+          <div id="pitchColorGrid" class="pitch-grid"></div>
+          <button id="resetPalette" class="reset-button" type="button">Reset</button>
+          <span>Choices</span>
+          <div id="paletteChoiceGrid" class="color-grid"></div>
+        </div>
+      </div>
+    </details>
   </header>
 
   <main id="viewport">
@@ -287,39 +375,47 @@
     </div>
   </main>
 
-  <div id="scrollbarY" class="edge-scrollbar edge-scrollbar-y" aria-hidden="true">
-    <div id="thumbY" class="scroll-thumb"></div>
-  </div>
-  <div id="scrollbarX" class="edge-scrollbar edge-scrollbar-x" aria-hidden="true">
-    <div id="thumbX" class="scroll-thumb"></div>
-  </div>
-
   <script>
     const baseKeyboardConfig = {
       edo: 12,
-      rows: 11,
-      columns: 17,
+      hearingMinHz: 40,
+      hearingMaxHz: 10000,
       anchor: {
-        row: 4,
-        column: 4,
-        midi: 60
+        row: 0,
+        column: 0,
+        midi: 72
       }
     };
 
-    const pitchColors = [
-      "#e8edf4",
-      "#78dcca",
-      "#8eb9ff",
-      "#d99dff",
-      "#ff97bb",
-      "#ffb06b",
-      "#efd96a",
-      "#a7e06f",
-      "#66d6a6",
-      "#6cc7f2",
-      "#b2a2ff",
-      "#f58fd6"
+    const defaultPitchColors = [
+      "#f4f7fb",
+      "#4f8cff",
+      "#f4f7fb",
+      "#4f8cff",
+      "#f4f7fb",
+      "#f4f7fb",
+      "#4f8cff",
+      "#f4f7fb",
+      "#4f8cff",
+      "#f4f7fb",
+      "#4f8cff",
+      "#f4f7fb"
     ];
+
+    const paletteChoices = [
+      "#f4f7fb",
+      "#ffe94f",
+      "#ff3b30",
+      "#007aff",
+      "#34c759",
+      "#ff9500",
+      "#af52de",
+      "#00c7be",
+      "#ff2d8f",
+      "#2c2f36"
+    ];
+
+    const pitchNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
     const keyboardModes = {
       classic: {
@@ -340,18 +436,18 @@
     };
 
     let currentModeId = "classic";
+    let selectedPitchClass = 0;
+    const pitchColors = [...defaultPitchColors];
     let keyboardConfig = { ...baseKeyboardConfig, ...keyboardModes[currentModeId] };
 
     const modeSelect = document.querySelector("#modeSelect");
+    const settingsDetails = document.querySelector(".settings-details");
     const keyboard = document.querySelector("#keyboard");
-    const viewport = document.querySelector("#viewport");
     const keySizeSlider = document.querySelector("#keySizeSlider");
     const keySizeValue = document.querySelector("#keySizeValue");
-    const scrollbarY = document.querySelector("#scrollbarY");
-    const scrollbarX = document.querySelector("#scrollbarX");
-    const thumbY = document.querySelector("#thumbY");
-    const thumbX = document.querySelector("#thumbX");
-    const header = document.querySelector("header");
+    const pitchColorGrid = document.querySelector("#pitchColorGrid");
+    const paletteChoiceGrid = document.querySelector("#paletteChoiceGrid");
+    const resetPalette = document.querySelector("#resetPalette");
     let audioContext;
     const activeVoices = new Map();
     const activePointers = new Map();
@@ -373,28 +469,55 @@
       currentModeId = modeId;
       keyboardConfig = { ...baseKeyboardConfig, ...keyboardModes[currentModeId] };
       modeSelect.value = currentModeId;
-      renderKeyboard();
-      requestAnimationFrame(() => {
-        centerAnchorKey();
-        updateScrollbars();
+      requestAnimationFrame(renderKeyboard);
+    }
+
+    function renderPaletteEditor() {
+      pitchColorGrid.replaceChildren();
+      paletteChoiceGrid.replaceChildren();
+
+      pitchColors.forEach((color, pitchClass) => {
+        const swatch = document.createElement("button");
+        swatch.className = "pitch-swatch";
+        swatch.type = "button";
+        swatch.style.setProperty("--swatch-color", color);
+        swatch.dataset.label = pitchNames[pitchClass];
+        swatch.setAttribute("aria-label", `${pitchNames[pitchClass]} color`);
+        swatch.classList.toggle("is-selected", pitchClass === selectedPitchClass);
+        swatch.addEventListener("click", () => {
+          selectedPitchClass = pitchClass;
+          renderPaletteEditor();
+        });
+        pitchColorGrid.append(swatch);
+      });
+
+      paletteChoices.forEach((color) => {
+        const swatch = document.createElement("button");
+        swatch.className = "color-swatch";
+        swatch.type = "button";
+        swatch.style.setProperty("--swatch-color", color);
+        swatch.setAttribute("aria-label", `Assign ${color} to ${pitchNames[selectedPitchClass]}`);
+        swatch.classList.toggle("is-selected", pitchColors[selectedPitchClass] === color);
+        swatch.addEventListener("click", () => {
+          pitchColors[selectedPitchClass] = color;
+          renderPaletteEditor();
+          renderKeyboard();
+        });
+        paletteChoiceGrid.append(swatch);
       });
     }
 
-    function keyboardExtent() {
-      return {
-        rows: keyboardConfig.rows,
-        columns: keyboardConfig.columns
-      };
+    function resetPitchColors() {
+      pitchColors.splice(0, pitchColors.length, ...defaultPitchColors);
+      selectedPitchClass = 0;
+      renderPaletteEditor();
+      renderKeyboard();
     }
 
     function defaultKeySize() {
-      const { rows, columns } = keyboardExtent();
       const availableWidth = Math.max(260, window.innerWidth - 32);
       const availableHeight = Math.max(260, window.innerHeight - 128);
-      const gap = window.matchMedia("(max-width: 720px)").matches ? 6 : 7;
-      const widthFit = availableWidth / (columns + 0.5) - gap;
-      const heightFit = availableHeight / Math.max(1, (rows - 1) * 0.866 + 1) - gap;
-      const fitted = Math.min(widthFit, heightFit, 48);
+      const fitted = Math.min(48, availableWidth / 13, availableHeight / 9);
 
       return Math.round(Math.min(72, Math.max(24, fitted)));
     }
@@ -414,14 +537,51 @@
     function noteAt(row, column) {
       const anchor = keyboardConfig.anchor;
       const rowDelta = row - anchor.row;
-      const doubledX = column * 2 + (row % 2);
-      const anchorDoubledX = anchor.column * 2 + (anchor.row % 2);
+      const doubledX = column * 2 + rowParity(row);
+      const anchorDoubledX = anchor.column * 2 + rowParity(anchor.row);
       const rightDelta = (doubledX - anchorDoubledX + rowDelta) / 2;
       const uprightDelta = -rowDelta;
 
       return anchor.midi
         + rightDelta * keyboardConfig.rightStep
         + uprightDelta * keyboardConfig.uprightStep;
+    }
+
+    function rowParity(row) {
+      return ((row % 2) + 2) % 2;
+    }
+
+    function keyPosition(row, column) {
+      const keySize = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--key-size"));
+      const keyGap = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--key-gap"));
+      const colStep = keySize + keyGap;
+      const rowStep = colStep * 0.866;
+      const centerX = keyboard.clientWidth / 2;
+      const centerY = keyboard.clientHeight / 2;
+      const anchor = keyboardConfig.anchor;
+      const x = centerX
+        + ((column - anchor.column) + (rowParity(row) - rowParity(anchor.row)) * 0.5) * colStep
+        - keySize / 2;
+      const y = centerY + (row - anchor.row) * rowStep - keySize / 2;
+
+      return { x, y, keySize, colStep, rowStep };
+    }
+
+    function visibleGridBounds() {
+      const keySize = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--key-size"));
+      const keyGap = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--key-gap"));
+      const colStep = keySize + keyGap;
+      const rowStep = colStep * 0.866;
+      const anchor = keyboardConfig.anchor;
+      const rowReach = Math.ceil(keyboard.clientHeight / rowStep / 2) + 2;
+      const columnReach = Math.ceil(keyboard.clientWidth / colStep / 2) + 3;
+
+      return {
+        rowMin: anchor.row - rowReach,
+        rowMax: anchor.row + rowReach,
+        columnMin: anchor.column - columnReach,
+        columnMax: anchor.column + columnReach
+      };
     }
 
     function stopVoice(pointerId) {
@@ -466,7 +626,7 @@
       let nearestDistance = Infinity;
       const maxDistance = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--key-size")) * 0.62;
 
-      for (const key of keyboard.querySelectorAll(".key")) {
+      for (const key of keyboard.querySelectorAll(".key[data-audible='true']")) {
         const rect = key.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
@@ -500,142 +660,61 @@
       activePointers.delete(event.pointerId);
     }
 
-    function updateScrollbars() {
-      const maxScrollTop = viewport.scrollHeight - viewport.clientHeight;
-      const maxScrollLeft = viewport.scrollWidth - viewport.clientWidth;
-      const headerBottom = header.getBoundingClientRect().bottom;
-
-      document.documentElement.style.setProperty("--scrollbar-top", `${Math.ceil(headerBottom + 10)}px`);
-      scrollbarY.classList.toggle("is-hidden", maxScrollTop <= 1);
-      scrollbarX.classList.toggle("is-hidden", maxScrollLeft <= 1);
-
-      if (maxScrollTop > 1) {
-        const trackHeight = scrollbarY.clientHeight;
-        const thumbHeight = Math.max(36, trackHeight * viewport.clientHeight / viewport.scrollHeight);
-        const thumbTop = (trackHeight - thumbHeight) * viewport.scrollTop / maxScrollTop;
-
-        thumbY.style.height = `${thumbHeight}px`;
-        thumbY.style.transform = `translateY(${thumbTop}px)`;
-      }
-
-      if (maxScrollLeft > 1) {
-        const trackWidth = scrollbarX.clientWidth;
-        const thumbWidth = Math.max(36, trackWidth * viewport.clientWidth / viewport.scrollWidth);
-        const thumbLeft = (trackWidth - thumbWidth) * viewport.scrollLeft / maxScrollLeft;
-
-        thumbX.style.width = `${thumbWidth}px`;
-        thumbX.style.transform = `translateX(${thumbLeft}px)`;
-      }
-    }
-
-    function jumpScroll(axis, clientPosition) {
-      if (axis === "y") {
-        const track = scrollbarY.getBoundingClientRect();
-        const thumbHeight = thumbY.getBoundingClientRect().height;
-        const maxThumbTop = Math.max(1, track.height - thumbHeight);
-        const maxScrollTop = Math.max(1, viewport.scrollHeight - viewport.clientHeight);
-        const thumbTop = Math.min(maxThumbTop, Math.max(0, clientPosition - track.top - thumbHeight / 2));
-
-        viewport.scrollTop = thumbTop / maxThumbTop * maxScrollTop;
-      } else {
-        const track = scrollbarX.getBoundingClientRect();
-        const thumbWidth = thumbX.getBoundingClientRect().width;
-        const maxThumbLeft = Math.max(1, track.width - thumbWidth);
-        const maxScrollLeft = Math.max(1, viewport.scrollWidth - viewport.clientWidth);
-        const thumbLeft = Math.min(maxThumbLeft, Math.max(0, clientPosition - track.left - thumbWidth / 2));
-
-        viewport.scrollLeft = thumbLeft / maxThumbLeft * maxScrollLeft;
-      }
-
-      updateScrollbars();
-    }
-
-    function bindScrollbarDrag(track, axis) {
-      track.addEventListener("pointerdown", (event) => {
-        event.preventDefault();
-        track.setPointerCapture(event.pointerId);
-        jumpScroll(axis, axis === "y" ? event.clientY : event.clientX);
-      });
-
-      track.addEventListener("pointermove", (event) => {
-        if (!track.hasPointerCapture(event.pointerId)) return;
-
-        event.preventDefault();
-        jumpScroll(axis, axis === "y" ? event.clientY : event.clientX);
-      });
-    }
-
-    function centerAnchorKey() {
-      const anchor = keyboardConfig.anchor;
-      const anchorKey = keyboard.querySelector(`[data-row="${anchor.row}"][data-column="${anchor.column}"]`);
-
-      if (!anchorKey) return;
-
-      const keyLeft = anchorKey.offsetLeft;
-      const keyTop = anchorKey.offsetTop;
-      const keyWidth = anchorKey.offsetWidth;
-      const keyHeight = anchorKey.offsetHeight;
-
-      viewport.scrollLeft = keyLeft + keyWidth / 2 - viewport.clientWidth / 2;
-      viewport.scrollTop = keyTop + keyHeight / 2 - viewport.clientHeight / 2;
-    }
-
     function renderKeyboard() {
       keyboard.replaceChildren();
       keyboard.setAttribute("aria-label", `${keyboardConfig.name} isomorphic keyboard`);
 
-      const rows = Array.from({ length: keyboardConfig.rows }, () => ({
-        columns: keyboardConfig.columns,
-        offset: 0
-      }));
+      const bounds = visibleGridBounds();
 
-      for (let row = 0; row < rows.length; row += 1) {
-        const rowConfig = rows[row];
-        const columns = rowConfig.columns;
-        const rowElement = document.createElement("div");
-        rowElement.className = "key-row";
-        rowElement.style.setProperty("--row-offset", rowConfig.offset ?? 0);
+      for (let row = bounds.rowMin; row <= bounds.rowMax; row += 1) {
+        for (let column = bounds.columnMin; column <= bounds.columnMax; column += 1) {
+          const { x, y, keySize } = keyPosition(row, column);
 
-        for (let column = 0; column < columns; column += 1) {
+          if (
+            x > keyboard.clientWidth ||
+            y > keyboard.clientHeight ||
+            x + keySize < 0 ||
+            y + keySize < 0
+          ) {
+            continue;
+          }
+
           const midi = noteAt(row, column);
+          const frequency = midiToFrequency(midi);
+          const isAudible = frequency >= keyboardConfig.hearingMinHz && frequency <= keyboardConfig.hearingMaxHz;
           const pitchClass = ((midi % keyboardConfig.edo) + keyboardConfig.edo) % keyboardConfig.edo;
           const key = document.createElement("div");
 
           key.className = "key";
+          key.classList.toggle("is-muted", !isAudible);
           key.setAttribute("role", "button");
           key.tabIndex = 0;
           key.style.setProperty("--key-color", pitchColors[pitchClass]);
+          key.style.transform = `translate(${x}px, ${y}px)`;
           key.setAttribute("aria-label", `Pitch class ${pitchClass}`);
           key.dataset.midi = String(midi);
+          key.dataset.audible = String(isAudible);
           key.dataset.pitchClass = String(pitchClass);
           key.dataset.row = String(row);
           key.dataset.column = String(column);
 
-          rowElement.append(key);
+          keyboard.append(key);
         }
-
-        keyboard.append(rowElement);
       }
     }
 
     createModeOptions();
+    renderPaletteEditor();
     initializeKeySize();
     renderKeyboard();
     modeSelect.addEventListener("change", () => setMode(modeSelect.value));
+    resetPalette.addEventListener("click", resetPitchColors);
     keySizeSlider.addEventListener("input", () => {
       setKeySize(keySizeSlider.value);
-      requestAnimationFrame(() => {
-        centerAnchorKey();
-        updateScrollbars();
-      });
+      requestAnimationFrame(renderKeyboard);
     });
-    viewport.addEventListener("scroll", updateScrollbars, { passive: true });
-    window.addEventListener("resize", () => {
-      centerAnchorKey();
-      updateScrollbars();
-    });
-    bindScrollbarDrag(scrollbarY, "y");
-    bindScrollbarDrag(scrollbarX, "x");
+    window.addEventListener("resize", renderKeyboard);
+    settingsDetails.addEventListener("toggle", () => requestAnimationFrame(renderKeyboard));
     keyboard.addEventListener("pointerdown", (event) => {
       event.preventDefault();
       keyboard.setPointerCapture(event.pointerId);
@@ -653,10 +732,7 @@
     keyboard.addEventListener("pointerup", releasePointer);
     keyboard.addEventListener("pointercancel", releasePointer);
     keyboard.addEventListener("lostpointercapture", releasePointer);
-    requestAnimationFrame(() => {
-      centerAnchorKey();
-      updateScrollbars();
-    });
+    requestAnimationFrame(renderKeyboard);
   </script>
 </body>
 </html>
