@@ -70,6 +70,16 @@
       min-width: min(290px, 100%);
     }
 
+    select {
+      min-width: 150px;
+      border: 1px solid #303644;
+      border-radius: 7px;
+      background: #101319;
+      color: var(--text);
+      padding: 8px 10px;
+      font: inherit;
+    }
+
     input[type="range"] {
       width: min(190px, 42vw);
       accent-color: #78dcca;
@@ -230,6 +240,7 @@
         width: 100%;
       }
 
+      select,
       input[type="range"] {
         flex: 1;
       }
@@ -259,6 +270,10 @@
     <h1>Isomorphic Keyboard</h1>
     <div class="controls" aria-label="Keyboard settings">
       <label class="setting">
+        Mode
+        <select id="modeSelect" aria-label="Keyboard mode"></select>
+      </label>
+      <label class="setting">
         Key size
         <input id="keySizeSlider" type="range" min="24" max="72" step="1" aria-label="Key size">
         <span id="keySizeValue" class="setting-value" aria-live="polite"></span>
@@ -280,8 +295,7 @@
   </div>
 
   <script>
-    const keyboardConfig = {
-      name: "12EDO",
+    const baseKeyboardConfig = {
       edo: 12,
       rows: 11,
       columns: 17,
@@ -289,25 +303,46 @@
         row: 4,
         column: 4,
         midi: 60
-      },
-      horizontalStep: 2,
-      downwardStep: 1,
-      colors: [
-        "#e8edf4",
-        "#78dcca",
-        "#8eb9ff",
-        "#d99dff",
-        "#ff97bb",
-        "#ffb06b",
-        "#efd96a",
-        "#a7e06f",
-        "#66d6a6",
-        "#6cc7f2",
-        "#b2a2ff",
-        "#f58fd6"
-      ]
+      }
     };
 
+    const pitchColors = [
+      "#e8edf4",
+      "#78dcca",
+      "#8eb9ff",
+      "#d99dff",
+      "#ff97bb",
+      "#ffb06b",
+      "#efd96a",
+      "#a7e06f",
+      "#66d6a6",
+      "#6cc7f2",
+      "#b2a2ff",
+      "#f58fd6"
+    ];
+
+    const keyboardModes = {
+      classic: {
+        name: "Classic Mode",
+        rightStep: 2,
+        uprightStep: 1
+      },
+      melodic: {
+        name: "Melodic Mode",
+        rightStep: 2,
+        uprightStep: 7
+      },
+      harmonic: {
+        name: "Harmonic Mode",
+        rightStep: 4,
+        uprightStep: 7
+      }
+    };
+
+    let currentModeId = "classic";
+    let keyboardConfig = { ...baseKeyboardConfig, ...keyboardModes[currentModeId] };
+
+    const modeSelect = document.querySelector("#modeSelect");
     const keyboard = document.querySelector("#keyboard");
     const viewport = document.querySelector("#viewport");
     const keySizeSlider = document.querySelector("#keySizeSlider");
@@ -323,6 +358,26 @@
 
     function midiToFrequency(midi) {
       return 440 * 2 ** ((midi - 69) / 12);
+    }
+
+    function createModeOptions() {
+      for (const [id, mode] of Object.entries(keyboardModes)) {
+        const option = document.createElement("option");
+        option.value = id;
+        option.textContent = mode.name;
+        modeSelect.append(option);
+      }
+    }
+
+    function setMode(modeId) {
+      currentModeId = modeId;
+      keyboardConfig = { ...baseKeyboardConfig, ...keyboardModes[currentModeId] };
+      modeSelect.value = currentModeId;
+      renderKeyboard();
+      requestAnimationFrame(() => {
+        centerAnchorKey();
+        updateScrollbars();
+      });
     }
 
     function keyboardExtent() {
@@ -350,7 +405,6 @@
       document.documentElement.style.setProperty("--key-size", `${roundedSize}px`);
       keySizeSlider.value = String(roundedSize);
       keySizeValue.textContent = `${roundedSize}px`;
-      requestAnimationFrame(updateScrollbars);
     }
 
     function initializeKeySize() {
@@ -362,11 +416,12 @@
       const rowDelta = row - anchor.row;
       const doubledX = column * 2 + (row % 2);
       const anchorDoubledX = anchor.column * 2 + (anchor.row % 2);
-      const horizontalDelta = (doubledX - anchorDoubledX - rowDelta) / 2;
+      const rightDelta = (doubledX - anchorDoubledX + rowDelta) / 2;
+      const uprightDelta = -rowDelta;
 
       return anchor.midi
-        + horizontalDelta * keyboardConfig.horizontalStep
-        + rowDelta * keyboardConfig.downwardStep;
+        + rightDelta * keyboardConfig.rightStep
+        + uprightDelta * keyboardConfig.uprightStep;
     }
 
     function stopVoice(pointerId) {
@@ -510,6 +565,21 @@
       });
     }
 
+    function centerAnchorKey() {
+      const anchor = keyboardConfig.anchor;
+      const anchorKey = keyboard.querySelector(`[data-row="${anchor.row}"][data-column="${anchor.column}"]`);
+
+      if (!anchorKey) return;
+
+      const keyLeft = anchorKey.offsetLeft;
+      const keyTop = anchorKey.offsetTop;
+      const keyWidth = anchorKey.offsetWidth;
+      const keyHeight = anchorKey.offsetHeight;
+
+      viewport.scrollLeft = keyLeft + keyWidth / 2 - viewport.clientWidth / 2;
+      viewport.scrollTop = keyTop + keyHeight / 2 - viewport.clientHeight / 2;
+    }
+
     function renderKeyboard() {
       keyboard.replaceChildren();
       keyboard.setAttribute("aria-label", `${keyboardConfig.name} isomorphic keyboard`);
@@ -534,10 +604,12 @@
           key.className = "key";
           key.setAttribute("role", "button");
           key.tabIndex = 0;
-          key.style.setProperty("--key-color", keyboardConfig.colors[pitchClass]);
+          key.style.setProperty("--key-color", pitchColors[pitchClass]);
           key.setAttribute("aria-label", `Pitch class ${pitchClass}`);
           key.dataset.midi = String(midi);
           key.dataset.pitchClass = String(pitchClass);
+          key.dataset.row = String(row);
+          key.dataset.column = String(column);
 
           rowElement.append(key);
         }
@@ -546,11 +618,22 @@
       }
     }
 
+    createModeOptions();
     initializeKeySize();
     renderKeyboard();
-    keySizeSlider.addEventListener("input", () => setKeySize(keySizeSlider.value));
+    modeSelect.addEventListener("change", () => setMode(modeSelect.value));
+    keySizeSlider.addEventListener("input", () => {
+      setKeySize(keySizeSlider.value);
+      requestAnimationFrame(() => {
+        centerAnchorKey();
+        updateScrollbars();
+      });
+    });
     viewport.addEventListener("scroll", updateScrollbars, { passive: true });
-    window.addEventListener("resize", updateScrollbars);
+    window.addEventListener("resize", () => {
+      centerAnchorKey();
+      updateScrollbars();
+    });
     bindScrollbarDrag(scrollbarY, "y");
     bindScrollbarDrag(scrollbarX, "x");
     keyboard.addEventListener("pointerdown", (event) => {
@@ -570,7 +653,10 @@
     keyboard.addEventListener("pointerup", releasePointer);
     keyboard.addEventListener("pointercancel", releasePointer);
     keyboard.addEventListener("lostpointercapture", releasePointer);
-    requestAnimationFrame(updateScrollbars);
+    requestAnimationFrame(() => {
+      centerAnchorKey();
+      updateScrollbars();
+    });
   </script>
 </body>
 </html>
