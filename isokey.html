@@ -283,6 +283,48 @@
       filter: grayscale(0.75) brightness(0.65);
     }
 
+    .chord-display {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      transition: opacity 120ms ease;
+    }
+
+    .chord-display.is-visible {
+      opacity: var(--chord-display-opacity, 0.58);
+    }
+
+    .chord-display.is-visible.is-unrecognized {
+      opacity: calc(var(--chord-display-opacity, 0.58) * 0.55);
+    }
+
+    .chord-display-inner {
+      text-align: center;
+      color: #f4f7fb;
+      text-shadow:
+        0 0 10px rgb(0 0 0 / 0.85),
+        0 0 26px rgb(0 0 0 / 0.7);
+    }
+
+    .chord-brief {
+      font-size: clamp(44px, 12vw, 132px);
+      font-weight: 760;
+      line-height: 0.92;
+    }
+
+    .chord-full {
+      margin-top: 8px;
+      font-size: clamp(13px, 2.4vw, 24px);
+      font-weight: 540;
+    }
+
     @media (max-width: 720px) {
       :root {
         --key-gap: 6px;
@@ -366,6 +408,11 @@
           Chord mode
           <input id="chordModeToggle" type="checkbox" aria-label="Chord mode">
         </label>
+        <label class="setting chord-opacity-setting">
+          Chord text
+          <input id="chordOpacitySlider" type="range" min="20" max="90" step="1" aria-label="Chord text opacity">
+          <span id="chordOpacityValue" class="setting-value" aria-live="polite"></span>
+        </label>
         <label class="setting">
           Key size
           <input id="keySizeSlider" type="range" min="24" max="72" step="1" aria-label="Key size">
@@ -387,6 +434,13 @@
       <div id="keyboard" class="keyboard" aria-label="12EDO isomorphic keyboard"></div>
     </div>
   </main>
+
+  <div id="chordDisplay" class="chord-display" aria-hidden="true">
+    <div class="chord-display-inner">
+      <div id="chordBrief" class="chord-brief"></div>
+      <div id="chordFull" class="chord-full"></div>
+    </div>
+  </div>
 
   <script>
     const baseKeyboardConfig = {
@@ -431,6 +485,24 @@
     ];
 
     const pitchNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    const pitchFullNames = ["C", "C sharp", "D", "D sharp", "E", "F", "F sharp", "G", "G sharp", "A", "A sharp", "B"];
+    const chordPatterns = [
+      { intervals: [0, 4, 7, 10], suffix: "7", full: "dominant seventh chord" },
+      { intervals: [0, 4, 7, 11], suffix: "maj7", full: "major seventh chord" },
+      { intervals: [0, 3, 7, 10], suffix: "m7", full: "minor seventh chord" },
+      { intervals: [0, 3, 6, 10], suffix: "m7b5", full: "half-diminished seventh chord" },
+      { intervals: [0, 3, 6, 9], suffix: "dim7", full: "diminished seventh chord" },
+      { intervals: [0, 4, 7], suffix: "", full: "major chord" },
+      { intervals: [0, 3, 7], suffix: "m", full: "minor chord" },
+      { intervals: [0, 3, 6], suffix: "dim", full: "diminished chord" },
+      { intervals: [0, 4, 8], suffix: "aug", full: "augmented chord" },
+      { intervals: [0, 5, 7], suffix: "sus4", full: "suspended fourth chord" },
+      { intervals: [0, 2, 7], suffix: "sus2", full: "suspended second chord" },
+      { intervals: [0, 4], suffix: "", full: "major third" },
+      { intervals: [0, 3], suffix: "m", full: "minor third" },
+      { intervals: [0, 7], suffix: "5", full: "perfect fifth" },
+      { intervals: [0, 6], suffix: "tritone", full: "tritone" }
+    ];
 
     const keyboardModes = {
       classic: {
@@ -448,12 +520,16 @@
     let currentModeId = "classic";
     let selectedPitchClass = 0;
     let chordModeEnabled = false;
+    let chordDisplayOpacity = 0.58;
     const pitchColors = [...defaultPitchColors];
     let keyboardConfig = { ...baseKeyboardConfig, ...keyboardModes[currentModeId] };
 
     const modeSelect = document.querySelector("#modeSelect");
     const chordModeToggle = document.querySelector("#chordModeToggle");
     const chordModeSetting = document.querySelector(".chord-setting");
+    const chordOpacitySlider = document.querySelector("#chordOpacitySlider");
+    const chordOpacityValue = document.querySelector("#chordOpacityValue");
+    const chordOpacitySetting = document.querySelector(".chord-opacity-setting");
     const settingsDetails = document.querySelector(".settings-details");
     const keyboard = document.querySelector("#keyboard");
     const keySizeSlider = document.querySelector("#keySizeSlider");
@@ -461,6 +537,9 @@
     const pitchColorGrid = document.querySelector("#pitchColorGrid");
     const paletteChoiceGrid = document.querySelector("#paletteChoiceGrid");
     const resetPalette = document.querySelector("#resetPalette");
+    const chordDisplay = document.querySelector("#chordDisplay");
+    const chordBrief = document.querySelector("#chordBrief");
+    const chordFull = document.querySelector("#chordFull");
     let audioContext;
     const activeVoices = new Map();
     const activePointers = new Map();
@@ -522,12 +601,24 @@
     function syncChordModeAvailability() {
       const canUseChordMode = currentModeId === "harmonic";
 
-      chordModeToggle.disabled = !canUseChordMode;
-      chordModeSetting.classList.toggle("is-disabled", !canUseChordMode);
       if (!canUseChordMode) {
         chordModeEnabled = false;
         chordModeToggle.checked = false;
       }
+
+      chordModeToggle.disabled = !canUseChordMode;
+      chordOpacitySlider.disabled = !canUseChordMode || !chordModeEnabled;
+      chordModeSetting.classList.toggle("is-disabled", !canUseChordMode);
+      chordOpacitySetting.classList.toggle("is-disabled", !canUseChordMode || !chordModeEnabled);
+    }
+
+    function setChordDisplayOpacity(percent) {
+      const normalized = Math.min(0.9, Math.max(0.2, Number(percent) / 100));
+
+      chordDisplayOpacity = normalized;
+      document.documentElement.style.setProperty("--chord-display-opacity", String(chordDisplayOpacity));
+      chordOpacitySlider.value = String(Math.round(chordDisplayOpacity * 100));
+      chordOpacityValue.textContent = `${Math.round(chordDisplayOpacity * 100)}%`;
     }
 
     function renderPaletteEditor() {
@@ -654,6 +745,92 @@
       return ((midi % keyboardConfig.edo) + keyboardConfig.edo) % keyboardConfig.edo;
     }
 
+    function uniquePitchClassesFromChordVoices() {
+      const pitchClasses = new Set();
+
+      for (const id of activeVoices.keys()) {
+        const match = id.match(/:pc:(\d+)$/);
+        if (match) {
+          pitchClasses.add(Number(match[1]));
+        }
+      }
+
+      return [...pitchClasses].sort((a, b) => a - b);
+    }
+
+    function sameIntervals(a, b) {
+      return a.length === b.length && a.every((value, index) => value === b[index]);
+    }
+
+    function recognizeChord(pitchClasses) {
+      if (!pitchClasses.length) return null;
+
+      if (pitchClasses.length === 1) {
+        const root = pitchClasses[0];
+        return {
+          brief: pitchNames[root],
+          full: `${pitchFullNames[root]} single note`,
+          recognized: true
+        };
+      }
+
+      const matches = [];
+
+      for (const root of pitchClasses) {
+        const intervals = pitchClasses
+          .map((pitchClass) => (pitchClass - root + 12) % 12)
+          .sort((a, b) => a - b);
+
+        for (const pattern of chordPatterns) {
+          if (sameIntervals(intervals, pattern.intervals)) {
+            matches.push({
+              brief: `${pitchNames[root]}${pattern.suffix}`,
+              full: `${pitchFullNames[root]} ${pattern.full}`
+            });
+          }
+        }
+      }
+
+      if (matches.length) {
+        return {
+          brief: matches.map((match) => match.brief).join(" / "),
+          full: matches.map((match) => match.full).join(" / "),
+          recognized: true
+        };
+      }
+
+      return {
+        brief: pitchClasses.map((pitchClass) => pitchNames[pitchClass]).join(" "),
+        full: "unrecognized chord",
+        recognized: false
+      };
+    }
+
+    function updateChordDisplay() {
+      if (!chordModeEnabled) {
+        chordDisplay.classList.remove("is-visible");
+        chordDisplay.classList.remove("is-unrecognized");
+        chordBrief.textContent = "";
+        chordFull.textContent = "";
+        return;
+      }
+
+      const chord = recognizeChord(uniquePitchClassesFromChordVoices());
+
+      if (!chord) {
+        chordDisplay.classList.remove("is-visible");
+        chordDisplay.classList.remove("is-unrecognized");
+        chordBrief.textContent = "";
+        chordFull.textContent = "";
+        return;
+      }
+
+      chordBrief.textContent = chord.brief;
+      chordFull.textContent = chord.full;
+      chordDisplay.classList.add("is-visible");
+      chordDisplay.classList.toggle("is-unrecognized", !chord.recognized);
+    }
+
     function addPlayingKey(pointerId, key) {
       let keys = activePointerKeys.get(pointerId);
 
@@ -689,6 +866,7 @@
         oscillator.stop(now + 0.95);
       }
       activeVoices.delete(id);
+      updateChordDisplay();
     }
 
     function stopPointerVoices(pointerId) {
@@ -700,6 +878,7 @@
         }
       }
       clearPointerKeys(pointerId);
+      updateChordDisplay();
     }
 
     function stopAllVoices() {
@@ -710,6 +889,7 @@
       for (const pointerId of [...activePointerKeys.keys()]) {
         clearPointerKeys(pointerId);
       }
+      updateChordDisplay();
     }
 
     function startTone(midi, key, pointerId, options = {}) {
@@ -726,7 +906,10 @@
         stopPointerVoices(pointerId);
       }
       addPlayingKey(pointerId, key);
-      if (activeVoices.has(id)) return;
+      if (activeVoices.has(id)) {
+        updateChordDisplay();
+        return;
+      }
 
       const now = audioContext.currentTime;
       const nodes = [];
@@ -753,6 +936,7 @@
       });
 
       activeVoices.set(id, { nodes });
+      updateChordDisplay();
     }
 
     function keyFromPoint(clientX, clientY) {
@@ -845,6 +1029,7 @@
     }
 
     createModeOptions();
+    setChordDisplayOpacity(chordDisplayOpacity * 100);
     syncChordModeAvailability();
     renderPaletteEditor();
     initializeKeySize();
@@ -853,8 +1038,10 @@
     chordModeToggle.addEventListener("change", () => {
       chordModeEnabled = currentModeId === "harmonic" && chordModeToggle.checked;
       stopAllVoices();
+      syncChordModeAvailability();
       requestAnimationFrame(renderKeyboard);
     });
+    chordOpacitySlider.addEventListener("input", () => setChordDisplayOpacity(chordOpacitySlider.value));
     resetPalette.addEventListener("click", resetPitchColors);
     keySizeSlider.addEventListener("input", () => {
       setKeySize(keySizeSlider.value);
