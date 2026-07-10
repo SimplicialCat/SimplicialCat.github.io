@@ -98,6 +98,10 @@
       min-width: min(290px, 100%);
     }
 
+    .setting.is-disabled {
+      opacity: 0.48;
+    }
+
     select {
       min-width: 150px;
       border: 1px solid #303644;
@@ -259,6 +263,11 @@
     .key:active,
     .key.is-playing {
       filter: brightness(1.3) saturate(1.15);
+      box-shadow:
+        inset 0 0 0 1px rgb(255 255 255 / 0.28),
+        0 0 12px var(--key-glow-color),
+        0 0 28px var(--key-glow-color),
+        0 14px 30px rgb(0 0 0 / 0.3);
     }
 
     .key.is-muted {
@@ -353,6 +362,10 @@
           Mode
           <select id="modeSelect" aria-label="Keyboard mode"></select>
         </label>
+        <label class="setting chord-setting">
+          Chord mode
+          <input id="chordModeToggle" type="checkbox" aria-label="Chord mode">
+        </label>
         <label class="setting">
           Key size
           <input id="keySizeSlider" type="range" min="24" max="72" step="1" aria-label="Key size">
@@ -380,6 +393,8 @@
       edo: 12,
       hearingMinHz: 40,
       hearingMaxHz: 10000,
+      gaussianCenterMidi: 60,
+      gaussianSigmaOctaves: 1.35,
       anchor: {
         row: 0,
         column: 0,
@@ -423,11 +438,6 @@
         rightStep: 2,
         uprightStep: 1
       },
-      melodic: {
-        name: "Melodic Mode",
-        rightStep: 2,
-        uprightStep: 7
-      },
       harmonic: {
         name: "Harmonic Mode",
         rightStep: 4,
@@ -437,10 +447,13 @@
 
     let currentModeId = "classic";
     let selectedPitchClass = 0;
+    let chordModeEnabled = false;
     const pitchColors = [...defaultPitchColors];
     let keyboardConfig = { ...baseKeyboardConfig, ...keyboardModes[currentModeId] };
 
     const modeSelect = document.querySelector("#modeSelect");
+    const chordModeToggle = document.querySelector("#chordModeToggle");
+    const chordModeSetting = document.querySelector(".chord-setting");
     const settingsDetails = document.querySelector(".settings-details");
     const keyboard = document.querySelector("#keyboard");
     const keySizeSlider = document.querySelector("#keySizeSlider");
@@ -451,9 +464,41 @@
     let audioContext;
     const activeVoices = new Map();
     const activePointers = new Map();
+    const activePointerKeys = new Map();
 
     function midiToFrequency(midi) {
       return 440 * 2 ** ((midi - 69) / 12);
+    }
+
+    function gaussianWeight(midi) {
+      const distanceInOctaves = (midi - keyboardConfig.gaussianCenterMidi) / keyboardConfig.edo;
+      const sigma = keyboardConfig.gaussianSigmaOctaves;
+
+      return Math.exp(-0.5 * (distanceInOctaves / sigma) ** 2);
+    }
+
+    function audibleOctaveMidisForPitchClass(pitchClass) {
+      const midis = [];
+      const minMidi = Math.ceil(69 + 12 * Math.log2(keyboardConfig.hearingMinHz / 440));
+      const maxMidi = Math.floor(69 + 12 * Math.log2(keyboardConfig.hearingMaxHz / 440));
+
+      for (let midi = minMidi; midi <= maxMidi; midi += 1) {
+        if (pitchClassOfMidi(midi) === pitchClass) {
+          midis.push(midi);
+        }
+      }
+
+      return midis;
+    }
+
+    function brightenHexColor(hex, amount = 0.42) {
+      const value = hex.replace("#", "");
+      const red = Number.parseInt(value.slice(0, 2), 16);
+      const green = Number.parseInt(value.slice(2, 4), 16);
+      const blue = Number.parseInt(value.slice(4, 6), 16);
+      const blend = (channel) => Math.round(channel + (255 - channel) * amount);
+
+      return `rgb(${blend(red)} ${blend(green)} ${blend(blue)})`;
     }
 
     function createModeOptions() {
@@ -466,10 +511,23 @@
     }
 
     function setMode(modeId) {
+      stopAllVoices();
       currentModeId = modeId;
       keyboardConfig = { ...baseKeyboardConfig, ...keyboardModes[currentModeId] };
       modeSelect.value = currentModeId;
+      syncChordModeAvailability();
       requestAnimationFrame(renderKeyboard);
+    }
+
+    function syncChordModeAvailability() {
+      const canUseChordMode = currentModeId === "harmonic";
+
+      chordModeToggle.disabled = !canUseChordMode;
+      chordModeSetting.classList.toggle("is-disabled", !canUseChordMode);
+      if (!canUseChordMode) {
+        chordModeEnabled = false;
+        chordModeToggle.checked = false;
+      }
     }
 
     function renderPaletteEditor() {
@@ -584,41 +642,117 @@
       };
     }
 
-    function stopVoice(pointerId) {
-      const voice = activeVoices.get(pointerId);
+    function voiceId(pointerId, midi) {
+      return `${pointerId}:${midi}`;
+    }
+
+    function chordVoiceId(pointerId, pitchClass) {
+      return `${pointerId}:pc:${pitchClass}`;
+    }
+
+    function pitchClassOfMidi(midi) {
+      return ((midi % keyboardConfig.edo) + keyboardConfig.edo) % keyboardConfig.edo;
+    }
+
+    function addPlayingKey(pointerId, key) {
+      let keys = activePointerKeys.get(pointerId);
+
+      if (!keys) {
+        keys = new Set();
+        activePointerKeys.set(pointerId, keys);
+      }
+
+      keys.add(key);
+      key.classList.add("is-playing");
+    }
+
+    function clearPointerKeys(pointerId) {
+      const keys = activePointerKeys.get(pointerId);
+      if (!keys) return;
+
+      for (const key of keys) {
+        key.classList.remove("is-playing");
+      }
+      activePointerKeys.delete(pointerId);
+    }
+
+    function stopVoice(id) {
+      const voice = activeVoices.get(id);
       if (!voice || !audioContext) return;
 
       const now = audioContext.currentTime;
-      voice.gain.gain.cancelScheduledValues(now);
-      voice.gain.gain.setValueAtTime(Math.max(voice.gain.gain.value, 0.0001), now);
-      voice.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
-      voice.oscillator.stop(now + 0.95);
-      voice.key.classList.remove("is-playing");
-      activeVoices.delete(pointerId);
+
+      for (const { oscillator, gain } of voice.nodes) {
+        gain.gain.cancelScheduledValues(now);
+        gain.gain.setValueAtTime(Math.max(gain.gain.value, 0.0001), now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+        oscillator.stop(now + 0.95);
+      }
+      activeVoices.delete(id);
     }
 
-    function startTone(midi, key, pointerId) {
+    function stopPointerVoices(pointerId) {
+      const prefix = `${pointerId}:`;
+
+      for (const id of [...activeVoices.keys()]) {
+        if (id.startsWith(prefix)) {
+          stopVoice(id);
+        }
+      }
+      clearPointerKeys(pointerId);
+    }
+
+    function stopAllVoices() {
+      for (const id of [...activeVoices.keys()]) {
+        stopVoice(id);
+      }
+      activePointers.clear();
+      for (const pointerId of [...activePointerKeys.keys()]) {
+        clearPointerKeys(pointerId);
+      }
+    }
+
+    function startTone(midi, key, pointerId, options = {}) {
       audioContext ??= new AudioContext();
       if (audioContext.state === "suspended") {
         audioContext.resume();
       }
-      stopVoice(pointerId);
 
-      const oscillator = audioContext.createOscillator();
-      const gain = audioContext.createGain();
+      const pitchClass = pitchClassOfMidi(midi);
+      const id = options.chordSpread
+        ? chordVoiceId(pointerId, pitchClass)
+        : voiceId(pointerId, midi);
+      if (!options.accumulate) {
+        stopPointerVoices(pointerId);
+      }
+      addPlayingKey(pointerId, key);
+      if (activeVoices.has(id)) return;
+
       const now = audioContext.currentTime;
+      const nodes = [];
+      const midis = options.chordSpread
+        ? audibleOctaveMidisForPitchClass(pitchClass)
+        : [midi];
+      const weights = midis.map(gaussianWeight);
+      const totalWeight = weights.reduce((sum, weight) => sum + weight, 0) || 1;
+      const peakGain = options.chordSpread ? 0.24 : 0.2;
 
-      oscillator.type = "sine";
-      oscillator.frequency.value = midiToFrequency(midi);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.2, now + 0.025);
-      gain.gain.setTargetAtTime(0.16, now + 0.025, 0.18);
+      midis.forEach((voiceMidi, index) => {
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        const weightedPeak = peakGain * weights[index] / totalWeight;
 
-      oscillator.connect(gain).connect(audioContext.destination);
-      oscillator.start(now);
+        oscillator.type = "sine";
+        oscillator.frequency.value = midiToFrequency(voiceMidi);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, weightedPeak), now + 0.025);
+        gain.gain.setTargetAtTime(Math.max(0.0002, weightedPeak * 0.8), now + 0.025, 0.18);
+        oscillator.connect(gain).connect(audioContext.destination);
+        oscillator.start(now);
+        nodes.push({ oscillator, gain });
+      });
 
-      key.classList.add("is-playing");
-      activeVoices.set(pointerId, { oscillator, gain, key });
+      activeVoices.set(id, { nodes });
     }
 
     function keyFromPoint(clientX, clientY) {
@@ -647,16 +781,20 @@
 
       if (key === lastKey) return;
 
-      stopVoice(event.pointerId);
       activePointers.set(event.pointerId, key);
 
       if (key) {
-        startTone(Number(key.dataset.midi), key, event.pointerId);
+        startTone(Number(key.dataset.midi), key, event.pointerId, {
+          accumulate: chordModeEnabled,
+          chordSpread: chordModeEnabled
+        });
+      } else if (!chordModeEnabled) {
+        stopPointerVoices(event.pointerId);
       }
     }
 
     function releasePointer(event) {
-      stopVoice(event.pointerId);
+      stopPointerVoices(event.pointerId);
       activePointers.delete(event.pointerId);
     }
 
@@ -690,6 +828,7 @@
           key.setAttribute("role", "button");
           key.tabIndex = 0;
           key.style.setProperty("--key-color", pitchColors[pitchClass]);
+          key.style.setProperty("--key-glow-color", brightenHexColor(pitchColors[pitchClass]));
           key.style.transform = `translate(${x}px, ${y}px)`;
           key.setAttribute("aria-label", `Pitch class ${pitchClass}`);
           key.dataset.midi = String(midi);
@@ -704,10 +843,14 @@
     }
 
     createModeOptions();
+    syncChordModeAvailability();
     renderPaletteEditor();
     initializeKeySize();
     renderKeyboard();
     modeSelect.addEventListener("change", () => setMode(modeSelect.value));
+    chordModeToggle.addEventListener("change", () => {
+      chordModeEnabled = currentModeId === "harmonic" && chordModeToggle.checked;
+    });
     resetPalette.addEventListener("click", resetPitchColors);
     keySizeSlider.addEventListener("input", () => {
       setKeySize(keySizeSlider.value);
