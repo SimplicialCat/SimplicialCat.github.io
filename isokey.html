@@ -759,8 +759,9 @@
       let nearestKey = null;
       let nearestDistance = Infinity;
       const maxDistance = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--key-size")) * 0.62;
+      const keySelector = chordModeEnabled ? ".key" : ".key[data-audible='true']";
 
-      for (const key of keyboard.querySelectorAll(".key[data-audible='true']")) {
+      for (const key of keyboard.querySelectorAll(keySelector)) {
         const rect = key.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
@@ -819,7 +820,8 @@
 
           const midi = noteAt(row, column);
           const frequency = midiToFrequency(midi);
-          const isAudible = frequency >= keyboardConfig.hearingMinHz && frequency <= keyboardConfig.hearingMaxHz;
+          const isAudible = chordModeEnabled
+            || (frequency >= keyboardConfig.hearingMinHz && frequency <= keyboardConfig.hearingMaxHz);
           const pitchClass = ((midi % keyboardConfig.edo) + keyboardConfig.edo) % keyboardConfig.edo;
           const key = document.createElement("div");
 
@@ -850,6 +852,8 @@
     modeSelect.addEventListener("change", () => setMode(modeSelect.value));
     chordModeToggle.addEventListener("change", () => {
       chordModeEnabled = currentModeId === "harmonic" && chordModeToggle.checked;
+      stopAllVoices();
+      requestAnimationFrame(renderKeyboard);
     });
     resetPalette.addEventListener("click", resetPitchColors);
     keySizeSlider.addEventListener("input", () => {
