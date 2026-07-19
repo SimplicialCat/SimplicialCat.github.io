@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汉诺塔演示</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: #fafafa;
+    color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+  .app { width: 100%; max-width: 720px; }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+  .sub { font-size: 14px; color: #777; margin-bottom: 24px; }
+  .toolbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 12px;
+  }
+  .label { font-size: 14px; color: #555; }
+  input.num {
+    width: 64px; padding: 6px 8px; font: inherit; font-size: 14px;
+    border: 1px solid #d4d4d4; border-radius: 10px; background: #fff; color: #1a1a1a;
+    font-variant-numeric: tabular-nums;
+  }
+  .step { font-size: 14px; font-variant-numeric: tabular-nums; margin-left: auto; }
+  .track { height: 4px; border-radius: 2px; background: #e8e8e8; overflow: hidden; margin-bottom: 12px; }
+  .fill { height: 100%; width: 0; background: #1a1a1a; border-radius: 2px; transition: width .25s ease; }
+  .stage {
+    background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 8px;
+  }
+  .stage svg { display: block; width: 100%; }
+  .desc { font-size: 14px; color: #555; min-height: 24px; text-align: center; margin: 12px 0; }
+  .controls { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  button {
+    font: inherit; font-size: 14px; padding: 6px 16px; cursor: pointer;
+    border: 1px solid #d4d4d4; border-radius: 8px; background: #fff; color: #1a1a1a;
+    transition: background .15s ease;
+  }
+  button:hover:not(:disabled) { background: #f0f0f0; }
+  button:disabled { opacity: .35; cursor: default; }
+  button.primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  button.primary:hover:not(:disabled) { background: #333; }
+  .hint { font-size: 12px; color: #999; text-align: center; margin-top: 16px; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #141414; color: #f0f0f0; }
+    .sub, .label, .desc { color: #999; }
+    input.num, button { background: #1f1f1f; color: #f0f0f0; border-color: #3a3a3a; }
+    button:hover:not(:disabled) { background: #2c2c2c; }
+    button.primary { background: #f0f0f0; color: #1a1a1a; border-color: #f0f0f0; }
+    button.primary:hover:not(:disabled) { background: #d8d8d8; }
+    .stage { background: #1f1f1f; border-color: #333; }
+    .track { background: #333; }
+    .fill { background: #f0f0f0; }
+    .hint { color: #666; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>汉诺塔演示</h1>
+  <p class="sub">把 A 柱上的全部圆盘移到 C 柱，每次只能移动一个盘子，且大盘不能压小盘。</p>
+
+  <div class="toolbar">
+    <span class="label">层数（1–10）</span>
+    <input class="num" id="h-num" type="number" min="1" max="10" step="1" value="4">
+    <button class="primary" id="h-start">开始</button>
+    <span class="step">第 <b id="h-cur">0</b> 步 / 共 <b id="h-total">15</b> 步</span>
+  </div>
+
+  <div class="track"><div class="fill" id="h-fill"></div></div>
+
+  <div class="stage"><svg id="h-stage" viewBox="0 0 640 340"></svg></div>
+
+  <div class="desc" id="h-desc">点击“下一步”开始移动圆盘</div>
+
+  <div class="controls">
+    <button id="h-first">|◀ 开头</button>
+    <button id="h-prev">◀ 上一步</button>
+    <button class="primary" id="h-next">下一步 ▶</button>
+    <button id="h-last">结尾 ▶|</button>
+    <button id="h-auto">自动播放</button>
+  </div>
+
+  <p class="hint">提示：也可以用键盘 ← → 方向键后退 / 前进</p>
+</div>
+
+<script>
+(function () {
+  var SVGNS = "http://www.w3.org/2000/svg";
+  var stage = document.getElementById("h-stage"),
+      desc  = document.getElementById("h-desc"),
+      cur   = document.getElementById("h-cur"),
+      total = document.getElementById("h-total"),
+      fill  = document.getElementById("h-fill"),
+      numIn = document.getElementById("h-num");
+  var bStart = document.getElementById("h-start"),
+      bFirst = document.getElementById("h-first"),
+      bPrev  = document.getElementById("h-prev"),
+      bNext  = document.getElementById("h-next"),
+      bLast  = document.getElementById("h-last"),
+      bAuto  = document.getElementById("h-auto");
+
+  var n = 4, moves = [], states = [], step = 0, timer = null;
+  var PEGX = [106, 320, 534], BASEY = 298, DISKH = 18, PEGS = 214;
+
+  function build(k) {
+    n = k; moves = [];
+    (function h(m, a, b, c) {
+      if (m === 0) return;
+      h(m - 1, a, c, b);
+      moves.push([a, b, m]);
+      h(m - 1, c, b, a);
+    })(k, 0, 2, 1);
+    var pegs = [[], [], []];
+    for (var i = k; i >= 1; i--) pegs[0].push(i);
+    states = [pegs.map(function (p) { return p.slice(); })];
+    for (var j = 0; j < moves.length; j++) {
+      var f = moves[j][0], t = moves[j][1];
+      pegs[t].push(pegs[f].pop());
+      states.push(pegs.map(function (p) { return p.slice(); }));
+    }
+    step = 0;
+    render();
+  }
+
+  function diskColor(size) {
+    if (n === 1) return "hsl(0,72%,55%)";
+    var hue = 270 * (n - size) / (n - 1);
+    return "hsl(" + Math.round(hue) + ",72%,55%)";
+  }
+
+  function diskWidth(size) {
+    if (n === 1) return 70;
+    return 44 + (PEGS - 24 - 44) * (size - 1) / (n - 1);
+  }
+
+  function el(name, attrs) {
+    var e = document.createElementNS(SVGNS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function render() {
+    while (stage.firstChild) stage.removeChild(stage.firstChild);
+    var dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var pegColor = dark ? "#3a3a3a" : "#d8d8d8";
+    var lblColor = dark ? "#888" : "#999";
+
+    stage.appendChild(el("rect", { x: 16, y: BASEY, width: 608, height: 8, rx: 4, fill: pegColor }));
+    for (var p = 0; p < 3; p++) {
+      stage.appendChild(el("rect", { x: PEGX[p] - 4, y: BASEY - 206, width: 8, height: 206, rx: 4, fill: pegColor }));
+      var lbl = el("text", { x: PEGX[p], y: BASEY + 28, "text-anchor": "middle", "font-size": 14, fill: lblColor });
+      lbl.textContent = "ABC"[p] + " 柱";
+      stage.appendChild(lbl);
+    }
+
+    var st = states[step];
+    for (var q = 0; q < 3; q++) {
+      for (var i = 0; i < st[q].length; i++) {
+        var size = st[q][i], w = diskWidth(size), y = BASEY - (i + 1) * DISKH;
+        stage.appendChild(el("rect", {
+          x: PEGX[q] - w / 2, y: y, width: w, height: DISKH - 2,
+          rx: (DISKH - 2) / 2, fill: diskColor(size)
+        }));
+      }
+    }
+
+    cur.textContent = step;
+    total.textContent = moves.length;
+    fill.style.width = (moves.length ? step / moves.length * 100 : 0) + "%";
+
+    if (step === 0) {
+      desc.textContent = "初始状态：" + n + " 层圆盘全部在 A 柱";
+    } else {
+      var mv = moves[step - 1];
+      desc.textContent = "第 " + step + " 步：将 " + mv[2] + " 号盘从 " + "ABC"[mv[0]] +
+        " 柱移到 " + "ABC"[mv[1]] + " 柱" + (step === moves.length ? "，完成！" : "");
+    }
+
+    bPrev.disabled = step === 0;
+    bFirst.disabled = step === 0;
+    bNext.disabled = step === moves.length;
+    bLast.disabled = step === moves.length;
+    if (step === moves.length) stopAuto();
+  }
+
+  function stopAuto() {
+    if (timer) { clearInterval(timer); timer = null; bAuto.textContent = "自动播放"; }
+  }
+
+  function go(s) {
+    stopAuto();
+    step = Math.max(0, Math.min(moves.length, s));
+    render();
+  }
+
+  bStart.onclick = function () {
+    var k = parseInt(numIn.value, 10);
+    if (isNaN(k)) k = 4;
+    k = Math.max(1, Math.min(10, k));
+    numIn.value = k;
+    stopAuto();
+    build(k);
+  };
+  bPrev.onclick  = function () { go(step - 1); };
+  bNext.onclick  = function () { go(step + 1); };
+  bFirst.onclick = function () { go(0); };
+  bLast.onclick  = function () { go(moves.length); };
+  bAuto.onclick  = function () {
+    if (timer) { stopAuto(); return; }
+    if (step === moves.length) { step = 0; render(); }
+    bAuto.textContent = "暂停";
+    timer = setInterval(function () {
+      if (step >= moves.length) { stopAuto(); return; }
+      step++;
+      render();
+    }, 650);
+  };
+
+  document.addEventListener("keydown", function (e) {
+    if (e.target === numIn) return;
+    if (e.key === "ArrowLeft" && step > 0) go(step - 1);
+    if (e.key === "ArrowRight" && step < moves.length) go(step + 1);
+  });
+
+  build(4);
+})();
+</script>
+</body>
+</html>
