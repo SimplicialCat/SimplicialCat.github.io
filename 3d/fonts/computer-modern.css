@@ -1,0 +1,7 @@
+/* Computer Modern（KaTeX 构建，SIL OFL）：KaTeX Main = cmr 罗马体；CM Math Italic = cmmi 数学斜体 */
+@font-face{font-family:'KaTeX Main';font-style:normal;font-weight:400;font-display:swap;
+  src:url('./KaTeX_Main-Regular.woff2') format('woff2');}
+@font-face{font-family:'KaTeX Main';font-style:normal;font-weight:700;font-display:swap;
+  src:url('./KaTeX_Main-Bold.woff2') format('woff2');}
+@font-face{font-family:'CM Math Italic';font-style:normal;font-weight:400;font-display:swap;
+  src:url('./KaTeX_Math-Italic.woff2') format('woff2');}

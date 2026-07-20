@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>3D 几何画板</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="lib/three.min.js"></script>
+<script src="lib/OrbitControls.js"></script>
+<script src="lib/math.js"></script>
+<link rel="stylesheet" href="fonts/computer-modern.css">
+<link rel="stylesheet" href="fonts/noto-serif-sc.css">
+<style>
+:root{--bg:#1e1f24;--panel:#26272e;--border:#3a3b44;--fg:#e8e8ea;--dim:#9a9ca6;--accent:#4f8cff;--btn:#33343d;--btn-hover:#3d3e49;--input:#1b1c21;--hover:#32333c;--popup:#2b2c34;--shadow:rgba(0,0,0,.5);--font:"KaTeX Main","Noto Serif SC","Songti SC","STSong","SimSun",serif}
+[data-theme=light]{--bg:#eef0f4;--panel:#ffffff;--border:#d4d7de;--fg:#26272e;--dim:#6a6d77;--accent:#3d7be0;--btn:#eceef2;--btn-hover:#dde1e8;--input:#f4f5f7;--hover:#e9ecf1;--popup:#ffffff;--shadow:rgba(0,0,0,.18)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font:13px/1.5 var(--font);background:var(--bg);color:var(--fg)}
+#toolbar{display:flex;gap:6px;align-items:center;padding:6px 10px;background:var(--panel);border-bottom:1px solid var(--border);flex-wrap:wrap}
+button{background:var(--btn);color:var(--fg);border:1px solid var(--border);border-radius:5px;padding:4px 10px;cursor:pointer;font-size:13px}
+button:hover{background:var(--btn-hover)}
+button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+#main{display:flex;height:calc(100% - 78px)}
+#viewport{flex:1;position:relative;min-width:0}
+#viewport canvas{display:block}
+#sidebar{width:360px;min-width:360px;background:var(--panel);border-left:1px solid var(--border);overflow-y:auto;padding:8px}
+#statusbar{height:32px;display:flex;align-items:center;padding:0 12px;background:var(--panel);border-top:1px solid var(--border);color:var(--dim);gap:12px}
+#statusbar.err{color:#ff7b72}
+.sec-title{display:flex;justify-content:space-between;align-items:center;font-weight:600;margin:10px 0 6px;color:var(--dim);font-size:12px;letter-spacing:1px}
+.row{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:6px;border:1px solid transparent;margin-bottom:2px}
+.row.selectable{cursor:pointer}
+.row.selectable:hover{background:var(--hover);border-color:var(--border)}
+.row .tag{font-size:11px;color:var(--dim);border:1px solid var(--border);border-radius:4px;padding:0 4px;white-space:nowrap}
+.row input[type=text]{background:var(--input);border:1px solid var(--border);color:var(--fg);border-radius:4px;padding:2px 6px;font-size:12px;min-width:0}
+.row input[type=color]{width:22px;height:22px;border:none;background:none;padding:0;cursor:pointer;flex:none}
+.row .exprline{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--dim);font-family:var(--font);font-size:11px}
+.cparams{color:var(--dim);flex:none;font-size:12px;user-select:none}
+.row.banned{opacity:.32}
+.gsub{display:flex;justify-content:space-between;align-items:center;color:var(--dim);font-size:11px;margin:8px 0 2px;letter-spacing:1px}
+.gsub .gsub-ops{display:flex;gap:6px;align-items:center}
+.gsub .grptoggle{padding:1px 8px;font-size:11px}
+.gsub .addbtn{padding:3px 22px;font-size:15px;line-height:1.3}
+.del{padding:0 4px;font-size:10px;opacity:.7}
+.objrow .del{margin-left:auto}
+.ranges{display:flex;gap:4px;width:100%;margin-top:2px;align-items:center;font-size:11px;color:var(--dim);flex-wrap:wrap}
+.ranges .rg{color:var(--fg);font-family:var(--font)}
+.ranges .opslider{width:80px}
+.ranges .wirechk{margin:0 2px}
+.ranges input.rg{width:58px;background:var(--input);border:1px solid var(--accent);color:var(--fg);border-radius:4px;padding:1px 5px;font-size:11px;font-family:var(--font)}
+.cname{width:64px;flex:none}
+.cexpr{flex:1;font-family:var(--font)}
+.oname{width:76px;flex:none}
+.del{flex:none;padding:0 6px}
+.err-mark{color:#ff7b72;cursor:help}
+.row.hoverhl{background:var(--hover);border-color:var(--accent)}
+.objrow{flex-wrap:wrap}
+.exprinputs{display:flex;gap:4px;width:100%;margin-top:2px;align-items:center}
+.exprinputs .ax{color:var(--dim);font-size:11px;flex:none}
+.txt{cursor:pointer;user-select:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.txt:empty::after{content:'（双击填写）';color:var(--dim);opacity:.8}
+/* 参数名/坐标字母用 Computer Modern 数学斜体（cmmi，即 LaTeX 默认数学字体）；缺字自动回落宋体 */
+.ax,.cparams{font-family:"CM Math Italic","Noto Serif SC","Songti SC","STSong","SimSun",serif}
+/* mathify 套用的斜体标识符：自定义函数名、变量、点名称 */
+.mi{font-family:"CM Math Italic","Noto Serif SC","Songti SC","STSong","SimSun",serif}
+/* 侧边栏底部：可用函数清单（原生折叠面板） */
+#funcList{margin-top:12px;border-top:1px solid var(--border);padding-top:6px;font-size:11px;color:var(--dim)}
+#funcList summary{cursor:pointer;font-weight:600;letter-spacing:1px;user-select:none;padding:2px 0}
+#funcList .fl-group{margin:5px 0;line-height:2}
+#funcList .fl-group b{color:var(--fg);margin-right:6px}
+#funcList .fname{font-family:"KaTeX Main","Noto Serif SC",serif;background:var(--input);border:1px solid var(--border);border-radius:3px;padding:0 4px;margin-right:4px;white-space:nowrap}
+#funcList .fl-note{margin-top:6px;line-height:1.7}
+span.ox{flex:1;font-family:var(--font);font-size:11px;color:var(--fg)}
+.exprinputs input{flex:1;min-width:0;background:var(--input);border:1px solid var(--border);color:var(--fg);border-radius:4px;padding:2px 6px;font-size:11px;font-family:var(--font)}
+#gridToggle{display:flex;align-items:center;gap:4px;color:var(--dim);font-size:13px;cursor:pointer}
+#constForm{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--popup);border:1px solid var(--border);border-radius:10px;padding:14px;z-index:10;box-shadow:0 8px 30px var(--shadow);display:flex;gap:8px;align-items:center}
+#constForm[hidden]{display:none}
+#ctxMenu{position:fixed;z-index:50;background:var(--popup);border:1px solid var(--border);border-radius:8px;padding:4px;box-shadow:0 8px 30px var(--shadow);min-width:96px}
+#ctxMenu[hidden]{display:none}
+.ctxitem{padding:6px 14px;border-radius:5px;cursor:pointer;font-size:13px}
+.ctxitem:hover{background:var(--accent);color:#fff}
+#constForm input{background:var(--input);border:1px solid var(--border);color:var(--fg);border-radius:5px;padding:6px 8px;font-size:13px}
+.hint{color:var(--dim);font-size:12px;padding:4px 6px}
+</style>
+</head>
+<body>
+<div id="toolbar">
+  <button data-mode="segment">线段</button>
+  <button data-mode="arc">旋转成弧</button>
+  <button data-mode="extrude">平移成面</button>
+  <button data-mode="revolve">旋转成面</button>
+  <span style="flex:1"></span>
+  <button id="btnOpen">打开</button>
+  <button id="btnNew">新建</button>
+  <button id="btnSave">保存</button>
+  <button id="btnHome">重置视角</button>
+  <label id="gridToggle"><input type="checkbox" id="chkGrid" checked>网格</label>
+  <button id="btnTheme" title="切换深色/浅色主题">浅色</button>
+</div>
+<div id="main">
+  <div id="viewport"></div>
+  <div id="sidebar">
+    <div class="sec-title"><span>表达式</span></div>
+    <div id="constList"></div>
+    <div class="sec-title"><span>几何对象</span></div>
+    <div id="objList"></div>
+    <details id="funcList">
+      <summary>可用函数与常量</summary>
+      <div id="funcListBody"></div>
+    </details>
+  </div>
+</div>
+<div id="statusbar"><span id="statusText">就绪</span></div>
+<input type="file" id="fileInput" accept=".json,application/json" hidden>
+<div id="ctxMenu" hidden>
+  <div class="ctxitem" data-act="dup">复制</div>
+  <div class="ctxitem" data-act="mov">平移</div>
+  <div class="ctxitem" data-act="rot">旋转</div>
+  <div class="ctxitem" data-act="dupmov">复制后平移</div>
+  <div class="ctxitem" data-act="duprot">复制后旋转</div>
+</div>
+<script>
+'use strict';
+/* ================= 基础工具 ================= */
+const BUILTINS=new Set(['sin','cos','tan','asin','acos','atan','atan2','sinh','cosh','tanh','asinh','acosh','atanh','exp','log','log10','log2','sqrt','cbrt','abs','arg','conj','re','im','mod','floor','ceil','round','sign','min','max','pow','hypot','pi','e','i','tau','phi','gamma','factorial']);
+const PARAM_NAMES=['t','u','v'];
+const PALETTE=['#ff5a5a','#4f8cff','#3ecf6e','#ffb020','#c26bff','#2fd4d4','#ff7ad9','#b5e048','#8c9eff','#ff8a65'];
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+/* 数学排版（非 LaTeX 渲染，仅字体切换）：mathjs 内置函数/常量(sin、pi 等)保持正体，
+   其余标识符（自定义名 f/hx、点名称 O、参数 t/u/v）用 Computer Modern 数学斜体 */
+function mathify(s){
+  return String(s).split(/([A-Za-z_]\w*)/).map((tok,i)=>{
+    if(i%2===0)return esc(tok);
+    if(BUILTINS.has(tok))return esc(tok);
+    return '<span class="mi">'+esc(tok)+'</span>';
+  }).join('');
+}
+function fmt(x){if(!isFinite(x))return '0';return String(Number(x.toPrecision(14)));}
+function fmtComplex(v){if(typeof v==='number')return fmt(v);const r=v.re||0,m=v.im||0;if(Math.abs(m)<1e-12)return fmt(r);return '('+fmt(r)+(m>=0?'+':'-')+fmt(Math.abs(m))+'*i)';}
+function reNum(v){if(typeof v==='number')return v;if(v&&typeof v.re==='number')return v.re;return null;}
+function isRealNum(v){return reNum(v)!==null&&(typeof v==='number'||Math.abs(v.im||0)<1e-9);}
+function cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}
+function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];}
+
+/* ================= 数据模型 =================
+ 所有对象生来自由：没有父子关系，创建时一次性拷贝/计算所需数据。
+ state.consts : {id,name,expr}                 —— 表达式（0/1/2 个参数 t/u/v）
+ state.objects: {id,type:'point'|'curve'|'surface',name,color,visible,exprs,range}
+   exprs     : [sx,sy,sz] 字符串；可引用常量名，也可用 f(t)、f(u,v) 调用含参表达式
+   range     : 曲线 {t0,t1}，曲面 {u0,u1,v0,v1}，均为数值
+*/
+let state={consts:[],objects:[],cSeq:0,oSeq:0,colorSeq:0};
+let constInfo={},nameToId={},constScope={},paramFuncs={},activeFuncs=new Set(),objData={};
+
+function scanExpr(str){
+  const r={params:new Set(),refs:new Set(),calls:new Set(),error:null};
+  let node=null;
+  try{node=math.parse(str);}catch(e){r.error='解析失败: '+e.message;return r;}
+  node.traverse((n,path,parent)=>{
+    if(!n.isSymbolNode)return;
+    const nm=n.name;
+    if(PARAM_NAMES.includes(nm)){r.params.add(nm);return;}
+    if(BUILTINS.has(nm))return;
+    if(parent&&parent.isFunctionNode&&parent.fn===n){r.calls.add(nm);return;}
+    r.refs.add(nm);
+  });
+  return r;
+}
+/* 含参表达式 → 作用域中的可调用函数，如 hx(t)、fx(u,v)，带循环调用防护 */
+function makeParamFunc(c){
+  const info=constInfo[c.id];
+  const isT=info.params.has('t');
+  return function(a,b){
+    if(activeFuncs.has(c.name))throw new Error('循环调用: '+c.name);
+    activeFuncs.add(c.name);
+    try{
+      const sc={};
+      for(const nm of info.refs){
+        const rid=nameToId[nm];
+        if(rid===undefined)throw new Error('未定义符号: '+nm);
+        const v=evalConstValue(rid,[]);
+        if(v===undefined)throw new Error(nm+' 不是常量');
+        sc[nm]=v;
+      }
+      Object.assign(sc,paramFuncs);
+      if(isT)sc.t=a;else{sc.u=a;sc.v=b;}
+      return math.evaluate(info.str,sc);
+    }finally{activeFuncs.delete(c.name);}
+  };
+}
+function evalConstValue(id,stack){
+  const info=constInfo[id];if(!info)throw new Error('表达式缺失');
+  if(info.value!==undefined)return info.value;
+  if(info.error)throw new Error(info.error);
+  if(info.params.size>0)return undefined;
+  if(stack.includes(id))throw new Error('循环引用');
+  const scope={};
+  for(const nm of info.refs){
+    const rid=nameToId[nm];
+    if(rid===undefined)throw new Error('未定义符号: '+nm);
+    const v=evalConstValue(rid,stack.concat(id));
+    if(v===undefined)throw new Error(nm+' 是含参表达式，请以 '+nm+'(t) 形式调用');
+    scope[nm]=v;
+  }
+  let v;
+  try{v=math.evaluate(info.str,Object.assign(scope,paramFuncs));}catch(e){throw new Error(e.message);}
+  if(typeof v!=='number'&&!(v&&typeof v.re==='number'))throw new Error('结果不是数值');
+  info.value=v;return v;
+}
+function rebuild(){
+  nameToId={};constInfo={};objData={};activeFuncs=new Set();
+  for(const c of state.consts)nameToId[c.name]=c.id;
+  for(const c of state.consts){const s=scanExpr(c.expr);constInfo[c.id]={str:c.expr,params:s.params,refs:s.refs,calls:s.calls,error:s.error,value:undefined};
+    if(!c.expr.trim())constInfo[c.id].error='表达式为空：请双击侧边栏中的表达式进行填充';
+    else if(s.params.has('t')&&(s.params.has('u')||s.params.has('v')))constInfo[c.id].error='参数不能混用 t 与 u,v';}
+  paramFuncs={};
+  for(const c of state.consts){if(constInfo[c.id].params.size>0&&!constInfo[c.id].error)paramFuncs[c.name]=makeParamFunc(c);}
+  for(const c of state.consts){try{const v=evalConstValue(c.id,[]);constInfo[c.id].value=(v===undefined?undefined:v);constInfo[c.id].error=null;}catch(e){constInfo[c.id].error=e.message;}}
+  constScope={};
+  for(const c of state.consts){const v=constInfo[c.id].value;if(v!==undefined)constScope[c.name]=v;}
+  for(const o of state.objects)computeObject(o);
+  renderAll();refreshSidebar();
+}
+function evalStr(s,extra){return math.evaluate(s,Object.assign({},constScope,paramFuncs,extra||{}));}
+/* 参数范围以字符串存储，可引用常量（如 T、2*pi），每次 rebuild 时求值 */
+function rangeVal(s){
+  const x=reNum(evalStr(String(s),{}));
+  if(x===null||!isFinite(x))throw new Error('参数范围无效: '+s);
+  return x;
+}
+function computeObject(o){
+  const D={error:null,exprs:o.exprs,range:null,coords:null};objData[o.id]=D;
+  try{
+    if(o.exprs.some(s=>!String(s).trim()))
+      throw new Error('表达式为空：请双击侧边栏中的表达式进行填充');
+    if(o.type==='curve')D.range={t0:rangeVal(o.range.t0),t1:rangeVal(o.range.t1)};
+    else if(o.type==='surface')D.range={u0:rangeVal(o.range.u0),u1:rangeVal(o.range.u1),v0:rangeVal(o.range.v0),v1:rangeVal(o.range.v1)};
+    if(o.type==='point'){
+      D.coords=o.exprs.map(s=>{const x=reNum(evalStr(s,{}));
+        if(x===null||!isFinite(x))throw new Error('坐标不是有限实数');return x;});
+    }
+  }catch(e){D.error=e.message;}
+}
+/* -------- 由父对象自动生成表达式 -------- */
+function assemble(terms){
+  const parts=[];
+  terms.forEach((pr,idx)=>{const c=pr[0],f=pr[1];
+    if(Math.abs(c)<1e-12&&idx>0)return;
+    parts.push(f?'('+fmt(c)+')*'+f:'('+fmt(c)+')');});
+  return parts.length?parts.join('+'):'(0)';
+}
+/* 曲线表达式拼进曲面时，把参数 t 换成 u */
+function subTU(str){
+  try{
+    return math.parse(str).transform(n=>(n.isSymbolNode&&n.name==='t')?new math.SymbolNode('u'):n).toString();
+  }catch(e){return str;}
+}
+function unitAxis(A,B){
+  const k=[B[0]-A[0],B[1]-A[1],B[2]-A[2]];
+  const n=Math.hypot(k[0],k[1],k[2]);
+  if(n<1e-12)throw new Error('轴的两个点重合');
+  return [k[0]/n,k[1]/n,k[2]/n];
+}
+/* -------- 构造器：创建时一次性生成表达式，此后对象完全自由 -------- */
+function pointCoords(id){
+  const d=objData[id];
+  if(!d)throw new Error('所选点不存在');
+  if(d.error)throw new Error('所选点出错: '+d.error);
+  if(!d.coords)throw new Error('所选对象不是点');
+  return d.coords;
+}
+function curveData(id){
+  const d=objData[id];
+  if(!d)throw new Error('所选曲线不存在');
+  if(d.error)throw new Error('所选曲线出错: '+d.error);
+  if(!d.exprs||!d.range)throw new Error('所选对象不是曲线');
+  const o=state.objects.find(x=>x.id===id);
+  return {exprs:d.exprs,range:o.range}; /* range 保留原始字符串，常量依赖可延续 */
+}
+function constNum(id){
+  const ci=constInfo[id];
+  if(!ci||ci.value===undefined)throw new Error('所选常量无效');
+  const x=reNum(ci.value);
+  if(x===null||!isFinite(x))throw new Error('须为有限实数');
+  return x;
+}
+function genSegment(A,B){
+  return {exprs:[0,1,2].map(i=>assemble([[A[i],null],[B[i]-A[i],'t']])),range:{t0:'0',t1:'1'}};
+}
+function genArc(P,A,B,th){
+  const k=unitAxis(A,B);
+  const rel=[P[0]-A[0],P[1]-A[1],P[2]-A[2]],w=cross(k,rel),d=dot(k,rel);
+  return {exprs:[0,1,2].map(i=>assemble([[A[i],null],[rel[i],'cos(t)'],[w[i],'sin(t)'],[k[i]*d,'(1-cos(t))']])),
+          range:{t0:'0',t1:fmt(th)}};
+}
+function genExtrude(Cexprs,Crange,A,B){
+  const d=[B[0]-A[0],B[1]-A[1],B[2]-A[2]];
+  return {exprs:[0,1,2].map(i=>'('+subTU(Cexprs[i])+')+('+fmt(d[i])+')*v'),
+          range:{u0:Crange.t0,u1:Crange.t1,v0:'0',v1:'1'}};
+}
+function genRevolve(Cexprs,Crange,A,B,th){
+  const k=unitAxis(A,B);
+  const rel=[0,1,2].map(i=>'(('+subTU(Cexprs[i])+')-('+fmt(A[i])+'))');
+  const dotS=[0,1,2].filter(j=>Math.abs(k[j])>1e-12).map(j=>'('+fmt(k[j])+')*'+rel[j]).join('+')||'(0)';
+  const exprs=[0,1,2].map(i=>{
+    const j=(i+1)%3,l=(i+2)%3;
+    const cp=[];
+    if(Math.abs(k[j])>1e-12)cp.push('('+fmt(k[j])+')*'+rel[l]);
+    if(Math.abs(k[l])>1e-12)cp.push('('+fmt(-k[l])+')*'+rel[j]);
+    const crossS=cp.join('+')||'(0)';
+    let s='('+fmt(A[i])+')+'+rel[i]+'*cos(v)+('+crossS+')*sin(v)';
+    if(Math.abs(k[i])>1e-12)s+='+(('+fmt(k[i])+')*('+dotS+'))*(1-cos(v))';
+    return s;
+  });
+  return {exprs:exprs,range:{u0:Crange.t0,u1:Crange.t1,v0:'0',v1:fmt(th)}};
+}
+/* -------- 成面伴随对象：原曲线平移/旋转到终点的曲线 + 两个端点的轨迹（线段/弧） -------- */
+function curvePointAt(exprs,t){
+  return exprs.map(s=>{
+    const x=reNum(evalStr(s,{t:t}));
+    if(x===null||!isFinite(x))throw new Error('曲线端点求值失败');
+    return x;
+  });
+}
+/* 与既有点（或本批新建点）距离不超过 POINT_EPS 时，不再重复创建点 */
+const POINT_EPS=1e-10;
+function findPointNear(P,extra){
+  const near=q=>Math.hypot(P[0]-q[0],P[1]-q[1],P[2]-q[2])<=POINT_EPS;
+  for(const o of state.objects){
+    if(o.type!=='point')continue;
+    const d=objData[o.id];
+    if(d&&!d.error&&d.coords&&near(d.coords))return o;
+  }
+  if(extra)for(const q of extra){if(near(q))return true;}
+  return null;
+}
+/* 新建曲线时同步生成端点（自由点对象，数值固化为常量表达式）；与既有点重合的端点跳过，返回实际新建的点 */
+function addCurveEndpoints(o){
+  const pts=[],created=[];
+  [rangeVal(o.range.t0),rangeVal(o.range.t1)].forEach((t,i)=>{
+    const P=curvePointAt(o.exprs,t);
+    if(findPointNear(P,created))return; /* 起点常常就是输入点本身：避免重复 */
+    created.push(P);
+    pts.push(newObject('point',{name:o.name+' 端点'+(i+1),color:o.color,
+      exprs:P.map(fmt),range:null}));
+  });
+  return pts;
+}
+function genExtrudeCompanions(src,Cexprs,Crange,A,B){
+  const d=[B[0]-A[0],B[1]-A[1],B[2]-A[2]];
+  const out=[newObject('curve',{name:src.name+' 平移终点',color:src.color,
+    exprs:[0,1,2].map(i=>'('+Cexprs[i]+')+('+fmt(d[i])+')'),
+    range:{t0:Crange.t0,t1:Crange.t1}})];
+  [rangeVal(Crange.t0),rangeVal(Crange.t1)].forEach((t,i)=>{
+    const P=curvePointAt(Cexprs,t);
+    out.push(newObject('curve',Object.assign({name:src.name+' 端点'+(i+1)+' 轨迹',color:src.color},
+      genSegment(P,[P[0]+d[0],P[1]+d[1],P[2]+d[2]]))));
+  });
+  out.forEach(o=>addCurveEndpoints(o));
+  return out;
+}
+function genRevolveCompanions(src,Cexprs,Crange,A,B,thNum,angId){
+  const k=unitAxis(A,B);
+  const th='('+constInfo[angId].str+')'; /* 角度保留常量引用，改常量即更新 */
+  const out=[newObject('curve',{name:src.name+' 旋转终点',color:src.color,
+    exprs:rotatedExprs(Cexprs,A,k,th),range:{t0:Crange.t0,t1:Crange.t1}})];
+  [rangeVal(Crange.t0),rangeVal(Crange.t1)].forEach((t,i)=>{
+    const P=curvePointAt(Cexprs,t);
+    out.push(newObject('curve',Object.assign({name:src.name+' 端点'+(i+1)+' 轨迹',color:src.color},
+      genArc(P,A,B,thNum))));
+  });
+  out.forEach(o=>addCurveEndpoints(o));
+  return out;
+}
+/* -------- 右键操作：对已有对象直接做平移 / 旋转（改写其表达式，角度保留常量引用） -------- */
+function applyTranslate(id,A,B){
+  const o=state.objects.find(x=>x.id===id);
+  if(!o)throw new Error('目标对象不存在');
+  const d=[B[0]-A[0],B[1]-A[1],B[2]-A[2]];
+  o.exprs=o.exprs.map((s,i)=>'('+s+')+('+fmt(d[i])+')');
+  return o;
+}
+/* Rodrigues 旋转改写：exprs 绕轴 (A,k) 转 th（表达式字符串，保留常量引用），返回新表达式数组 */
+function rotatedExprs(exprs,A,k,th){
+  const rel=[0,1,2].map(i=>'(('+exprs[i]+')-('+fmt(A[i])+'))');
+  const dotS=[0,1,2].filter(j=>Math.abs(k[j])>1e-12).map(j=>'('+fmt(k[j])+')*'+rel[j]).join('+')||'(0)';
+  return [0,1,2].map(i=>{
+    const j=(i+1)%3,l=(i+2)%3;
+    const cp=[];
+    if(Math.abs(k[j])>1e-12)cp.push('('+fmt(k[j])+')*'+rel[l]);
+    if(Math.abs(k[l])>1e-12)cp.push('('+fmt(-k[l])+')*'+rel[j]);
+    const crossS=cp.join('+')||'(0)';
+    let s='('+fmt(A[i])+')+'+rel[i]+'*cos'+th+'+('+crossS+')*sin'+th;
+    if(Math.abs(k[i])>1e-12)s+='+(('+fmt(k[i])+')*('+dotS+'))*(1-cos'+th+')';
+    return s;
+  });
+}
+function applyRotate(id,A,B,angId){
+  const o=state.objects.find(x=>x.id===id);
+  if(!o)throw new Error('目标对象不存在');
+  const ci=constInfo[angId];
+  if(!ci)throw new Error('旋转角常量不存在');
+  o.exprs=rotatedExprs(o.exprs,A,unitAxis(A,B),'('+ci.str+')');
+  return o;
+}
+/* ================= Three.js 渲染 ================= */
+let scene,camera,renderer,controls,renderGroups={},gridHelper=null,axesHelper=null;
+const raycaster=new THREE.Raycaster();raycaster.params.Line={threshold:0.15};
+const mouseV=new THREE.Vector2();
+
+/* -------- 主题（深/浅色系）：CSS 变量 + 3D 场景配色，选择持久化到 localStorage -------- */
+let uiTheme='dark';
+function loadTheme(){
+  try{const t=localStorage.getItem('geom3d-theme');if(t==='light'||t==='dark')uiTheme=t;}catch(e){}
+}
+function applyTheme(theme){
+  uiTheme=theme;
+  document.documentElement.dataset.theme=theme;
+  document.getElementById('btnTheme').textContent=theme==='light'?'深色':'浅色';
+  if(scene){
+    scene.background=new THREE.Color(theme==='light'?0xeef0f4:0x15161a);
+    const vis=gridHelper?gridHelper.visible:true;
+    if(gridHelper){scene.remove(gridHelper);disposeGroup(gridHelper);}
+    gridHelper=new THREE.GridHelper(20,20,theme==='light'?0xb8bdc9:0x444a55,theme==='light'?0xd5d8df:0x2c2f38);
+    gridHelper.visible=vis;
+    scene.add(gridHelper);
+  }
+  try{localStorage.setItem('geom3d-theme',theme);}catch(e){}
+}
+
+/* 自定义坐标标架：数学 x(场景+x) 蓝色，数学 y(场景-z) 红色，数学 z(场景+y, 向上) 黄色 */
+function makeAxes(len){
+  const g=new THREE.Group();
+  const mk=(dir,color)=>{
+    const geo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(dir[0]*len,dir[1]*len,dir[2]*len)]);
+    g.add(new THREE.Line(geo,new THREE.LineBasicMaterial({color:color})));
+  };
+  mk([1,0,0],0x4f8cff);
+  mk([0,0,-1],0xff5a5a);
+  mk([0,1,0],0xffd020);
+  return g;
+}
+function initThree(){
+  scene=new THREE.Scene();scene.background=new THREE.Color(0x15161a);
+  camera=new THREE.PerspectiveCamera(50,1,0.01,1000);camera.position.set(7,6,9);
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setPixelRatio(window.devicePixelRatio);
+  document.getElementById('viewport').appendChild(renderer.domElement);
+  controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true;
+  scene.add(new THREE.AmbientLight(0xffffff,0.7));
+  const dl=new THREE.DirectionalLight(0xffffff,0.8);dl.position.set(5,10,7);scene.add(dl);
+  gridHelper=new THREE.GridHelper(20,20,0x444a55,0x2c2f38);
+  scene.add(gridHelper);
+  axesHelper=makeAxes(2.5);
+  scene.add(axesHelper);
+  window.addEventListener('resize',onResize);onResize();
+  let downX=0,downY=0;
+  renderer.domElement.addEventListener('pointerdown',e=>{downX=e.clientX;downY=e.clientY;});
+  renderer.domElement.addEventListener('pointermove',onHoverMove);
+  renderer.domElement.addEventListener('pointerup',e=>{
+    if(Math.hypot(e.clientX-downX,e.clientY-downY)>5)return;
+    pickAt(e);
+  });
+  renderer.domElement.addEventListener('contextmenu',e=>{
+    e.preventDefault();
+    const id=oidFromEvent(e,false);
+    if(id)showCtxMenu(e.clientX,e.clientY,id);
+    else hideCtxMenu();
+  });
+  (function anim(){requestAnimationFrame(anim);controls.update();renderer.render(scene,camera);})();
+}
+/* 数学坐标(x 右, y 前, z 上) → Three.js 场景坐标(x 右, y 上, z 朝观察者) */
+function toScene(p){return [p[0],p[2],-p[1]];}
+function onResize(){
+  const el=document.getElementById('viewport');
+  const w=el.clientWidth,h=el.clientHeight;
+  renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+function disposeGroup(g){
+  g.traverse(m=>{if(m.geometry)m.geometry.dispose();
+    if(m.material)(Array.isArray(m.material)?m.material:[m.material]).forEach(x=>x.dispose());});
+}
+function sampleCurve(exprs,t0,t1,N){
+  const comp=exprs.map(s=>math.compile(s));
+  const runs=[];let cur=[],firstErr=null;
+  for(let i=0;i<=N;i++){
+    const t=t0+(t1-t0)*i/N;
+    let ok=true;const p=[0,0,0];
+    for(let j=0;j<3;j++){
+      let v;try{v=comp[j].evaluate(Object.assign({},constScope,paramFuncs,{t:t}));}catch(e){firstErr=firstErr||e;ok=false;break;}
+      const x=reNum(v);
+      if(x===null||!isFinite(x)){ok=false;break;}
+      p[j]=x;
+    }
+    if(ok)cur.push(p);
+    else if(cur.length){if(cur.length>1)runs.push(cur);cur=[];}
+  }
+  if(cur.length>1)runs.push(cur);
+  if(!runs.length&&firstErr)throw firstErr;
+  return runs;
+}
+function buildSurfaceGeom(exprs,r,Nu,Nv){
+  const comp=exprs.map(s=>math.compile(s));
+  const W=Nu+1,H=Nv+1;
+  const pos=new Float32Array(W*H*3);
+  const valid=new Uint8Array(W*H);
+  let validCount=0,firstErr=null;
+  for(let i=0;i<W;i++){
+    const u=r.u0+(r.u1-r.u0)*i/Nu;
+    for(let j=0;j<H;j++){
+      const v=r.v0+(r.v1-r.v0)*j/Nv;
+      const sc=Object.assign({},constScope,paramFuncs,{u:u,v:v});
+      let ok=true;const p=[0,0,0];
+      for(let k=0;k<3;k++){
+        let val;try{val=comp[k].evaluate(sc);}catch(e){firstErr=firstErr||e;ok=false;break;}
+        const x=reNum(val);
+        if(x===null||!isFinite(x)){ok=false;break;}
+        p[k]=x;
+      }
+      const idx=i*H+j;
+      valid[idx]=ok?1:0;
+      if(ok)validCount++;
+      const sp=toScene(p);
+      pos[idx*3]=sp[0];pos[idx*3+1]=sp[1];pos[idx*3+2]=sp[2];
+    }
+  }
+  const indices=[];
+  for(let i=0;i<Nu;i++)for(let j=0;j<Nv;j++){
+    const a=i*H+j,b=(i+1)*H+j,c=(i+1)*H+j+1,d=i*H+j+1;
+    if(valid[a]&&valid[b]&&valid[c])indices.push(a,b,c);
+    if(valid[a]&&valid[c]&&valid[d])indices.push(a,c,d);
+  }
+  if(validCount===0)throw firstErr||new Error('所有采样点均无效');
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  g.setIndex(indices);
+  g.computeVertexNormals();
+  return g;
+}
+function renderAll(){
+  setHover(null);
+  for(const id in renderGroups){scene.remove(renderGroups[id]);disposeGroup(renderGroups[id]);}
+  renderGroups={};
+  for(const o of state.objects){
+    const d=objData[o.id];
+    if(!o.visible||!d||d.error)continue;
+    const g=new THREE.Group();g.userData.oid=o.id;
+    try{
+      if(o.type==='point'){
+        const m=new THREE.Mesh(new THREE.SphereGeometry(0.09,20,14),new THREE.MeshBasicMaterial({color:o.color}));
+        const sc=toScene(d.coords);
+        m.position.set(sc[0],sc[1],sc[2]);
+        g.add(m);
+      }else if(o.type==='curve'){
+        for(const run of sampleCurve(d.exprs,d.range.t0,d.range.t1,256)){
+          const pts=run.map(p=>{const sp=toScene(p);return new THREE.Vector3(sp[0],sp[1],sp[2]);});
+          g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:o.color})));
+        }
+      }else{
+        const geo=buildSurfaceGeom(d.exprs,d.range,44,44);
+        const op=o.opacity!==undefined?o.opacity:0.85;
+        if(op>=0.999){
+          /* 不透明：正常深度写入，交叠关系正确 */
+          g.add(new THREE.Mesh(geo,new THREE.MeshPhongMaterial({color:o.color,side:THREE.DoubleSide,shininess:40})));
+        }else{
+          /* 半透明：不写深度 + 先背面后正面两遍绘制，避免前后交叠被"切片" */
+          const back=new THREE.Mesh(geo,new THREE.MeshPhongMaterial({color:o.color,side:THREE.BackSide,
+            transparent:true,opacity:op,shininess:40,depthWrite:false}));
+          const front=new THREE.Mesh(geo,new THREE.MeshPhongMaterial({color:o.color,side:THREE.FrontSide,
+            transparent:true,opacity:op,shininess:40,depthWrite:false}));
+          back.renderOrder=1;
+          front.renderOrder=2;
+          g.add(back);g.add(front);
+        }
+        if(o.wire){
+          const wm=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:o.color,wireframe:true,
+            transparent:true,opacity:0.18,depthWrite:false}));
+          wm.renderOrder=3;
+          g.add(wm);
+        }
+      }
+    }catch(e){d.error=e.message;}
+    if(g.children.length){scene.add(g);renderGroups[o.id]=g;}
+  }
+}
+/* 射线拾取：返回鼠标下第一个（可要求仅限当前模式下合格）对象的 id，无则 null */
+function oidFromEvent(e,onlyEligible){
+  const r=renderer.domElement.getBoundingClientRect();
+  mouseV.x=((e.clientX-r.left)/r.width)*2-1;
+  mouseV.y=-((e.clientY-r.top)/r.height)*2+1;
+  raycaster.setFromCamera(mouseV,camera);
+  const hits=raycaster.intersectObjects(Object.values(renderGroups),true);
+  for(const h of hits){
+    let n=h.object;
+    while(n&&!n.userData.oid)n=n.parent;
+    if(n&&(!onlyEligible||!mode||objEligible(n.userData.oid)))return n.userData.oid;
+  }
+  return null;
+}
+function pickAt(e){
+  const id=oidFromEvent(e,true);
+  if(id)handleObjectPicked(id);
+}
+/* -------- 悬停高亮 -------- */
+let hoverId=null,hoverPending=false;
+function applyHighlight(g,on){
+  if(!g)return;
+  g.traverse(m=>{
+    if(!m.material)return;
+    if(on){
+      if(m.userData._hc===undefined){
+        m.userData._hc=m.material.color.getHex();
+        m.userData._ho=m.material.opacity;
+      }
+      m.material.color.setHex(m.userData._hc);
+      m.material.color.lerp(uiTheme==='light'?new THREE.Color(0,0,0):new THREE.Color(1,1,1),0.55);
+      if(m.material.transparent&&m.userData._ho!==undefined)m.material.opacity=Math.min(1,m.userData._ho+0.15);
+    }else if(m.userData._hc!==undefined){
+      m.material.color.setHex(m.userData._hc);
+      if(m.material.transparent&&m.userData._ho!==undefined)m.material.opacity=m.userData._ho;
+    }
+  });
+}
+function setHover(id){
+  if(hoverId===id)return;
+  if(hoverId&&renderGroups[hoverId])applyHighlight(renderGroups[hoverId],false);
+  hoverId=id;
+  if(hoverId&&renderGroups[hoverId])applyHighlight(renderGroups[hoverId],true);
+  document.querySelectorAll('#objList .row').forEach(r=>r.classList.toggle('hoverhl',r.dataset.oid===hoverId));
+  renderer.domElement.style.cursor=hoverId?'pointer':'';
+}
+function onHoverMove(e){
+  if(hoverPending)return;
+  hoverPending=true;
+  requestAnimationFrame(()=>{
+    hoverPending=false;
+    const r=renderer.domElement.getBoundingClientRect();
+    mouseV.x=((e.clientX-r.left)/r.width)*2-1;
+    mouseV.y=-((e.clientY-r.top)/r.height)*2+1;
+    raycaster.setFromCamera(mouseV,camera);
+    const hits=raycaster.intersectObjects(Object.values(renderGroups),true);
+    let id=null;
+    for(const h of hits){
+      let n=h.object;
+      while(n&&!n.userData.oid)n=n.parent;
+      if(n&&(!mode||objEligible(n.userData.oid))){id=n.userData.oid;break;}
+    }
+    setHover(id);
+  });
+}
+/* ================= 侧边栏 ================= */
+function setStatus(msg,isErr){
+  document.getElementById('statusText').textContent=msg;
+  document.getElementById('statusbar').classList.toggle('err',!!isErr);
+}
+/* 表达式分类：0=常量，1=一元函数(t)，2=二元函数(u,v)（仅用到 u 或 v 也归二元） */
+function constClass(info){
+  if(!info||!info.params||info.params.size===0)return 0;
+  if([...info.params].every(p=>p==='t'))return 1;
+  return 2;
+}
+/* 空表达式按新建时的意图类型(kind)分组；填入内容后按实际参数归类 */
+function constGroupOf(c){
+  if(!String(c.expr).trim()&&c.kind&&CONST_KINDS[c.kind])return {const:0,unary:1,binary:2}[c.kind];
+  return constClass(constInfo[c.id]);
+}
+function groupHeader(title,tip,onAdd,toggle){
+  const sub=document.createElement('div');sub.className='gsub';
+  const s=document.createElement('span');s.textContent=title;sub.appendChild(s);
+  const right=document.createElement('span');right.className='gsub-ops';
+  if(toggle){
+    const tb=document.createElement('button');tb.className='grptoggle';tb.textContent=toggle.label;tb.title=toggle.tip;
+    tb.addEventListener('click',e=>{e.stopPropagation();toggle.fn();});
+    right.appendChild(tb);
+  }
+  const b=document.createElement('button');b.className='addbtn';b.textContent='＋';b.title=tip;
+  b.addEventListener('click',e=>{e.stopPropagation();onAdd();});
+  right.appendChild(b);
+  sub.appendChild(right);
+  return sub;
+}
+/* 一键显示/隐藏某类全部几何对象：有隐藏则全部显示，否则全部隐藏 */
+function toggleTypeVisible(type){
+  const list=state.objects.filter(o=>o.type===type);
+  if(!list.length)return;
+  const show=list.some(o=>!o.visible);
+  list.forEach(o=>{o.visible=show;});
+  rebuild();
+  const tn=type==='point'?'点':type==='curve'?'参数曲线':'参数曲面';
+  setStatus((show?'已显示 ':'已隐藏 ')+'全部'+tn+'（'+list.length+' 个）');
+}
+/* 凭空新建对象：空表达式占位（等用户双击填充）；参数对象默认范围 0 到 1 */
+function createDefaultObject(type){
+  let extra;
+  if(type==='point')extra={exprs:['','',''],range:null};
+  else if(type==='curve')extra={exprs:['','',''],range:{t0:'0',t1:'1'}};
+  else extra={exprs:['','',''],range:{u0:'0',u1:'1',v0:'0',v1:'1'}};
+  const o=newObject(type,extra);
+  rebuild();
+  const hint=type==='point'?'请双击表达式，填入常数坐标（如 1、2*pi/3、sqrt(2)）'
+    :type==='curve'?'请双击表达式，填入含参数 t 的式子（如 cos(t)、sin(t)、t）'
+    :'请双击表达式，填入含参数 u、v 的式子（如 cos(u)、sin(v)）';
+  setStatus('已创建 '+o.name+'：'+hint);
+}
+function constRow(c){
+  const info=constInfo[c.id]||{};
+  const cls=constGroupOf(c); /* 空表达式按意图类型显示 (t)/(u,v) 参数提示 */
+  const row=document.createElement('div');
+  row.className='row selectable';
+  row.dataset.cid=c.id;
+  let valTxt='';
+  if(info.error)valTxt='<span class="err-mark" title="'+esc(info.error)+'">⚠</span>';
+  else if(info.value!==undefined)valTxt='<span class="tag">'+esc(typeof info.value==='number'?fmt(info.value):fmtComplex(info.value))+'</span>';
+  const paramTxt=cls===1?'<span class="cparams">(t)</span>':cls===2?'<span class="cparams">(u,v)</span>':'';
+  row.innerHTML='<span class="cname txt" title="双击重命名">'+mathify(c.name)+'</span>'+paramTxt+'<span class="ax">=</span>'+
+    '<span class="cexpr txt" title="双击编辑表达式">'+mathify(c.expr)+'</span>'+valTxt+
+    '<button class="del" title="删除">✕</button>';
+  wireConstRow(row,c);
+  return row;
+}
+function rgSpan(k,v){return '<span class="rg txt" data-k="'+k+'" title="双击编辑（可引用常量或算式，如 2*pi、T/2）">'+mathify(v)+'</span>';}
+function objRow(o){
+  const d=objData[o.id]||{};
+  const row=document.createElement('div');
+  row.className='row selectable objrow';
+  row.dataset.oid=o.id;
+  const typeName=o.type==='point'?'点':o.type==='curve'?'曲线':'曲面';
+  const exprInputs='<div class="exprinputs">'+[0,1,2].map(i=>
+    '<span class="ax">'+['x','y','z'][i]+'</span><span class="ox txt" data-idx="'+i+'" title="双击编辑（可引用常量名，或调用含参表达式如 hx(t)、fx(u,v)）">'+mathify(d.exprs?d.exprs[i]:'')+'</span>'
+  ).join('')+'</div>';
+  let rangeInputs='';
+  if(o.type==='curve'&&o.range)rangeInputs='<div class="ranges"><span class="ax">t∈[</span>'+rgSpan('t0',o.range.t0)+'<span class="ax">,</span>'+rgSpan('t1',o.range.t1)+'<span class="ax">]</span></div>';
+  else if(o.type==='surface'&&o.range)rangeInputs='<div class="ranges"><span class="ax">u∈[</span>'+rgSpan('u0',o.range.u0)+'<span class="ax">,</span>'+rgSpan('u1',o.range.u1)+'<span class="ax">]</span><span class="ax">　v∈[</span>'+rgSpan('v0',o.range.v0)+'<span class="ax">,</span>'+rgSpan('v1',o.range.v1)+'<span class="ax">]</span></div>';
+  if(o.type==='surface')rangeInputs+='<div class="ranges"><span class="ax">网格线</span><input type="checkbox" class="wirechk" '+(o.wire?'checked':'')+' title="显示/隐藏网格线"><span class="ax">透明度</span><input type="range" class="opslider" min="0" max="1" step="0.05" value="'+(o.opacity!==undefined?o.opacity:0.85)+'" title="曲面透明度"></div>';
+  row.innerHTML='<input type="color" value="'+esc(o.color)+'" title="颜色">'+
+    '<span class="oname txt" title="双击重命名">'+mathify(o.name)+'</span>'+
+    '<span class="tag">'+typeName+'</span>'+
+    (d.error?'<span class="err-mark" title="'+esc(d.error)+'">⚠</span>':'')+
+    '<input type="checkbox" class="vischk" '+(o.visible?'checked':'')+' title="显示/隐藏">'+
+    '<button class="del" title="删除">✕</button>'+exprInputs+rangeInputs;
+  wireObjRow(row,o);
+  return row;
+}
+function refreshSidebar(){
+  const cl=document.getElementById('constList');cl.innerHTML='';
+  const groups=[['常量','const',[]],['一元函数','unary',[]],['二元函数','binary',[]]];
+  for(const c of state.consts)groups[constGroupOf(c)][2].push(c);
+  for(const g of groups){
+    cl.appendChild(groupHeader(g[0],'新建'+g[0],()=>createDefaultConst(g[1])));
+    for(const c of g[2])cl.appendChild(constRow(c));
+  }
+  const ol=document.getElementById('objList');ol.innerHTML='';
+  const ogroups=[['点','point',[]],['参数曲线','curve',[]],['参数曲面','surface',[]]];
+  for(const o of state.objects){const g=ogroups.find(x=>x[1]===o.type);if(g)g[2].push(o);}
+  for(const g of ogroups){
+    const anyHidden=g[2].some(o=>!o.visible);
+    const toggle=g[2].length?{label:anyHidden?'全显':'全隐',tip:(anyHidden?'显示':'隐藏')+'全部'+g[0],fn:()=>toggleTypeVisible(g[1])}:null;
+    ol.appendChild(groupHeader(g[0],'新建'+g[0],()=>createDefaultObject(g[1]),toggle));
+    for(const o of g[2])ol.appendChild(objRow(o));
+  }
+  updatePickStyles();
+}
+/* 双击进入内联编辑：Enter/失焦提交，Esc 取消 */
+function inlineEdit(span,cls,commit){
+  const old=span.textContent;
+  const inp=document.createElement('input');
+  inp.type='text';inp.value=old;inp.className=cls;
+  let done=false;
+  const finish=ok=>{
+    if(done)return;done=true;
+    const v=inp.value.trim();
+    if(ok&&v!==old)commit(v);
+    else refreshSidebar();
+  };
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();finish(true);}
+    else if(e.key==='Escape'){e.stopPropagation();finish(false);}
+  });
+  inp.addEventListener('blur',()=>finish(true));
+  inp.addEventListener('click',e=>e.stopPropagation());
+  inp.addEventListener('dblclick',e=>e.stopPropagation());
+  span.replaceWith(inp);
+  inp.focus();inp.select();
+}
+function wireConstRow(row,c){
+  row.querySelector('.del').addEventListener('click',e=>{e.stopPropagation();deleteConst(c.id);});
+  row.addEventListener('click',e=>{if(e.target.closest('input,button'))return;handleConstPick(c.id);});
+  const ns=row.querySelector('.cname'),es=row.querySelector('.cexpr');
+  ns.addEventListener('dblclick',e=>{
+    e.stopPropagation();
+    if(mode){setStatus('请先完成或取消当前作图，再编辑名称',true);return;}
+    inlineEdit(ns,'cname',v=>{
+      if(!/^[A-Za-z_]\w*$/.test(v)||BUILTINS.has(v)||PARAM_NAMES.includes(v)||state.consts.some(x=>x.id!==c.id&&x.name===v)){
+        setStatus('名称无效、为保留字或与已有表达式重复',true);rebuild();return;
+      }
+      c.name=v;rebuild();
+    });
+  });
+  es.addEventListener('dblclick',e=>{
+    e.stopPropagation();
+    if(mode){setStatus('请先完成或取消当前作图，再编辑表达式',true);return;}
+    inlineEdit(es,'cexpr',v=>{c.expr=v;rebuild();});
+  });
+}
+function wireObjRow(row,o){
+  const colI=row.querySelector('input[type=color]'),visI=row.querySelector('.vischk');
+  colI.addEventListener('input',()=>{o.color=colI.value;renderAll();});
+  visI.addEventListener('change',()=>{o.visible=visI.checked;renderAll();});
+  const wireI=row.querySelector('.wirechk'),opI=row.querySelector('.opslider');
+  if(wireI)wireI.addEventListener('change',()=>{o.wire=wireI.checked;renderAll();});
+  if(opI)opI.addEventListener('input',()=>{o.opacity=parseFloat(opI.value);renderAll();});
+  row.querySelector('.del').addEventListener('click',e=>{e.stopPropagation();deleteObject(o.id);});
+  row.addEventListener('click',e=>{if(e.target.closest('input,button'))return;handleObjectPicked(o.id);});
+  row.addEventListener('mouseenter',()=>{if(mode&&!objEligible(o.id))return;setHover(o.id);});
+  row.addEventListener('mouseleave',()=>setHover(null));
+  row.addEventListener('contextmenu',e=>{e.preventDefault();e.stopPropagation();showCtxMenu(e.clientX,e.clientY,o.id);});
+  row.querySelectorAll('.rg').forEach(sp=>{
+    sp.addEventListener('dblclick',e=>{
+      e.stopPropagation();
+      if(mode){setStatus('请先完成或取消当前作图，再编辑范围',true);return;}
+      inlineEdit(sp,'rg',v=>{
+        let x;
+        try{x=reNum(evalStr(v,{}));}catch(err){x=null;}
+        if(x===null||!isFinite(x)){setStatus('范围须能求值为有限实数（可引用常量，如 2*pi、T/2）',true);rebuild();return;}
+        o.range[sp.dataset.k]=v;
+        rebuild();
+        setStatus(o.name+' 的参数范围已更新');
+      });
+    });
+  });
+  const ns=row.querySelector('.oname');
+  ns.addEventListener('dblclick',e=>{
+    e.stopPropagation();
+    if(mode){setStatus('请先完成或取消当前作图，再编辑名称',true);return;}
+    inlineEdit(ns,'oname',v=>{o.name=v||o.name;rebuild();});
+  });
+  row.querySelectorAll('.ox').forEach(sp=>{
+    sp.addEventListener('dblclick',e=>{
+      e.stopPropagation();
+      if(mode){setStatus('请先完成或取消当前作图，再编辑表达式',true);return;}
+      const idx=+sp.dataset.idx;
+      inlineEdit(sp,'ox',v=>{
+        const vals=o.exprs.slice();vals[idx]=v;
+        for(const s of vals){
+          if(!String(s).trim())continue; /* 允许留空待填，computeObject 会给出提示 */
+          const sc=scanExpr(s);
+          if(sc.error){setStatus('表达式错误: '+sc.error,true);rebuild();return;}
+        }
+        o.exprs=vals;
+        rebuild();
+        setStatus(o.name+' 的表达式已更新');
+      });
+    });
+  });
+}
+/* ================= 作图模式（按钮 + 依次点击对象） ================= */
+let mode=null;
+const REALSCALAR=c=>c.params.size===0&&c.value!==undefined&&isRealNum(c.value);
+const MODES={
+  segment:{label:'线段',steps:[
+    {t:'obj',type:'point',hint:'点击第一个点'},
+    {t:'obj',type:'point',hint:'点击第二个点'}],
+    make:p=>{const o=newObject('curve',genSegment(pointCoords(p[0]),pointCoords(p[1])));
+      return [o].concat(addCurveEndpoints(o));}},
+  arc:{label:'旋转成弧',steps:[
+    {t:'obj',type:'point',hint:'点击要旋转的点'},
+    {t:'obj',type:'point',hint:'点击旋转轴上的第一个点'},
+    {t:'obj',type:'point',hint:'点击旋转轴上的第二个点'},
+    {t:'const',hint:'点击常量作为旋转角（弧度）',ok:REALSCALAR}],
+    make:p=>{const o=newObject('curve',genArc(pointCoords(p[0]),pointCoords(p[1]),pointCoords(p[2]),constNum(p[3])));
+      return [o].concat(addCurveEndpoints(o));}},
+  extrude:{label:'平移成面',steps:[
+    {t:'obj',type:'curve',hint:'点击一条参数曲线'},
+    {t:'obj',type:'point',hint:'点击平移方向的起点'},
+    {t:'obj',type:'point',hint:'点击平移方向的终点'}],
+    make:p=>{const C=curveData(p[0]);
+      const A=pointCoords(p[1]),B=pointCoords(p[2]);
+      const src=state.objects.find(x=>x.id===p[0]);
+      const surf=newObject('surface',genExtrude(C.exprs,C.range,A,B));
+      return [surf].concat(genExtrudeCompanions(src,C.exprs,C.range,A,B));}},
+  revolve:{label:'旋转成面',steps:[
+    {t:'obj',type:'curve',hint:'点击一条参数曲线'},
+    {t:'obj',type:'point',hint:'点击旋转轴上的第一个点'},
+    {t:'obj',type:'point',hint:'点击旋转轴上的第二个点'},
+    {t:'const',hint:'点击常量作为旋转角（弧度）',ok:REALSCALAR}],
+    make:p=>{const C=curveData(p[0]);
+      const A=pointCoords(p[1]),B=pointCoords(p[2]),th=constNum(p[3]);
+      const src=state.objects.find(x=>x.id===p[0]);
+      const surf=newObject('surface',genRevolve(C.exprs,C.range,A,B,th));
+      return [surf].concat(genRevolveCompanions(src,C.exprs,C.range,A,B,th,p[3]));}},
+  /* —— 右键菜单触发的隐藏模式（不进工具栏，直接修改已有对象） —— */
+  opMove:{label:'平移对象',steps:[
+    {t:'obj',type:'point',hint:'点击平移方向的起点'},
+    {t:'obj',type:'point',hint:'点击平移方向的终点'}],
+    make:p=>applyTranslate(ctxOp,pointCoords(p[0]),pointCoords(p[1])),
+    finish:a=>'已平移 '+a[0].name},
+  opRot:{label:'旋转对象',steps:[
+    {t:'obj',type:'point',hint:'点击旋转轴上的第一个点'},
+    {t:'obj',type:'point',hint:'点击旋转轴上的第二个点'},
+    {t:'const',hint:'点击常量作为旋转角（弧度）',ok:REALSCALAR}],
+    make:p=>applyRotate(ctxOp,pointCoords(p[0]),pointCoords(p[1]),p[2]),
+    finish:a=>'已旋转 '+a[0].name},
+  opDupMove:{label:'复制后平移',steps:[
+    {t:'obj',type:'point',hint:'点击平移方向的起点'},
+    {t:'obj',type:'point',hint:'点击平移方向的终点'}],
+    make:p=>{const o=duplicateRaw(ctxOp);if(!o)throw new Error('目标对象不存在');
+      return applyTranslate(o.id,pointCoords(p[0]),pointCoords(p[1]));},
+    finish:a=>'已复制并平移为 '+a[0].name},
+  opDupRot:{label:'复制后旋转',steps:[
+    {t:'obj',type:'point',hint:'点击旋转轴上的第一个点'},
+    {t:'obj',type:'point',hint:'点击旋转轴上的第二个点'},
+    {t:'const',hint:'点击常量作为旋转角（弧度）',ok:REALSCALAR}],
+    make:p=>{const o=duplicateRaw(ctxOp);if(!o)throw new Error('目标对象不存在');
+      return applyRotate(o.id,pointCoords(p[0]),pointCoords(p[1]),p[2]);},
+    finish:a=>'已复制并旋转为 '+a[0].name}
+};
+function newObject(type,extra){
+  const n=++state.oSeq;
+  const prefix=type==='point'?'P':type==='curve'?'C':'S';
+  const o=Object.assign({id:'o'+n,type:type,name:prefix+n,
+    color:PALETTE[state.colorSeq++%PALETTE.length],visible:true,
+    exprs:null,range:null},extra);
+  state.objects.push(o);
+  return o;
+}
+function enterMode(key){mode={key:key,def:MODES[key],picked:[]};updateModeUI();}
+function exitMode(msg,isErr){mode=null;updateModeUI();setStatus(msg||'就绪',!!isErr);}
+function updateModeUI(){
+  document.querySelectorAll('#toolbar [data-mode]').forEach(b=>b.classList.toggle('active',!!mode&&b.dataset.mode===mode.key));
+  updatePickStyles();
+  if(!mode)return;
+  const step=mode.def.steps[mode.picked.length];
+  setStatus('【'+mode.def.label+'】第 '+(mode.picked.length+1)+'/'+mode.def.steps.length+' 步：'+step.hint+'　（Esc 或再次点击按钮取消）');
+}
+/* -------- 选择资格：类型不符的对象不可被指定（绘图区与侧边栏一致） -------- */
+function constEligible(id){
+  if(!mode)return true;
+  const step=mode.def.steps[mode.picked.length];
+  if(step.t!=='const')return false;
+  const c=constInfo[id];
+  if(!c)return false;
+  return !step.ok||step.ok({params:c.params,value:c.value});
+}
+function objEligible(id){
+  if(!mode)return true;
+  const step=mode.def.steps[mode.picked.length];
+  if(step.t!=='obj')return false;
+  const o=state.objects.find(x=>x.id===id);
+  if(!o||o.type!==step.type)return false;
+  if(mode.picked.includes(id))return false;
+  return true;
+}
+function updatePickStyles(){
+  document.querySelectorAll('#constList .row').forEach(r=>r.classList.toggle('banned',!!mode&&!constEligible(r.dataset.cid)));
+  document.querySelectorAll('#objList .row').forEach(r=>r.classList.toggle('banned',!!mode&&!objEligible(r.dataset.oid)));
+}
+/* ================= 右键菜单：复制 / 平移 / 旋转 ================= */
+let ctxTarget=null,ctxOp=null;
+function showCtxMenu(x,y,id){
+  ctxTarget=id;
+  const m=document.getElementById('ctxMenu');
+  m.hidden=false;
+  m.style.left=Math.min(x,window.innerWidth-m.offsetWidth-8)+'px';
+  m.style.top=Math.min(y,window.innerHeight-m.offsetHeight-8)+'px';
+}
+function hideCtxMenu(){
+  const m=document.getElementById('ctxMenu');
+  if(m)m.hidden=true;
+  ctxTarget=null;
+}
+function ctxAction(act){
+  const id=ctxTarget;hideCtxMenu();
+  if(!id||!state.objects.some(x=>x.id===id))return;
+  if(act==='dup'){duplicateObject(id);return;}
+  ctxOp=id;
+  enterMode({mov:'opMove',rot:'opRot',dupmov:'opDupMove',duprot:'opDupRot'}[act]);
+}
+/* 原地生成副本（不重建、不提示），供"复制"及"复制后平移/旋转"复用 */
+function duplicateRaw(id){
+  const s=state.objects.find(x=>x.id===id);if(!s)return null;
+  const extra={name:s.name+' 副本',color:s.color,visible:s.visible,
+    exprs:s.exprs.slice(),range:s.range?Object.assign({},s.range):null};
+  if(s.wire!==undefined)extra.wire=s.wire;
+  if(s.opacity!==undefined)extra.opacity=s.opacity;
+  return newObject(s.type,extra);
+}
+function duplicateObject(id){
+  const s=state.objects.find(x=>x.id===id);if(!s)return;
+  const o=duplicateRaw(id);
+  rebuild();
+  setStatus('已复制 '+s.name+' → '+o.name);
+}
+function handleConstPick(id){
+  if(!mode)return;
+  if(!constEligible(id))return; /* 类型不符：不可选中，不中止 */
+  mode.picked.push(id);stepDone();
+}
+function handleObjectPicked(id){
+  const o=state.objects.find(x=>x.id===id);
+  if(!mode){if(o)setStatus(o.name+'（'+(o.type==='point'?'点':o.type==='curve'?'曲线':'曲面')+'）');return;}
+  if(!objEligible(id))return; /* 类型不符：不可选中，不中止 */
+  mode.picked.push(id);stepDone();
+}
+function stepDone(){
+  if(mode.picked.length>=mode.def.steps.length){
+    const def=mode.def,picked=mode.picked.slice();
+    let res;
+    try{res=def.make(picked);}catch(e){exitMode('创建失败：'+e.message,true);return;}
+    const arr=Array.isArray(res)?res:[res];
+    exitMode(null);rebuild();
+    setStatus(def.finish?def.finish(arr):('已创建 '+arr.map(x=>x.name).join('、')));
+  }else updateModeUI();
+}
+/* ================= 删除（所有对象生来自由，删除只影响自身） ================= */
+function deleteObject(id){
+  const o=state.objects.find(x=>x.id===id);if(!o)return;
+  const tn=o.type==='point'?'点':o.type==='curve'?'曲线':'曲面';
+  if(!window.confirm('确认删除'+tn+' "'+o.name+'"？'))return;
+  state.objects=state.objects.filter(x=>x.id!==id);
+  rebuild();
+  setStatus('已删除'+tn+' '+o.name);
+}
+function deleteConst(id){
+  const c=state.consts.find(x=>x.id===id);if(!c)return;
+  if(!window.confirm('确认删除表达式 '+c.name+'？\n引用它的表达式将显示错误。'))return;
+  state.consts=state.consts.filter(x=>x.id!==id);
+  rebuild();
+  setStatus('已删除表达式 '+c.name);
+}
+/* ================= 保存 / 打开 ================= */
+function newFile(){
+  if(window.confirm('是否保存当前作品？\n"确定"先下载保存再新建，"取消"直接新建空白画板。'))saveFile();
+  mode=null;updateModeUI();
+  initDoc();
+  setStatus('已新建空白画板（含原点 O 与单位点 X/Y/Z）');
+}
+function saveFile(){
+  const defName='3d几何画板作品';
+  let fn=window.prompt('保存文件名（不含扩展名）：',defName);
+  if(fn===null)return;
+  fn=fn.trim()||defName;
+  const data={app:'geom3d-board',version:2,
+    consts:state.consts.map(c=>{const o={id:c.id,name:c.name,expr:c.expr};if(c.kind)o.kind=c.kind;return o;}),
+    objects:state.objects.map(o=>({id:o.id,type:o.type,name:o.name,color:o.color,visible:o.visible,
+      wire:o.wire,opacity:o.opacity,exprs:o.exprs,range:o.range}))};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=fn+'.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  setStatus('已保存到下载文件 '+fn+'.json');
+}
+/* 旧版(v1)文件转换：把 exprRefs/range 引用/recipe 按当前数值一次性固化为自由对象 */
+function convertV1Object(o,localData){
+  const num=r=>{
+    if(r===null||r===undefined)return null;
+    if(typeof r==='number')return r;
+    if(r.num!==undefined)return r.num;
+    if(r.ref!==undefined)return constNum(r.ref);
+    return null;
+  };
+  const out={id:String(o.id),type:o.type,name:o.name||'',color:o.color||'#ff5a5a',visible:o.visible!==false,exprs:null,range:null};
+  if(o.recipe){
+    const R=o.recipe,th=R.angle?num(R.angle):null;
+    let g=null;
+    if(R.kind==='segment')g=genSegment(localData[R.a].coords,localData[R.b].coords);
+    else if(R.kind==='arc')g=genArc(localData[R.p].coords,localData[R.a].coords,localData[R.b].coords,th);
+    else if(R.kind==='extrude')g=genExtrude(localData[R.c].exprs,localData[R.c].range,localData[R.a].coords,localData[R.b].coords);
+    else if(R.kind==='revolve')g=genRevolve(localData[R.c].exprs,localData[R.c].range,localData[R.a].coords,localData[R.b].coords,th);
+    if(!g)throw new Error('无法转换旧版构造对象');
+    out.exprs=g.exprs;out.range=g.range;
+  }else{
+    out.exprs=o.exprRefs?o.exprRefs.map(rid=>{const ci=constInfo[rid];if(!ci)throw new Error('引用的表达式缺失');return ci.str;}):(o.exprs||['0','0','0']);
+    if(o.type==='curve'&&o.range)out.range={t0:num(o.range.t0),t1:num(o.range.t1)};
+    else if(o.type==='surface'&&o.range)out.range={u0:num(o.range.u0),u1:num(o.range.u1),v0:num(o.range.v0),v1:num(o.range.v1)};
+  }
+  if(o.type==='curve'&&!out.range)out.range={t0:0,t1:1};
+  if(o.type==='surface'&&!out.range)out.range={u0:0,u1:1,v0:0,v1:1};
+  return out;
+}
+function loadFile(file){
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const data=JSON.parse(rd.result);
+      if(!data||!Array.isArray(data.consts)||!Array.isArray(data.objects))throw new Error('文件格式不正确');
+      state.consts=data.consts.map(c=>{const o={id:String(c.id),name:String(c.name),expr:String(c.expr)};
+        if(c.kind==='const'||c.kind==='unary'||c.kind==='binary')o.kind=c.kind;return o;});
+      state.objects=[];
+      mode=null;updateModeUI();
+      rebuild(); /* 先求出常量，供旧版转换使用 */
+      const localData={};
+      state.objects=data.objects.map(o=>{
+        let out;
+        if(o.recipe||o.exprRefs){
+          out=convertV1Object(o,localData);
+        }else{
+          out={id:String(o.id),type:o.type,name:o.name||'',color:o.color||'#ff5a5a',visible:o.visible!==false,
+               exprs:o.exprs||['0','0','0'],range:o.range||null};
+        }
+        if(o.wire!==undefined)out.wire=o.wire;
+        if(o.opacity!==undefined)out.opacity=o.opacity;
+        if(out.range)for(const k in out.range)out.range[k]=String(out.range[k]);
+        /* 记录已转换对象的数据，供后续旧版 recipe 对象引用 */
+        const ld={exprs:out.exprs,range:out.range,coords:null};
+        if(out.type==='point'){
+          ld.coords=out.exprs.map(s=>{const x=reNum(evalStr(s,{}));if(x===null||!isFinite(x))throw new Error('点坐标无效');return x;});
+        }
+        localData[out.id]=ld;
+        return out;
+      });
+      const maxN=(arr,pre)=>arr.reduce((m,x)=>{const mm=(new RegExp('^'+pre+'(\\d+)$')).exec(x.id);return mm?Math.max(m,+mm[1]):m;},0);
+      state.cSeq=maxN(state.consts,'c');state.oSeq=maxN(state.objects,'o');state.colorSeq=state.objects.length;
+      rebuild();
+      setStatus('已载入 '+file.name);
+    }catch(e){setStatus('打开失败：'+e.message,true);}
+  };
+  rd.readAsText(file);
+}
+/* ================= 界面接线 ================= */
+/* 三类表达式的新建入口：常量 / 一元函数(t) / 二元函数(u,v) */
+const CONST_KINDS={
+  const:{title:'新建常量',prefix:'c',suffix:''},
+  unary:{title:'新建一元函数',prefix:'f',suffix:'(t)'},
+  binary:{title:'新建二元函数',prefix:'g',suffix:'(u,v)'}
+};
+/* 凭空新建表达式：空表达式占位（等用户双击填充）；kind 记录意图类型，空表达式期间按它分组和提示参数 */
+function createDefaultConst(kind){
+  const K=CONST_KINDS[kind]||CONST_KINDS.const;
+  let i=1;
+  while(nameToId[K.prefix+i])i++;
+  const name=K.prefix+i;
+  state.consts.push({id:'c'+(++state.cSeq),name:name,expr:'',kind:CONST_KINDS[kind]?kind:'const'});
+  rebuild();
+  setStatus('已添加'+K.title.slice(2)+' '+name+K.suffix+'：请双击填入表达式');
+}
+/* ================= 可用函数清单（侧边栏底部折叠面板） ================= */
+const FUNC_GROUPS=[['三角',['sin','cos','tan','asin','acos','atan','atan2','sinh','cosh','tanh','asinh','acosh','atanh']],
+  ['指数对数',['exp','log','log10','log2','sqrt','cbrt','pow']],
+  ['数值',['abs','sign','floor','ceil','round','mod','min','max','hypot','gamma','factorial']],
+  ['复数',['arg','conj','re','im']],
+  ['常量',['pi','e','i','tau','phi']]];
+function funcListHTML(){
+  const gs=FUNC_GROUPS.map(g=>'<div class="fl-group"><b>'+g[0]+'</b>'+g[1].map(n=>'<span class="fname">'+n+'</span>').join('')+'</div>').join('');
+  return gs+'<div class="fl-note">参数：<span class="fname">t</span>（曲线）、<span class="fname">u</span> <span class="fname">v</span>（曲面）；含参表达式以 f(t)、g(u,v) 形式互相调用；支持复数（i）与虚部自动取实部绘图。</div>';
+}
+function wireUI(){
+  document.getElementById('funcListBody').innerHTML=funcListHTML();
+  document.querySelectorAll('#toolbar [data-mode]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      if(mode&&mode.key===b.dataset.mode)exitMode(null);
+      else enterMode(b.dataset.mode);
+    });
+  });
+
+  document.getElementById('btnSave').addEventListener('click',saveFile);
+  document.getElementById('btnNew').addEventListener('click',newFile);
+  document.getElementById('btnOpen').addEventListener('click',()=>document.getElementById('fileInput').click());
+  document.getElementById('fileInput').addEventListener('change',e=>{
+    if(e.target.files.length)loadFile(e.target.files[0]);
+    e.target.value='';
+  });
+  document.querySelectorAll('#ctxMenu .ctxitem').forEach(it=>{
+    it.addEventListener('click',()=>ctxAction(it.dataset.act));
+  });
+  window.addEventListener('pointerdown',e=>{if(!e.target.closest('#ctxMenu'))hideCtxMenu();});
+  document.getElementById('btnHome').addEventListener('click',()=>{
+    camera.position.set(7,6,9);controls.target.set(0,0,0);
+  });
+  document.getElementById('chkGrid').addEventListener('change',e=>{
+    gridHelper.visible=e.target.checked;
+    axesHelper.visible=e.target.checked;
+  });
+  document.getElementById('btnTheme').addEventListener('click',()=>{
+    applyTheme(uiTheme==='light'?'dark':'light');
+  });
+  window.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      hideCtxMenu();
+      if(mode)exitMode(null);
+    }
+  });
+}
+/* ================= 初始文档：原点 + 三个单位点（颜色与坐标标架一致） ================= */
+function initDoc(){
+  state={consts:[],objects:[],cSeq:0,oSeq:0,colorSeq:0};
+  newObject('point',{name:'O',color:'#e8e8ea',exprs:['0','0','0'],range:null});
+  newObject('point',{name:'X',color:'#4f8cff',exprs:['1','0','0'],range:null});
+  newObject('point',{name:'Y',color:'#ff5a5a',exprs:['0','1','0'],range:null});
+  newObject('point',{name:'Z',color:'#ffd020',exprs:['0','0','1'],range:null});
+  rebuild();
+}
+/* ================= 启动 ================= */
+window.addEventListener('DOMContentLoaded',()=>{
+  loadTheme();
+  initThree();
+  wireUI();
+  applyTheme(uiTheme);
+  initDoc();
+  setStatus('就绪：已放入原点 O 与单位点 X/Y/Z，点侧边栏"＋"新建表达式或几何对象');
+});
+</script>
+</body>
+</html>

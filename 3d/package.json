@@ -1,0 +1,9 @@
+{
+  "name": "geom3d-board",
+  "version": "1.0.0",
+  "private": true,
+  "description": "3D 几何画板（单 HTML 文件应用）",
+  "scripts": {
+    "dev": "node server.js"
+  }
+}
