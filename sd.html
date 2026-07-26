@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>线图工具 · String Diagram Editor</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif; font-size: 14px; }
+  body { display: flex; flex-direction: column; }
+  header#toolbar {
+    display: flex; align-items: center; gap: 6px; padding: 6px 10px;
+    background: #2d3748; color: #e2e8f0; flex: none; flex-wrap: wrap;
+  }
+  header#toolbar .brand { font-weight: 600; margin-right: 10px; }
+  header#toolbar button {
+    background: #4a5568; color: #e2e8f0; border: 1px solid #718096; border-radius: 4px;
+    padding: 4px 10px; cursor: pointer; font-size: 13px;
+  }
+  header#toolbar button:hover { background: #5a6a82; }
+  header#toolbar button.on { background: #3182ce; border-color: #63b3ed; color: #fff; }
+  header#toolbar .sep { width: 1px; height: 20px; background: #718096; margin: 0 4px; }
+  header#toolbar .spacer { flex: 1; }
+  header#toolbar .grid-ctl { display: flex; align-items: center; gap: 4px; margin-left: 8px; }
+  header#toolbar .chk { display: flex; align-items: center; gap: 4px; margin-left: 8px; user-select: none; }
+  header#toolbar .grid-ctl input {
+    width: 60px; padding: 3px 6px; border: 1px solid #718096; border-radius: 4px;
+    background: #1a202c; color: #e2e8f0; font-size: 13px;
+  }
+  main { display: flex; flex: 1; min-height: 0; }
+  #canvasWrap { flex: 1; overflow: auto; background: #e2e8f0; position: relative; }
+  #svg { display: block; background: #ffffff; margin: 12px; box-shadow: 0 1px 6px rgba(0,0,0,.25); }
+  #inlineEditor {
+    position: absolute; transform: translate(-50%, -50%); z-index: 5;
+    width: 180px; padding: 5px 9px; font: 14px Consolas, monospace;
+    border: 2px solid #3182ce; border-radius: 6px; background: #fff;
+    box-shadow: 0 4px 16px rgba(49,130,206,.35); outline: none;
+  }
+  aside#side {
+    width: 330px; flex: none; border-left: 1px solid #cbd5e0; background: #f7fafc;
+    display: flex; flex-direction: column; min-height: 0;
+  }
+  #panel { flex: 1; overflow-y: auto; padding: 10px; }
+  #errors { flex: none; max-height: 180px; overflow-y: auto; border-top: 1px solid #cbd5e0; padding: 6px 10px; background: #fff5f5; }
+  #errors:empty { display: none; }
+  #errors .err-title { color: #c53030; font-weight: 600; margin: 2px 0 4px; }
+  #errors .err-item { color: #c53030; font-size: 12px; padding: 2px 0; cursor: pointer; }
+  #errors .err-item:hover { text-decoration: underline; }
+  .row { display: flex; align-items: center; gap: 6px; margin: 6px 0; }
+  .row label.k { width: 72px; flex: none; color: #4a5568; }
+  .row input[type=number], .row input[type=text], .row select {
+    flex: 1; min-width: 0; padding: 3px 6px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 13px;
+  }
+  .row input[type=color] { width: 36px; height: 26px; padding: 0; border: 1px solid #cbd5e0; border-radius: 4px; background: none; }
+  .row input[type=range] { flex: 1; }
+  .row .alpha-val { width: 40px; text-align: right; color: #718096; font-size: 12px; flex: none; }
+  .color-wrap { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .color-wrap input[type=range] { flex: 1; min-width: 50px; }
+  .color-row2 { display: flex; align-items: center; gap: 6px; flex-basis: 100%; }
+  .swatches { display: flex; gap: 5px; flex-basis: 100%; margin: 2px 0 3px; align-items: center; flex-wrap: wrap; }
+  .sw { width: 22px; height: 22px; border-radius: 5px; border: 1px solid rgba(0,0,0,.35); cursor: pointer; padding: 0; flex: none; }
+  .sw:hover { transform: scale(1.15); }
+  .sw.sel { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #3182ce; } /* 当前颜色选中态外圈 */
+  .btn-mini {
+    background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 4px; padding: 2px 8px;
+    cursor: pointer; font-size: 12px; color: #4a5568; flex: none;
+  }
+  .btn-mini:hover { background: #e2e8f0; }
+  .sec-title { font-weight: 600; color: #2d3748; margin: 12px 0 2px; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; }
+  .hint { color: #718096; font-size: 12px; line-height: 1.6; white-space: pre-line; }
+  #panel button.act {
+    background: #edf2f7; border: 1px solid #cbd5e0; border-radius: 4px; padding: 3px 10px; cursor: pointer; font-size: 13px;
+  }
+  #panel button.act:hover { background: #e2e8f0; }
+  #panel button.danger { background: #fff5f5; border: 1px solid #fc8181; color: #c53030; border-radius: 4px; padding: 4px 12px; cursor: pointer; }
+  #modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 10;
+  }
+  #modal.hidden { display: none; }
+  #modal .box { background: #fff; border-radius: 8px; padding: 16px; width: 640px; max-width: 92vw; }
+  #modal textarea { width: 100%; height: 300px; font-family: Consolas, monospace; font-size: 13px; border: 1px solid #cbd5e0; border-radius: 4px; padding: 8px; }
+  #modal .btns { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+  #modal .btns button { padding: 5px 14px; border-radius: 4px; border: 1px solid #cbd5e0; cursor: pointer; background: #edf2f7; }
+  #modal .btns button.primary { background: #3182ce; color: #fff; border-color: #2b6cb0; }
+  #modal .msg { color: #c53030; font-size: 12px; margin-top: 6px; min-height: 16px; }
+  #toast {
+    position: fixed; left: 12px; bottom: 12px; background: #2d3748; color: #e2e8f0;
+    padding: 6px 14px; border-radius: 6px; font-size: 13px; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 20;
+  }
+  #toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<header id="toolbar">
+  <span class="brand">线图工具</span>
+  <span id="tools">
+    <button data-tool="select" class="on">选择</button>
+    <button data-tool="curve">画线</button>
+  </span>
+  <label class="grid-ctl">网格 <input type="number" id="gridInput" min="1" step="5" value="40"></label>
+  <label class="chk"><input type="checkbox" id="showAids" checked> 辅助显示</label>
+  <span class="spacer"></span>
+  <button id="btnImport">导入 JSONC</button>
+  <button id="btnExport">导出文件</button>
+  <button id="btnCopy">复制 JSONC</button>
+  <button id="btnSvg">导出 SVG</button>
+  <button id="btnCopySvg">复制 SVG</button>
+  <span class="sep"></span>
+  <button id="btnReset">重置示例</button>
+</header>
+<main>
+  <div id="canvasWrap">
+    <svg id="svg" width="2400" height="1400" viewBox="0 0 2400 1400"
+         xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+  <aside id="side">
+    <div id="panel"></div>
+    <div id="errors"></div>
+  </aside>
+</main>
+<div id="modal" class="hidden">
+  <div class="box">
+    <div class="sec-title">导入 JSONC（旧格式自动迁移）</div>
+    <textarea id="impText" placeholder="粘贴 JSONC 文本，或选择文件…"></textarea>
+    <div class="btns">
+      <input type="file" id="impFile" accept=".jsonc,.json,.txt">
+      <span class="spacer" style="flex:1"></span>
+      <button class="primary" id="btnDoImport">导入</button>
+      <button id="btnCancelImport">取消</button>
+    </div>
+    <div class="msg" id="impMsg"></div>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+'use strict';
+// ============================================================================
+// ===CORE-BEGIN===
+// 第 1 层：JSONC 解析 / 稳定序列化 / 旧格式迁移（不依赖 DOM，可在 Node 中测试）
+//
+// 文档模型（格点即锚点 schema）：
+//   { grid?: number,                       // 默认 40
+//     nodes: [ { at: Pt, text?, shape?, size?, fill?, border?, borderWidth?, textColor? } ],
+//     wires: [ { type: 'curve', from: Pt, to: Pt, via?, exit?, enter?,
+//                tension?, stroke?, width? } ] }
+//   - 节点以坐标为身份，at 必须是网格整数倍，一个格点最多一个节点；
+//   - 节点存在条件：text 非空，或显式指定 shape；否则视为无内容（容错标错）；
+//   - wires 端点一律是格点像素坐标，不再引用名字；连线即曲线（type 只有 curve），
+//     旧 seg 导入时自动迁移为 1/3、2/3 控制点的 curve；
+//   - curve 的 via 要么不存在（自动 exit/enter 方向臂模式），要么恰好 2 个控制点
+//     （三次贝塞尔）；导入时 1 个控制点按端点中点镜像对称补全为 2 个，via: [] 按不存在处理；
+//   - 拖动 curve 端点时对应控制点（from↔via[0]，to↔via[1]）按相同向量跟随，保持相对位置；
+//   - 派生锚点表达式已退役（无名字即无法引用），表达式求值器仅保留用于旧格式迁移。
+// ============================================================================
+
+// 去掉 JSONC 注释（// 行注释 与 /* */ 块注释），字符串内容原样保留
+function stripComments(src) {
+  let out = '', i = 0, inStr = false;
+  while (i < src.length) {
+    const c = src[i];
+    if (inStr) {
+      out += c;
+      if (c === '\\') { if (i + 1 < src.length) out += src[i + 1], i += 2; else i++; continue; }
+      if (c === '"') inStr = false;
+      i++; continue;
+    }
+    if (c === '"') { inStr = true; out += c; i++; continue; }
+    if (c === '/' && src[i + 1] === '/') { while (i < src.length && src[i] !== '\n') i++; continue; }
+    if (c === '/' && src[i + 1] === '*') {
+      i += 2;
+      while (i < src.length && !(src[i] === '*' && src[i + 1] === '/')) { if (src[i] === '\n') out += '\n'; i++; }
+      i += 2; continue;
+    }
+    out += c; i++;
+  }
+  return out;
+}
+
+// 宽容处理：去掉对象/数组中多余的尾逗号
+function stripTrailingCommas(src) {
+  let out = '', i = 0, inStr = false;
+  while (i < src.length) {
+    const c = src[i];
+    if (inStr) {
+      out += c;
+      if (c === '\\') { if (i + 1 < src.length) out += src[i + 1], i += 2; else i++; continue; }
+      if (c === '"') inStr = false;
+      i++; continue;
+    }
+    if (c === '"') { inStr = true; out += c; i++; continue; }
+    if (c === ',') {
+      let j = i + 1;
+      while (j < src.length && /\s/.test(src[j])) j++;
+      if (src[j] === '}' || src[j] === ']') { i++; continue; } // 丢弃尾逗号
+    }
+    out += c; i++;
+  }
+  return out;
+}
+
+function isPtLiteral(v) { return Array.isArray(v) && v.length === 2 && v.every(Number.isFinite); }
+function isPlainObj(v) { return !!v && typeof v === 'object' && !Array.isArray(v); }
+const IDENT_RE = /^[A-Za-z0-9_$\u4e00-\u9fa5]+$/;
+
+// XML/SVG 文本转义（导出与渲染共用）
+function escXml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+const DEFAULTS = {
+  grid: 40,
+  stroke: '#222222ff', width: 2,
+  nodeShape: 'rect', nodeSize: [60, 36],
+  fill: '#ffffffff', border: '#222222ff', borderWidth: 1.5, textColor: '#222222ff',
+  tension: 40
+};
+
+// 网格吸附：创建/拖动节点与连线端点、via 控制点时一律吸附到最近格点
+function snapTo(v, grid) { return Math.round(v / grid) * grid; }
+function snapPtTo(p, grid) { return [snapTo(p[0], grid), snapTo(p[1], grid)]; }
+
+// ---- 旧格式迁移 ------------------------------------------------------------------
+// 表达式微型求值器【仅用于旧格式迁移】：新文档模型已退役派生锚点表达式。
+// 语法：节点名引用、二元组字面量 (x, y)、加减、数乘、一元负号。
+function evalExpr(src, env) {
+  const s = String(src);
+  let i = 0;
+  const bad = (m) => { throw new Error(m + '（位置 ' + i + '）'); };
+  const skip = () => { while (i < s.length && /\s/.test(s[i])) i++; };
+  const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
+  const isPt = (v) => Array.isArray(v);
+  const needNum = (v) => { if (!isNum(v)) bad('此处需要数值'); return v; };
+  function add(a, b, sign) {
+    if (isPt(a) && isPt(b)) return [a[0] + sign * b[0], a[1] + sign * b[1]];
+    if (isNum(a) && isNum(b)) return a + sign * b;
+    bad('加减两边必须同为坐标或同为数值');
+  }
+  function mul(a, b) {
+    if (isNum(a) && isPt(b)) return [a * b[0], a * b[1]];
+    if (isPt(a) && isNum(b)) return [a[0] * b, a[1] * b];
+    if (isNum(a) && isNum(b)) return a * b;
+    bad('乘法需要一边是数值');
+  }
+  function parseExpr() {
+    let v = parseTerm();
+    for (;;) {
+      skip();
+      if (s[i] === '+') { i++; v = add(v, parseTerm(), 1); }
+      else if (s[i] === '-') { i++; v = add(v, parseTerm(), -1); }
+      else return v;
+    }
+  }
+  function parseTerm() {
+    let v = parseFactor();
+    for (;;) {
+      skip();
+      if (s[i] === '*') { i++; v = mul(v, parseFactor()); }
+      else return v;
+    }
+  }
+  function parseFactor() {
+    skip();
+    const c = s[i];
+    if (c === '(') {
+      i++;
+      const a = parseExpr(); skip();
+      if (s[i] === ',') {
+        i++;
+        const b = parseExpr(); skip();
+        if (s[i] !== ')') bad('二元组缺少 )');
+        i++;
+        return [needNum(a), needNum(b)];
+      }
+      if (s[i] !== ')') bad('缺少 )');
+      i++;
+      return a;
+    }
+    if (c === '-') { i++; const v = parseFactor(); return isPt(v) ? [-v[0], -v[1]] : -needNum(v); }
+    if (c === '+') { i++; return parseFactor(); }
+    if (c !== undefined && /[0-9.]/.test(c)) {
+      const m = /^\d*\.?\d+(?:[eE][+-]?\d+)?/.exec(s.slice(i));
+      if (!m) bad('非法数字');
+      i += m[0].length;
+      return parseFloat(m[0]);
+    }
+    if (c !== undefined && /[A-Za-z_$\u4e00-\u9fa5]/.test(c)) {
+      const m = /^[A-Za-z0-9_$\u4e00-\u9fa5]+/.exec(s.slice(i));
+      i += m[0].length;
+      const name = m[0];
+      if (!Object.prototype.hasOwnProperty.call(env, name)) bad('未定义的节点 "' + name + '"');
+      return env[name];
+    }
+    bad(c === undefined ? '表达式意外结束' : '意外字符 "' + c + '"');
+  }
+  const v = parseExpr();
+  skip();
+  if (i < s.length) bad('表达式末尾有多余内容');
+  return v;
+}
+
+// 最旧格式（anchors + objects）→ 中间名字格式（nodes 名字表 + wires 引用名字）
+function migrateLegacy(raw) {
+  const nodes = {}, wires = [];
+  const used = new Set();
+  const autoName = (base) => {
+    for (let i = 1; ; i++) { const n = base + i; if (!used.has(n)) { used.add(n); return n; } }
+  };
+  if (isPlainObj(raw.anchors)) {
+    for (const [k, v] of Object.entries(raw.anchors)) { nodes[k] = { at: v }; used.add(k); }
+  }
+  for (const o of (Array.isArray(raw.objects) ? raw.objects : [])) {
+    if (isPlainObj(o) && o.type === 'node') {
+      let name = (typeof o.text === 'string' && IDENT_RE.test(o.text) && !used.has(o.text))
+        ? o.text : autoName('n');
+      used.add(name);
+      const def = { at: o.at };
+      for (const k of ['shape', 'size', 'text', 'fill', 'border', 'borderWidth', 'textColor']) {
+        if (o[k] !== undefined) def[k] = o[k];
+      }
+      nodes[name] = def;
+    } else if (isPlainObj(o) && (o.type === 'seg' || o.type === 'curve')) {
+      const w = { type: o.type };
+      for (const f of ['from', 'to']) {
+        if (typeof o[f] === 'string') w[f] = o[f];
+        else if (isPtLiteral(o[f])) {
+          const nm = autoName('n');
+          nodes[nm] = { at: [o[f][0], o[f][1]] };
+          w[f] = nm;
+        } else w[f] = o[f];
+      }
+      for (const k of ['via', 'exit', 'enter', 'tension', 'stroke', 'width']) {
+        if (o[k] !== undefined) w[k] = o[k];
+      }
+      wires.push(w);
+    } else {
+      wires.push(o);
+    }
+  }
+  return { grid: undefined, nodes, wires };
+}
+
+// 中间名字格式 → 格点坐标格式：按定义顺序求值表达式得到坐标；wires 名字端点替换为坐标
+function migrateNamed(raw) {
+  const pts = new Map();
+  if (isPlainObj(raw.nodes)) {
+    for (const [name, def] of Object.entries(raw.nodes)) {
+      let pt = [0, 0];
+      if (isPlainObj(def)) {
+        if (isPtLiteral(def.at)) pt = [def.at[0], def.at[1]];
+        else if (typeof def.at === 'string') {
+          try {
+            const v = evalExpr(def.at, Object.fromEntries(pts));
+            if (Array.isArray(v)) pt = v;
+          } catch (e) { /* 求值失败回退 [0,0]，导入后由容错层标错 */ }
+        }
+      }
+      pts.set(name, pt);
+    }
+  }
+  const nodes = [];
+  for (const def of Object.values(raw.nodes || {})) {
+    if (!isPlainObj(def)) { nodes.push(def); continue; } // 非对象项原样保留，求值层标错
+    const hasText = typeof def.text === 'string' && def.text !== '';
+    const hasShape = def.shape !== undefined;
+    // 新语义下"无 text 且无 shape"的旧锚点节点无内容，迁移时直接丢弃
+    //（其存在意义只是被 wires 引用，端点已内联为坐标）
+    if (!hasText && !hasShape) continue;
+    const name = Object.keys(raw.nodes).find(k => raw.nodes[k] === def);
+    const nd = { at: pts.get(name) || [0, 0] };
+    for (const k of ['shape', 'size', 'text', 'fill', 'border', 'borderWidth', 'textColor']) {
+      if (def[k] !== undefined) nd[k] = def[k];
+    }
+    nodes.push(nd);
+  }
+  const wires = [];
+  for (const w of (Array.isArray(raw.wires) ? raw.wires : [])) {
+    if (isPlainObj(w)) {
+      const nw = Object.assign({}, w);
+      for (const f of ['from', 'to']) {
+        if (typeof nw[f] === 'string' && pts.has(nw[f])) nw[f] = pts.get(nw[f]).slice();
+        // 未定义的名字保留原字符串，求值层标错
+      }
+      wires.push(nw);
+    } else wires.push(w);
+  }
+  return { grid: raw.grid, nodes, wires };
+}
+
+// 导入兼容：旧文档 text 中的 $...$ 定界符一律剥离（容错，不报错），按 TeX 源码处理
+function stripTexDelimiters(doc) {
+  for (const def of doc.nodes) {
+    if (isPlainObj(def) && typeof def.text === 'string' && def.text.includes('$')) {
+      def.text = def.text.replace(/\$/g, '');
+    }
+  }
+  return doc;
+}
+
+// 导入归一化：节点 at 与连线端点吸附到最近格点（schema 要求网格整数倍）
+function snapDocToGrid(doc) {
+  const g = (typeof doc.grid === 'number' && Number.isFinite(doc.grid) && doc.grid > 0) ? doc.grid : DEFAULTS.grid;
+  for (const nd of doc.nodes) {
+    if (isPlainObj(nd) && isPtLiteral(nd.at)) nd.at = snapPtTo(nd.at, g);
+  }
+  for (const w of doc.wires) {
+    if (isPlainObj(w)) for (const f of ['from', 'to']) if (isPtLiteral(w[f])) w[f] = snapPtTo(w[f], g);
+  }
+  return doc;
+}
+
+// 解析 JSONC 文本为文档模型。整体语法错误为 fatal；字段级错误留给求值层逐项标记。
+// 返回 { ok, fatal, doc, migrated, segMigrated }；migrated=true 表示旧格式已自动迁移，
+// segMigrated 为 seg→curve 的迁移条数（连线即曲线，旧直线自动改为 1/3、2/3 控制点的曲线）。
+function parseDoc(text) {
+  let raw;
+  try {
+    raw = JSON.parse(stripTrailingCommas(stripComments(String(text))));
+  } catch (e) {
+    return { ok: false, fatal: 'JSONC 语法错误：' + e.message, doc: null, migrated: false, segMigrated: 0 };
+  }
+  if (!isPlainObj(raw)) {
+    return { ok: false, fatal: '文档顶层必须是 { "nodes": […], "wires": […] } 对象', doc: null, migrated: false, segMigrated: 0 };
+  }
+  const finish = (d, migrated) => {
+    const n = normalizeWires(stripTexDelimiters(d));
+    return { ok: true, fatal: null, doc: snapDocToGrid(n.doc), migrated, segMigrated: n.segMigrated };
+  };
+  if (Array.isArray(raw.nodes) || (!isPlainObj(raw.nodes) && Array.isArray(raw.wires))) {
+    // 新格式：nodes 为坐标数组
+    const doc = { grid: undefined, nodes: [], wires: [] };
+    if (typeof raw.grid === 'number' && Number.isFinite(raw.grid) && raw.grid > 0) doc.grid = raw.grid;
+    if (Array.isArray(raw.nodes)) doc.nodes = raw.nodes;
+    if (Array.isArray(raw.wires)) doc.wires = raw.wires;
+    return finish(doc, false);
+  }
+  if (isPlainObj(raw.nodes) || Array.isArray(raw.wires)) {
+    // 上一版：nodes 名字表 + wires 引用名字（含派生表达式）
+    return finish(migrateNamed(raw), true);
+  }
+  if (raw.anchors !== undefined || raw.objects !== undefined) {
+    // 最旧格式：anchors + objects → 名字格式 → 坐标格式
+    return finish(migrateNamed(migrateLegacy(raw)), true);
+  }
+  return { ok: false, fatal: '无法识别的文档格式', doc: null, migrated: false, segMigrated: 0 };
+}
+
+// ---- 稳定序列化：字段顺序固定、2 空格缩进、值格式固定 ------------------------
+
+function fmtNum(n) { return String(n); } // JS 数值的最短 round-trip 形式
+
+function fmtVal(v) {
+  if (Array.isArray(v)) return '[' + v.map(fmtVal).join(', ') + ']';
+  if (typeof v === 'number') return fmtNum(v);
+  if (typeof v === 'boolean') return String(v);
+  return JSON.stringify(v); // 字符串及其它可 JSON 化的值
+}
+
+// 节点 / 连线字段的固定输出顺序；未知字段按原插入顺序附加在末尾（前向兼容）
+const NODE_KEY_ORDER = ['at', 'shape', 'size', 'text', 'fill', 'border', 'borderWidth', 'textColor'];
+const WIRE_KEY_ORDER = ['type', 'from', 'to', 'via', 'exit', 'enter', 'tension', 'stroke', 'width'];
+
+function serializeFields(o, keyOrder) {
+  if (!isPlainObj(o)) return fmtVal(o); // 非对象项原样保留（容错）
+  const parts = [];
+  const seen = new Set();
+  const has = (k) => Object.prototype.hasOwnProperty.call(o, k);
+  for (const k of keyOrder) {
+    if (has(k) && o[k] !== undefined && !(k === 'via' && Array.isArray(o[k]) && o[k].length === 0)) {
+      parts.push(JSON.stringify(k) + ': ' + fmtVal(o[k]));
+      seen.add(k);
+    }
+  }
+  for (const k of Object.keys(o)) {
+    if (!seen.has(k) && o[k] !== undefined) parts.push(JSON.stringify(k) + ': ' + fmtVal(o[k]));
+  }
+  return '{ ' + parts.join(', ') + ' }';
+}
+
+function serializeDoc(doc) {
+  const L = ['{'];
+  if (doc.grid !== undefined) L.push('  "grid": ' + fmtNum(doc.grid) + ',');
+  if (doc.nodes.length === 0) {
+    L.push('  "nodes": [],');
+  } else {
+    L.push('  "nodes": [');
+    doc.nodes.forEach((n, i) => {
+      L.push('    ' + serializeFields(n, NODE_KEY_ORDER) + (i < doc.nodes.length - 1 ? ',' : ''));
+    });
+    L.push('  ],');
+  }
+  if (doc.wires.length === 0) {
+    L.push('  "wires": []');
+  } else {
+    L.push('  "wires": [');
+    doc.wires.forEach((w, i) => {
+      L.push('    ' + serializeFields(w, WIRE_KEY_ORDER) + (i < doc.wires.length - 1 ? ',' : ''));
+    });
+    L.push('  ]');
+  }
+  L.push('}');
+  return L.join('\n') + '\n';
+}
+
+// ============================================================================
+// 第 2 层：求值（逐节点/逐连线校验与规范化，坐标已是纯值，无引用解析）。
+// ============================================================================
+
+const DIR_VEC = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+const COLOR_RE = /^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+
+// ---- TeX 公式：节点 text 整段视为 TeX 源码（普通文字用 \text{...}） --------------
+
+const FONT_FAMILY = '"Segoe UI", "Microsoft YaHei", system-ui, sans-serif';
+const round2 = (v) => Math.round(v * 100) / 100;
+const NODE_PAD_W = 12, NODE_PAD_H = 8; // 自动尺寸内边距（横向 6+6，纵向 4+4）
+
+// 粗估文本宽度（CJK 按 1em，其余按 0.55em），MathJax 不可用时的回退
+function roughTextWidth(s, fontSize) {
+  let w = 0;
+  for (const ch of String(s)) w += /[\u3000-\u9fff\uff00-\uffef]/.test(ch) ? fontSize : fontSize * 0.55;
+  return w;
+}
+
+// 自动尺寸：公式渲染宽高 + 内边距；无渲染器时按源码粗估；空内容用默认尺寸
+// measureNode(text) → { w, h } | null
+function measureNodeContent(text, measureNode) {
+  if (!text) return DEFAULTS.nodeSize.slice();
+  const r = measureNode ? measureNode(text) : null;
+  if (r && r.w > 0 && r.h > 0) {
+    return [Math.max(8, round2(r.w + NODE_PAD_W)), Math.max(8, round2(r.h + NODE_PAD_H))];
+  }
+  return [Math.max(8, round2(roughTextWidth(text, 14) + NODE_PAD_W)), 14 + NODE_PAD_H];
+}
+
+// 节点文字标签 SVG：整段 text 交 texRender 渲染为公式，居中于节点中心；
+// 无渲染器或渲染失败时回退为原始源码文本（居中 <text>）。
+// texRender(tex) → { markup, wPx, hPx, vbW, vbTop } | null
+function nodeLabelSvg(nd, opts) {
+  const o = opts || {};
+  const fontSize = o.fontSize || 14;
+  const fontFamily = o.fontFamily || FONT_FAMILY;
+  const color = o.color || nd.ap.textColor;
+  const [x, y] = nd.pt;
+  const text = nd.ap.text;
+  const r = o.texRender ? o.texRender(text) : null;
+  if (r && r.vbW > 0 && r.wPx > 0) {
+    const s = r.wPx / r.vbW;
+    const tx = round2(x - r.wPx / 2);
+    const ty = round2(y - r.hPx / 2 + (-r.vbTop) * s); // 让公式包围盒垂直居中
+    return {
+      markup: `<g transform="translate(${tx} ${ty}) scale(${Math.round(s * 10000) / 10000})">${r.markup}</g>`,
+      width: r.wPx, height: r.hPx, failed: []
+    };
+  }
+  const failed = o.texRender ? [text] : [];
+  return {
+    markup: `<text x="${x}" y="${y}" font-size="${fontSize}" fill="${color}" font-family="${escXml(fontFamily)}" text-anchor="middle" dominant-baseline="central">${escXml(text)}</text>`,
+    width: o.measureText ? o.measureText(text) : roughTextWidth(text, fontSize),
+    height: fontSize,
+    failed
+  };
+}
+
+// ---- 节点求值 --------------------------------------------------------------------
+// 形态判定：shape 显式指定优先；缺省时 text 非空 → 矩形公式框。
+// 存在条件：text 非空或显式 shape，否则视为无内容节点（标错）。
+// 同一格点最多一个节点，重复标错。size 缺省时自动贴合公式内容（opts.measureNode 注入）。
+function evalNodes(nodeDefs, opts) {
+  const o = opts || {};
+  const list = [];
+  const occupied = new Map(); // "x,y" → 首个节点下标
+  (nodeDefs || []).forEach((def, idx) => {
+    const errs = [];
+    let pt = null, ap = null;
+    if (!isPlainObj(def)) {
+      errs.push('节点 #' + (idx + 1) + ' 定义必须是对象 { "at": … }');
+    } else {
+      if (isPtLiteral(def.at)) pt = [def.at[0], def.at[1]];
+      else errs.push('at：必须是 [x, y] 格点坐标');
+      if (def.text !== undefined && typeof def.text !== 'string') errs.push('text：必须是字符串');
+      const text = typeof def.text === 'string' ? def.text : '';
+      let form;
+      if (def.shape === 'rect' || def.shape === 'ellipse') {
+        form = def.shape; // 显式指定优先，即使 text 为空
+      } else {
+        if (def.shape !== undefined) errs.push('shape：必须是 rect 或 ellipse');
+        form = text ? 'rect' : null; // 缺省：有文字 → 公式框；空内容 → 不存在
+      }
+      if (form === null) {
+        errs.push('节点无内容：无 text 且未指定 shape（应删除该节点）');
+      } else {
+        if (pt) {
+          const key = pt[0] + ',' + pt[1];
+          if (occupied.has(key)) errs.push('格点 (' + pt[0] + ', ' + pt[1] + ') 已被节点 #' + (occupied.get(key) + 1) + ' 占用');
+          else occupied.set(key, idx);
+        }
+        const optColor = (v, what, d) => {
+          if (v === undefined) return d;
+          if (typeof v === 'string' && COLOR_RE.test(v)) return v;
+          errs.push(what + '：颜色必须是 #RGB/#RRGGBB/#RRGGBBAA 形式');
+          return d;
+        };
+        let size, autoSize;
+        if (def.size !== undefined) {
+          if (isPtLiteral(def.size) && def.size[0] > 0 && def.size[1] > 0) { size = [def.size[0], def.size[1]]; autoSize = false; }
+          else { errs.push('size：必须是正数 [宽, 高]'); autoSize = true; }
+        } else autoSize = true;
+        if (autoSize) size = measureNodeContent(text, o.measureNode);
+        let borderWidth = DEFAULTS.borderWidth;
+        if (def.borderWidth !== undefined) {
+          if (typeof def.borderWidth === 'number' && Number.isFinite(def.borderWidth) && def.borderWidth > 0) borderWidth = def.borderWidth;
+          else errs.push('borderWidth：必须是正数');
+        }
+        ap = {
+          shape: form, size, autoSize, text,
+          fill: optColor(def.fill, 'fill', DEFAULTS.fill),
+          border: optColor(def.border, 'border', DEFAULTS.border),
+          borderWidth,
+          textColor: optColor(def.textColor, 'textColor', DEFAULTS.textColor)
+        };
+      }
+    }
+    list.push({ idx, pt: pt || [0, 0], errs, ap });
+  });
+  return { list };
+}
+
+// 逐条校验连线并规范化。端点必须是格点像素坐标（导入时已吸附）。
+function evalWire(raw, idx) {
+  const errs = [];
+  if (!isPlainObj(raw)) {
+    return { idx, kind: 'bad', errs: ['连线 #' + (idx + 1) + ' 不是对象'], raw, fromPt: [0, 0], toPt: [0, 0] };
+  }
+  const kind = raw.type;
+  if (kind !== 'curve') { // 连线即曲线：seg 等旧/未知类型由导入层迁移，未迁移的在此标错
+    return { idx, kind: 'bad', errs: ['连线 #' + (idx + 1) + '：未知类型 ' + JSON.stringify(kind) + '（只支持 curve；seg 会在导入时自动迁移）'], raw, fromPt: [0, 0], toPt: [0, 0] };
+  }
+  const resolveEnd = (v, what) => {
+    if (isPtLiteral(v)) return [v[0], v[1]];
+    errs.push(what + '：必须是 [x, y] 格点坐标' + (typeof v === 'string' ? '（名字引用已退役："' + v + '"）' : ''));
+    return null;
+  };
+  const optColor = (v, what, d) => {
+    if (v === undefined) return d;
+    if (typeof v === 'string' && COLOR_RE.test(v)) return v;
+    errs.push(what + '：颜色必须是 #RGB/#RRGGBB/#RRGGBBAA 形式');
+    return d;
+  };
+  let width = DEFAULTS.width;
+  if (raw.width !== undefined) {
+    if (typeof raw.width === 'number' && Number.isFinite(raw.width) && raw.width > 0) width = raw.width;
+    else errs.push('width：必须是正数');
+  }
+  const f = resolveEnd(raw.from, 'from'), t = resolveEnd(raw.to, 'to');
+  const res = {
+    idx, kind, errs, raw,
+    fromPt: f || t || [0, 0],
+    toPt: t || f || [0, 0],
+    stroke: optColor(raw.stroke, 'stroke', DEFAULTS.stroke),
+    width
+  };
+  if (kind === 'curve') {
+    res.viaPts = null;
+    if (raw.via !== undefined && !(Array.isArray(raw.via) && raw.via.length === 0)) {
+      // via: [] 按不存在处理（自动方向臂模式）；否则必须恰好 2 个控制点（三次贝塞尔）
+      if (Array.isArray(raw.via) && raw.via.length === 2 && raw.via.every(isPtLiteral)) {
+        res.viaPts = raw.via.map(p => [p[0], p[1]]);
+      } else errs.push('via：必须恰好是 2 个 [x, y] 控制点（三次贝塞尔）；不需要控制点请删除 via 字段');
+    }
+    for (const fld of ['exit', 'enter']) {
+      if (raw[fld] !== undefined && !DIR_VEC[raw[fld]]) errs.push(fld + '：必须是 up/down/left/right');
+    }
+    if (raw.tension !== undefined && !(typeof raw.tension === 'number' && Number.isFinite(raw.tension) && raw.tension >= 0)) {
+      errs.push('tension：必须是非负数');
+    }
+    res.tension = (typeof raw.tension === 'number' && Number.isFinite(raw.tension) && raw.tension >= 0) ? raw.tension : DEFAULTS.tension;
+  }
+  return res;
+}
+
+// 曲线控制点：via 优先；否则按 exit/enter 方向伸出 tension 臂；都没有则退化为直线
+function curveControls(res) {
+  if (res.viaPts && res.viaPts.length) return res.viaPts;
+  const f = res.fromPt, t = res.toPt;
+  const d1 = DIR_VEC[res.raw.exit], d2 = DIR_VEC[res.raw.enter];
+  const arm = res.tension;
+  const c1 = d1 ? [f[0] + d1[0] * arm, f[1] + d1[1] * arm]
+                : [f[0] + (t[0] - f[0]) / 3, f[1] + (t[1] - f[1]) / 3];
+  const c2 = d2 ? [t[0] + d2[0] * arm, t[1] + d2[1] * arm]
+                : [f[0] + (t[0] - f[0]) * 2 / 3, f[1] + (t[1] - f[1]) * 2 / 3];
+  return [c1, c2];
+}
+
+function evalScene(doc, opts) {
+  const grid = (typeof doc.grid === 'number' && Number.isFinite(doc.grid) && doc.grid > 0) ? doc.grid : DEFAULTS.grid;
+  const { list: nodes } = evalNodes(doc.nodes || [], opts);
+  const wires = (doc.wires || []).map((w, i) => evalWire(w, i));
+  return { grid, nodes, wires };
+}
+
+// ---- 连线几何（纯函数，GUI 与 SVG 导出共用） ------------------------------------
+
+function curveD(res) {
+  const c = curveControls(res); // 现在恒为 2 个控制点（via 恰 2 个或自动方向臂补 2 个）
+  const c1 = c[0], c2 = c[1] || c[0]; // 防御：异常输入下退化为对称控制点
+  const f = res.fromPt, t = res.toPt;
+  return `M ${f[0]} ${f[1]} C ${c1[0]} ${c1[1]} ${c2[0]} ${c2[1]} ${t[0]} ${t[1]}`;
+}
+
+// ---- 框选几何：曲线采样折线与矩形的相交判定（纯函数，供 GUI 长按框选）---------------
+// 三次贝塞尔采样为 n+1 个点的折线
+function curvePolyline(res, n = 24) {
+  const c = curveControls(res);
+  const c1 = c[0], c2 = c[1] || c[0];
+  const f = res.fromPt, t = res.toPt, pts = [];
+  for (let i = 0; i <= n; i++) {
+    const u = i / n, v = 1 - u;
+    pts.push([
+      v * v * v * f[0] + 3 * v * v * u * c1[0] + 3 * v * u * u * c2[0] + u * u * u * t[0],
+      v * v * v * f[1] + 3 * v * v * u * c1[1] + 3 * v * u * u * c2[1] + u * u * u * t[1]
+    ]);
+  }
+  return pts;
+}
+// 线段与开区间线段相交（跨立实验；共线/贴边由端点在矩形内兜底，框选场景足够）
+function segSegIntersect(p1, p2, p3, p4) {
+  const d = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  const d1 = d(p3, p4, p1), d2 = d(p3, p4, p2), d3 = d(p1, p2, p3), d4 = d(p1, p2, p4);
+  return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
+}
+function ptInRect(p, r) { return p[0] >= r.x0 && p[0] <= r.x1 && p[1] >= r.y0 && p[1] <= r.y1; }
+function segRectIntersect(a, b, r) {
+  if (ptInRect(a, r) || ptInRect(b, r)) return true;
+  const c = [[r.x0, r.y0], [r.x1, r.y0], [r.x1, r.y1], [r.x0, r.y1]];
+  for (let i = 0; i < 4; i++) if (segSegIntersect(a, b, c[i], c[(i + 1) % 4])) return true;
+  return false;
+}
+// 曲线与选框矩形是否相交：采样折线的任一采样点在矩形内，或任一采样段与矩形边相交。
+// 语义为"相交即选中"（扫过即选），比"完全包含"更符合框选直觉。
+function wireIntersectsRect(res, r) {
+  if (!res || res.kind !== 'curve') return false;
+  const pts = curvePolyline(res);
+  for (let i = 0; i < pts.length - 1; i++) if (segRectIntersect(pts[i], pts[i + 1], r)) return true;
+  return false;
+}
+
+// ---- 节点拖动：坐标身份迁移 + 连线端点跟随 ----------------------------------------
+// 曲线端点移动：which='from'|'to'。端点改为 newPt，对应控制点（from↔via[0]，to↔via[1]）
+// 按相同向量跟随（保持与端点的相对位置），结果吸附 grid；另一个控制点不动。就地修改，返回是否成功。
+function moveCurveEndpoint(wire, which, newPt, grid) {
+  if (!isPlainObj(wire) || !isPtLiteral(wire[which]) || !isPtLiteral(newPt)) return false;
+  const old = wire[which];
+  const d = [newPt[0] - old[0], newPt[1] - old[1]];
+  wire[which] = [newPt[0], newPt[1]];
+  if (wire.type === 'curve' && Array.isArray(wire.via) && wire.via.length === 2) {
+    const i = which === 'from' ? 0 : 1;
+    if (isPtLiteral(wire.via[i])) {
+      wire.via[i] = [snapTo(wire.via[i][0] + d[0], grid), snapTo(wire.via[i][1] + d[1], grid)];
+    }
+  }
+  return true;
+}
+
+// 导入规范化：wires 只保留 curve 类型（"连线即曲线"）。
+// - seg（旧版直线）→ curve：via 取两端点连线的 1/3、2/3 处并吸附网格（视觉仍是直线，可拖出弧度）；
+// - curve 的 via 只允许"不存在"或"恰好 2 个控制点"：via: [] 视为不存在（自动 exit/enter 方向臂模式），
+//   旧版 1 个控制点（二次贝塞尔）按端点中点镜像对称补全为 2 个（网格对齐不漂移）；
+// 其他非法形态留给求值层标错。返回 { doc, segMigrated }（seg 迁移条数供 GUI 提示）。
+function normalizeWires(doc) {
+  let segMigrated = 0;
+  const g = (doc && typeof doc.grid === 'number' && Number.isFinite(doc.grid) && doc.grid > 0) ? doc.grid : DEFAULTS.grid;
+  for (const w of (doc && doc.wires) || []) {
+    if (!isPlainObj(w)) continue;
+    if (w.type === 'seg' && isPtLiteral(w.from) && isPtLiteral(w.to)) {
+      w.type = 'curve';
+      w.via = [
+        snapPtTo([w.from[0] + (w.to[0] - w.from[0]) / 3, w.from[1] + (w.to[1] - w.from[1]) / 3], g),
+        snapPtTo([w.from[0] + (w.to[0] - w.from[0]) * 2 / 3, w.from[1] + (w.to[1] - w.from[1]) * 2 / 3], g)
+      ];
+      segMigrated++;
+      continue;
+    }
+    if (w.type !== 'curve' || !Array.isArray(w.via)) continue;
+    if (w.via.length === 0) { delete w.via; continue; }
+    if (w.via.length === 1 && isPtLiteral(w.via[0]) && isPtLiteral(w.from) && isPtLiteral(w.to)) {
+      const c = w.via[0];
+      w.via = [[c[0], c[1]], [w.from[0] + w.to[0] - c[0], w.from[1] + w.to[1] - c[1]]];
+    }
+  }
+  return { doc, segMigrated };
+}
+
+// 节点从格点 A 移到空格点 B：改其 at，并把所有等于 A 的 wire 端点改为 B；
+// curve 端点的对应控制点按相同向量跟随（调用方保证坐标已吸附网格，故此处无需再吸附）。
+// 目标格点被占用时拒绝（ok:false, reason:'occupied'），GUI 弹回原位。
+function moveNode(doc, fromPt, toPt) {
+  const idx = (doc.nodes || []).findIndex(n =>
+    isPlainObj(n) && isPtLiteral(n.at) && n.at[0] === fromPt[0] && n.at[1] === fromPt[1]);
+  if (idx === -1) return { ok: false, reason: 'not-found' };
+  const occupied = (doc.nodes || []).some((n, j) =>
+    j !== idx && isPlainObj(n) && isPtLiteral(n.at) && n.at[0] === toPt[0] && n.at[1] === toPt[1]);
+  if (occupied) return { ok: false, reason: 'occupied' };
+  doc.nodes[idx].at = [toPt[0], toPt[1]];
+  for (const w of doc.wires || []) {
+    if (!isPlainObj(w)) continue;
+    for (const f of ['from', 'to']) {
+      if (isPtLiteral(w[f]) && w[f][0] === fromPt[0] && w[f][1] === fromPt[1]) {
+        // 复用端点联动：grid 传 1 等价于不吸附（坐标已对齐网格）
+        moveCurveEndpoint(w, f, [toPt[0], toPt[1]], 1);
+      }
+    }
+  }
+  return { ok: true, index: idx };
+}
+
+// ---- SVG 导出：求值后的场景 → 独立自包含 SVG -------------------------------------
+// 只导出图元本体（连线、可见节点、节点文字）；格点阵、错误标红等编辑器辅助元素不导出。
+// opts: { padding=20, fontSize, fontFamily, measureText, texRender }
+function exportSceneSvg(scene, opts) {
+  const o = opts || {};
+  const pad = typeof o.padding === 'number' ? o.padding : 20;
+  const texFailed = [];
+  const M = [];
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  const grow = (x, y, m) => {
+    minX = Math.min(minX, x - m); maxX = Math.max(maxX, x + m);
+    minY = Math.min(minY, y - m); maxY = Math.max(maxY, y + m);
+  };
+
+  // 连线
+  for (const res of scene.wires) {
+    if (res.kind !== 'curve') continue;
+    M.push(`<path d="${curveD(res)}" fill="none" stroke="${res.stroke}" stroke-width="${res.width}"/>`);
+    const m = res.width / 2;
+    grow(res.fromPt[0], res.fromPt[1], m);
+    grow(res.toPt[0], res.toPt[1], m);
+    if (res.kind === 'curve') for (const c of curveControls(res)) grow(c[0], c[1], m);
+  }
+
+  // 可见节点
+  for (const nd of scene.nodes) {
+    if (!nd.ap) continue;
+    const [x, y] = nd.pt, [w, h] = nd.ap.size;
+    const common = `fill="${nd.ap.fill}" stroke="${nd.ap.border}" stroke-width="${nd.ap.borderWidth}"`;
+    M.push(nd.ap.shape === 'ellipse'
+      ? `<ellipse cx="${x}" cy="${y}" rx="${w / 2}" ry="${h / 2}" ${common}/>`
+      : `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="3" ${common}/>`);
+    grow(x - w / 2, y - h / 2, nd.ap.borderWidth / 2);
+    grow(x + w / 2, y + h / 2, nd.ap.borderWidth / 2);
+    // 节点文字（整段 TeX 公式，自动尺寸已在求值时计入）
+    if (nd.ap.text) {
+      const lab = nodeLabelSvg(nd, o);
+      M.push(lab.markup);
+      texFailed.push(...lab.failed);
+      grow(x - lab.width / 2, y - lab.height / 2, 0);
+      grow(x + lab.width / 2, y + lab.height / 2, 0);
+    }
+  }
+
+  if (!isFinite(minX)) { minX = 0; minY = 0; maxX = 100; maxY = 100; } // 空场景
+  const bx = round2(minX - pad), by = round2(minY - pad);
+  const bw = round2(maxX - minX + 2 * pad), bh = round2(maxY - minY + 2 * pad);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="${bx} ${by} ${bw} ${bh}" width="${bw}" height="${bh}">\n${M.join('\n')}\n</svg>\n`;
+  return { svg, bbox: [bx, by, bw, bh], texFailed };
+}
+// ===CORE-END===
+
+// ============================================================================
+// 第 3 层：GUI（格点即锚点交互 + 属性面板）。
+// ============================================================================
+
+const SAMPLE = `// string diagram（格点即锚点，40 网格；连线即曲线）
+{
+  "grid": 40,
+  "nodes": [
+    { "at": [160, 200], "text": "f" },
+    { "at": [160, 320], "text": "g \\\\circ f", "shape": "ellipse", "size": [80, 40] }
+  ],
+  "wires": [
+    { "type": "curve", "from": [120, 40], "to": [160, 200],
+      "via": [[120, 80], [160, 160]], "stroke": "#222222ff", "width": 2 },
+    { "type": "curve", "from": [200, 40], "to": [160, 200],
+      "via": [[200, 80], [160, 160]], "stroke": "#222222ff", "width": 2 },
+    { "type": "curve", "from": [160, 200], "to": [160, 320],
+      "via": [[220, 240], [220, 280]], "stroke": "#2266ccff", "width": 2 },
+    { "type": "curve", "from": [160, 320], "to": [160, 440],
+      "via": [[160, 360], [160, 400]], "stroke": "#222222ff", "width": 2 }
+  ]
+}`;
+
+const svg = document.getElementById('svg');
+const panel = document.getElementById('panel');
+const errorsBox = document.getElementById('errors');
+const gridInput = document.getElementById('gridInput');
+const SVG_MARGIN = 12; // #svg 的 CSS margin，供就地编辑框定位
+
+let doc = parseDoc(SAMPLE).doc;
+let selection = null;          // {kind:'node'|'wire', index} | {kind:'wires'}（曲线多选）
+let selSet = [];               // 选中的曲线索引集合（插入序，最后一个为"最后选中"）；单选时恰一个元素
+// 统一应用曲线选中集合：>1 → 多选面板；=1 → 单选完整属性；=0 → 无选中
+function applyWireSel(set) {
+  selSet = set;
+  if (set.length > 1) selection = { kind: 'wires' };
+  else if (set.length === 1) selection = { kind: 'wire', index: set[0] };
+  else selection = null;
+}
+let tool = 'select';
+let dragState = null;
+let lastScene = null;
+
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+const curGrid = () => (lastScene ? lastScene.grid : DEFAULTS.grid);
+const snapPt = (p) => snapPtTo(p, curGrid());
+
+// 悬停光晕：独立 hover 层元素，mousemove 时单独移动/显隐，不触发全量重绘
+// 格点光晕 = 两个同心半透明圆（柔和蓝灰光晕，暗示"这里可以点"）
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const hoverGrid = document.createElementNS(SVG_NS, 'g');
+hoverGrid.setAttribute('pointer-events', 'none');
+const haloOut = document.createElementNS(SVG_NS, 'circle');
+haloOut.setAttribute('fill', '#3182ce');
+haloOut.setAttribute('opacity', '0.16');
+const haloIn = document.createElementNS(SVG_NS, 'circle');
+haloIn.setAttribute('fill', '#3182ce');
+haloIn.setAttribute('opacity', '0.32');
+hoverGrid.append(haloOut, haloIn);
+hoverGrid.style.display = 'none';
+// 连线光晕 = 同路径加粗 + 固定低透明度；颜色取连线自身 stroke 的 RGB（不被连线 alpha 影响）
+const hoverWire = document.createElementNS(SVG_NS, 'path');
+hoverWire.setAttribute('pointer-events', 'none');
+hoverWire.setAttribute('fill', 'none');
+hoverWire.setAttribute('stroke-linecap', 'round');
+hoverWire.setAttribute('opacity', '0.3');
+hoverWire.style.display = 'none';
+
+let toastTimer = null;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ---- 颜色工具：#RRGGBBAA <-> 取色器 + 透明度滑条 -----------------------------
+function parseColor(c, def) {
+  c = (typeof c === 'string' && COLOR_RE.test(c)) ? c : def;
+  let h = c.slice(1);
+  if (h.length === 3 || h.length === 4) h = h.split('').map(ch => ch + ch).join('');
+  if (h.length === 6) h += 'ff';
+  return { hex6: '#' + h.slice(0, 6).toLowerCase(), a: parseInt(h.slice(6, 8), 16) };
+}
+function composeColor(hex6, a) {
+  return hex6.toLowerCase() + clamp(Math.round(a), 0, 255).toString(16).padStart(2, '0');
+}
+
+// ---- MathJax v3 集成（CDN 按需加载，仅用于 TeX 公式渲染；失败时回退源码文本） ------
+let mjState = 'idle'; // idle | loading | ready | failed
+let mjPromise = null;
+const texCache = new Map(); // tex → { markup, wPx, hPx, vbW, vbTop }
+const TEX_EM = 14, TEX_EX = 7; // 与节点文字 14px 字号匹配
+
+function ensureMathJax() {
+  if (mjState === 'ready') return Promise.resolve(true);
+  if (mjState === 'failed') return Promise.resolve(false);
+  if (mjPromise) return mjPromise;
+  mjState = 'loading';
+  window.MathJax = { svg: { fontCache: 'local' } }; // local：defs 内嵌，导出文件自包含
+  mjPromise = new Promise((resolve) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js';
+    s.onload = () => { mjState = 'ready'; resolve(true); };
+    s.onerror = () => { mjState = 'failed'; resolve(false); };
+    document.head.append(s);
+  });
+  return mjPromise;
+}
+
+// 同步渲染（需 mjState==='ready'）。返回 { markup, wPx, hPx, vbW, vbTop } 或 null。
+function mjRender(tex) {
+  try {
+    const node = MathJax.tex2svg(tex, { display: false, em: TEX_EM, ex: TEX_EX, scale: 1 });
+    const svgEl = node.querySelector('svg');
+    if (!svgEl || svgEl.hasAttribute('data-mjx-error')) return null;
+    const vb = String(svgEl.getAttribute('viewBox') || '').split(/\s+/).map(Number);
+    const wEx = parseFloat(svgEl.getAttribute('width') || '0');
+    const hEx = parseFloat(svgEl.getAttribute('height') || '0');
+    if (!(vb.length === 4 && vb[2] > 0 && wEx > 0 && hEx > 0)) return null;
+    // XML 严格性消毒：HTML 序列化会把 U+00A0 输出为 &nbsp;（XML 不支持的 HTML 实体），
+    // 替换为数值实体，保证内嵌进导出 SVG（严格 XML 解析）时不炸。xlink:href 前缀由导出根元素统一声明 xmlns:xlink。
+    const markup = svgEl.innerHTML.replace(/&nbsp;/g, '&#160;');
+    return { markup, wPx: wEx * TEX_EX, hPx: hEx * TEX_EX, vbW: vb[2], vbTop: vb[1] };
+  } catch (e) { return null; }
+}
+
+// 画布实时渲染用的 texRender：未加载时回退源码文本并触发异步加载，完成后重绘
+function liveTexRender(tex) {
+  if (texCache.has(tex)) return texCache.get(tex);
+  if (mjState === 'ready') {
+    const r = mjRender(tex);
+    if (r) texCache.set(tex, r);
+    return r;
+  }
+  ensureMathJax().then((ok) => { if (ok) render(); });
+  return null;
+}
+
+// 自动尺寸用的内容测量：复用公式缓存；MathJax 未就绪返回 null（求值层按源码粗估）
+function liveMeasureNode(text) {
+  if (!text) return null;
+  const r = liveTexRender(text);
+  return r ? { w: r.wPx, h: r.hPx } : null;
+}
+
+// 文字测宽（canvas 2d），供 SVG 导出共用
+const measureCtx = document.createElement('canvas').getContext('2d');
+function measureTextPx(s) {
+  measureCtx.font = `14px ${FONT_FAMILY}`;
+  return measureCtx.measureText(String(s)).width;
+}
+
+// ---- 主渲染：求值后的场景 → SVG ---------------------------------------------------
+function render() {
+  const scene = evalScene(doc, { measureNode: liveMeasureNode });
+  lastScene = scene;
+  const g = scene.grid;
+  const M = [];
+  // 辅助元素：格点阵（"辅助显示"开关控制；格点/连线悬停光晕由 hover 层单独处理）
+  const showAids = document.getElementById('showAids').checked;
+  if (showAids && g >= 8) {
+    // 格点阵：格点即锚点的视觉隐喻（随 grid 联动）
+    M.push('<g fill="#b9c6d8">');
+    for (let x = 0; x <= 2400; x += g) {
+      for (let y = 0; y <= 1400; y += g) M.push(`<circle cx="${x}" cy="${y}" r="2"/>`);
+    }
+    M.push('</g>');
+  }
+
+  // 连线
+  for (const res of scene.wires) {
+    const err = res.errs.length > 0;
+    const sel = selSet.includes(res.idx); // 多选集合内的曲线全部橙色高亮
+    if (res.kind === 'curve') {
+      const d = curveD(res);
+      const stroke = err ? '#e02424' : res.stroke;
+      const dash = err ? ' stroke-dasharray="6 4"' : '';
+      M.push(`<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${res.width}"${dash} pointer-events="none"/>`);
+      if (sel) M.push(`<path d="${d}" fill="none" stroke="#f6ad55" stroke-width="${res.width + 4}" stroke-opacity="0.45" pointer-events="none"/>`);
+      M.push(`<path d="${d}" fill="none" stroke="rgba(0,0,0,0)" stroke-width="${Math.max(14, res.width + 8)}" pointer-events="stroke" data-wire="${res.idx}" style="cursor:pointer"/>`);
+    } else { // bad 连线：红色占位标记
+      M.push(`<g data-wire="${res.idx}" style="cursor:pointer"><circle cx="${res.fromPt[0]}" cy="${res.fromPt[1]}" r="8" fill="#e0242433" stroke="#e02424" stroke-width="2" stroke-dasharray="4 3"/></g>`);
+    }
+    if (err) M.push(`<text x="${res.fromPt[0] + 8}" y="${res.fromPt[1] - 8}" fill="#e02424" font-size="14" pointer-events="none">⚠</text>`);
+  }
+
+  // 节点（有内容的才渲染）
+  for (const nd of scene.nodes) {
+    const err = nd.errs.length > 0;
+    const sel = selection && selection.kind === 'node' && selection.index === nd.idx;
+    if (!nd.ap) { // 无内容 / 定义非法：红色占位标记
+      if (err) {
+        M.push(`<g data-node="${nd.idx}" style="cursor:pointer"><circle cx="${nd.pt[0]}" cy="${nd.pt[1]}" r="8" fill="#e0242433" stroke="#e02424" stroke-width="2" stroke-dasharray="4 3"/></g>`);
+        M.push(`<text x="${nd.pt[0] + 10}" y="${nd.pt[1] - 8}" fill="#e02424" font-size="12" pointer-events="none">⚠</text>`);
+      }
+      continue;
+    }
+    const [x, y] = nd.pt, [w, h] = nd.ap.size;
+    const fill = err ? '#e0242433' : nd.ap.fill;
+    const stroke = err ? '#e02424' : nd.ap.border;
+    const dash = err ? ' stroke-dasharray="6 4"' : '';
+    const common = `fill="${fill}" stroke="${stroke}" stroke-width="${nd.ap.borderWidth}"${dash}`;
+    const shape = nd.ap.shape === 'ellipse'
+      ? `<ellipse cx="${x}" cy="${y}" rx="${w / 2}" ry="${h / 2}" ${common}/>`
+      : `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="3" ${common}/>`;
+    M.push(`<g data-node="${nd.idx}" style="cursor:pointer">${shape}</g>`);
+    if (nd.ap.text) { // 整段 text 即 TeX 公式源码；MathJax 未就绪时回退显示源码
+      const lab = nodeLabelSvg(nd, {
+        texRender: liveTexRender, measureText: measureTextPx,
+        color: err ? '#e02424' : nd.ap.textColor
+      });
+      M.push(`<g pointer-events="none">${lab.markup}</g>`);
+    }
+    if (sel) {
+      M.push(`<rect x="${x - w / 2 - 4}" y="${y - h / 2 - 4}" width="${w + 8}" height="${h + 8}" fill="none" stroke="#f6ad55" stroke-width="1.5" stroke-dasharray="4 3" pointer-events="none"/>`);
+    }
+    if (err) M.push(`<text x="${x + 8}" y="${y - h / 2 - 6}" fill="#e02424" font-size="14" pointer-events="none">⚠</text>`);
+  }
+
+  // 选中连线的操作手柄（连线即曲线；手柄尺寸加倍便于抓取，命中区域同步加大）
+  // 多选时手柄只挂在最后选中的一条上
+  if (selSet.length > 0) {
+    const res = scene.wires[selSet[selSet.length - 1]];
+    if (res && res.kind === 'curve') {
+      const handle = (p, field) =>
+        `<rect x="${p[0] - 10}" y="${p[1] - 10}" width="20" height="20" rx="4" fill="#fff" stroke="#2b6cb0" stroke-width="2" data-handle="${res.idx}:${field}" style="cursor:move"/>`;
+      const c = curveControls(res);
+      M.push(`<line x1="${res.fromPt[0]}" y1="${res.fromPt[1]}" x2="${c[0][0]}" y2="${c[0][1]}" stroke="#a0aec0" stroke-dasharray="3 3" pointer-events="none"/>`);
+      M.push(`<line x1="${res.toPt[0]}" y1="${res.toPt[1]}" x2="${c[c.length - 1][0]}" y2="${c[c.length - 1][1]}" stroke="#a0aec0" stroke-dasharray="3 3" pointer-events="none"/>`);
+      c.forEach((p, i) => {
+        M.push(`<circle cx="${p[0]}" cy="${p[1]}" r="10" fill="#fff" stroke="#b0562b" stroke-width="2" data-handle="${res.idx}:via${i}" style="cursor:move"/>`);
+      });
+      M.push(handle(res.fromPt, 'from'));
+      M.push(handle(res.toPt, 'to'));
+    }
+  }
+  // 选中节点的尺寸手柄
+  if (selection && selection.kind === 'node') {
+    const nd = scene.nodes[selection.index];
+    if (nd && nd.ap) {
+      const [x, y] = nd.pt, [w, h] = nd.ap.size;
+      M.push(`<rect x="${x + w / 2 - 6}" y="${y + h / 2 - 6}" width="12" height="12" fill="#fff" stroke="#2b6cb0" stroke-width="1.5" data-handle="node:size" style="cursor:nwse-resize"/>`);
+    }
+  }
+
+  // 节点拖动：合法目标已实时应用（节点+连线逐帧跟随）；仅目标被占用时用红色虚线框标记拒绝态
+  if (dragState && dragState.kind === 'nodeMove' && dragState.cur && !dragState.valid) {
+    const nd = scene.nodes[dragState.index];
+    if (nd && nd.ap) {
+      const [w, h] = nd.ap.size;
+      const [cx, cy] = dragState.cur;
+      M.push(`<rect x="${cx - w / 2}" y="${cy - h / 2}" width="${w}" height="${h}" rx="3" fill="#e0242422" stroke="#e02424" stroke-width="2" stroke-dasharray="5 4" pointer-events="none"/>`);
+    }
+  }
+  // 曲线创建预览（吸附端点）
+  if (dragState && dragState.kind === 'createWire' && dragState.cur) {
+    const a = dragState.start, b = snapPt(dragState.cur);
+    M.push(`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#3182ce" stroke-width="2" stroke-dasharray="5 4" pointer-events="none"/>`);
+    M.push(`<circle cx="${b[0]}" cy="${b[1]}" r="4" fill="none" stroke="#3182ce" stroke-width="2" pointer-events="none"/>`);
+  }
+  // 长按框选的矩形选框
+  if (dragState && dragState.kind === 'marquee') {
+    const x = Math.min(dragState.x0, dragState.x1), y = Math.min(dragState.y0, dragState.y1);
+    const w = Math.abs(dragState.x1 - dragState.x0), h = Math.abs(dragState.y1 - dragState.y0);
+    M.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#3182ce22" stroke="#3182ce" stroke-width="1.5" stroke-dasharray="5 4" pointer-events="none"/>`);
+  }
+
+  svg.innerHTML = M.join('\n');
+  svg.appendChild(hoverGrid); // hover 层永远置顶（innerHTML 重建后重新挂上）
+  svg.appendChild(hoverWire);
+  renderErrors(scene);
+}
+
+function renderErrors(scene) {
+  const list = [];
+  for (const nd of scene.nodes) {
+    for (const e of nd.errs) {
+      list.push({ html: `节点 #${nd.idx + 1}（at (${nd.pt[0]}, ${nd.pt[1]})）：${escXml(e)}`, sel: { kind: 'node', index: nd.idx } });
+    }
+  }
+  for (const res of scene.wires) {
+    for (const e of res.errs) {
+      list.push({ html: `连线 #${res.idx + 1}（${escXml(res.kind)}）：${escXml(e)}`, sel: { kind: 'wire', index: res.idx } });
+    }
+  }
+  if (!list.length) { errorsBox.innerHTML = ''; return; }
+  errorsBox.innerHTML = `<div class="err-title">⚠ 问题（${list.length}）</div>` +
+    list.map((it, i) => `<div class="err-item" data-err="${i}">• ${it.html}</div>`).join('');
+  errorsBox.querySelectorAll('[data-err]').forEach((el, i) => {
+    el.addEventListener('click', () => {
+      const s = list[i].sel;
+      if (s.kind === 'wire') applyWireSel([s.index]);
+      else { selSet = []; selection = s; }
+      render(); renderPanel();
+    });
+  });
+}
+
+// ---- 画布交互 ------------------------------------------------------------------
+function svgPt(e) {
+  const r = svg.getBoundingClientRect();
+  return [e.clientX - r.left, e.clientY - r.top];
+}
+
+// 格点占用检测（拖动落点规则：只能落到原先没有内容的格点）
+function occupiedAt(pt, exceptIdx) {
+  return doc.nodes.some((n, j) => j !== exceptIdx && isPlainObj(n) && isPtLiteral(n.at) &&
+    n.at[0] === pt[0] && n.at[1] === pt[1]);
+}
+function nodeIndexAt(pt) {
+  return doc.nodes.findIndex(n => isPlainObj(n) && isPtLiteral(n.at) &&
+    n.at[0] === pt[0] && n.at[1] === pt[1]);
+}
+// 节点是否可拖动：只有有文字的节点可拖动
+function nodeDraggable(idx) {
+  const n = doc.nodes[idx];
+  return isPlainObj(n) && typeof n.text === 'string' && n.text !== '';
+}
+
+svg.addEventListener('mousedown', (e) => {
+  if (e.button !== 0) return;
+  const p = svgPt(e);
+  const t = e.target;
+  const h = t.closest && t.closest('[data-handle]');
+  if (h) {
+    const [idx, field] = h.dataset.handle.split(':');
+    if (idx === 'node') { // 节点尺寸手柄
+      const nd = lastScene.nodes[selection.index];
+      dragState = { kind: 'size', index: selection.index, center: nd.pt.slice() };
+    } else if (field === 'from' || field === 'to') {
+      // 端点手柄：拖动改坐标（吸附最近格点）；curve 的对应控制点按相同向量跟随
+      applyWireSel([+idx]);
+      const w0 = doc.wires[+idx];
+      const viaIdx = field === 'from' ? 0 : 1;
+      const origCtl = (w0 && w0.type === 'curve' && Array.isArray(w0.via) && isPtLiteral(w0.via[viaIdx]))
+        ? w0.via[viaIdx].slice() : null;
+      const res0 = lastScene.wires[+idx];
+      dragState = { kind: 'endpoint', index: +idx, field, origEnd: res0 ? res0[field === 'from' ? 'fromPt' : 'toPt'].slice() : null, origCtl };
+      render(); renderPanel();
+    } else { // via 控制点
+      applyWireSel([+idx]);
+      dragState = { kind: 'via', index: +idx, viaIdx: +field.slice(3) };
+      render(); renderPanel();
+    }
+    return;
+  }
+  const ndEl = t.closest && t.closest('[data-node]');
+  if (ndEl && tool === 'select') {
+    const idx = +ndEl.dataset.node;
+    selection = { kind: 'node', index: idx }; // 节点不参与多选：点节点 = 单选节点并清空曲线多选
+    selSet = [];
+    if (nodeDraggable(idx)) {
+      const nd = lastScene.nodes[idx];
+      // 快照 wires（含 via）供拖拽期间每帧回滚：实时跟随 = 恢复快照 → 以当前目标重新应用 moveNode
+      dragState = { kind: 'nodeMove', index: idx, orig: nd.pt.slice(), cur: nd.pt.slice(), valid: true,
+        snapWires: JSON.parse(JSON.stringify(doc.wires)) };
+    }
+    render(); renderPanel();
+    return;
+  }
+  const wr = t.closest && t.closest('[data-wire]');
+  if (wr && tool === 'select') { // 画线模式下点击已有曲线不选中（避免干扰连续绘制）
+    const idx = +wr.dataset.wire;
+    if (e.shiftKey) { // Shift+单击 = 加入/移出多选集合（toggle），不启动拖动
+      applyWireSel(selSet.includes(idx) ? selSet.filter(i => i !== idx) : [...selSet, idx]);
+      render(); renderPanel();
+      return;
+    }
+    applyWireSel([idx]); // 单选
+    // 整体拖动：记录起始位置快照，避免吸附误差累积
+    const res = lastScene.wires[idx];
+    const orig = { from: res.fromPt.slice(), to: res.toPt.slice() };
+    const origVia = Array.isArray(res.raw.via) ? res.raw.via.map(c => isPtLiteral(c) ? c.slice() : c) : null;
+    dragState = { kind: 'wireBody', index: idx, start: p, orig, origVia };
+    render(); renderPanel();
+    return;
+  }
+  // 空白画布
+  if (tool === 'curve') {
+    // 画线：从格点拖到格点（起止都吸附最近格点）；原地单击（mouseup 判定）= 回到选择模式
+    dragState = { kind: 'createWire', start: snapPt(p), cur: p, startRaw: p };
+  } else {
+    // select 工具空白：准备长按框选（350ms 未移动后激活）；普通单击 = 取消选中（mouseup 判定）
+    const start = p, shift = e.shiftKey;
+    const timer = setTimeout(() => {
+      if (dragState && dragState.kind === 'marqueePending') {
+        dragState = { kind: 'marquee', x0: start[0], y0: start[1], x1: start[0], y1: start[1], additive: shift };
+        render();
+      }
+    }, 350);
+    dragState = { kind: 'marqueePending', start, shift, timer, moved: false };
+  }
+});
+
+// ---- 悬停光晕：格点光晕 + 连线光晕（独立 hover 层，mousemove 只改属性，不触发全量重绘）----
+// 连线命中复用透明加粗命中路径（data-wire）；连线光晕优先于格点光晕
+function updateHover(p, wireIdx = -1) {
+  // 连线光晕：颜色 = 该连线自身 stroke 的 RGB，固定 opacity 0.3（不被连线自身透明度影响）
+  const res = (wireIdx >= 0 && !dragState && lastScene) ? lastScene.wires[wireIdx] : null;
+  if (res && res.kind === 'curve') {
+    hoverWire.setAttribute('d', curveD(res));
+    hoverWire.setAttribute('stroke', parseColor(res.stroke, DEFAULTS.stroke).hex6);
+    hoverWire.setAttribute('stroke-width', res.width + 6);
+    hoverWire.style.display = '';
+  } else {
+    hoverWire.style.display = 'none';
+  }
+  // 格点光晕：辅助显示开关联动；无节点占据且未命中连线时跟随最近格点
+  const g = curGrid();
+  const pt = p && snapPt(p);
+  if (!p || !showAidsInput.checked || dragState || g < 8 || res || occupiedAt(pt, -1)) {
+    hoverGrid.style.display = 'none';
+  } else {
+    const r1 = Math.min(12, g * 0.25); // 半径取格点间距的一小部分，上限 12px
+    haloOut.setAttribute('cx', pt[0]); haloOut.setAttribute('cy', pt[1]); haloOut.setAttribute('r', round2(r1));
+    haloIn.setAttribute('cx', pt[0]); haloIn.setAttribute('cy', pt[1]); haloIn.setAttribute('r', round2(r1 * 0.55));
+    hoverGrid.style.display = '';
+  }
+  svg.style.cursor = (hoverGrid.style.display === '' || hoverWire.style.display === '') ? 'pointer' : '';
+}
+svg.addEventListener('mousemove', (e) => {
+  if (dragState) return;
+  const wr = e.target.closest && e.target.closest('[data-wire]');
+  updateHover(svgPt(e), wr ? +wr.dataset.wire : -1);
+});
+svg.addEventListener('mouseleave', () => updateHover(null, -1));
+
+// 节点拖动回滚：把节点位置与全部 wires（from/to/via）恢复到拖拽起点快照
+function restoreNodeDrag(ds) {
+  doc.nodes[ds.index].at = ds.orig.slice();
+  ds.snapWires.forEach((sw, i) => { doc.wires[i] = JSON.parse(JSON.stringify(sw)); });
+}
+
+window.addEventListener('mousemove', (e) => {
+  if (!dragState) return;
+  updateHover(null); // 拖拽期间隐藏悬停光晕
+  const p = svgPt(e);
+  const ds = dragState;
+  if (ds.kind === 'nodeMove') {
+    ds.cur = snapPt(p);
+    ds.valid = !occupiedAt(ds.cur, ds.index);
+    // 实时跟随：先回滚到起点，合法目标则重新应用 moveNode（端点跟随+曲线控制点联动逐帧生效）
+    restoreNodeDrag(ds);
+    if (ds.valid) moveNode(doc, ds.orig, ds.cur);
+    render();
+  } else if (ds.kind === 'endpoint') {
+    const w = doc.wires[ds.index];
+    if (w) {
+      // 从拖拽起点快照计算整体位移（避免逐帧吸附误差累积），端点+对应控制点联动
+      if (ds.origEnd && isPtLiteral(w[ds.field])) w[ds.field] = ds.origEnd.slice();
+      if (ds.origCtl && Array.isArray(w.via)) w.via[ds.field === 'from' ? 0 : 1] = ds.origCtl.slice();
+      moveCurveEndpoint(w, ds.field, snapPt(p), curGrid());
+      render();
+    }
+  } else if (ds.kind === 'via') {
+    const w = doc.wires[ds.index];
+    if (w && Array.isArray(w.via) && isPtLiteral(w.via[ds.viaIdx])) {
+      w.via[ds.viaIdx] = snapPt(p);
+      render();
+    }
+  } else if (ds.kind === 'size') {
+    const def = doc.nodes[ds.index];
+    if (isPlainObj(def)) {
+      const sp = snapPt(p);
+      def.size = [
+        Math.max(curGrid(), Math.abs(sp[0] - ds.center[0]) * 2),
+        Math.max(curGrid(), Math.abs(sp[1] - ds.center[1]) * 2)
+      ];
+      render();
+    }
+  } else if (ds.kind === 'wireBody') {
+    const w = doc.wires[ds.index];
+    if (!w) { dragState = null; return; }
+    const d = [p[0] - ds.start[0], p[1] - ds.start[1]];
+    for (const f of ['from', 'to']) {
+      w[f] = snapPt([ds.orig[f][0] + d[0], ds.orig[f][1] + d[1]]);
+    }
+    if (ds.origVia && Array.isArray(w.via)) {
+      w.via = ds.origVia.map(c => isPtLiteral(c) ? snapPt([c[0] + d[0], c[1] + d[1]]) : c);
+    }
+    render();
+  } else if (ds.kind === 'createWire') {
+    ds.cur = p;
+    render();
+  } else if (ds.kind === 'marqueePending') {
+    // 长按计时中移动超过 4px：取消框选激活（视为一次失败的按压，不作任何操作）
+    if (Math.hypot(p[0] - ds.start[0], p[1] - ds.start[1]) > 4) {
+      clearTimeout(ds.timer);
+      dragState = null;
+    }
+  } else if (ds.kind === 'marquee') {
+    ds.x1 = p[0];
+    ds.y1 = p[1];
+    render();
+  }
+});
+
+window.addEventListener('mouseup', (e) => {
+  if (!dragState) return;
+  const ds = dragState;
+  dragState = null;
+  const p = svgPt(e);
+  if (ds.kind === 'nodeMove') {
+    const target = snapPt(p);
+    const moved = target[0] !== ds.orig[0] || target[1] !== ds.orig[1];
+    // 幂等提交：mousemove 期间的应用都是临时的——先回滚到起点，再以最终目标一次性提交
+    restoreNodeDrag(ds);
+    if (moved) {
+      if (!occupiedAt(target, ds.index)) {
+        moveNode(doc, ds.orig, target);
+      } else toast('目标格点已被占用，已弹回');
+    }
+    render(); renderPanel();
+  } else if (ds.kind === 'createWire') {
+    const a = ds.start, b = snapPt(p);
+    if (Math.hypot(b[0] - a[0], b[1] - a[1]) >= 5) {
+      // 连线即曲线：默认 2 个控制点（三次贝塞尔），取端点连线的 1/3、2/3 处并吸附网格
+      doc.wires.push({
+        type: 'curve', from: a, to: b,
+        via: [
+          snapPt([a[0] + (b[0] - a[0]) / 3, a[1] + (b[1] - a[1]) / 3]),
+          snapPt([a[0] + (b[0] - a[0]) * 2 / 3, a[1] + (b[1] - a[1]) * 2 / 3])
+        ]
+      });
+      // 连续绘制：保持画线模式、不设选中，直接画下一条
+      render(); renderPanel();
+    } else {
+      // 原地单击（起止距 < 5px）= 退出画线模式，回到选择模式
+      setTool('select');
+      render(); renderPanel();
+    }
+  } else if (ds.kind === 'marqueePending') {
+    clearTimeout(ds.timer);
+    // 空白处普通单击（未触发长按）= 取消选中；Shift 单击保留现有多选
+    if (!ds.shift) applyWireSel([]);
+    render(); renderPanel();
+  } else if (ds.kind === 'marquee') {
+    // 松手结算：与选框相交（扫过即选）的曲线入选；Shift 长按 = 追加到现有多选
+    const r = {
+      x0: Math.min(ds.x0, ds.x1), y0: Math.min(ds.y0, ds.y1),
+      x1: Math.max(ds.x0, ds.x1), y1: Math.max(ds.y0, ds.y1)
+    };
+    const hits = [];
+    if (lastScene) for (const res of lastScene.wires) {
+      if (wireIntersectsRect(res, r)) hits.push(res.idx);
+    }
+    applyWireSel(ds.additive ? [...new Set([...selSet, ...hits])] : hits);
+    if (!hits.length) toast('未命中曲线');
+    render(); renderPanel();
+  } else if (ds.kind === 'endpoint' || ds.kind === 'via' || ds.kind === 'size' || ds.kind === 'wireBody') {
+    render(); renderPanel(); // 拖拽结束刷新面板数值
+  }
+});
+
+// ---- 双击就地编辑：任意格点弹出编辑框，输入 TeX 源码 --------------------------------
+svg.addEventListener('dblclick', (e) => {
+  if (tool === 'curve') return; // 画线模式下禁止双击编辑节点（避免干扰连续绘制）
+  const gp = snapPt(svgPt(e));
+  openInlineEditor(gp);
+});
+
+function closeInlineEditor() {
+  const old = document.getElementById('inlineEditor');
+  if (old) old.remove();
+}
+
+function openInlineEditor(gridPt) {
+  closeInlineEditor();
+  const idx = nodeIndexAt(gridPt);
+  const existing = idx >= 0 ? doc.nodes[idx] : null;
+  const inp = document.createElement('input');
+  inp.id = 'inlineEditor';
+  inp.type = 'text';
+  inp.value = existing && typeof existing.text === 'string' ? existing.text : '';
+  inp.placeholder = 'TeX 公式，如 x^2';
+  inp.style.left = (SVG_MARGIN + gridPt[0]) + 'px';
+  inp.style.top = (SVG_MARGIN + gridPt[1]) + 'px';
+  document.getElementById('canvasWrap').append(inp);
+  inp.focus();
+  inp.select();
+  let done = false;
+  const submit = () => {
+    if (done) return;
+    done = true;
+    const v = inp.value.trim();
+    closeInlineEditor();
+    if (existing) {
+      if (v) existing.text = v;
+      else if (existing.shape === undefined) { // 清空且无显式 shape → 节点消失
+        doc.nodes.splice(idx, 1);
+        if (selection && selection.kind === 'node') selection = null;
+        toast('已清空文字，节点消失');
+      } else delete existing.text;
+    } else if (v) {
+      doc.nodes.push({ at: gridPt.slice(), text: v });
+      selection = { kind: 'node', index: doc.nodes.length - 1 };
+    }
+    render(); renderPanel();
+  };
+  const cancel = () => { if (!done) { done = true; closeInlineEditor(); } };
+  inp.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') { ev.preventDefault(); submit(); }
+    else if (ev.key === 'Escape') { ev.preventDefault(); cancel(); }
+  });
+  inp.addEventListener('blur', submit);
+}
+
+window.addEventListener('keydown', (e) => {
+  const tag = (e.target && e.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  if (e.key === 'Escape') {
+    if (tool !== 'select') setTool('select'); // 画线模式下 Esc 退出工具
+    applyWireSel([]); // 清空选中（含曲线多选集合）
+    render(); renderPanel();
+  }
+  else if (e.key === 'Delete' || e.key === 'Backspace') deleteSelection();
+});
+
+function deleteSelection() {
+  if (!selection) return;
+  if (selection.kind === 'node') {
+    doc.nodes.splice(selection.index, 1);
+    toast('已删除节点');
+    selection = null;
+  } else {
+    // 曲线删除以多选集合 selSet 为准（单选时恰一个元素）：索引降序逐个 splice
+    const idxs = [...selSet].sort((a, b) => b - a);
+    for (const i of idxs) doc.wires.splice(i, 1);
+    toast(idxs.length > 1 ? `已删除 ${idxs.length} 条连线` : '已删除连线');
+    applyWireSel([]);
+  }
+  render(); renderPanel();
+}
+
+// ---- 工具栏 ----------------------------------------------------------------------
+function setTool(t) {
+  tool = t;
+  document.querySelectorAll('#tools button').forEach(b => b.classList.toggle('on', b.dataset.tool === t));
+  if (t === 'curve') toast('画线：格点间拖拽绘制，单击空白或 Esc 退出');
+}
+document.querySelectorAll('#tools button').forEach(b => b.addEventListener('click', () => setTool(b.dataset.tool)));
+gridInput.addEventListener('change', () => {
+  const v = parseFloat(gridInput.value);
+  if (Number.isFinite(v) && v > 0) { doc.grid = v; render(); }
+  else gridInput.value = String(curGrid());
+});
+// "辅助显示"开关：控制格点阵与格点悬停光晕；纯视图状态（不进文档），localStorage 持久化
+const showAidsInput = document.getElementById('showAids');
+try { showAidsInput.checked = localStorage.getItem('sd-showAids') !== '0'; } catch (e) { /* 无 localStorage 时保持默认开 */ }
+showAidsInput.addEventListener('change', () => {
+  try { localStorage.setItem('sd-showAids', showAidsInput.checked ? '1' : '0'); } catch (e) {}
+  updateHover(null); // 开关切换时立即收起格点光晕
+  render();
+});
+
+// ---- 属性面板 ---------------------------------------------------------------------
+function el(tag, attrs, kids) {
+  const n = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') n.className = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v);
+  }
+  for (const k of [].concat(kids || [])) n.append(k);
+  return n;
+}
+function row(label, ...kids) {
+  return el('div', { class: 'row' }, [el('label', { class: 'k' }, label), ...kids]);
+}
+
+// 颜色编辑主控件：十种默认色板（大色块 + 选中态外圈）为主界面，原生取色器降级为"自定义…"小按钮；
+// 透明度滑条保留。点击色块/自定义只改色相，透明度由滑条独立控制。统一存 #RRGGBBAA。
+const SWATCH_COLORS = [
+  ['黑', '#222222'], ['白', '#ffffff'], ['灰', '#888888'], ['红', '#e53e3e'], ['橙', '#dd6b20'],
+  ['黄', '#d69e2e'], ['绿', '#38a169'], ['青', '#319795'], ['蓝', '#2266cc'], ['紫', '#805ad5']
+];
+function colorCtl(getStored, defVal, setStored) {
+  const eff = parseColor(getStored(), defVal);
+  const alphaVal = el('span', { class: 'alpha-val' }, Math.round(eff.a / 255 * 100) + '%');
+  const slider = el('input', { type: 'range', min: '0', max: '100', value: String(Math.round(eff.a / 255 * 100)) });
+  // 隐藏的原生取色器：由"自定义…"按钮触发 .click() 打开系统选色对话框
+  const picker = el('input', { type: 'color', value: eff.hex6,
+    style: 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none' });
+  const apply = (hex6) => setStored(composeColor(hex6, Math.round(slider.value / 100 * 255)));
+  const swBtns = [];
+  const markSel = (hex6) => { const h = String(hex6).toLowerCase(); for (const [b, sw] of swBtns) b.classList.toggle('sel', sw === h); };
+  const swatches = el('div', { class: 'swatches' });
+  for (const [name, hex] of SWATCH_COLORS) {
+    const b = el('button', {
+      class: 'sw', type: 'button', title: `${name} ${hex}`, style: `background:${hex}`,
+      onclick: () => { picker.value = hex; markSel(hex); apply(hex); } // 面板不重建，手动同步选中态与取色器
+    });
+    swBtns.push([b, hex]);
+    swatches.append(b);
+  }
+  markSel(eff.hex6); // 初始选中态；当前色不在色板内时无选中
+  slider.addEventListener('input', () => {
+    alphaVal.textContent = slider.value + '%';
+    apply(picker.value);
+  });
+  picker.addEventListener('input', () => { markSel(picker.value); apply(picker.value); });
+  const customBtn = el('button', { class: 'btn-mini', type: 'button', title: '自定义颜色', onclick: () => picker.click() }, '自定义…');
+  return [el('div', { class: 'color-wrap' },
+    swatches,
+    el('div', { class: 'color-row2' }, slider, alphaVal, customBtn, picker))];
+}
+function numCtl(get, set, opts) {
+  const inp = el('input', Object.assign({ type: 'number', step: '1', value: String(get()) }, opts || {}));
+  inp.addEventListener('change', () => { const v = parseFloat(inp.value); if (Number.isFinite(v)) set(v); render(); renderPanel(); });
+  return inp;
+}
+function textCtl(get, set) {
+  const inp = el('input', { type: 'text', value: get() });
+  inp.addEventListener('change', () => { set(inp.value); render(); renderPanel(); });
+  return inp;
+}
+
+// 连线端点坐标（吸附格点）
+function endpointRow(label, w, field) {
+  const pt = isPtLiteral(w[field]) ? w[field] : [0, 0];
+  return row(label,
+    numCtl(() => pt[0], v => { w[field] = snapPt([v, pt[1]]); }),
+    numCtl(() => pt[1], v => { w[field] = snapPt([pt[0], v]); }));
+}
+
+function renderPanel() {
+  panel.innerHTML = '';
+  const scene = lastScene || evalScene(doc);
+  if (!selection) {
+    panel.append(
+      el('div', { class: 'sec-title' }, '属性面板'),
+      el('div', { class: 'hint' }, `${doc.nodes.length} 节点 · ${doc.wires.length} 连线 · 网格 ${scene.grid}`),
+      el('div', { class: 'sec-title' }, '操作提示'),
+      el('div', { class: 'hint' },
+        '· 双击格点编辑公式；有文字的节点可拖动。\n' +
+        '· 画线：格点间拖拽，单击空白退出。\n' +
+        '· Shift+单击多选曲线；空白长按框选；Delete 删除。')
+    );
+    return;
+  }
+  if (selection.kind === 'node') { renderNodePanel(selection.index, scene); return; }
+  if (selection.kind === 'wires') { // 曲线多选面板：批量颜色 / 粗细，批量删除
+    const first = () => doc.wires[selSet[0]];
+    panel.append(el('div', { class: 'sec-title' }, `已选 ${selSet.length} 条曲线`));
+    panel.append(el('div', { class: 'hint' }, 'Shift+单击增删；Delete 全删；Esc 清空'));
+    panel.append(row('批量颜色', ...colorCtl(() => first() && first().stroke, DEFAULTS.stroke,
+      v => { for (const i of selSet) if (doc.wires[i]) doc.wires[i].stroke = v; render(); })));
+    panel.append(row('批量粗细', numCtl(() => (first() && first().width) ?? DEFAULTS.width,
+      v => { for (const i of selSet) if (doc.wires[i]) doc.wires[i].width = Math.max(0.5, v); render(); },
+      { min: '0.5', step: '0.5' })));
+    panel.append(el('div', { class: 'row' }, el('button', { class: 'danger', onclick: deleteSelection }, '删除全部选中（Delete）')));
+    return;
+  }
+  const w = doc.wires[selection.index];
+  const res = scene.wires[selection.index];
+  if (!w || !res) { selection = null; renderPanel(); return; }
+  panel.append(el('div', { class: 'sec-title' }, `连线 #${selection.index + 1}（曲线）`));
+  if (res.errs.length) {
+    panel.append(el('div', { class: 'hint', style: 'color:#c53030' }, '⚠ ' + res.errs.join('；')));
+  }
+  panel.append(endpointRow('起点 from', w, 'from'));
+  panel.append(endpointRow('终点 to', w, 'to'));
+  panel.append(el('div', { class: 'hint' }, '坐标自动吸附格点'));
+  if (w.type === 'curve') renderCurvePanel(w, res);
+  panel.append(row('颜色 stroke', ...colorCtl(() => w.stroke, DEFAULTS.stroke, v => { w.stroke = v; render(); })));
+  panel.append(row('粗细 width', numCtl(() => w.width ?? DEFAULTS.width, v => { w.width = Math.max(0.5, v); }, { min: '0.5', step: '0.5' })));
+  panel.append(el('div', { class: 'row' }, el('button', { class: 'danger', onclick: deleteSelection }, '删除所选（Delete）')));
+}
+
+function renderCurvePanel(w, res) {
+  panel.append(el('div', { class: 'sec-title' }, '曲线控制'));
+  const modeSel = el('select', {});
+  // 控制点只有两种形态：via 不存在 = 自动方向臂；via 恰好 2 个 = 三次贝塞尔
+  const mode = (Array.isArray(w.via) && w.via.length === 2) ? '2' : '0';
+  for (const [v, label] of [['0', '自动（方向臂）'], ['2', '2 个控制点']]) {
+    const op = el('option', { value: v }, label);
+    if (mode === v) op.selected = true;
+    modeSel.append(op);
+  }
+  modeSel.addEventListener('change', () => {
+    if (modeSel.value === '0') delete w.via;
+    else {
+      const cur = curveControls(res); // 当前实际渲染的两个控制点，作为物化初值
+      w.via = [snapPt(cur[0]), snapPt(cur[1] || cur[0])];
+    }
+    render(); renderPanel();
+  });
+  panel.append(row('控制点', modeSel));
+  if (Array.isArray(w.via)) {
+    w.via.forEach((c, i) => {
+      if (!isPtLiteral(c)) return;
+      panel.append(row('控制点' + (i + 1),
+        numCtl(() => c[0], v => { c[0] = snapTo(v, curGrid()); }),
+        numCtl(() => c[1], v => { c[1] = snapTo(v, curGrid()); })));
+    });
+  } else {
+    for (const f of ['exit', 'enter']) {
+      const s = el('select', {});
+      for (const [v, label] of [['', '（无方向）'], ['up', 'up 上'], ['down', 'down 下'], ['left', 'left 左'], ['right', 'right 右']]) {
+        const op = el('option', { value: v }, label);
+        if ((w[f] ?? '') === v) op.selected = true;
+        s.append(op);
+      }
+      s.addEventListener('change', () => { if (s.value) w[f] = s.value; else delete w[f]; render(); });
+      panel.append(row(f, s));
+    }
+    panel.append(row('tension', numCtl(() => w.tension ?? DEFAULTS.tension, v => { w.tension = Math.max(0, v); }, { min: '0' })));
+  }
+}
+
+function renderNodePanel(index, scene) {
+  const def = doc.nodes[index];
+  const nd = scene.nodes[index];
+  if (!isPlainObj(def) || !nd) { selection = null; renderPanel(); return; }
+  const formLabel = !nd.ap ? '无内容' : (def.shape === undefined ? '公式框（自动矩形）' : '可见节点');
+  panel.append(el('div', { class: 'sec-title' }, `节点 #${index + 1}（${formLabel}）`));
+  if (nd.errs.length) {
+    panel.append(el('div', { class: 'hint', style: 'color:#c53030' }, '⚠ ' + nd.errs.join('；')));
+  }
+  panel.append(el('div', { class: 'hint' }, `位置 (${nd.pt[0]}, ${nd.pt[1]})`));
+  // 形态：shape 缺省 = 自动（有文字→矩形公式框，空内容→节点消失）；显式 rect/ellipse 优先
+  const formSel = el('select', {});
+  const curForm = def.shape === undefined ? 'auto' : def.shape;
+  for (const [v, label] of [['auto', '自动'], ['rect', '矩形 rect'], ['ellipse', '椭圆 ellipse']]) {
+    const op = el('option', { value: v }, label);
+    if (curForm === v) op.selected = true;
+    formSel.append(op);
+  }
+  formSel.addEventListener('change', () => {
+    if (formSel.value === 'auto') {
+      delete def.shape;
+      // 切回自动且无文字 → 节点消失
+      if (typeof def.text !== 'string' || def.text === '') {
+        doc.nodes.splice(index, 1);
+        selection = null;
+        toast('无文字，节点已消失');
+      }
+    } else def.shape = formSel.value;
+    render(); renderPanel();
+  });
+  panel.append(row('形态', formSel));
+  // 文字（TeX 源码；清空且形态自动 = 节点消失）
+  panel.append(row('文字 text', textCtl(() => def.text ?? '', v => {
+    v = v.trim();
+    if (v) def.text = v;
+    else if (def.shape === undefined) {
+      doc.nodes.splice(index, 1);
+      selection = null;
+      toast('已清空文字，节点消失');
+      return;
+    } else delete def.text;
+  })));
+  panel.append(el('div', { class: 'hint' }, '文字即 TeX 源码；留空（自动形态）= 删除节点'));
+  // 尺寸：缺省自动贴合公式内容；输入数值即转为显式指定，可一键恢复自动
+  const sizeKids = [
+    numCtl(() => (isPtLiteral(def.size) ? def.size : nd.ap ? nd.ap.size : DEFAULTS.nodeSize)[0],
+      v => { if (!isPtLiteral(def.size)) def.size = (nd.ap ? nd.ap.size.slice() : DEFAULTS.nodeSize.slice()); def.size[0] = Math.max(8, v); }, { min: '8' }),
+    numCtl(() => (isPtLiteral(def.size) ? def.size : nd.ap ? nd.ap.size : DEFAULTS.nodeSize)[1],
+      v => { if (!isPtLiteral(def.size)) def.size = (nd.ap ? nd.ap.size.slice() : DEFAULTS.nodeSize.slice()); def.size[1] = Math.max(8, v); }, { min: '8' })
+  ];
+  if (!isPtLiteral(def.size)) {
+    sizeKids.push(el('span', { class: 'alpha-val' }, '自动'));
+  } else {
+    sizeKids.push(el('button', { class: 'act', onclick: () => { delete def.size; render(); renderPanel(); } }, '恢复自动'));
+  }
+  panel.append(row('尺寸 size', ...sizeKids));
+  panel.append(row('填充 fill', ...colorCtl(() => def.fill, DEFAULTS.fill, v => { def.fill = v; render(); })));
+  panel.append(row('边框 border', ...colorCtl(() => def.border, DEFAULTS.border, v => { def.border = v; render(); })));
+  panel.append(row('边框宽', numCtl(() => def.borderWidth ?? DEFAULTS.borderWidth, v => { def.borderWidth = Math.max(0.5, v); }, { min: '0.5', step: '0.5' })));
+  panel.append(row('文字色', ...colorCtl(() => def.textColor, DEFAULTS.textColor, v => { def.textColor = v; render(); })));
+  panel.append(el('div', { class: 'row' }, el('button', { class: 'danger', onclick: deleteSelection }, '删除节点（Delete）')));
+}
+
+// ---- 导入 / 导出 ------------------------------------------------------------------
+function doExport() {
+  const text = serializeDoc(doc);
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'diagram.jsonc';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('已导出 diagram.jsonc');
+}
+function doCopy() {
+  const text = serializeDoc(doc);
+  navigator.clipboard.writeText(text).then(
+    () => toast('已复制到剪贴板'),
+    () => toast('复制失败：请用"导出文件"'));
+}
+function openImport() {
+  document.getElementById('impMsg').textContent = '';
+  document.getElementById('impText').value = serializeDoc(doc);
+  document.getElementById('modal').classList.remove('hidden');
+}
+function closeImport() { document.getElementById('modal').classList.add('hidden'); }
+function doImport(text) {
+  const r = parseDoc(text);
+  const msg = document.getElementById('impMsg');
+  if (!r.ok) { msg.textContent = r.fatal + '（当前文档未受影响）'; return; }
+  doc = r.doc;
+  selection = null;
+  closeImport();
+  gridInput.value = String(doc.grid ?? DEFAULTS.grid);
+  render(); renderPanel();
+  const nErr = lastScene.nodes.reduce((s, n) => s + n.errs.length, 0) +
+               lastScene.wires.reduce((s, w) => s + w.errs.length, 0);
+  toast((r.migrated ? '旧格式已自动迁移。' : '') +
+        (r.segMigrated ? r.segMigrated + ' 条旧直线已转为曲线。' : '') +
+        (nErr ? nErr + ' 处问题已标红' : '导入成功'));
+}
+
+// ---- SVG 导出 / 复制 ------------------------------------------------------------
+// 把当前求值后的场景序列化为独立自包含 SVG；含公式时先确保 MathJax 就绪
+async function buildExportSvg() {
+  const hasTex = doc.nodes.some(nd => isPlainObj(nd) && typeof nd.text === 'string' && nd.text !== '');
+  let texOk = true;
+  if (hasTex) texOk = await ensureMathJax();
+  const scene = evalScene(doc, { measureNode: texOk ? liveMeasureNode : null });
+  const res = exportSceneSvg(scene, {
+    measureText: measureTextPx,
+    texRender: texOk ? liveTexRender : null
+  });
+  if (hasTex && !texOk) {
+    toast('MathJax 加载失败：公式按源码导出');
+  } else if (res.texFailed.length) {
+    toast('部分公式渲染失败，按源码导出：' + res.texFailed.join('、'));
+  }
+  return res.svg;
+}
+async function doExportSvg() {
+  const text = await buildExportSvg();
+  const blob = new Blob([text], { type: 'image/svg+xml;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'diagram.svg';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('已导出 diagram.svg');
+}
+async function doCopySvg() {
+  const text = await buildExportSvg();
+  navigator.clipboard.writeText(text).then(
+    () => toast('SVG 已复制'),
+    () => toast('复制失败：请用"导出 SVG"'));
+}
+
+document.getElementById('btnExport').addEventListener('click', doExport);
+document.getElementById('btnCopy').addEventListener('click', doCopy);
+document.getElementById('btnSvg').addEventListener('click', doExportSvg);
+document.getElementById('btnCopySvg').addEventListener('click', doCopySvg);
+document.getElementById('btnImport').addEventListener('click', openImport);
+document.getElementById('btnCancelImport').addEventListener('click', closeImport);
+document.getElementById('btnDoImport').addEventListener('click', () => doImport(document.getElementById('impText').value));
+document.getElementById('impFile').addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => { document.getElementById('impText').value = rd.result; };
+  rd.readAsText(f, 'utf-8');
+});
+document.getElementById('btnReset').addEventListener('click', () => {
+  doc = parseDoc(SAMPLE).doc;
+  selection = null;
+  gridInput.value = String(doc.grid ?? DEFAULTS.grid);
+  render(); renderPanel();
+  toast('已重置为示例');
+});
+
+// ---- 初始化 ---------------------------------------------------------------------------
+gridInput.value = String(doc.grid ?? DEFAULTS.grid);
+render();
+renderPanel();
+</script>
+</body>
+</html>
