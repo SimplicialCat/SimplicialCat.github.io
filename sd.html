@@ -109,7 +109,7 @@
   <button id="btnSvg">导出 SVG</button>
   <button id="btnCopySvg">复制 SVG</button>
   <span class="sep"></span>
-  <button id="btnReset">重置示例</button>
+  <button id="btnReset">清空</button>
 </header>
 <main>
   <div id="canvasWrap">
@@ -141,7 +141,7 @@
 // 构建版本号：每次改动代码后手动更新（格式 vYYYY.MM.DD-HHMM），
 // 显示在工具栏品牌名旁——用户报出看到的版本号即可判断是否缓存旧版。
 // ============================================================================
-const BUILD_VERSION = 'v2026.07.26-0644';
+const BUILD_VERSION = 'v2026.07.26-0711';
 document.getElementById('buildVer').textContent = BUILD_VERSION;
 // ============================================================================
 // ===CORE-BEGIN===
@@ -701,6 +701,14 @@ function curveControls(res) {
   return [c1, c2];
 }
 
+// 控制点与对应端点重合判定（via[0]↔from、via[1]↔to）：重合时 GUI 把 via 手柄
+// 绘制在端点手柄之上并加醒目双环，保证"这里叠着控制点"可见且可直接拖走
+function viaEndpointCoincide(res) {
+  const c = curveControls(res);
+  const same = (a, b) => a[0] === b[0] && a[1] === b[1];
+  return [same(c[0], res.fromPt), same(c[1] || c[0], res.toPt)];
+}
+
 function evalScene(doc, opts) {
   const grid = (typeof doc.grid === 'number' && Number.isFinite(doc.grid) && doc.grid > 0) ? doc.grid : DEFAULTS.grid;
   const { list: nodes } = evalNodes(doc.nodes || [], opts);
@@ -920,7 +928,7 @@ const errorsBox = document.getElementById('errors');
 const gridInput = document.getElementById('gridInput');
 const SVG_MARGIN = 12; // #svg 的 CSS margin，供就地编辑框定位
 
-let doc = parseDoc(SAMPLE).doc;
+let doc = { nodes: [], wires: [] }; // 默认空画布（grid 缺省 40）；SAMPLE 仅保留供测试参考，不再自动加载
 let selection = null;          // {kind:'node'|'wire', index} | {kind:'wires'}（曲线多选）
 let selSet = [];               // 选中的曲线索引集合（插入序，最后一个为"最后选中"）；单选时恰一个元素
 // 统一应用曲线选中集合：>1 → 多选面板；=1 → 单选完整属性；=0 → 无选中
@@ -1117,20 +1125,28 @@ function render() {
   }
 
   // 选中连线的操作手柄（连线即曲线；手柄尺寸加倍便于抓取，命中区域同步加大）
-  // 多选时手柄只挂在最后选中的一条上
+  // 多选时手柄只挂在最后选中的一条上。
+  // via 手柄绘制在端点方块之上：控制点与端点重合时仍可抓取；重合的 via 手柄
+  // 用白底 + 棕色双环醒目提示"这里叠着控制点"（命中优先 via，端点抓方块露出的边缘）
   if (selSet.length > 0) {
     const res = scene.wires[selSet[selSet.length - 1]];
     if (res && res.kind === 'curve') {
       const handle = (p, field) =>
         `<rect x="${p[0] - 10}" y="${p[1] - 10}" width="20" height="20" rx="4" fill="#fff" stroke="#2b6cb0" stroke-width="2" data-handle="${res.idx}:${field}" style="cursor:move"/>`;
       const c = curveControls(res);
+      const coinc = viaEndpointCoincide(res);
       M.push(`<line x1="${res.fromPt[0]}" y1="${res.fromPt[1]}" x2="${c[0][0]}" y2="${c[0][1]}" stroke="#a0aec0" stroke-dasharray="3 3" pointer-events="none"/>`);
       M.push(`<line x1="${res.toPt[0]}" y1="${res.toPt[1]}" x2="${c[c.length - 1][0]}" y2="${c[c.length - 1][1]}" stroke="#a0aec0" stroke-dasharray="3 3" pointer-events="none"/>`);
-      c.forEach((p, i) => {
-        M.push(`<circle cx="${p[0]}" cy="${p[1]}" r="10" fill="#fff" stroke="#b0562b" stroke-width="2" data-handle="${res.idx}:via${i}" style="cursor:move"/>`);
-      });
       M.push(handle(res.fromPt, 'from'));
       M.push(handle(res.toPt, 'to'));
+      c.forEach((p, i) => {
+        if (coinc[i]) { // 与对应端点重合：双环加大手柄，置顶可抓
+          M.push(`<circle cx="${p[0]}" cy="${p[1]}" r="13" fill="#ffffff" stroke="#b0562b" stroke-width="2.5" data-handle="${res.idx}:via${i}" style="cursor:move"/>`);
+          M.push(`<circle cx="${p[0]}" cy="${p[1]}" r="7" fill="none" stroke="#b0562b" stroke-width="1.5" stroke-dasharray="3 2" pointer-events="none"/>`);
+        } else {
+          M.push(`<circle cx="${p[0]}" cy="${p[1]}" r="10" fill="#fff" stroke="#b0562b" stroke-width="2" data-handle="${res.idx}:via${i}" style="cursor:move"/>`);
+        }
+      });
     }
   }
   // 选中节点的尺寸手柄
@@ -1823,11 +1839,12 @@ document.getElementById('impFile').addEventListener('change', (e) => {
   rd.readAsText(f, 'utf-8');
 });
 document.getElementById('btnReset').addEventListener('click', () => {
-  doc = parseDoc(SAMPLE).doc;
-  selection = null;
+  if (!confirm('清空当前文档？此操作不可撤销。')) return;
+  doc = { nodes: [], wires: [] };
+  applyWireSel([]);
   gridInput.value = String(doc.grid ?? DEFAULTS.grid);
   render(); renderPanel();
-  toast('已重置为示例');
+  toast('已清空');
 });
 
 // ---- 初始化 ---------------------------------------------------------------------------
