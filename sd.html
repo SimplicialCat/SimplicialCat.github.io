@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-store">
+<meta http-equiv="Pragma" content="no-cache">
 <title>线图工具 · String Diagram Editor</title>
 <style>
   * { box-sizing: border-box; }
@@ -13,6 +15,7 @@
     background: #2d3748; color: #e2e8f0; flex: none; flex-wrap: wrap;
   }
   header#toolbar .brand { font-weight: 600; margin-right: 10px; }
+  header#toolbar .brand .ver { font-weight: 400; font-size: 11px; color: #a0aec0; margin-left: 6px; }
   header#toolbar button {
     background: #4a5568; color: #e2e8f0; border: 1px solid #718096; border-radius: 4px;
     padding: 4px 10px; cursor: pointer; font-size: 13px;
@@ -92,7 +95,7 @@
 </head>
 <body>
 <header id="toolbar">
-  <span class="brand">线图工具</span>
+  <span class="brand">线图工具<span class="ver" id="buildVer"></span></span>
   <span id="tools">
     <button data-tool="select" class="on">选择</button>
     <button data-tool="curve">画线</button>
@@ -135,20 +138,26 @@
 <script>
 'use strict';
 // ============================================================================
+// 构建版本号：每次改动代码后手动更新（格式 vYYYY.MM.DD-HHMM），
+// 显示在工具栏品牌名旁——用户报出看到的版本号即可判断是否缓存旧版。
+// ============================================================================
+const BUILD_VERSION = 'v2026.07.26-0644';
+document.getElementById('buildVer').textContent = BUILD_VERSION;
+// ============================================================================
 // ===CORE-BEGIN===
 // 第 1 层：JSONC 解析 / 稳定序列化 / 旧格式迁移（不依赖 DOM，可在 Node 中测试）
 //
 // 文档模型（格点即锚点 schema）：
 //   { grid?: number,                       // 默认 40
 //     nodes: [ { at: Pt, text?, shape?, size?, fill?, border?, borderWidth?, textColor? } ],
-//     wires: [ { type: 'curve', from: Pt, to: Pt, via?, exit?, enter?,
-//                tension?, stroke?, width? } ] }
+//     wires: [ { type: 'curve', from: Pt, to: Pt, via?, stroke?, width? } ] }
 //   - 节点以坐标为身份，at 必须是网格整数倍，一个格点最多一个节点；
 //   - 节点存在条件：text 非空，或显式指定 shape；否则视为无内容（容错标错）；
 //   - wires 端点一律是格点像素坐标，不再引用名字；连线即曲线（type 只有 curve），
 //     旧 seg 导入时自动迁移为 1/3、2/3 控制点的 curve；
-//   - curve 的 via 要么不存在（自动 exit/enter 方向臂模式），要么恰好 2 个控制点
-//     （三次贝塞尔）；导入时 1 个控制点按端点中点镜像对称补全为 2 个，via: [] 按不存在处理；
+//   - 所有曲线恒为 2 个控制点（三次贝塞尔）：via 缺失的旧曲线导入时按 exit/enter
+//     方向臂计算并物化进 via（吸附网格），exit/enter/tension 字段随之退役删除；
+//     求值层保留"via 缺失时自动方向臂"回退作为容错，但 UI 与导出不再产生无 via 曲线；
 //   - 拖动 curve 端点时对应控制点（from↔via[0]，to↔via[1]）按相同向量跟随，保持相对位置；
 //   - 派生锚点表达式已退役（无名字即无法引用），表达式求值器仅保留用于旧格式迁移。
 // ============================================================================
@@ -457,7 +466,7 @@ function fmtVal(v) {
 
 // 节点 / 连线字段的固定输出顺序；未知字段按原插入顺序附加在末尾（前向兼容）
 const NODE_KEY_ORDER = ['at', 'shape', 'size', 'text', 'fill', 'border', 'borderWidth', 'textColor'];
-const WIRE_KEY_ORDER = ['type', 'from', 'to', 'via', 'exit', 'enter', 'tension', 'stroke', 'width'];
+const WIRE_KEY_ORDER = ['type', 'from', 'to', 'via', 'stroke', 'width'];
 
 function serializeFields(o, keyOrder) {
   if (!isPlainObj(o)) return fmtVal(o); // 非对象项原样保留（容错）
@@ -608,8 +617,9 @@ function evalNodes(nodeDefs, opts) {
         if (autoSize) size = measureNodeContent(text, o.measureNode);
         let borderWidth = DEFAULTS.borderWidth;
         if (def.borderWidth !== undefined) {
-          if (typeof def.borderWidth === 'number' && Number.isFinite(def.borderWidth) && def.borderWidth > 0) borderWidth = def.borderWidth;
-          else errs.push('borderWidth：必须是正数');
+          // 0 是合法值：表示无边框（渲染与导出跳过描边）
+          if (typeof def.borderWidth === 'number' && Number.isFinite(def.borderWidth) && def.borderWidth >= 0) borderWidth = def.borderWidth;
+          else errs.push('borderWidth：必须是非负数');
         }
         ap = {
           shape: form, size, autoSize, text,
@@ -761,11 +771,13 @@ function moveCurveEndpoint(wire, which, newPt, grid) {
   return true;
 }
 
-// 导入规范化：wires 只保留 curve 类型（"连线即曲线"）。
+// 导入规范化：wires 只保留 curve 类型（"连线即曲线"），且所有曲线恒为 2 个控制点。
 // - seg（旧版直线）→ curve：via 取两端点连线的 1/3、2/3 处并吸附网格（视觉仍是直线，可拖出弧度）；
-// - curve 的 via 只允许"不存在"或"恰好 2 个控制点"：via: [] 视为不存在（自动 exit/enter 方向臂模式），
-//   旧版 1 个控制点（二次贝塞尔）按端点中点镜像对称补全为 2 个（网格对齐不漂移）；
-// 其他非法形态留给求值层标错。返回 { doc, segMigrated }（seg 迁移条数供 GUI 提示）。
+// - curve 的 via 缺失或为 [] → 按旧 exit/enter 方向臂（tension 臂长）计算两个控制点**物化**进 via
+//   （无方向则取 1/3、2/3 处），吸附网格；1 个控制点（旧二次贝塞尔）按端点中点镜像补全为 2 个；
+// - exit/enter/tension 字段已退役：物化后一律删除，不再输出；
+// 其他非法形态留给求值层标错（求值层保留"via 缺失时自动方向臂"回退作为容错）。
+// 返回 { doc, segMigrated }（seg 迁移条数供 GUI 提示）。
 function normalizeWires(doc) {
   let segMigrated = 0;
   const g = (doc && typeof doc.grid === 'number' && Number.isFinite(doc.grid) && doc.grid > 0) ? doc.grid : DEFAULTS.grid;
@@ -780,12 +792,24 @@ function normalizeWires(doc) {
       segMigrated++;
       continue;
     }
-    if (w.type !== 'curve' || !Array.isArray(w.via)) continue;
-    if (w.via.length === 0) { delete w.via; continue; }
-    if (w.via.length === 1 && isPtLiteral(w.via[0]) && isPtLiteral(w.from) && isPtLiteral(w.to)) {
-      const c = w.via[0];
-      w.via = [[c[0], c[1]], [w.from[0] + w.to[0] - c[0], w.from[1] + w.to[1] - c[1]]];
+    if (w.type !== 'curve') continue;
+    if (isPtLiteral(w.from) && isPtLiteral(w.to)) {
+      const f = w.from, t = w.to;
+      if (!Array.isArray(w.via) || w.via.length === 0) {
+        // 物化：exit/enter 方向臂优先（tension 臂长，默认 40），否则 1/3、2/3 处
+        const d1 = DIR_VEC[w.exit], d2 = DIR_VEC[w.enter];
+        const arm = (typeof w.tension === 'number' && Number.isFinite(w.tension) && w.tension >= 0) ? w.tension : DEFAULTS.tension;
+        const c1 = d1 ? [f[0] + d1[0] * arm, f[1] + d1[1] * arm]
+                      : [f[0] + (t[0] - f[0]) / 3, f[1] + (t[1] - f[1]) / 3];
+        const c2 = d2 ? [t[0] + d2[0] * arm, t[1] + d2[1] * arm]
+                      : [f[0] + (t[0] - f[0]) * 2 / 3, f[1] + (t[1] - f[1]) * 2 / 3];
+        w.via = [snapPtTo(c1, g), snapPtTo(c2, g)];
+      } else if (w.via.length === 1 && isPtLiteral(w.via[0])) {
+        const c = w.via[0];
+        w.via = [[c[0], c[1]], [f[0] + t[0] - c[0], f[1] + t[1] - c[1]]];
+      }
     }
+    delete w.exit; delete w.enter; delete w.tension; // 退役字段不再输出
   }
   return { doc, segMigrated };
 }
@@ -841,7 +865,9 @@ function exportSceneSvg(scene, opts) {
   for (const nd of scene.nodes) {
     if (!nd.ap) continue;
     const [x, y] = nd.pt, [w, h] = nd.ap.size;
-    const common = `fill="${nd.ap.fill}" stroke="${nd.ap.border}" stroke-width="${nd.ap.borderWidth}"`;
+    const common = nd.ap.borderWidth === 0
+      ? `fill="${nd.ap.fill}" stroke="none"`
+      : `fill="${nd.ap.fill}" stroke="${nd.ap.border}" stroke-width="${nd.ap.borderWidth}"`;
     M.push(nd.ap.shape === 'ellipse'
       ? `<ellipse cx="${x}" cy="${y}" rx="${w / 2}" ry="${h / 2}" ${common}/>`
       : `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="3" ${common}/>`);
@@ -910,6 +936,7 @@ let lastScene = null;
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const curGrid = () => (lastScene ? lastScene.grid : DEFAULTS.grid);
+let lastBorderW = DEFAULTS.borderWidth; // 节点"边框"开关恢复时使用的上次非零宽度
 const snapPt = (p) => snapPtTo(p, curGrid());
 
 // 悬停光晕：独立 hover 层元素，mousemove 时单独移动/显隐，不触发全量重绘
@@ -1068,7 +1095,10 @@ function render() {
     const fill = err ? '#e0242433' : nd.ap.fill;
     const stroke = err ? '#e02424' : nd.ap.border;
     const dash = err ? ' stroke-dasharray="6 4"' : '';
-    const common = `fill="${fill}" stroke="${stroke}" stroke-width="${nd.ap.borderWidth}"${dash}`;
+    // borderWidth 0 = 无边框：跳过描边（错误标红仍强制描边）
+    const common = (nd.ap.borderWidth === 0 && !err)
+      ? `fill="${fill}" stroke="none"`
+      : `fill="${fill}" stroke="${stroke}" stroke-width="${nd.ap.borderWidth}"${dash}`;
     const shape = nd.ap.shape === 'ellipse'
       ? `<ellipse cx="${x}" cy="${y}" rx="${w / 2}" ry="${h / 2}" ${common}/>`
       : `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="3" ${common}/>`;
@@ -1537,27 +1567,30 @@ function row(label, ...kids) {
   return el('div', { class: 'row' }, [el('label', { class: 'k' }, label), ...kids]);
 }
 
-// 颜色编辑主控件：十种默认色板（大色块 + 选中态外圈）为主界面，原生取色器降级为"自定义…"小按钮；
-// 透明度滑条保留。点击色块/自定义只改色相，透明度由滑条独立控制。统一存 #RRGGBBAA。
+// 颜色编辑主控件：九种高饱和默认色板（大色块 + 选中态外圈）为界面主体；
+// 第二排"透明度"滑条 + 百分比；第三排全宽"自定义颜色…"按钮（label 包裹可渲染 color input，
+// 点击原生打开系统取色框），按钮上带当前色预览块。统一存 #RRGGBBAA。
 const SWATCH_COLORS = [
-  ['黑', '#222222'], ['白', '#ffffff'], ['灰', '#888888'], ['红', '#e53e3e'], ['橙', '#dd6b20'],
-  ['黄', '#d69e2e'], ['绿', '#38a169'], ['青', '#319795'], ['蓝', '#2266cc'], ['紫', '#805ad5']
+  ['黑', '#1a1a1a'], ['白', '#ffffff'], ['红', '#e01818'], ['橙', '#f06800'], ['黄', '#e8b800'],
+  ['绿', '#20a020'], ['青', '#00a0a8'], ['蓝', '#2050e8'], ['紫', '#8848e0']
 ];
 function colorCtl(getStored, defVal, setStored) {
   const eff = parseColor(getStored(), defVal);
   const alphaVal = el('span', { class: 'alpha-val' }, Math.round(eff.a / 255 * 100) + '%');
   const slider = el('input', { type: 'range', min: '0', max: '100', value: String(Math.round(eff.a / 255 * 100)) });
-  // 隐藏的原生取色器：由"自定义…"按钮触发 .click() 打开系统选色对话框
-  const picker = el('input', { type: 'color', value: eff.hex6,
-    style: 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none' });
   const apply = (hex6) => setStored(composeColor(hex6, Math.round(slider.value / 100 * 255)));
   const swBtns = [];
   const markSel = (hex6) => { const h = String(hex6).toLowerCase(); for (const [b, sw] of swBtns) b.classList.toggle('sel', sw === h); };
+  // 自定义取色：<label> 包裹视觉隐藏但可渲染的 color input——label 点击由浏览器原生触发
+  // 系统取色框，不依赖对不可见元素的编程 .click()（在 Chrome 里不可靠）；按钮上带当前色预览块
+  const picker = el('input', { type: 'color', value: eff.hex6,
+    style: 'position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer' });
+  const customPrev = el('span', { style: `flex:none;width:16px;height:16px;border-radius:3px;background:${eff.hex6};border:1px solid rgba(0,0,0,.25)` });
   const swatches = el('div', { class: 'swatches' });
   for (const [name, hex] of SWATCH_COLORS) {
     const b = el('button', {
       class: 'sw', type: 'button', title: `${name} ${hex}`, style: `background:${hex}`,
-      onclick: () => { picker.value = hex; markSel(hex); apply(hex); } // 面板不重建，手动同步选中态与取色器
+      onclick: () => { picker.value = hex; customPrev.style.background = hex; markSel(hex); apply(hex); } // 面板不重建，手动同步选中态与取色器
     });
     swBtns.push([b, hex]);
     swatches.append(b);
@@ -1567,11 +1600,15 @@ function colorCtl(getStored, defVal, setStored) {
     alphaVal.textContent = slider.value + '%';
     apply(picker.value);
   });
-  picker.addEventListener('input', () => { markSel(picker.value); apply(picker.value); });
-  const customBtn = el('button', { class: 'btn-mini', type: 'button', title: '自定义颜色', onclick: () => picker.click() }, '自定义…');
-  return [el('div', { class: 'color-wrap' },
+  picker.addEventListener('input', () => { customPrev.style.background = picker.value; markSel(picker.value); apply(picker.value); });
+  const customBtn = el('label', { class: 'btn-mini', title: '自定义颜色',
+    style: 'position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;flex-basis:100%;padding:6px 10px' },
+    [customPrev, '自定义颜色…', picker]);
+  return [el('div', { class: 'color-wrap' }, [
     swatches,
-    el('div', { class: 'color-row2' }, slider, alphaVal, customBtn, picker))];
+    el('div', { class: 'color-row2' }, [
+      el('span', { class: 'alpha-val', style: 'width:auto' }, '透明度'), slider, alphaVal]),
+    customBtn])];
 }
 function numCtl(get, set, opts) {
   const inp = el('input', Object.assign({ type: 'number', step: '1', value: String(get()) }, opts || {}));
@@ -1582,14 +1619,6 @@ function textCtl(get, set) {
   const inp = el('input', { type: 'text', value: get() });
   inp.addEventListener('change', () => { set(inp.value); render(); renderPanel(); });
   return inp;
-}
-
-// 连线端点坐标（吸附格点）
-function endpointRow(label, w, field) {
-  const pt = isPtLiteral(w[field]) ? w[field] : [0, 0];
-  return row(label,
-    numCtl(() => pt[0], v => { w[field] = snapPt([v, pt[1]]); }),
-    numCtl(() => pt[1], v => { w[field] = snapPt([pt[0], v]); }));
 }
 
 function renderPanel() {
@@ -1608,7 +1637,7 @@ function renderPanel() {
     return;
   }
   if (selection.kind === 'node') { renderNodePanel(selection.index, scene); return; }
-  if (selection.kind === 'wires') { // 曲线多选面板：批量颜色 / 粗细，批量删除
+  if (selection.kind === 'wires') { // 曲线多选面板：批量颜色 / 粗细
     const first = () => doc.wires[selSet[0]];
     panel.append(el('div', { class: 'sec-title' }, `已选 ${selSet.length} 条曲线`));
     panel.append(el('div', { class: 'hint' }, 'Shift+单击增删；Delete 全删；Esc 清空'));
@@ -1617,7 +1646,6 @@ function renderPanel() {
     panel.append(row('批量粗细', numCtl(() => (first() && first().width) ?? DEFAULTS.width,
       v => { for (const i of selSet) if (doc.wires[i]) doc.wires[i].width = Math.max(0.5, v); render(); },
       { min: '0.5', step: '0.5' })));
-    panel.append(el('div', { class: 'row' }, el('button', { class: 'danger', onclick: deleteSelection }, '删除全部选中（Delete）')));
     return;
   }
   const w = doc.wires[selection.index];
@@ -1627,54 +1655,8 @@ function renderPanel() {
   if (res.errs.length) {
     panel.append(el('div', { class: 'hint', style: 'color:#c53030' }, '⚠ ' + res.errs.join('；')));
   }
-  panel.append(endpointRow('起点 from', w, 'from'));
-  panel.append(endpointRow('终点 to', w, 'to'));
-  panel.append(el('div', { class: 'hint' }, '坐标自动吸附格点'));
-  if (w.type === 'curve') renderCurvePanel(w, res);
   panel.append(row('颜色 stroke', ...colorCtl(() => w.stroke, DEFAULTS.stroke, v => { w.stroke = v; render(); })));
   panel.append(row('粗细 width', numCtl(() => w.width ?? DEFAULTS.width, v => { w.width = Math.max(0.5, v); }, { min: '0.5', step: '0.5' })));
-  panel.append(el('div', { class: 'row' }, el('button', { class: 'danger', onclick: deleteSelection }, '删除所选（Delete）')));
-}
-
-function renderCurvePanel(w, res) {
-  panel.append(el('div', { class: 'sec-title' }, '曲线控制'));
-  const modeSel = el('select', {});
-  // 控制点只有两种形态：via 不存在 = 自动方向臂；via 恰好 2 个 = 三次贝塞尔
-  const mode = (Array.isArray(w.via) && w.via.length === 2) ? '2' : '0';
-  for (const [v, label] of [['0', '自动（方向臂）'], ['2', '2 个控制点']]) {
-    const op = el('option', { value: v }, label);
-    if (mode === v) op.selected = true;
-    modeSel.append(op);
-  }
-  modeSel.addEventListener('change', () => {
-    if (modeSel.value === '0') delete w.via;
-    else {
-      const cur = curveControls(res); // 当前实际渲染的两个控制点，作为物化初值
-      w.via = [snapPt(cur[0]), snapPt(cur[1] || cur[0])];
-    }
-    render(); renderPanel();
-  });
-  panel.append(row('控制点', modeSel));
-  if (Array.isArray(w.via)) {
-    w.via.forEach((c, i) => {
-      if (!isPtLiteral(c)) return;
-      panel.append(row('控制点' + (i + 1),
-        numCtl(() => c[0], v => { c[0] = snapTo(v, curGrid()); }),
-        numCtl(() => c[1], v => { c[1] = snapTo(v, curGrid()); })));
-    });
-  } else {
-    for (const f of ['exit', 'enter']) {
-      const s = el('select', {});
-      for (const [v, label] of [['', '（无方向）'], ['up', 'up 上'], ['down', 'down 下'], ['left', 'left 左'], ['right', 'right 右']]) {
-        const op = el('option', { value: v }, label);
-        if ((w[f] ?? '') === v) op.selected = true;
-        s.append(op);
-      }
-      s.addEventListener('change', () => { if (s.value) w[f] = s.value; else delete w[f]; render(); });
-      panel.append(row(f, s));
-    }
-    panel.append(row('tension', numCtl(() => w.tension ?? DEFAULTS.tension, v => { w.tension = Math.max(0, v); }, { min: '0' })));
-  }
 }
 
 function renderNodePanel(index, scene) {
@@ -1734,10 +1716,22 @@ function renderNodePanel(index, scene) {
   }
   panel.append(row('尺寸 size', ...sizeKids));
   panel.append(row('填充 fill', ...colorCtl(() => def.fill, DEFAULTS.fill, v => { def.fill = v; render(); })));
-  panel.append(row('边框 border', ...colorCtl(() => def.border, DEFAULTS.border, v => { def.border = v; render(); })));
-  panel.append(row('边框宽', numCtl(() => def.borderWidth ?? DEFAULTS.borderWidth, v => { def.borderWidth = Math.max(0.5, v); }, { min: '0.5', step: '0.5' })));
+  // 边框开关：勾选 = 有边框；取消 = borderWidth 置 0（无边框，边框色/宽两行隐藏），恢复时回到上次宽度
+  const bwNow = def.borderWidth ?? DEFAULTS.borderWidth;
+  const borderCb = el('input', { type: 'checkbox' });
+  borderCb.checked = bwNow > 0;
+  borderCb.addEventListener('change', () => {
+    if (borderCb.checked) def.borderWidth = lastBorderW;
+    else { if (bwNow > 0) lastBorderW = bwNow; def.borderWidth = 0; }
+    render(); renderPanel();
+  });
+  panel.append(row('边框', borderCb));
+  if (bwNow > 0) {
+    panel.append(row('边框色', ...colorCtl(() => def.border, DEFAULTS.border, v => { def.border = v; render(); })));
+    panel.append(row('边框宽', numCtl(() => def.borderWidth ?? DEFAULTS.borderWidth,
+      v => { def.borderWidth = Math.max(0.5, v); lastBorderW = def.borderWidth; }, { min: '0.5', step: '0.5' })));
+  }
   panel.append(row('文字色', ...colorCtl(() => def.textColor, DEFAULTS.textColor, v => { def.textColor = v; render(); })));
-  panel.append(el('div', { class: 'row' }, el('button', { class: 'danger', onclick: deleteSelection }, '删除节点（Delete）')));
 }
 
 // ---- 导入 / 导出 ------------------------------------------------------------------
