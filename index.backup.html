@@ -6,50 +6,89 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="/favicon.ico">
     <title>Wang Jinyi (SimplicialCat)</title>
+    <style>
+        /* 语言切换控制：默认英文 (body 类 lang-en) */
+        body.lang-en .zh { display: none; }
+        body.lang-zh .en { display: none; }
+
+        /* 切换按钮样式，尽量保持简洁，不破坏原有布局 */
+        #lang-toggle {
+            background: none;
+            border: 1px solid #88d;
+            border-radius: 20px;
+            display: block;
+            margin: 10px auto;
+            padding: 3px 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            vertical-align: middle;
+            color: #465BAF;
+            transition: background 0.2s;
+        }
+        #lang-toggle:hover {
+            background: #f0f0ff;
+        }
+        /* 让 header 里的元素能良好对齐 */
+        header {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        header h1 {
+            margin-right: auto;  /* 把导航和按钮推到右边 */
+        }
+        nav {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        /* 适应小屏幕 */
+        @media (max-width: 700px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            header h1 { margin-right: 0; }
+            #lang-toggle { margin-left: 0; }
+        }
+    </style>
 </head>
 <body class="lang-en">
-
-    <div class="layout">
-
-    <!-- 侧边栏: 站名 + 章节导航 + 语言切换 (小屏时折叠为顶栏) -->
-    <header class="sidebar">
-        <h1 class="site-title">
-            <img src="simplopedia.svg" alt="" class="title-logo">
-            <span class="en">Wang Jinyi</span>
-            <span class="zh">王进一</span>
+    <div class="container">
+    <header>
+        <h1>
+            王进一
             <span class="subtitle">
-                <span class="en">SimplicialCat</span>
-                <span class="zh">单纯猫 SimplicialCat</span>
+                <span class="en">(Wang Jinyi), SimplicialCat</span>
+                <span class="zh">, 单纯猫 SimplicialCat</span>
             </span>
         </h1>
-        <nav>
-            <a class="nav-link" href="#about">
-                <span class="en">About</span><span class="zh">基本信息</span>
-            </a>
-            <a class="nav-link" href="#maths">
-                <span class="en">Maths</span><span class="zh">数学</span>
-            </a>
-            <a class="nav-link" href="#music">
-                <span class="en">Music</span><span class="zh">音乐</span>
-            </a>
-            <a class="nav-link" href="#misc">
-                <span class="en">Misc</span><span class="zh">其它</span>
-            </a>
-            <a class="nav-link" href="#links">
-                <span class="en">Links</span><span class="zh">链接</span>
-            </a>
-        </nav>
         <button id="lang-toggle" onclick="toggleLang()">切换为中文</button>
+        <nav>
+            <span class="nav-link active" onclick="showSection('about', this)">
+                <span class="en">About</span><span class="zh">基本信息</span>
+            </span>
+            <span class="nav-link" onclick="showSection('maths', this)">
+                <span class="en">Maths</span><span class="zh">数学</span>
+            </span>
+            <span class="nav-link" onclick="showSection('music', this)">
+                <span class="en">Music</span><span class="zh">音乐</span>
+            </span>
+            <span class="nav-link" onclick="showSection('misc', this)">
+                <span class="en">Misc</span><span class="zh">其它</span>
+            </span>
+            <span class="nav-link" onclick="showSection('links', this)">
+                <span class="en">Links</span><span class="zh">链接</span>
+            </span>
+        </nav>
     </header>
-
-    <main class="container">
-
-    <!-- ============ 01 About ============ -->
-    <section id="about" class="content-section clearfix">
+    
+    <section id="about" class="content-section active clearfix">
     <h2><span class="en">About</span>
         <span class="zh">基本信息</span></h2>
     <img src="furina.jpg" alt="Portrait" class="profile-right">
-
+    
     <p>
         <span class="en">I am a graduate student at <a href="https://qzc.tsinghua.edu.cn/">Qiuzhen College</a>, Tsinghua University.</span>
         <span class="zh">我是清华大学<a href="https://qzc.tsinghua.edu.cn/">求真书院</a>的研究生.</span>
@@ -59,14 +98,14 @@
         <span class="en">I was born on March 27, 2003.</span>
         <span class="zh">我的生日是 2003 年 3 月 27 日.</span>
     </p>
-
+    
     <p>
         <span class="en">Email:</span>
         <span class="zh">邮箱:</span>
     </p>
     <ul>
-        <li><code>wangjiny24@mails.tsinghua.edu.cn</code></li>
-        <li><code>jinExp2iPi@gmail.com</code></li>
+        <li>wangjiny24@mails.tsinghua.edu.cn</li>
+        <li>jinExp2iPi@gmail.com</li>
     </ul>
 
     <p>
@@ -75,9 +114,8 @@
     </p>
     </section>
 
-    <!-- ============ 02 Maths ============ -->
     <section id="maths" class="content-section clearfix">
-
+    
     <h2><span class="en">Maths</span>
         <span class="zh">数学</span></h2>
 
@@ -96,7 +134,7 @@
         <li><span class="en">homotopy theory, homotopy type theory;</span><span class="zh">同伦论, 同伦类型论;</span></li>
         <li><span class="en">and recently, higher category theory and the geometric Langlands program.</span><span class="zh">高阶范畴论, 几何 Langlands 纲领.</span></li>
     </ul>
-
+    
     <p>
         <span class="en">Some of my talks are on <a href="https://space.bilibili.com/395890444">Bilibili</a>.</span>
         <span class="zh"><a href="https://space.bilibili.com/395890444">B 站</a>上有一些我的讲座.</span>
@@ -221,7 +259,7 @@
         <span class="en"><a href="Quillen1969report.pdf">Notes</a></span>
         <span class="zh"><a href="Quillen1969report.pdf">笔记</a></span>
     </p>
-
+    
     <h4>Survey on Atiyah–Singer index theorem
     <span class="language-tag">English</span>
     </h4>
@@ -281,7 +319,6 @@
 
     </section>
 
-    <!-- ============ 03 Music ============ -->
     <section id="music" class="content-section clearfix">
     <h2>
         <span class="en">Music</span>
@@ -313,7 +350,7 @@
         <span class="en"><a href="https://simphony.org/music">App</a></span>
         <span class="zh"><a href="https://simphony.org/music">应用</a></span>
     </p>
-
+    
     <h4><span class="en">Chord Progression Player</span>
         <span class="zh">和弦进行播放器</span></h4>
     <p>
@@ -375,14 +412,13 @@
 
     </section>
 
-    <!-- ============ 04 Misc ============ -->
     <section id="misc" class="content-section clearfix">
     <h2>
         <span class="en">Misc</span>
         <span class="zh">其它</span>
     </h2>
-
-
+    
+    
     <h4><span class="en">Aperiodic Tiling</span>
         <span class="zh">非周期镶嵌</span></h4>
     <p>
@@ -393,7 +429,7 @@
         <span class="en"><a href="infinite-tiling.html">Page</a></span>
         <span class="zh"><a href="infinite-tiling.html">页面</a></span>
     </p>
-
+    
 
     <h4><span class="en">Game of Life</span>
         <span class="zh">生命游戏</span></h4>
@@ -449,13 +485,14 @@
         <span class="zh"><a href="globe.html">页面</a></span>
     </p>
 
+    
+
     </section>
 
-    <!-- ============ 05 Links ============ -->
     <section id="links" class="content-section">
     <h2><span class="en">Links</span>
         <span class="zh">链接</span></h2>
-
+    
     <h3><span class="en">Organizations</span>
         <span class="zh">组织</span></h3>
 
@@ -468,7 +505,7 @@
         <span class="en"><a href="https://www.bananaspace.org">Site</a></span>
         <span class="zh"><a href="https://www.bananaspace.org">网站</a></span>
     </p>
-
+    
     <h3><span class="en">Friends</span>
         <span class="zh">朋友</span></h3>
     <h4>李心宇<span class="en"> (Li Xinyu)</span></h4>
@@ -482,7 +519,7 @@
         <span class="en"><a href="https://apolloniussun.github.io/">Site</a></span>
         <span class="zh"><a href="https://apolloniussun.github.io/">网站</a></span>
     </p>
-
+    
     <h4>QZC31</h4>
     <p>
         <span class="en">Shared homepage of several brilliant students from class no.31, Qiuzhen College.</span>
@@ -498,7 +535,7 @@
         <span class="en"><a href="https://marco-yuze-zheng.blogspot.com/">Site</a></span>
         <span class="zh"><a href="https://marco-yuze-zheng.blogspot.com/">网站</a></span>
     </p>
-
+    
     <h4>刘欧<span class="en"> (Ou Liu)</span></h4>
     <p>
         <span class="en"><a href="https://ou-liu-red-sugar.github.io/about/">Site</a></span>
@@ -519,187 +556,96 @@
 
     </section>
 
-    </main>
-
     </div>
 
     <script>
-    /* ================= 语言切换 (与旧版逻辑一致) ================= */
-
-    function setLanguage(lang) {
-        // lang 应为 'en' 或 'zh'
-        var body = document.body;
-        var btn = document.getElementById('lang-toggle');
-        body.classList.remove('lang-en', 'lang-zh');
-        body.classList.add(lang === 'zh' ? 'lang-zh' : 'lang-en');
-        if (btn) {
-            btn.textContent = lang === 'zh' ? 'Switch to English' : '切换为中文';
-        }
-        // 更新 URL 参数
-        var url = new URL(window.location);
-        var params = new URLSearchParams(url.search);
-        params.set('lang', lang);
-        url.search = params.toString();
-        window.history.replaceState({}, '', url);
-    }
-
-    function getLangFromURL() {
-        var params = new URLSearchParams(window.location.search);
-        var langParam = params.get('lang');
-        if (langParam === 'en') {
-            return 'en';
-        } else if (langParam === 'zh' || langParam === 'cn') {
-            return 'zh';
-        } else {
-            return null; // 无参数或无法识别的值，保持默认
-        }
+    /*function showSection(sectionId, element) {
+        // Remove active class from all nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        // Add active class to clicked nav link
+        element.classList.add('active');
+        
+        // Hide all content sections
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // Show the selected content section
+        document.getElementById(sectionId).classList.add('active');
     }
 
     function toggleLang() {
-        var currentLang = document.body.classList.contains('lang-zh') ? 'zh' : 'en';
-        setLanguage(currentLang === 'zh' ? 'en' : 'zh');
-    }
-
-    /* ================= 滚动侦测: 高亮当前章节的导航项 ================= */
-
-    function initScrollSpy() {
-        var links = document.querySelectorAll('.nav-link');
-        var sections = document.querySelectorAll('.content-section');
-        var observer = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    links.forEach(function(link) {
-                        link.classList.toggle(
-                            'active',
-                            link.getAttribute('href') === '#' + entry.target.id
-                        );
-                    });
-                }
-            });
-        }, {
-            // 判定线: 视口上部 15% 处 (同时适配侧边栏与顶栏两种布局)
-            rootMargin: '-15% 0px -70% 0px'
-        });
-        sections.forEach(function(section) { observer.observe(section); });
-    }
-
-    /* ================= 背景三角点缀: 随机生成, 随滚动视差漂移 ================= */
-
-    function initTriangles() {
-        var field = document.createElement('div');
-        field.className = 'tri-field';
-        field.setAttribute('aria-hidden', 'true');
-        document.body.appendChild(field);
-
-        // 蓝色系 (含芙宁娜蓝与水蓝), 随机取色
-        var palette = ['#253055', '#465BAF', '#6AC6E8', '#7E7DFF', '#BACBF0'];
-
-        var tris = [];
-        var count = Math.max(7, Math.min(14, Math.round(window.innerWidth / 110)));
-        for (var i = 0; i < count; i++) {
-            var el = document.createElement('i');
-            var d = {
-                el: el,
-                x: Math.random() * 100,                 // 水平位置 (vw)
-                y0: Math.random() * 130 - 15,           // 基准高度 (vh)
-                size: 30 + Math.random() * 110,         // 边长 (px)
-                speed: 0.05 + Math.random() * 0.25,     // 视差速度 (各不相同)
-                rot: Math.floor(Math.random() * 360)    // 朝向
-            };
-            el.style.width = d.size + 'px';
-            el.style.height = d.size + 'px';
-            el.style.left = d.x + 'vw';
-            el.style.background = palette[Math.floor(Math.random() * palette.length)];
-            el.style.opacity = (0.05 + Math.random() * 0.08).toFixed(3);
-            field.appendChild(el);
-            tris.push(d);
+        var body = document.body;
+        var btn = document.getElementById('lang-toggle');
+        if (body.classList.contains('lang-en')) {
+            body.classList.remove('lang-en');
+            body.classList.add('lang-zh');
+            btn.textContent = 'Switch to English';
+        } else {
+            body.classList.remove('lang-zh');
+            body.classList.add('lang-en');
+            btn.textContent = '切换为中文';
         }
-
-        function place() {
-            var vh = window.innerHeight;
-            var span = vh * 1.3;                        // 一个完整的漂移行程
-            var sy = window.scrollY || window.pageYOffset;
-            for (var i = 0; i < tris.length; i++) {
-                var d = tris[i];
-                var y = (d.y0 / 100) * vh - sy * d.speed;
-                // 行程内循环回绕, 保证任意滚动位置都有三角形在场
-                y = ((y % span) + span) % span - vh * 0.15;
-                d.el.style.transform = 'translateY(' + y.toFixed(1) + 'px) rotate(' + d.rot + 'deg)';
-            }
-        }
-
-        place();
-
-        // 常驻 rAF 循环: 只在滚动位置变化时重排, 对任何滚动方式都可靠
-        // (不挂 scroll 事件, 也无需依赖系统动画设置)
-        var lastY = -1;
-        (function tick() {
-            var sy = window.scrollY || window.pageYOffset;
-            if (sy !== lastY) {
-                lastY = sy;
-                place();
-            }
-            requestAnimationFrame(tick);
-        })();
-        window.addEventListener('resize', place);
-    }
-
-    /* ================= 滚轮平滑滚动: 把"突变"滚动变为连续缓动 ================= */
-
-    function initSmoothScroll() {
-        var target = window.scrollY || 0;   // 滚动目标值
-        var current = target;               // 当前缓动值
-        var animating = false;
-
-        function maxScroll() {
-            return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-        }
-
-        window.addEventListener('wheel', function(e) {
-            if (e.ctrlKey) { return; }      // Ctrl+滚轮是缩放, 不拦截
-            e.preventDefault();
-            var dy = e.deltaY;
-            if (e.deltaMode === 1) { dy *= 33; }              // 行模式 → 像素
-            else if (e.deltaMode === 2) { dy *= window.innerHeight; } // 页模式 → 像素
-            target = Math.max(0, Math.min(maxScroll(), target + dy));
-            if (!animating) {
-                animating = true;
-                requestAnimationFrame(step);
-            }
-        }, { passive: false });
-
-        function step() {
-            var diff = target - current;
-            if (Math.abs(diff) < 0.5) {
-                current = target;
-                window.scrollTo(0, Math.round(current));
-                animating = false;
-                return;
-            }
-            current += diff * 0.14;         // 缓动系数: 越小越柔, 越大越跟手
-            window.scrollTo(0, Math.round(current));
-            requestAnimationFrame(step);
-        }
-
-        // 外部滚动 (键盘 / 锚点 / 拖滚动条) 发生时, 同步目标值避免打架
-        window.addEventListener('scroll', function() {
-            if (!animating) {
-                target = current = window.scrollY || window.pageYOffset;
-            }
-        }, { passive: true });
-    }
-
-    /* ================= 初始化 ================= */
-
-    document.addEventListener('DOMContentLoaded', function() {
-        var lang = getLangFromURL();
-        if (lang) {
-            setLanguage(lang);
-        }
-        initScrollSpy();
-        initTriangles();
-        initSmoothScroll();
+    }*/
+    function showSection(sectionId, element) {
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
     });
+    element.classList.add('active');
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    document.getElementById(sectionId).classList.add('active');
+}
+
+function setLanguage(lang) {
+    // lang 应为 'en' 或 'zh'
+    var body = document.body;
+    var btn = document.getElementById('lang-toggle');
+    // 移除所有语言类
+    body.classList.remove('lang-en', 'lang-zh');
+    // 添加目标语言类
+    body.classList.add(lang === 'zh' ? 'lang-zh' : 'lang-en');
+    // 更新按钮文本
+    if (btn) {
+        btn.textContent = lang === 'zh' ? 'Switch to English' : '切换为中文';
+    }
+    // 更新 URL 参数（使用规范名称 en/zh）
+    var url = new URL(window.location);
+    var params = new URLSearchParams(url.search);
+    params.set('lang', lang);
+    url.search = params.toString();
+    window.history.replaceState({}, '', url);
+}
+
+function getLangFromURL() {
+    var params = new URLSearchParams(window.location.search);
+    var langParam = params.get('lang');
+    if (langParam === 'en') {
+        return 'en';
+    } else if (langParam === 'zh' || langParam === 'cn') {
+        return 'zh';
+    } else {
+        return null; // 无参数或无法识别的值，保持默认
+    }
+}
+
+function toggleLang() {
+    var currentLang = document.body.classList.contains('lang-zh') ? 'zh' : 'en';
+    var newLang = currentLang === 'zh' ? 'en' : 'zh';
+    setLanguage(newLang);
+}
+
+// 页面加载时根据 URL 参数初始化语言
+document.addEventListener('DOMContentLoaded', function() {
+    var lang = getLangFromURL();
+    if (lang) {
+        setLanguage(lang);
+    }
+});
     </script>
 </body>
 </html>
