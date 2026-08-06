@@ -204,11 +204,11 @@ nav {
     gap: 9px;
 }
 
-/* 两侧的小字标签, 激活侧染蓝 */
+/* 两侧的小字标签, 激活侧染蓝; 固定等宽, 保证两行开关轨道严格对齐 */
 .switch-cap {
     font-size: 0.75rem;
     color: var(--text-faint);
-    min-width: 1.1em;
+    width: 1.6em;
     text-align: center;
     user-select: none;
     transition: color 0.25s;
