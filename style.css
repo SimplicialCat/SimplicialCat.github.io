@@ -29,8 +29,8 @@
     --gold-light: #DDB368;
     --gold-ultra: #FDF388;
     --lan-tag: #BACBF0;
-    --line: #E2E8F0;
-    --line-light: #EEF2F6;
+    --line: #DADFF0;
+    --line-light: #E2E8F6;
     --shadow: rgba(27, 63, 143, 0.06);
 
     --font-serif: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
@@ -76,7 +76,7 @@ body::after {
     width: 62vmax;
     height: 62vmax;
     background: url("simplopedia.svg") no-repeat center / contain;
-    opacity: 0.05;
+    opacity: 0.09;
     pointer-events: none;
     z-index: 0;
 }
@@ -188,26 +188,62 @@ nav {
     font-weight: 600;
 }
 
-/* 语言切换: 同样极简, 只有一条横线 */
-#lang-toggle {
+/* 开关组: 语言 / 亮暗, 滑块式开关 */
+.switches {
     margin-top: auto;
-    align-self: flex-start;
-    background: none;
-    border: none;
-    border-bottom: 1px solid var(--text-faint);
-    border-radius: 0;
-    padding: 2px 0;
-    font-size: 0.82rem;
-    font-family: var(--font-sans);
-    color: var(--text-faint);
-    cursor: pointer;
-    transition: color 0.25s, border-color 0.25s;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+    padding-top: 24px;
 }
 
-#lang-toggle:hover {
-    color: var(--gold);
-    border-bottom-color: var(--gold);
+.switch-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
 }
+
+/* 两侧的小字标签, 激活侧染蓝 */
+.switch-cap {
+    font-size: 0.75rem;
+    color: var(--text-faint);
+    min-width: 1.1em;
+    text-align: center;
+    user-select: none;
+    transition: color 0.25s;
+}
+
+.switch-cap.on { color: var(--blue); }
+
+/* 轨道: 细描边胶囊, 符合整体极简风 */
+.switch {
+    position: relative;
+    width: 44px;
+    height: 22px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--panel);
+    cursor: pointer;
+    transition: border-color 0.25s;
+}
+
+.switch:hover { border-color: var(--blue); }
+
+/* 滑动的圆形钮 */
+.switch .knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--blue);
+    transition: transform 0.25s ease;
+}
+
+.switch.on .knob { transform: translateX(22px); }
 
 /* 双语切换 (与旧版一致): body.lang-en 隐藏中文, body.lang-zh 隐藏英文 */
 body.lang-en .zh { display: none; }
@@ -494,7 +530,13 @@ img.piano-right   { width: 180px; }
 
     .nav-link { font-size: 0.88rem; }
 
-    #lang-toggle { margin-top: 0; }
+    /* 顶栏模式: 开关组改为横排, 跟在标题右侧 */
+    .switches {
+        margin-top: 0;
+        padding-top: 0;
+        flex-direction: row;
+        gap: 16px;
+    }
 
     .container { padding: 8px 24px 100px; }
 
@@ -511,4 +553,64 @@ img.piano-right   { width: 180px; }
         margin: 16px auto;
         shape-outside: none;
     }
+}
+
+/* ============ 暗色模式: <html data-theme="dark"> 驱动 ============
+ * 规则: 仍是蓝色主题, 深蓝 ↔ 浅蓝 互换 (深变浅, 浅变深), 金色不变.
+ * data-theme 由 JS 设置: URL 参数 ?theme=light|dark 优先, 否则跟随系统.
+ */
+
+:root[data-theme="dark"] {
+    /* 背景与文字: 反转为墨蓝底 + 浅字 */
+    --bg: #10141C;
+    --panel: #161B26;
+    --text: #E6E9F2;
+    --text-dim: #A9B1C4;
+    --text-faint: #7C8496;
+
+    /* 深蓝 → 浅蓝 */
+    --navy: #A9BEF2;      /* 标题: 原深海军蓝 #253055 */
+    --blue: #8DA4EA;      /* 链接: 原皇家蓝 #465BAF */
+
+    /* 浅蓝 → 深蓝 */
+    --aqua: #3560B0;      /* 列表符号: 原水蓝 #6AC6E8 */
+    --lan-tag: #3A5CA8;   /* 语言标签底: 原浅蓝 #BACBF0 */
+
+    /* 分隔线与阴影 */
+    --line: #2A3145;
+    --line-light: #222839;
+    --shadow: rgba(0, 0, 0, 0.4);
+
+    /* 金色 (--gold / --gold-light / --gold-ultra) 不变 */
+
+    /* 让浏览器原生控件 (滚动条等) 也进入暗色 */
+    color-scheme: dark;
+}
+
+/* 顶部光晕: 改为暗色下的微弱蓝金 */
+[data-theme="dark"] body::before {
+    background:
+        radial-gradient(600px 280px at 15% 0%, rgba(189, 147, 104, 0.05), transparent 70%),
+        radial-gradient(700px 300px at 85% 0%, rgba(141, 164, 234, 0.07), transparent 70%);
+}
+
+/* 背景水印在暗色下略提亮一点点 */
+[data-theme="dark"] body::after { opacity: 0.06; }
+
+/* 行内代码: 保持金色系, 暗色下改用亮金 */
+[data-theme="dark"] code {
+    color: var(--gold-light);
+    background: rgba(221, 179, 104, 0.12);
+}
+
+/* 选区: 暗色下亮蓝底配深字 */
+[data-theme="dark"] ::selection {
+    background: var(--blue);
+    color: #10141C;
+}
+
+/* 暗色 + 小屏: 顶栏底色与更深的背景水印 */
+@media (max-width: 900px) {
+    [data-theme="dark"] .sidebar { background: rgba(16, 20, 28, 0.85); }
+    [data-theme="dark"] body::after { opacity: 0.05; }
 }

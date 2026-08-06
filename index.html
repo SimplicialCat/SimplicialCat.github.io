@@ -6,6 +6,14 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="/favicon.ico">
     <title>Wang Jinyi (SimplicialCat)</title>
+    <script>
+    /* 首屏前确定主题, 避免明暗闪烁: URL 参数 ?theme= 优先, 否则跟随系统 */
+    (function() {
+        var p = new URLSearchParams(location.search).get('theme');
+        var dark = p ? p === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    })();
+    </script>
 </head>
 <body class="lang-en">
 
@@ -39,7 +47,25 @@
                 <span class="en">Links</span><span class="zh">链接</span>
             </a>
         </nav>
-        <button id="lang-toggle" onclick="toggleLang()">切换为中文</button>
+        <!-- 开关组: 语言 (EN/中) + 亮暗 (☀/☾) -->
+        <div class="switches">
+            <div class="switch-row">
+                <span class="switch-cap on" id="cap-en">EN</span>
+                <button class="switch" id="lang-switch" role="switch" aria-checked="false"
+                        aria-label="Switch language / 切换语言" onclick="toggleLang()">
+                    <span class="knob"></span>
+                </button>
+                <span class="switch-cap" id="cap-zh">中</span>
+            </div>
+            <div class="switch-row">
+                <span class="switch-cap on" id="cap-light">☀</span>
+                <button class="switch" id="theme-switch" role="switch" aria-checked="false"
+                        aria-label="Toggle dark mode / 切换暗色" onclick="toggleTheme()">
+                    <span class="knob"></span>
+                </button>
+                <span class="switch-cap" id="cap-dark">☾</span>
+            </div>
+        </div>
     </header>
 
     <main class="container">
@@ -70,7 +96,7 @@
     </ul>
 
     <p>
-        <span class="en">Recently I am devoted to building <a href="https://simplopedia.org">单纯百科 (Simplopedia)</a>, a personal encyclopedia of maths. The current URL is <code>simplopedia.org</code>.</span>
+        <span class="en">Recently I have been devoted to building <a href="https://simplopedia.org">单纯百科 (Simplopedia)</a>, a personal encyclopedia of maths. The current URL is <code>simplopedia.org</code>.</span>
         <span class="zh">我最近致力于建设<a href="https://simplopedia.org">单纯百科</a>, 我的个人数学百科全书. 目前的网址是 <code>simplopedia.org</code>.</span>
     </p>
     </section>
@@ -127,8 +153,13 @@
         <span class="zh">数学作品选</span></h3>
 
     <p class="convention">
-        <span class="en">These are in Chinese unless specified otherwise.</span>
+        <span class="en">These contents are in Chinese unless specified otherwise.</span>
         <span class="zh">除特别说明外, 以下资料为中文.</span>
+    </p>
+
+    <p>
+        <span class="en">Starting in 2026, I have been doing most of my math writing on <a href="https://simplopedia.org">Simplopedia</a>.</span>
+        <span class="zh">自 2026 年起我的数学写作基本上都在<a href="https://simplopedia.org">单纯百科</a>上进行.</span>
     </p>
 
     <h4>盲人摸象<span class="en"> (Blind men touching an elephant)</span></h4>
@@ -291,7 +322,7 @@
     <img src="piano.jpg" alt="Piano" class="piano-right">
 
     <p>
-        <span class="en">Music is my main hobby. I enjoy studying harmonics and chord progressions, and I can accompany on piano, guitar or bass.</span>
+        <span class="en">Music is my main hobby. I enjoy studying harmonics and chord progressions, and I can accompany on the piano, guitar or bass.</span>
         <span class="zh">音乐是我的主要爱好. 我喜欢研究和声, 和弦进行; 能用钢琴, 吉他和贝斯进行即兴伴奏.</span>
     </p>
 
@@ -365,7 +396,7 @@
 
     <h4>Que le Vent Soit Doux</h4>
     <p>
-        <span class="en">An improvised piano re-arrangement of a beautiful background music in Genshin Impact.</span>
+        <span class="en">An improvised piano re-arrangement of a beautiful piece of background music from Genshin Impact.</span>
         <span class="zh">原神中一段优美的背景音乐的即兴钢琴改编.</span>
     </p>
     <p>
@@ -529,11 +560,16 @@
     function setLanguage(lang) {
         // lang 应为 'en' 或 'zh'
         var body = document.body;
-        var btn = document.getElementById('lang-toggle');
         body.classList.remove('lang-en', 'lang-zh');
         body.classList.add(lang === 'zh' ? 'lang-zh' : 'lang-en');
-        if (btn) {
-            btn.textContent = lang === 'zh' ? 'Switch to English' : '切换为中文';
+        // 同步语言开关 (右 = 中文)
+        var sw = document.getElementById('lang-switch');
+        if (sw) {
+            var zh = lang === 'zh';
+            sw.classList.toggle('on', zh);
+            sw.setAttribute('aria-checked', zh);
+            document.getElementById('cap-en').classList.toggle('on', !zh);
+            document.getElementById('cap-zh').classList.toggle('on', zh);
         }
         // 更新 URL 参数
         var url = new URL(window.location);
@@ -558,6 +594,62 @@
     function toggleLang() {
         var currentLang = document.body.classList.contains('lang-zh') ? 'zh' : 'en';
         setLanguage(currentLang === 'zh' ? 'en' : 'zh');
+    }
+
+    /* ================= 亮暗主题: <html data-theme> 驱动 =================
+     * 优先级: URL 参数 ?theme=light|dark > 浏览器/系统设置.
+     * 手动切换会写入 URL; 无参数时跟随系统并监听系统变化.
+     */
+
+    function isDark() {
+        return document.documentElement.dataset.theme === 'dark';
+    }
+
+    function getThemeFromURL() {
+        var t = new URLSearchParams(window.location.search).get('theme');
+        return (t === 'light' || t === 'dark') ? t : null;
+    }
+
+    function setTheme(theme, updateURL) {
+        document.documentElement.dataset.theme = theme;
+        // 同步亮暗开关 (右 = 暗色)
+        var sw = document.getElementById('theme-switch');
+        if (sw) {
+            var dark = theme === 'dark';
+            sw.classList.toggle('on', dark);
+            sw.setAttribute('aria-checked', dark);
+            document.getElementById('cap-light').classList.toggle('on', !dark);
+            document.getElementById('cap-dark').classList.toggle('on', dark);
+        }
+        if (updateURL) {
+            var url = new URL(window.location);
+            var params = new URLSearchParams(url.search);
+            params.set('theme', theme);
+            url.search = params.toString();
+            window.history.replaceState({}, '', url);
+        }
+        // 通知三角形等组件重着色
+        document.dispatchEvent(new CustomEvent('themechange'));
+    }
+
+    function toggleTheme() {
+        setTheme(isDark() ? 'light' : 'dark', true);
+    }
+
+    function initTheme() {
+        var fromURL = getThemeFromURL();
+        if (fromURL) {
+            setTheme(fromURL, false);
+        } else {
+            var mq = window.matchMedia('(prefers-color-scheme: dark)');
+            setTheme(mq.matches ? 'dark' : 'light', false);
+            // 未手动指定时, 跟随系统明暗变化
+            mq.addEventListener('change', function(e) {
+                if (!getThemeFromURL()) {
+                    setTheme(e.matches ? 'dark' : 'light', false);
+                }
+            });
+        }
     }
 
     /* ================= 滚动侦测: 高亮当前章节的导航项 ================= */
@@ -592,7 +684,12 @@
         document.body.appendChild(field);
 
         // 蓝色系 (含芙宁娜蓝与水蓝), 随机取色
-        var palette = ['#253055', '#465BAF', '#6AC6E8', '#7E7DFF', '#BACBF0'];
+        // 暗色模式下深蓝 ↔ 浅蓝 互换, 与 CSS 变量规则一致
+        function triPalette() {
+            return isDark()
+                ? ['#C7D2F2', '#8DA4EA', '#3560B0', '#6E7FE8', '#33508F']
+                : ['#253055', '#465BAF', '#6AC6E8', '#7E7DFF', '#BACBF0'];
+        }
 
         var tris = [];
         var count = Math.max(7, Math.min(14, Math.round(window.innerWidth / 110)));
@@ -602,18 +699,26 @@
                 el: el,
                 x: Math.random() * 100,                 // 水平位置 (vw)
                 y0: Math.random() * 130 - 15,           // 基准高度 (vh)
-                size: 30 + Math.random() * 110,         // 边长 (px)
+                size: 40 + Math.random() * 110,         // 边长 (px)
                 speed: 0.05 + Math.random() * 0.25,     // 视差速度 (各不相同)
-                rot: Math.floor(Math.random() * 360)    // 朝向
+                rot: Math.floor(Math.random() * 360),   // 朝向
+                ci: 0                                   // 调色板下标 (供明暗切换重着色)
             };
+            d.ci = Math.floor(Math.random() * triPalette().length);
             el.style.width = d.size + 'px';
             el.style.height = d.size + 'px';
             el.style.left = d.x + 'vw';
-            el.style.background = palette[Math.floor(Math.random() * palette.length)];
-            el.style.opacity = (0.05 + Math.random() * 0.08).toFixed(3);
+            el.style.background = triPalette()[d.ci];
+            el.style.opacity = (0.04 + Math.random() * 0.06).toFixed(3);
             field.appendChild(el);
             tris.push(d);
         }
+
+        // 亮暗切换时, 三角形按相同下标重新取色
+        document.addEventListener('themechange', function() {
+            var p = triPalette();
+            tris.forEach(function(d) { d.el.style.background = p[d.ci]; });
+        });
 
         function place() {
             var vh = window.innerHeight;
@@ -696,6 +801,7 @@
         if (lang) {
             setLanguage(lang);
         }
+        initTheme();
         initScrollSpy();
         initTriangles();
         initSmoothScroll();
