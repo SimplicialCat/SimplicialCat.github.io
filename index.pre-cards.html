@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/favicon.ico">
+    <title>Wang Jinyi (SimplicialCat)</title>
+    <script>
+    /* 首屏前确定主题, 避免明暗闪烁: URL 参数 ?theme= 优先, 否则跟随系统 */
+    (function() {
+        var p = new URLSearchParams(location.search).get('theme');
+        var dark = p ? p === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    })();
+    </script>
+</head>
+<body class="lang-en">
+
+    <div class="layout">
+
+    <!-- 侧边栏: 站名 + 章节导航 + 语言切换 (小屏时折叠为顶栏) -->
+    <header class="sidebar">
+        <h1 class="site-title">
+            <img src="simplopedia.svg" alt="" class="title-logo">
+            <span class="en">Wang Jinyi</span>
+            <span class="zh">王进一</span>
+            <span class="subtitle">
+                <span class="en">SimplicialCat</span>
+                <span class="zh">单纯猫 SimplicialCat</span>
+            </span>
+        </h1>
+        <nav>
+            <a class="nav-link" href="#about">
+                <span class="en">About</span><span class="zh">基本信息</span>
+            </a>
+            <a class="nav-link" href="#maths">
+                <span class="en">Maths</span><span class="zh">数学</span>
+            </a>
+            <a class="nav-link" href="#music">
+                <span class="en">Music</span><span class="zh">音乐</span>
+            </a>
+            <a class="nav-link" href="#misc">
+                <span class="en">Misc</span><span class="zh">其它</span>
+            </a>
+            <a class="nav-link" href="#links">
+                <span class="en">Links</span><span class="zh">链接</span>
+            </a>
+        </nav>
+        <!-- 开关组: 语言 (EN/中) + 亮暗 (☀/☾) -->
+        <div class="switches">
+            <div class="switch-row">
+                <span class="switch-cap on" id="cap-en">EN</span>
+                <button class="switch" id="lang-switch" role="switch" aria-checked="false"
+                        aria-label="Switch language / 切换语言" onclick="toggleLang()">
+                    <span class="knob"></span>
+                </button>
+                <span class="switch-cap" id="cap-zh">中</span>
+            </div>
+            <div class="switch-row">
+                <span class="switch-cap on" id="cap-light">☀</span>
+                <button class="switch" id="theme-switch" role="switch" aria-checked="false"
+                        aria-label="Toggle dark mode / 切换暗色" onclick="toggleTheme()">
+                    <span class="knob"></span>
+                </button>
+                <span class="switch-cap" id="cap-dark">☾</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+    <!-- ============ 01 About ============ -->
+    <section id="about" class="content-section clearfix">
+    <h2><span class="en">About</span>
+        <span class="zh">基本信息</span></h2>
+    <img src="furina.jpg" alt="Portrait" class="profile-right">
+
+    <p>
+        <span class="en">I am a graduate student at <a href="https://qzc.tsinghua.edu.cn/">Qiuzhen College</a>, Tsinghua University.</span>
+        <span class="zh">我是清华大学<a href="https://qzc.tsinghua.edu.cn/">求真书院</a>的研究生.</span>
+    </p>
+
+    <p>
+        <span class="en">I was born on March 27, 2003.</span>
+        <span class="zh">我的生日是 2003 年 3 月 27 日.</span>
+    </p>
+
+    <p>
+        <span class="en">Email:</span>
+        <span class="zh">邮箱:</span>
+    </p>
+    <ul>
+        <li><code>wangjiny24@mails.tsinghua.edu.cn</code></li>
+        <li><code>jinExp2iPi@gmail.com</code></li>
+    </ul>
+
+    <p>
+        <span class="en">Recently I have been devoted to building <a href="https://simplopedia.org">单纯百科 (Simplopedia)</a>, a personal encyclopedia of maths. The current URL is <code>simplopedia.org</code>.</span>
+        <span class="zh">我最近致力于建设<a href="https://simplopedia.org">单纯百科</a>, 我的个人数学百科全书. 目前的网址是 <code>simplopedia.org</code>.</span>
+    </p>
+    </section>
+
+    <!-- ============ 02 Maths ============ -->
+    <section id="maths" class="content-section clearfix">
+
+    <h2><span class="en">Maths</span>
+        <span class="zh">数学</span></h2>
+
+    <img src="cat-seminar.jpg" alt="Seminar" class="seminar-right">
+    <p>
+        <span class="en">My supervisor is <a href="https://windshower.github.io/linchen/">Prof. Lin Chen</a>.</span>
+        <span class="zh">我的导师是<a href="https://windshower.github.io/linchen/">陈麟老师</a>.</span>
+    </p>
+    <p>
+        <span class="en">My mathematical interests lie in</span>
+        <span class="zh">我的数学兴趣 (按时间顺序排列):</span>
+    </p>
+    <ul>
+        <li><span class="en">initially, differential geometry, algebraic topology;</span><span class="zh">微分几何, 代数拓扑;</span></li>
+        <li><span class="en">later, category theory, topos theory, categorical logic,</span><span class="zh">范畴论, 意象, 范畴逻辑;</span></li>
+        <li><span class="en">homotopy theory, homotopy type theory;</span><span class="zh">同伦论, 同伦类型论;</span></li>
+        <li><span class="en">and recently, higher category theory and the geometric Langlands program.</span><span class="zh">高阶范畴论, 几何 Langlands 纲领.</span></li>
+    </ul>
+
+    <p>
+        <span class="en">Some of my talks are on <a href="https://space.bilibili.com/395890444">Bilibili</a>.</span>
+        <span class="zh"><a href="https://space.bilibili.com/395890444">B 站</a>上有一些我的讲座.</span>
+    </p>
+    <p>
+        <span class="en">Some of my notes are on <a href="https://www.zhihu.com/people/wang-jin-yi-4">Zhihu</a>.</span>
+        <span class="zh"><a href="https://www.zhihu.com/people/wang-jin-yi-4">知乎</a>上有一些我的笔记.</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://github.com/SimplicialCat?tab=repositories">Here</a> are my Github repositories.</span>
+        <span class="zh"><a href="https://github.com/SimplicialCat?tab=repositories">这里</a>是我的 Github 仓库.</span>
+    </p>
+
+    <h4>
+        <span class="en">Markdown commutative diagram / matrix generator</span>
+        <span class="zh">Markdown 交换图 / 矩阵生成器</span>
+    </h4>
+    <p>
+        <span class="en">An interactive commutative diagram / matrix editor for Markdown.</span>
+        <span class="zh">一个用于 Markdown 的交互式交换图 / 矩阵编辑器.</span>
+    </p>
+    <p>
+        <span class="en">Page · <a href="cd.html">commutative diagram</a> · <a href="matrix.html">matrix</a></span>
+        <span class="zh">页面 · <a href="cd.html">交换图</a> · <a href="matrix.html">矩阵</a></span>
+    </p>
+
+    <h4>
+        <span class="zh">线图生成器</span>
+        <span class="en">String diagram generator</span>
+    </h4>
+    <img src="sd-logo.svg" class="sd-logo" style="float: right; margin: 0 0 15px 20px; max-width: 200px; height: auto;">
+    <p>
+        <span class="zh">线图绘制工具, 可导出 SVG 图片与 JSON 代码.</span>
+        <span class="en">A string diagram editor that supports exporting SVG images and JSON code.</span>
+    </p>
+    <p>
+        <span class="en"><a href="sd.html">Page</a></span>
+        <span class="zh"><a href="sd.html">页面</a></span>
+    </p>
+
+    <h3><span class="en">Selected works</span>
+        <span class="zh">数学作品选</span></h3>
+
+    <p class="convention">
+        <span class="en">These contents are in Chinese unless specified otherwise.</span>
+        <span class="zh">除特别说明外, 以下资料为中文.</span>
+    </p>
+
+    <p>
+        <span class="en">Starting in 2026, I have been doing most of my math writing on <a href="https://simplopedia.org">Simplopedia</a>.</span>
+        <span class="zh">自 2026 年起我的数学写作基本上都在<a href="https://simplopedia.org">单纯百科</a>上进行.</span>
+    </p>
+
+    <h4>盲人摸象<span class="en"> (Blind men touching an elephant)</span></h4>
+    <p>
+        <span class="en">A basic introduction to topos theory.</span>
+        <span class="zh">意象理论入门资料.</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://github.com/SimplicialCat/topos">Book PDF</a> on Github (>300 pages)</span>
+        <span class="zh">Github 上有<a href="https://github.com/SimplicialCat/topos">书籍 PDF</a> (>300 页)</span>
+    </p>
+
+    <h4>单纯百科 Simplopedia</h4>
+    <p>
+        <span class="en">A <a href="https://www.jonmsterling.com/index/index.xml">forest</a>-style site and a personal encyclopedia of mathematics.</span>
+        <span class="zh">一个 <a href="https://www.jonmsterling.com/index/index.xml">forest</a> 风格的个人数学百科.</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://simplopedia.org">Site</a></span>
+        <span class="zh"><a href="https://simplopedia.org">网站</a></span>
+    </p>
+
+    <h4>∞-Group Theory<span class="language-tag">English</span></h4>
+    <p>
+        <span class="en">Rewriting classical group theory concepts in the intrinsic language of ∞-categories.</span>
+        <span class="zh">在 ∞-范畴的内蕴语言中重新定义经典群论概念.</span>
+    </p>
+    <p>
+        <span class="en"><a href="infinity-group-theory.pdf">Notes</a></span>
+        <span class="zh"><a href="infinity-group-theory.pdf">笔记</a></span>
+    </p>
+
+    <h4>Nonabelian Cohomology
+    <span class="language-tag">English</span>
+    </h4>
+    <p>
+        <span class="en">A short note on nonabelian cohomology, using the language of ∞-toposes.</span>
+        <span class="zh">关于非 Abel 上同调的简短笔记, 使用 ∞-意象的语言.</span>
+    </p>
+    <p>
+        <span class="en"><a href="nonabelian_cohomology.pdf">Notes</a></span>
+        <span class="zh"><a href="nonabelian_cohomology.pdf">笔记</a></span>
+    </p>
+
+    <h4>Sketches of an Elephant
+    <span class="language-tag">English</span>
+    </h4>
+    <p>
+        <span class="en">A short talk on topos theory (title borrowed from P. Johnstone)</span>
+        <span class="zh">关于意象理论的简短报告 (标题致敬 P. Johnstone)</span>
+    </p>
+    <p>
+        <span class="en"><a href="pre-topos.pdf">Notes</a></span>
+        <span class="zh"><a href="pre-topos.pdf">笔记</a></span>
+    </p>
+
+    <h4>Interview with Prof. Laurent Lafforgue
+    <span class="language-tag">English</span>
+    </h4>
+    <p>
+        <span class="en"><a href="https://www.bilibili.com/video/BV1aX4y1a7Z1">Video 1</a>: From Langlands program to topos theory</span>
+        <span class="zh"><a href="https://www.bilibili.com/video/BV1aX4y1a7Z1">视频 1</a>: 从 Langlands 纲领到意象理论</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://www.bilibili.com/video/BV1GF41197hh">Video 2</a>: The future of topos theory</span>
+        <span class="zh"><a href="https://www.bilibili.com/video/BV1GF41197hh">视频 2</a>: 意象理论的未来</span>
+    </p>
+
+    <h4>
+        <span class="en">Category Theory in Differential Geometry</span>
+        <span class="zh">微分几何中的范畴学</span>
+    </h4>
+    <p>
+        <span class="en">A short talk on the use of sheaves and stacks in differential geometry.</span>
+        <span class="zh">关于层和叠在微分几何中的用处的简短报告.</span>
+    </p>
+    <p>
+        <span class="en"><a href="微分几何中的范畴学.pdf">Notes</a></span>
+        <span class="zh"><a href="微分几何中的范畴学.pdf">笔记</a></span>
+    </p>
+
+    <h4>Quillen's 1969 paper explained
+    <span class="language-tag">English</span>
+    </h4>
+    <p>
+        <span class="en">A presentation of Quillen's 1969 paper on formal group laws.</span>
+        <span class="zh">Quillen 1969年关于形式群律论文的介绍.</span>
+    </p>
+    <p>
+        <span class="en"><a href="Quillen1969report.pdf">Notes</a></span>
+        <span class="zh"><a href="Quillen1969report.pdf">笔记</a></span>
+    </p>
+
+    <h4>Survey on Atiyah–Singer index theorem
+    <span class="language-tag">English</span>
+    </h4>
+    <p>
+        <span class="en"><a href="Submitted version - Atiyah--Singer Index Theorem - 王进一.pdf">Article</a></span>
+        <span class="zh"><a href="Submitted version - Atiyah--Singer Index Theorem - 王进一.pdf">文章</a></span>
+    </p>
+
+    <h4>
+        <span class="en">Spin geometry and Dirac operators</span>
+        <span class="zh">自旋几何与 Dirac 算子</span>
+    </h4>
+    <p>
+        <span class="en"><a href="自旋几何与 Dirac 算子.pdf">Notes</a></span>
+        <span class="zh"><a href="自旋几何与 Dirac 算子.pdf">讲义</a></span>
+    </p>
+
+    <h4>
+        <span class="en">Notes on Categorical Logic Summer School 2025</span>
+        <span class="zh">2025 范畴逻辑暑校笔记</span>
+    </h4>
+    <p>
+        <span class="en"><a href="https://zhuanlan.zhihu.com/p/1921238166871990492">Notes 1</a>: Posets and propositional logic</span>
+        <span class="zh"><a href="https://zhuanlan.zhihu.com/p/1921238166871990492">笔记 1</a>: 偏序集与命题逻辑</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://zhuanlan.zhihu.com/p/1921670598905553676">Notes 2</a>: Lex categories, algebraic theories and locally finitely presentable categories</span>
+        <span class="zh"><a href="https://zhuanlan.zhihu.com/p/1921670598905553676">笔记 2</a>: 左正合范畴, 代数理论, 局部有限可表现范畴</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://zhuanlan.zhihu.com/p/1922016221357929996">Notes 3</a>: Sketches</span>
+        <span class="zh"><a href="https://zhuanlan.zhihu.com/p/1922016221357929996">笔记 3</a>: 提纲 (Sketches)</span>
+    </p>
+
+    <h4>
+        <span class="en">Principal bundles in an ∞-topos</span>
+        <span class="zh">∞-意象中的主丛</span>
+    </h4>
+    <p>
+        <span class="en"><a href="https://www.bilibili.com/video/BV1i1DUYPEL3">Video</a></span>
+        <span class="zh"><a href="https://www.bilibili.com/video/BV1i1DUYPEL3">视频</a></span>
+    </p>
+    <p>
+        <span class="en"><a href="Jinyi-pre-∞topos.pdf">Slides</a></span>
+        <span class="zh"><a href="Jinyi-pre-∞topos.pdf">讲稿 (幻灯片)</a></span>
+        <span class="language-tag">English</span>
+    </p>
+
+    <h4>
+        <span class="en">All concepts are Kan extensions</span>
+        <span class="zh">一切概念都是 Kan 扩张</span>
+    </h4>
+    <p>
+        <span class="en"><a href="https://www.bilibili.com/video/BV1ByjGzfEfr">Video</a></span>
+        <span class="zh"><a href="https://www.bilibili.com/video/BV1ByjGzfEfr">视频</a></span>
+    </p>
+
+    </section>
+
+    <!-- ============ 03 Music ============ -->
+    <section id="music" class="content-section clearfix">
+    <h2>
+        <span class="en">Music</span>
+        <span class="zh">音乐</span>
+    </h2>
+
+    <img src="piano.jpg" alt="Piano" class="piano-right">
+
+    <p>
+        <span class="en">Music is my main hobby. I enjoy studying harmonics and chord progressions, and I can accompany on the piano, guitar or bass.</span>
+        <span class="zh">音乐是我的主要爱好. 我喜欢研究和声, 和弦进行; 能用钢琴, 吉他和贝斯进行即兴伴奏.</span>
+    </p>
+
+    <h4>单纯和声学 Simphony</h4>
+    <p>
+        <span class="en">A <a href="https://www.jonmsterling.com/index/index.xml">forest</a>-style site and a personal encyclopedia of harmonics (in progress).</span>
+        <span class="zh">一个 <a href="https://www.jonmsterling.com/index/index.xml">forest</a> 风格的和声学网站 (建设中).</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://simphony.org">Site</a></span>
+        <span class="zh"><a href="https://simphony.org">网站</a></span>
+    </p>
+
+    <p>
+        <span class="en">The site also includes a web-based music notation parser and player app that uses a special musical notation syntax to compose polyphonic music and play it back in real time. It supports both 12-tone and 19-tone equal temperament tuning systems.</span>
+        <span class="zh">网站还包含一个基于 Web 的乐谱解析和播放应用, 使用特殊的音乐代码语法, 可以编写多声部音乐并实时播放. 支持 12 和 19 平均律两种调律系统.</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://simphony.org/music">App</a></span>
+        <span class="zh"><a href="https://simphony.org/music">应用</a></span>
+    </p>
+
+    <h4><span class="en">Chord Progression Player</span>
+        <span class="zh">和弦进行播放器</span></h4>
+    <p>
+        <span class="en">A web-based chord progression player with customizable chord codes.</span>
+        <span class="zh">基于 Web 的和弦进行播放器, 支持自定义和弦编码.</span>
+    </p>
+    <p>
+        <span class="en"><a href="chord_player.html">Page</a></span>
+        <span class="zh"><a href="chord_player.html">页面</a></span>
+    </p>
+
+    <h4>
+    <span class="en">Chord Guesser</span>
+    <span class="zh">猜和弦</span>
+    </h4>
+    <p>
+        <span class="en">A game that plays a random chord; click the piano keys to guess it.</span>
+        <span class="zh">一个小游戏: 聆听随机和弦, 在钢琴键上点出正确音符.</span>
+    </p>
+    <p>
+        <span class="en"><a href="chord_guesser.html">Page</a></span>
+        <span class="zh"><a href="chord_guesser.html">页面</a></span>
+    </p>
+
+    <h4><span class="en">Guitar Fretboard</span>
+        <span class="zh">吉他指板</span></h4>
+    <img src="guitar-logo.png" class="guitar-logo" style="float: right; margin: 0 0 15px 20px; max-width: 150px; height: auto;">
+    <p>
+        <span class="en">A guitar fretboard visualizer that maps notes to a color wheel and highlights selected pitches across all octaves.</span>
+        <span class="zh">吉他指板可视化工具, 用色轮标记十二个音, 并支持筛选高亮任意音名.</span>
+    </p>
+    <p>
+        <span class="en"><a href="guitar-chords.html">Page</a></span>
+        <span class="zh"><a href="guitar-chords.html">页面</a></span>
+    </p>
+
+    <h4><span class="en">Frequency Ratio</span>
+        <span class="zh">频率比</span></h4>
+    <p>
+        <span class="en">Two tones at a given frequency ratio played simultaneously.</span>
+        <span class="zh">播放两个指定频率比的音.</span>
+    </p>
+    <p>
+        <span class="en"><a href="frequency.html">Page</a></span>
+        <span class="zh"><a href="frequency.html">页面</a></span>
+    </p>
+
+    <h3><span class="en">Selected musical works</span>
+        <span class="zh">音乐作品选</span></h3>
+
+    <h4>Que le Vent Soit Doux</h4>
+    <p>
+        <span class="en">An improvised piano re-arrangement of a beautiful piece of background music from Genshin Impact.</span>
+        <span class="zh">原神中一段优美的背景音乐的即兴钢琴改编.</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://www.bilibili.com/video/BV1dr421E7oj">Video</a></span>
+        <span class="zh"><a href="https://www.bilibili.com/video/BV1dr421E7oj">视频</a></span>
+    </p>
+
+    </section>
+
+    <!-- ============ 04 Misc ============ -->
+    <section id="misc" class="content-section clearfix">
+    <h2>
+        <span class="en">Misc</span>
+        <span class="zh">其它</span>
+    </h2>
+
+
+    <h4><span class="en">Aperiodic Tiling</span>
+        <span class="zh">非周期镶嵌</span></h4>
+    <p>
+        <span class="en">An interactive aperiodic rhombus tiling visualization tool.</span>
+        <span class="zh">非周期菱形镶嵌的交互式可视化工具.</span>
+    </p>
+    <p>
+        <span class="en"><a href="infinite-tiling.html">Page</a></span>
+        <span class="zh"><a href="infinite-tiling.html">页面</a></span>
+    </p>
+
+
+    <h4><span class="en">Game of Life</span>
+        <span class="zh">生命游戏</span></h4>
+    <p>
+        <span class="en">A toy simulator of Conway's Game of Life.</span>
+        <span class="zh">Conway 生命游戏的简易模拟器.</span>
+    </p>
+    <p>
+        <span class="en"><a href="game_of_life.html">Page</a></span>
+        <span class="zh"><a href="game_of_life.html">页面</a></span>
+    </p>
+
+    <h4>F<sub>5</sub>P<sup>2</sup></h4>
+    <img src="f5p2-thumbnail.png" class="f5p2-thumbnail" style="float: right; margin: 0 0 15px 20px; max-width: 150px; height: auto;">
+    <p>
+        <span class="en">A game of five-in-a-row played on the projective plane over the finite field F<sub>5</sub>.</span>
+        <span class="zh">有限域 F<sub>5</sub> 上的射影平面上的五子棋.</span>
+    </p>
+    <p>
+        <span class="en"><a href="F5P2.html">Page</a></span>
+        <span class="zh"><a href="F5P2.html">页面</a></span>
+    </p>
+
+    <h4><span class="en">Super Tic-Tac-Toe</span>
+        <span class="zh">超级井字棋</span></h4>
+    <p>
+        <span class="en">A game of tic-tac-toe played on the square of the classic tic-tac-toe board.</span>
+        <span class="zh">井的平方上的井字棋.</span>
+    </p>
+    <p>
+        <span class="en"><a href="super-tictactoe.html">Page</a></span>
+        <span class="zh"><a href="super-tictactoe.html">页面</a></span>
+    </p>
+
+    <h4><span class="en">Stars</span>
+        <span class="zh">星空</span></h4>
+    <p>
+        <span class="en">An interactive visualization of the night sky.</span>
+        <span class="zh">交互式星空可视化.</span>
+    </p>
+    <p>
+        <span class="en"><a href="stars.html">Page</a></span>
+        <span class="zh"><a href="stars.html">页面</a></span>
+    </p>
+
+    <h4><span class="en">Globe</span>
+        <span class="zh">地球</span></h4>
+    <p>
+        <span class="en">A 3D Earth marker tool.</span>
+        <span class="zh">3D 地球标记工具.</span>
+    </p>
+    <p>
+        <span class="en"><a href="globe.html">Page</a></span>
+        <span class="zh"><a href="globe.html">页面</a></span>
+    </p>
+
+    </section>
+
+    <!-- ============ 05 Links ============ -->
+    <section id="links" class="content-section">
+    <h2><span class="en">Links</span>
+        <span class="zh">链接</span></h2>
+
+    <h3><span class="en">Organizations</span>
+        <span class="zh">组织</span></h3>
+
+    <h4>香蕉空间<span class="en"> (Banana Space)</span></h4>
+    <p>
+        <span class="en">A growing Chinese math community.</span>
+        <span class="zh">一个成长中的中文数学社区。</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://www.bananaspace.org">Site</a></span>
+        <span class="zh"><a href="https://www.bananaspace.org">网站</a></span>
+    </p>
+
+    <h3><span class="en">Friends</span>
+        <span class="zh">朋友</span></h3>
+    <h4>李心宇<span class="en"> (Li Xinyu)</span></h4>
+    <p>
+        <span class="en"><a href="https://est-wald.github.io/">Site</a></span>
+        <span class="zh"><a href="https://est-wald.github.io/">网站</a></span>
+    </p>
+
+    <h4>ApolloniusSun</h4>
+    <p>
+        <span class="en"><a href="https://apolloniussun.github.io/">Site</a></span>
+        <span class="zh"><a href="https://apolloniussun.github.io/">网站</a></span>
+    </p>
+
+    <h4>QZC31</h4>
+    <p>
+        <span class="en">Shared homepage of several brilliant students from class no.31, Qiuzhen College.</span>
+        <span class="zh">求真 31 班几位杰出的同学的共同主页.</span>
+    </p>
+    <p>
+        <span class="en"><a href="https://qzc31.github.io/">Site</a></span>
+        <span class="zh"><a href="https://qzc31.github.io/">网站</a></span>
+    </p>
+
+    <h4>郑宇泽<span class="en"> (Zheng Yuze)</span></h4>
+    <p>
+        <span class="en"><a href="https://marco-yuze-zheng.blogspot.com/">Site</a></span>
+        <span class="zh"><a href="https://marco-yuze-zheng.blogspot.com/">网站</a></span>
+    </p>
+
+    <h4>刘欧<span class="en"> (Ou Liu)</span></h4>
+    <p>
+        <span class="en"><a href="https://ou-liu-red-sugar.github.io/about/">Site</a></span>
+        <span class="zh"><a href="https://ou-liu-red-sugar.github.io/about/">网站</a></span>
+    </p>
+
+    <h4>无懈可击99<span class="en"> (wxkj99)</span></h4>
+    <p>
+        <span class="en"><a href="https://wxkj99.github.io/">Site</a></span>
+        <span class="zh"><a href="https://wxkj99.github.io/">网站</a></span>
+    </p>
+
+    <h4>傅杰<span class="en"> (Fu Jie)</span></h4>
+    <p>
+        <span class="en"><a href="https://fujiemath.com">Site</a></span>
+        <span class="zh"><a href="https://fujiemath.com">网站</a></span>
+    </p>
+
+    </section>
+
+    </main>
+
+    </div>
+
+    <script>
+    /* ================= 语言切换 (与旧版逻辑一致) ================= */
+
+    function setLanguage(lang) {
+        // lang 应为 'en' 或 'zh'
+        var body = document.body;
+        body.classList.remove('lang-en', 'lang-zh');
+        body.classList.add(lang === 'zh' ? 'lang-zh' : 'lang-en');
+        // 同步语言开关 (右 = 中文)
+        var sw = document.getElementById('lang-switch');
+        if (sw) {
+            var zh = lang === 'zh';
+            sw.classList.toggle('on', zh);
+            sw.setAttribute('aria-checked', zh);
+            document.getElementById('cap-en').classList.toggle('on', !zh);
+            document.getElementById('cap-zh').classList.toggle('on', zh);
+        }
+        // 更新 URL 参数
+        var url = new URL(window.location);
+        var params = new URLSearchParams(url.search);
+        params.set('lang', lang);
+        url.search = params.toString();
+        window.history.replaceState({}, '', url);
+    }
+
+    function getLangFromURL() {
+        var params = new URLSearchParams(window.location.search);
+        var langParam = params.get('lang');
+        if (langParam === 'en') {
+            return 'en';
+        } else if (langParam === 'zh' || langParam === 'cn') {
+            return 'zh';
+        } else {
+            return null; // 无参数或无法识别的值，保持默认
+        }
+    }
+
+    function toggleLang() {
+        var currentLang = document.body.classList.contains('lang-zh') ? 'zh' : 'en';
+        setLanguage(currentLang === 'zh' ? 'en' : 'zh');
+    }
+
+    /* ================= 亮暗主题: <html data-theme> 驱动 =================
+     * 优先级: URL 参数 ?theme=light|dark > 浏览器/系统设置.
+     * 手动切换会写入 URL; 无参数时跟随系统并监听系统变化.
+     */
+
+    function isDark() {
+        return document.documentElement.dataset.theme === 'dark';
+    }
+
+    function getThemeFromURL() {
+        var t = new URLSearchParams(window.location.search).get('theme');
+        return (t === 'light' || t === 'dark') ? t : null;
+    }
+
+    function setTheme(theme, updateURL) {
+        document.documentElement.dataset.theme = theme;
+        // 同步亮暗开关 (右 = 暗色)
+        var sw = document.getElementById('theme-switch');
+        if (sw) {
+            var dark = theme === 'dark';
+            sw.classList.toggle('on', dark);
+            sw.setAttribute('aria-checked', dark);
+            document.getElementById('cap-light').classList.toggle('on', !dark);
+            document.getElementById('cap-dark').classList.toggle('on', dark);
+        }
+        if (updateURL) {
+            var url = new URL(window.location);
+            var params = new URLSearchParams(url.search);
+            params.set('theme', theme);
+            url.search = params.toString();
+            window.history.replaceState({}, '', url);
+        }
+        // 通知三角形等组件重着色
+        document.dispatchEvent(new CustomEvent('themechange'));
+    }
+
+    function toggleTheme() {
+        setTheme(isDark() ? 'light' : 'dark', true);
+    }
+
+    function initTheme() {
+        var fromURL = getThemeFromURL();
+        if (fromURL) {
+            setTheme(fromURL, false);
+        } else {
+            var mq = window.matchMedia('(prefers-color-scheme: dark)');
+            setTheme(mq.matches ? 'dark' : 'light', false);
+            // 未手动指定时, 跟随系统明暗变化
+            mq.addEventListener('change', function(e) {
+                if (!getThemeFromURL()) {
+                    setTheme(e.matches ? 'dark' : 'light', false);
+                }
+            });
+        }
+    }
+
+    /* ================= 滚动侦测: 高亮当前章节的导航项 ================= */
+
+    function initScrollSpy() {
+        var links = document.querySelectorAll('.nav-link');
+        var sections = document.querySelectorAll('.content-section');
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    links.forEach(function(link) {
+                        link.classList.toggle(
+                            'active',
+                            link.getAttribute('href') === '#' + entry.target.id
+                        );
+                    });
+                }
+            });
+        }, {
+            // 判定线: 视口上部 15% 处 (同时适配侧边栏与顶栏两种布局)
+            rootMargin: '-15% 0px -70% 0px'
+        });
+        sections.forEach(function(section) { observer.observe(section); });
+    }
+
+    /* ================= 背景三角点缀: 随机生成, 随滚动视差漂移 ================= */
+
+    function initTriangles() {
+        var field = document.createElement('div');
+        field.className = 'tri-field';
+        field.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(field);
+
+        // 蓝色系 (含芙宁娜蓝与水蓝), 随机取色
+        // 暗色模式下深蓝 ↔ 浅蓝 互换, 与 CSS 变量规则一致
+        function triPalette() {
+            return isDark()
+                ? ['#C7D2F2', '#8DA4EA', '#3560B0', '#6E7FE8', '#33508F']
+                : ['#253055', '#465BAF', '#6AC6E8', '#7E7DFF', '#BACBF0'];
+        }
+
+        var tris = [];
+        var count = Math.max(7, Math.min(14, Math.round(window.innerWidth / 110)));
+        for (var i = 0; i < count; i++) {
+            var el = document.createElement('i');
+            var d = {
+                el: el,
+                x: Math.random() * 100,                 // 水平位置 (vw)
+                y0: Math.random() * 130 - 15,           // 基准高度 (vh)
+                size: 40 + Math.random() * 110,         // 边长 (px)
+                speed: 0.05 + Math.random() * 0.25,     // 视差速度 (各不相同)
+                rot: Math.floor(Math.random() * 360),   // 朝向
+                ci: 0                                   // 调色板下标 (供明暗切换重着色)
+            };
+            d.ci = Math.floor(Math.random() * triPalette().length);
+            el.style.width = d.size + 'px';
+            el.style.height = d.size + 'px';
+            el.style.left = d.x + 'vw';
+            el.style.background = triPalette()[d.ci];
+            el.style.opacity = (0.04 + Math.random() * 0.06).toFixed(3);
+            field.appendChild(el);
+            tris.push(d);
+        }
+
+        // 亮暗切换时, 三角形按相同下标重新取色
+        document.addEventListener('themechange', function() {
+            var p = triPalette();
+            tris.forEach(function(d) { d.el.style.background = p[d.ci]; });
+        });
+
+        function place() {
+            var vh = window.innerHeight;
+            var span = vh * 1.3;                        // 一个完整的漂移行程
+            var sy = window.scrollY || window.pageYOffset;
+            for (var i = 0; i < tris.length; i++) {
+                var d = tris[i];
+                var y = (d.y0 / 100) * vh - sy * d.speed;
+                // 行程内循环回绕, 保证任意滚动位置都有三角形在场
+                y = ((y % span) + span) % span - vh * 0.15;
+                d.el.style.transform = 'translateY(' + y.toFixed(1) + 'px) rotate(' + d.rot + 'deg)';
+            }
+        }
+
+        place();
+
+        // 常驻 rAF 循环: 只在滚动位置变化时重排, 对任何滚动方式都可靠
+        // (不挂 scroll 事件, 也无需依赖系统动画设置)
+        var lastY = -1;
+        (function tick() {
+            var sy = window.scrollY || window.pageYOffset;
+            if (sy !== lastY) {
+                lastY = sy;
+                place();
+            }
+            requestAnimationFrame(tick);
+        })();
+        window.addEventListener('resize', place);
+    }
+
+    /* ================= 滚轮平滑滚动: 把"突变"滚动变为连续缓动 ================= */
+
+    function initSmoothScroll() {
+        var target = window.scrollY || 0;   // 滚动目标值
+        var current = target;               // 当前缓动值
+        var animating = false;
+
+        function maxScroll() {
+            return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        }
+
+        window.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) { return; }      // Ctrl+滚轮是缩放, 不拦截
+            e.preventDefault();
+            var dy = e.deltaY;
+            if (e.deltaMode === 1) { dy *= 33; }              // 行模式 → 像素
+            else if (e.deltaMode === 2) { dy *= window.innerHeight; } // 页模式 → 像素
+            target = Math.max(0, Math.min(maxScroll(), target + dy));
+            if (!animating) {
+                animating = true;
+                requestAnimationFrame(step);
+            }
+        }, { passive: false });
+
+        function step() {
+            var diff = target - current;
+            if (Math.abs(diff) < 0.5) {
+                current = target;
+                window.scrollTo(0, Math.round(current));
+                animating = false;
+                return;
+            }
+            current += diff * 0.14;         // 缓动系数: 越小越柔, 越大越跟手
+            window.scrollTo(0, Math.round(current));
+            requestAnimationFrame(step);
+        }
+
+        // 外部滚动 (键盘 / 锚点 / 拖滚动条) 发生时, 同步目标值避免打架
+        window.addEventListener('scroll', function() {
+            if (!animating) {
+                target = current = window.scrollY || window.pageYOffset;
+            }
+        }, { passive: true });
+    }
+
+    /* ================= 初始化 ================= */
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var lang = getLangFromURL();
+        if (lang) {
+            setLanguage(lang);
+        }
+        initTheme();
+        initScrollSpy();
+        initTriangles();
+        initSmoothScroll();
+    });
+    </script>
+</body>
+</html>

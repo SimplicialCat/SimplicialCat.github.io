@@ -33,10 +33,6 @@
     --line-light: #E2E8F6;
     --shadow: rgba(27, 63, 143, 0.06);
 
-    /* 作品卡片: 默认半透明 (透出背景), hover 时加深但不全遮 */
-    --work-bg: rgba(255, 255, 255, 0.55);
-    --work-bg-hover: rgba(255, 255, 255, 0.85);
-
     --font-serif: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
     --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei",
                  "PingFang SC", "Helvetica Neue", Arial, sans-serif;
@@ -340,66 +336,6 @@ body.lang-zh .en { display: none; }
     font-weight: normal;
 }
 
-/* ============ 作品卡片 (.work) ============
- * 每个项目一张卡片. 默认无边框感 + 半透明, 透出背景三角与水印;
- * hover 时提高不透明度 (仍微透) + 金边.
- * 主链接 a.primary 通过 ::after 铺满整张卡片 → 整卡可点;
- * 无 primary 的卡片 (多个对等链接) 不可整体点击, 各链接独立可点.
- */
-
-.work {
-    position: relative;
-    clear: both;    /* 不被节首的右浮动照片 (钢琴/黑板/头像) 压住 */
-    margin: 22px 0;
-    padding: 20px 24px 16px;
-    border: 1px solid transparent;
-    background: var(--work-bg);
-    transition: border-color 0.25s ease, background 0.25s ease,
-                box-shadow 0.25s ease, transform 0.25s ease;
-}
-
-/* 浮动图片的清除 */
-.work::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-/* hover: 不透明度调高 + 金边 (所有卡片) */
-.work:hover {
-    background: var(--work-bg-hover);
-    border-color: var(--gold-light);
-}
-
-/* 整卡可点的卡片额外给出浮起与阴影反馈 */
-.work:has(a.primary):hover {
-    box-shadow: 0 6px 20px var(--shadow);
-    transform: translateY(-2px);
-}
-
-/* 键盘焦点同样给整卡反馈 */
-.work:focus-within {
-    background: var(--work-bg-hover);
-    border-color: var(--gold-light);
-}
-
-/* 主链接: 透明覆盖层铺满卡片 */
-.work a.primary::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-}
-
-/* 其余链接浮在覆盖层之上, 保持独立可点 */
-.work a:not(.primary) {
-    position: relative;
-    z-index: 1;
-}
-
-/* 卡片内的标题与段落收紧 */
-.work h4 { margin-top: 0; }
-.work p:last-child { margin-bottom: 0; }
-
 /* ============ 正文元素 ============ */
 
 p {
@@ -644,10 +580,6 @@ img.piano-right   { width: 180px; }
     --line: #2A3145;
     --line-light: #222839;
     --shadow: rgba(0, 0, 0, 0.4);
-
-    /* 作品卡片: 暗色下的半透明版本 */
-    --work-bg: rgba(22, 27, 38, 0.55);
-    --work-bg-hover: rgba(22, 27, 38, 0.85);
 
     /* 金色 (--gold / --gold-light / --gold-ultra) 不变 */
 
