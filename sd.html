@@ -145,7 +145,7 @@
 // 构建版本号：每次改动代码后手动更新（格式 vYYYY.MM.DD-HHMM），
 // 显示在工具栏品牌名旁——用户报出看到的版本号即可判断是否缓存旧版。
 // ============================================================================
-const BUILD_VERSION = 'v2026.07.27-1258';
+const BUILD_VERSION = 'v2026.07.27-1657';
 document.getElementById('buildVer').textContent = BUILD_VERSION;
 // ============================================================================
 // ===CORE-BEGIN===
@@ -973,6 +973,81 @@ function moveNode(doc, fromPt, toPt) {
   return { ok: true, index: idx };
 }
 
+// ---- 成组移动与复制（多选集合 = 曲线索引 + 节点索引）--------------------------------
+// sel 形态：{ wires: [连线索引…], nodes: [节点索引…] }（插入序）。delta 为网格整数倍位移。
+
+// 成组移动合法性：每个选中节点的目标格点（原 at + delta）必须无占用——
+// 但集合内部的节点互相让位（目标格点上是被同组移走的节点算合法）。
+function groupMoveValid(doc, nodeIdxs, delta) {
+  const moving = new Set(nodeIdxs);
+  for (const i of nodeIdxs) {
+    const nd = doc.nodes[i];
+    if (!isPlainObj(nd) || !isPtLiteral(nd.at)) return false;
+    const t = [nd.at[0] + delta[0], nd.at[1] + delta[1]];
+    const occ = doc.nodes.some((n, j) => !moving.has(j) && isPlainObj(n) && isPtLiteral(n.at) &&
+      n.at[0] === t[0] && n.at[1] === t[1]);
+    if (occ) return false;
+  }
+  return true;
+}
+
+// 成组位移（就地修改）：选中节点 at、选中曲线的 from/to/via 全部按 delta 移动；
+// 组外连线跟随：未选中但端点落在被移动节点原格点上的曲线，端点按 moveNode 语义跟随
+// （对应控制点同向量联动，会变形）；已选中曲线端点已随 delta 移动，不再重复跟随（去重）。
+// 调用方保证 delta 为网格整数倍且 groupMoveValid 通过（或自行承担占用重叠）。
+function moveSelection(doc, sel, delta) {
+  const origPts = [];
+  for (const i of sel.nodes) {
+    const nd = doc.nodes[i];
+    if (!isPlainObj(nd) || !isPtLiteral(nd.at)) continue;
+    origPts.push(nd.at.slice());
+    nd.at = [nd.at[0] + delta[0], nd.at[1] + delta[1]];
+  }
+  const wireSet = new Set(sel.wires);
+  for (const i of sel.wires) {
+    const w = doc.wires[i];
+    if (!isPlainObj(w)) continue;
+    for (const f of ['from', 'to']) if (isPtLiteral(w[f])) w[f] = [w[f][0] + delta[0], w[f][1] + delta[1]];
+    if (Array.isArray(w.via)) w.via = w.via.map(c => isPtLiteral(c) ? [c[0] + delta[0], c[1] + delta[1]] : c);
+  }
+  for (let j = 0; j < doc.wires.length; j++) {
+    if (wireSet.has(j)) continue; // 去重：已选中曲线不再应用跟随
+    const w = doc.wires[j];
+    if (!isPlainObj(w)) continue;
+    for (const f of ['from', 'to']) {
+      if (!isPtLiteral(w[f])) continue;
+      for (const orig of origPts) {
+        if (w[f][0] === orig[0] && w[f][1] === orig[1]) {
+          w[f] = [w[f][0] + delta[0], w[f][1] + delta[1]];
+          if (w.type === 'curve' && Array.isArray(w.via) && w.via.length === 2) {
+            const ci = f === 'from' ? 0 : 1;
+            if (isPtLiteral(w.via[ci])) w.via[ci] = [w.via[ci][0] + delta[0], w.via[ci][1] + delta[1]];
+          }
+          break;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+// 复制选中集合（深拷贝，追加到文档末尾）：节点含全部外观属性，曲线含 via/label/样式。
+// 返回副本索引集合 { wires, nodes }；调用方负责拖动副本、合法提交或截断丢弃。
+function duplicateSelection(doc, sel) {
+  const out = { wires: [], nodes: [] };
+  for (const i of sel.nodes) {
+    if (!isPlainObj(doc.nodes[i])) continue;
+    doc.nodes.push(JSON.parse(JSON.stringify(doc.nodes[i])));
+    out.nodes.push(doc.nodes.length - 1);
+  }
+  for (const i of sel.wires) {
+    if (!isPlainObj(doc.wires[i])) continue;
+    doc.wires.push(JSON.parse(JSON.stringify(doc.wires[i])));
+    out.wires.push(doc.wires.length - 1);
+  }
+  return out;
+}
+
 // ---- SVG 导出：求值后的场景 → 独立自包含 SVG -------------------------------------
 // 只导出图元本体（连线、可见节点、节点文字）；格点阵、错误标红等编辑器辅助元素不导出。
 // opts: { padding=20, fontSize, fontFamily, measureText, texRender }
@@ -1085,15 +1160,21 @@ const gridInput = document.getElementById('gridInput');
 const SVG_MARGIN = 12; // #svg 的 CSS margin，供就地编辑框定位
 
 let doc = { nodes: [], wires: [], texts: [] }; // 默认空画布（grid 缺省 40）；SAMPLE 仅保留供测试参考，不再自动加载
-let selection = null;          // {kind:'node'|'wire', index} | {kind:'wires'}（曲线多选）
+let selection = null;          // {kind:'node'|'wire'|'text', index} | {kind:'multi'}（曲线+节点多选）
 let selSet = [];               // 选中的曲线索引集合（插入序，最后一个为"最后选中"）；单选时恰一个元素
-// 统一应用曲线选中集合：>1 → 多选面板；=1 → 单选完整属性；=0 → 无选中
-function applyWireSel(set) {
-  selSet = set;
-  if (set.length > 1) selection = { kind: 'wires' };
-  else if (set.length === 1) selection = { kind: 'wire', index: set[0] };
+let nodeSel = [];              // 选中的节点索引集合（插入序）；节点单选时恰一个元素
+// 统一应用多选集合（曲线 + 节点）：总数 >1 → 多选面板；=1 → 该对象单选完整属性；=0 → 无选中
+function applySel(wires, nodes) {
+  selSet = wires;
+  nodeSel = nodes;
+  const total = wires.length + nodes.length;
+  if (total > 1) selection = { kind: 'multi' };
+  else if (wires.length === 1) selection = { kind: 'wire', index: wires[0] };
+  else if (nodes.length === 1) selection = { kind: 'node', index: nodes[0] };
   else selection = null;
 }
+// 兼容入口：只改曲线集合（导入/清空/标签点击等），节点集合清空
+function applyWireSel(set) { applySel(set, []); }
 let tool = 'select';
 let dragState = null;
 let lastScene = null;
@@ -1247,7 +1328,7 @@ function render() {
   // 节点（有内容的才渲染）
   for (const nd of scene.nodes) {
     const err = nd.errs.length > 0;
-    const sel = selection && selection.kind === 'node' && selection.index === nd.idx;
+    const sel = nodeSel.includes(nd.idx); // 节点选中集合（单选/多选统一橙色虚线高亮）
     if (!nd.ap) { // 无内容 / 定义非法：红色占位标记
       if (err) {
         M.push(`<g data-node="${nd.idx}" style="cursor:pointer"><circle cx="${nd.pt[0]}" cy="${nd.pt[1]}" r="8" fill="#e0242433" stroke="#e02424" stroke-width="2" stroke-dasharray="4 3"/></g>`);
@@ -1365,6 +1446,17 @@ function render() {
       M.push(`<rect x="${cx - w / 2}" y="${cy - h / 2}" width="${w}" height="${h}" rx="3" fill="#e0242422" stroke="#e02424" stroke-width="2" stroke-dasharray="5 4" pointer-events="none"/>`);
     }
   }
+  // 成组/复制拖动：非法时给组内每个节点的目标位置画红色拒绝框（合法时已实时应用，无需预览）
+  if (dragState && dragState.kind === 'groupMove' && !dragState.valid) {
+    for (const i of dragState.sel.nodes) {
+      const nd = scene.nodes[i];
+      if (nd && nd.ap) {
+        const [w, h] = nd.ap.size;
+        const cx = nd.pt[0] + dragState.delta[0], cy = nd.pt[1] + dragState.delta[1];
+        M.push(`<rect x="${cx - w / 2}" y="${cy - h / 2}" width="${w}" height="${h}" rx="3" fill="#e0242422" stroke="#e02424" stroke-width="2" stroke-dasharray="5 4" pointer-events="none"/>`);
+      }
+    }
+  }
   // 曲线创建预览（吸附端点）
   if (dragState && dragState.kind === 'createWire' && dragState.cur) {
     const a = dragState.start, b = snapPt(dragState.cur);
@@ -1408,7 +1500,8 @@ function renderErrors(scene) {
     el.addEventListener('click', () => {
       const s = list[i].sel;
       if (s.kind === 'wire') applyWireSel([s.index]);
-      else { selSet = []; selection = s; }
+      else if (s.kind === 'node') applySel([], [s.index]);
+      else { selSet = []; nodeSel = []; selection = s; }
       render(); renderPanel();
     });
   });
@@ -1474,8 +1567,20 @@ svg.addEventListener('mousedown', (e) => {
   const ndEl = t.closest && t.closest('[data-node]');
   if (ndEl && tool === 'select') {
     const idx = +ndEl.dataset.node;
-    selection = { kind: 'node', index: idx }; // 节点不参与多选：点节点 = 单选节点并清空曲线多选
-    selSet = [];
+    if (e.shiftKey) { // Shift+单击节点 = toggle 进多选集合（与曲线一致），不启动拖动
+      applySel(selSet, nodeSel.includes(idx) ? nodeSel.filter(i => i !== idx) : [...nodeSel, idx]);
+      render(); renderPanel();
+      return;
+    }
+    const copy = e.ctrlKey || e.metaKey;
+    if (nodeSel.includes(idx) || copy) {
+      // 命中已在选中集合内 → 成组拖动；Ctrl(Cmd) 按下 → 复制后拖动
+      //（Ctrl+未选中对象 = 先单选它再复制拖动；"复制该单个对象"语义）
+      if (!nodeSel.includes(idx)) applySel([], [idx]);
+      startGroupDrag(p, copy);
+      return;
+    }
+    applySel([], [idx]); // 单选节点（清空曲线多选）
     if (nodeDraggable(idx)) {
       const nd = lastScene.nodes[idx];
       // 快照 wires（含 via）供拖拽期间每帧回滚：实时跟随 = 恢复快照 → 以当前目标重新应用 moveNode
@@ -1490,6 +1595,7 @@ svg.addEventListener('mousedown', (e) => {
     const idx = +txEl.dataset.text;
     selection = { kind: 'text', index: idx };
     selSet = [];
+    nodeSel = [];
     const txd = doc.texts[idx];
     if (isPlainObj(txd) && isPtLiteral(txd.at)) {
       dragState = { kind: 'textMove', index: idx, off: [p[0] - txd.at[0], p[1] - txd.at[1]] };
@@ -1515,6 +1621,13 @@ svg.addEventListener('mousedown', (e) => {
     if (e.shiftKey) { // Shift+单击 = 加入/移出多选集合（toggle），不启动拖动
       applyWireSel(selSet.includes(idx) ? selSet.filter(i => i !== idx) : [...selSet, idx]);
       render(); renderPanel();
+      return;
+    }
+    const copy = e.ctrlKey || e.metaKey;
+    if (selSet.includes(idx) || copy) {
+      // 命中已在选中集合内 → 成组拖动；Ctrl(Cmd) 按下 → 复制后拖动（未选中 = 复制该单条曲线）
+      if (!selSet.includes(idx)) applySel([idx], []);
+      startGroupDrag(p, copy);
       return;
     }
     applyWireSel([idx]); // 单选
@@ -1585,6 +1698,29 @@ function restoreNodeDrag(ds) {
   ds.snapWires.forEach((sw, i) => { doc.wires[i] = JSON.parse(JSON.stringify(sw)); });
 }
 
+// 成组/复制拖动启动：命中对象已在选中集合内（或 Ctrl 复制）时调用。
+// copy=true：先深拷贝整个集合追加到文档末尾（副本为被拖对象），快照含副本；
+// 丢弃时按 origNodeCount/origWireCount 截断追加区。
+function startGroupDrag(p, copy) {
+  const preSel = { wires: selSet.slice(), nodes: nodeSel.slice() };
+  const origNodeCount = doc.nodes.length, origWireCount = doc.wires.length;
+  let dragSel = preSel;
+  if (copy) {
+    dragSel = duplicateSelection(doc, preSel); // 副本追加进文档，拖动的是副本
+    applySel(dragSel.wires, dragSel.nodes);    // 预览期即选中副本集合（橙框跟随）
+  }
+  dragState = {
+    kind: 'groupMove', copy, sel: dragSel, preSel, origNodeCount, origWireCount,
+    start: p, delta: [0, 0], valid: true,
+    snap: JSON.parse(JSON.stringify({ nodes: doc.nodes, wires: doc.wires })) // 快照-回滚-重放（copy 模式含副本）
+  };
+  render(); renderPanel();
+}
+function restoreGroupDrag(ds) {
+  doc.nodes = JSON.parse(JSON.stringify(ds.snap.nodes));
+  doc.wires = JSON.parse(JSON.stringify(ds.snap.wires));
+}
+
 window.addEventListener('mousemove', (e) => {
   if (!dragState) return;
   updateHover(null); // 拖拽期间隐藏悬停光晕
@@ -1648,6 +1784,16 @@ window.addEventListener('mousemove', (e) => {
       w.via = ds.origVia.map(c => isPtLiteral(c) ? snapPt([c[0] + d[0], c[1] + d[1]]) : c);
     }
     render();
+  } else if (ds.kind === 'groupMove') {
+    // 成组/复制拖动：delta 取网格整数倍（节点始终落格点）；
+    // 快照-回滚-重放：每帧回滚到起点，合法则重新应用整组位移，非法仅红色预览
+    const raw = [p[0] - ds.start[0], p[1] - ds.start[1]];
+    const delta = [snapTo(raw[0], curGrid()), snapTo(raw[1], curGrid())];
+    restoreGroupDrag(ds);
+    ds.delta = delta;
+    ds.valid = (delta[0] === 0 && delta[1] === 0) || groupMoveValid(doc, ds.sel.nodes, delta);
+    if (ds.valid && (delta[0] !== 0 || delta[1] !== 0)) moveSelection(doc, ds.sel, delta);
+    render();
   } else if (ds.kind === 'createWire') {
     ds.cur = p;
     render();
@@ -1704,7 +1850,8 @@ window.addEventListener('mouseup', (e) => {
     if (!ds.shift) applyWireSel([]);
     render(); renderPanel();
   } else if (ds.kind === 'marquee') {
-    // 松手结算：与选框相交（扫过即选）的曲线入选；Shift 长按 = 追加到现有多选
+    // 松手结算：与选框相交（扫过即选）的曲线入选；节点的格点坐标落入选框即入选（按点判定）；
+    // Shift 长按 = 追加到现有多选
     const r = {
       x0: Math.min(ds.x0, ds.x1), y0: Math.min(ds.y0, ds.y1),
       x1: Math.max(ds.x0, ds.x1), y1: Math.max(ds.y0, ds.y1)
@@ -1713,8 +1860,36 @@ window.addEventListener('mouseup', (e) => {
     if (lastScene) for (const res of lastScene.wires) {
       if (wireIntersectsRect(res, r)) hits.push(res.idx);
     }
-    applyWireSel(ds.additive ? [...new Set([...selSet, ...hits])] : hits);
-    if (!hits.length) toast('未命中曲线');
+    const hitsN = [];
+    doc.nodes.forEach((n, i) => {
+      if (isPlainObj(n) && isPtLiteral(n.at) && ptInRect(n.at, r)) hitsN.push(i);
+    });
+    applySel(
+      ds.additive ? [...new Set([...selSet, ...hits])] : hits,
+      ds.additive ? [...new Set([...nodeSel, ...hitsN])] : hitsN);
+    if (!hits.length && !hitsN.length) toast('未命中对象');
+    render(); renderPanel();
+  } else if (ds.kind === 'groupMove') {
+    // 幂等提交：回滚到快照，合法则以最终 delta 一次性应用整组位移；
+    // 非法/未移动 → 恢复原状（copy 模式截断副本追加区并恢复原选中）
+    const raw = [p[0] - ds.start[0], p[1] - ds.start[1]];
+    const delta = [snapTo(raw[0], curGrid()), snapTo(raw[1], curGrid())];
+    const moved = delta[0] !== 0 || delta[1] !== 0;
+    restoreGroupDrag(ds);
+    if (moved && groupMoveValid(doc, ds.sel.nodes, delta)) {
+      moveSelection(doc, ds.sel, delta);
+      applySel(ds.sel.wires, ds.sel.nodes); // 提交后选中（copy 模式 = 选中副本集合）
+      if (ds.copy) toast('已复制 ' + (ds.sel.nodes.length + ds.sel.wires.length) + ' 个对象');
+    } else {
+      if (ds.copy) {
+        doc.nodes.length = ds.origNodeCount;
+        doc.wires.length = ds.origWireCount;
+        if (moved) toast('目标格点被占用，已取消复制');
+      } else if (moved) {
+        toast('目标格点已被占用，已弹回');
+      }
+      applySel(ds.preSel.wires, ds.preSel.nodes);
+    }
     render(); renderPanel();
   } else if (ds.kind === 'endpoint' || ds.kind === 'via' || ds.kind === 'size' || ds.kind === 'wireBody' || ds.kind === 'textMove' || ds.kind === 'wireLabel') {
     render(); renderPanel(); // 拖拽结束刷新面板数值
@@ -1778,6 +1953,7 @@ function openTextEditor(pt, idx) {
       }
     } else if (v) {
       doc.texts.push({ at: [round2(pt[0]), round2(pt[1])], text: v });
+      selSet = []; nodeSel = [];
       selection = { kind: 'text', index: doc.texts.length - 1 };
     }
     render(); renderPanel();
@@ -1850,12 +2026,12 @@ function openInlineEditor(gridPt) {
       if (v) existing.text = v;
       else if (existing.shape === undefined) { // 清空且无显式 shape → 节点消失
         doc.nodes.splice(idx, 1);
-        if (selection && selection.kind === 'node') selection = null;
+        if (selection && selection.kind === 'node') { selection = null; nodeSel = []; }
         toast('已清空文字，节点消失');
       } else delete existing.text;
     } else if (v) {
       doc.nodes.push({ at: gridPt.slice(), text: v });
-      selection = { kind: 'node', index: doc.nodes.length - 1 };
+      applySel([], [doc.nodes.length - 1]);
     }
     render(); renderPanel();
   };
@@ -1884,16 +2060,22 @@ function deleteSelection() {
     doc.nodes.splice(selection.index, 1);
     toast('已删除节点');
     selection = null;
+    nodeSel = [];
   } else if (selection.kind === 'text') {
     doc.texts.splice(selection.index, 1);
     toast('已删除文本框');
     selection = null;
   } else {
-    // 曲线删除以多选集合 selSet 为准（单选时恰一个元素）：索引降序逐个 splice
+    // 删除以多选集合为准（曲线 selSet + 节点 nodeSel；单选时恰一个元素）：索引降序逐个 splice
     const idxs = [...selSet].sort((a, b) => b - a);
     for (const i of idxs) doc.wires.splice(i, 1);
-    toast(idxs.length > 1 ? `已删除 ${idxs.length} 条连线` : '已删除连线');
-    applyWireSel([]);
+    const nidxs = [...nodeSel].sort((a, b) => b - a);
+    for (const i of nidxs) doc.nodes.splice(i, 1);
+    const parts = [];
+    if (idxs.length) parts.push(idxs.length + ' 条连线');
+    if (nidxs.length) parts.push(nidxs.length + ' 个节点');
+    toast('已删除 ' + parts.join(' · '));
+    applySel([], []);
   }
   render(); renderPanel();
 }
@@ -2014,7 +2196,8 @@ function renderPanel() {
         '· 画线：格点间拖拽，单击空白退出。\n' +
         '· 文本：单击空白放公式文本框，自由拖动。\n' +
         '· 标签：选中连线在面板输入；标签可拖动、双击改公式。\n' +
-        '· Shift+单击多选曲线；空白长按框选；Delete 删除。')
+        '· Shift+单击多选曲线/节点；空白长按框选；Delete 删除。\n' +
+        '· 拖动选中组内对象 = 整组移动；Ctrl+拖动 = 复制整组。')
     );
     return;
   }
@@ -2041,15 +2224,18 @@ function renderPanel() {
     panel.append(row('颜色', ...colorCtl(() => tx.color, DEFAULTS.textColor, v => { tx.color = v; render(); })));
     return;
   }
-  if (selection.kind === 'wires') { // 曲线多选面板：批量颜色 / 粗细
-    const first = () => doc.wires[selSet[0]];
-    panel.append(el('div', { class: 'sec-title' }, `已选 ${selSet.length} 条曲线`));
-    panel.append(el('div', { class: 'hint' }, 'Shift+单击增删；Delete 全删；Esc 清空'));
-    panel.append(row('批量颜色', ...colorCtl(() => first() && first().stroke, DEFAULTS.stroke,
-      v => { for (const i of selSet) if (doc.wires[i]) doc.wires[i].stroke = v; render(); })));
-    panel.append(row('批量粗细', numCtl(() => (first() && first().width) ?? DEFAULTS.width,
-      v => { for (const i of selSet) if (doc.wires[i]) doc.wires[i].width = Math.max(0.5, v); render(); },
-      { min: '0.5', step: '0.5' })));
+  if (selection.kind === 'multi') { // 多选面板（曲线 + 节点）：批量颜色/粗细只作用于选中曲线
+    const nW = selSet.length, nN = nodeSel.length;
+    panel.append(el('div', { class: 'sec-title' }, `已选 ${nW} 条曲线 · ${nN} 个节点`));
+    panel.append(el('div', { class: 'hint' }, 'Shift+单击增删；Delete 全删；Esc 清空\n拖动组内对象整组移动；Ctrl+拖动复制整组'));
+    if (nW > 0) {
+      const first = () => doc.wires[selSet[0]];
+      panel.append(row('批量颜色', ...colorCtl(() => first() && first().stroke, DEFAULTS.stroke,
+        v => { for (const i of selSet) if (doc.wires[i]) doc.wires[i].stroke = v; render(); })));
+      panel.append(row('批量粗细', numCtl(() => (first() && first().width) ?? DEFAULTS.width,
+        v => { for (const i of selSet) if (doc.wires[i]) doc.wires[i].width = Math.max(0.5, v); render(); },
+        { min: '0.5', step: '0.5' })));
+    }
     return;
   }
   const w = doc.wires[selection.index];
@@ -2107,6 +2293,7 @@ function renderNodePanel(index, scene) {
       if (typeof def.text !== 'string' || def.text === '') {
         doc.nodes.splice(index, 1);
         selection = null;
+        nodeSel = [];
         toast('无文字，节点已消失');
       }
     } else def.shape = formSel.value;
