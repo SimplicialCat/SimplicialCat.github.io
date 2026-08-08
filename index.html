@@ -16,7 +16,7 @@
     </script>
 </head>
 <body class="lang-en">
-
+    <div id="customCursor"></div>
     <div class="layout">
 
     <!-- 侧边栏: 站名 + 章节导航 + 语言切换 (小屏时折叠为顶栏) -->
@@ -490,6 +490,7 @@
     <article class="work">
         <h4><span class="en">Aperiodic Tiling</span>
             <span class="zh">非周期镶嵌</span></h4>
+        <img src="aptil-thumbnail.png" class="guitar-logo" style="float: right; margin: 0 0 15px 20px; max-width: 150px; height: auto;">
         <p>
             <span class="en">An interactive aperiodic rhombus tiling visualization tool.</span>
             <span class="zh">非周期菱形镶嵌的交互式可视化工具.</span>
@@ -914,7 +915,18 @@
         initScrollSpy();
         initTriangles();
         initSmoothScroll();
+        
+        const cursor = document.getElementById('customCursor');
+
+        // 监听鼠标移动，让光标的左上角（即三角形顶点）对准鼠标焦点
+        document.addEventListener('mousemove', (e) => {
+        // 直接使用 clientX/Y，无需偏移，因为顶点就在图形的 (0,0) 位置
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+        });
     });
+
+    
     </script>
 </body>
 </html>

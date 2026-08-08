@@ -49,6 +49,20 @@ html {
     scroll-padding-top: 24px;
 }
 
+* {
+  cursor: none !important;
+}
+
+#customCursor {
+  position: fixed;        /* 必须，让 left/top 生效 */
+  pointer-events: none;   /* 让鼠标事件穿透，不影响点击按钮/链接 */
+  z-index: 99999;         /* 确保浮在所有元素上面 */
+  width: 30px;
+  height: 30px;
+  background-color: #708AFF;  /* 蓝色填充 */
+  clip-path: polygon(0 0, 100% 50%, 50% 100%); /* 顶点在左上角 (0,0) */
+}
+
 body {
     font-family: var(--font-sans);
     background-color: var(--bg);
