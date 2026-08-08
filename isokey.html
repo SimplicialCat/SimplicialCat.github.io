@@ -102,6 +102,46 @@
       opacity: 0.48;
     }
 
+    .microtonal-settings {
+      display: none;
+      width: 100%;
+      gap: 9px;
+      flex-direction: column;
+    }
+
+    .microtonal-settings.is-visible {
+      display: flex;
+    }
+
+    .microtonal-settings input[type="number"] {
+      width: min(150px, 42vw);
+      border: 1px solid #303644;
+      border-radius: 7px;
+      background: #101319;
+      color: var(--text);
+      padding: 8px 10px;
+      font: inherit;
+    }
+
+    .microtonal-status {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .key.microtonal-numbered::after {
+      content: attr(data-microtonal-number);
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+      font-weight: 760;
+      color: #ffffff;
+      text-shadow: 0 2px 5px rgb(0 0 0 / 0.9), 0 0 8px rgb(0 0 0 / 0.72);
+      transform: rotate(var(--keyboard-counter-rotation, 0deg));
+      pointer-events: none;
+    }
+
     select {
       min-width: 150px;
       border: 1px solid #303644;
@@ -220,9 +260,13 @@
 
     .keyboard {
       position: relative;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
+      width: var(--keyboard-layer-size, 142vmax);
+      height: var(--keyboard-layer-size, 142vmax);
+      left: 50%;
+      top: 50%;
+      overflow: visible;
+      transform: translate(-50%, -50%) rotate(var(--keyboard-rotation, 0deg));
+      transform-origin: center;
       touch-action: none;
       user-select: none;
       -webkit-user-select: none;
@@ -262,12 +306,13 @@
 
     .key:active,
     .key.is-playing {
-      filter: brightness(1.3) saturate(1.15);
+      filter: brightness(1.55) saturate(1.35);
       box-shadow:
-        inset 0 0 0 1px rgb(255 255 255 / 0.28),
-        0 0 12px var(--key-glow-color),
-        0 0 28px var(--key-glow-color),
-        0 14px 30px rgb(0 0 0 / 0.3);
+        inset 0 0 0 2px rgb(255 255 255 / 0.42),
+        0 0 16px var(--key-glow-color),
+        0 0 38px var(--key-glow-color),
+        0 0 72px var(--key-glow-color),
+        0 16px 32px rgb(0 0 0 / 0.34);
     }
 
     .key.is-muted {
@@ -314,15 +359,20 @@
     }
 
     .chord-brief {
-      font-size: clamp(44px, 12vw, 132px);
+      font-size: clamp(30px, calc(12vw * var(--chord-brief-scale, 1)), 132px);
       font-weight: 760;
-      line-height: 0.92;
+      line-height: 1;
+      max-width: 94vw;
+      white-space: pre-line;
     }
 
     .chord-full {
       margin-top: 8px;
-      font-size: clamp(13px, 2.4vw, 24px);
+      font-size: clamp(10px, calc(2.4vw * var(--chord-full-scale, 1)), 24px);
       font-weight: 540;
+      max-width: 94vw;
+      line-height: 1.28;
+      white-space: pre-line;
     }
 
     @media (max-width: 720px) {
@@ -404,6 +454,25 @@
           Mode
           <select id="modeSelect" aria-label="Keyboard mode"></select>
         </label>
+        <div id="microtonalSettings" class="microtonal-settings" aria-label="Microtonal parameters">
+          <label class="setting">
+            Right numerator
+            <input id="microRightNumerator" type="number" step="1" value="5" aria-label="Microtonal right numerator">
+          </label>
+          <label class="setting">
+            Upright numerator
+            <input id="microUprightNumerator" type="number" step="1" value="9" aria-label="Microtonal upright numerator">
+          </label>
+          <label class="setting">
+            Common denominator
+            <input id="microDenominator" type="number" min="1" step="1" value="53" aria-label="Microtonal common denominator">
+          </label>
+          <span id="microtonalStatus" class="microtonal-status" role="status" aria-live="polite"></span>
+          <label class="setting">
+            Show step numbers
+            <input id="microtonalNumbersToggle" type="checkbox" aria-label="Show microtonal step numbers" checked>
+          </label>
+        </div>
         <label class="setting chord-setting">
           Chord mode
           <input id="chordModeToggle" type="checkbox" aria-label="Chord mode">
@@ -417,6 +486,11 @@
           Key size
           <input id="keySizeSlider" type="range" min="24" max="72" step="1" aria-label="Key size">
           <span id="keySizeValue" class="setting-value" aria-live="polite"></span>
+        </label>
+        <label class="setting">
+          Keyboard rotation
+          <input id="rotationSlider" type="range" min="-180" max="180" step="1" value="0" aria-label="Keyboard rotation">
+          <span id="rotationValue" class="setting-value" aria-live="polite"></span>
         </label>
         <div class="palette-panel" aria-label="Palette editor">
           <span>Pitch color</span>
@@ -484,14 +558,30 @@
       "#2c2f36"
     ];
 
-    const pitchNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-    const pitchFullNames = ["C", "C sharp", "D", "D sharp", "E", "F", "F sharp", "G", "G sharp", "A", "A sharp", "B"];
+    const pitchNames = ["C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"];
+    const pitchSwatchLabels = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    const pitchFullNames = [
+      "C",
+      "C sharp / D flat",
+      "D",
+      "D sharp / E flat",
+      "E",
+      "F",
+      "F sharp / G flat",
+      "G",
+      "G sharp / A flat",
+      "A",
+      "A sharp / B flat",
+      "B"
+    ];
     const chordPatterns = [
       { intervals: [0, 4, 7, 10], suffix: "7", full: "dominant seventh chord" },
       { intervals: [0, 4, 7, 11], suffix: "maj7", full: "major seventh chord" },
       { intervals: [0, 3, 7, 10], suffix: "m7", full: "minor seventh chord" },
       { intervals: [0, 3, 6, 10], suffix: "m7b5", full: "half-diminished seventh chord" },
       { intervals: [0, 3, 6, 9], suffix: "dim7", full: "diminished seventh chord" },
+      { intervals: [0, 4, 7, 9], suffix: "6", full: "sixth chord" },
+      { intervals: [0, 3, 7, 9], suffix: "m6", full: "minor sixth chord" },
       { intervals: [0, 4, 7], suffix: "", full: "major chord" },
       { intervals: [0, 3, 7], suffix: "m", full: "minor chord" },
       { intervals: [0, 3, 6], suffix: "dim", full: "diminished chord" },
@@ -514,6 +604,12 @@
         name: "Harmonic Mode",
         rightStep: 4,
         uprightStep: 7
+      },
+      microtonal: {
+        name: "Microtonal Mode",
+        rightStep: 5 / 53,
+        uprightStep: 9 / 53,
+        microtonal: true
       }
     };
 
@@ -521,6 +617,7 @@
     let selectedPitchClass = 0;
     let chordModeEnabled = false;
     let chordDisplayOpacity = 0.58;
+    let microtonalNumbersEnabled = true;
     const pitchColors = [...defaultPitchColors];
     let keyboardConfig = { ...baseKeyboardConfig, ...keyboardModes[currentModeId] };
 
@@ -530,10 +627,18 @@
     const chordOpacitySlider = document.querySelector("#chordOpacitySlider");
     const chordOpacityValue = document.querySelector("#chordOpacityValue");
     const chordOpacitySetting = document.querySelector(".chord-opacity-setting");
+    const microtonalSettings = document.querySelector("#microtonalSettings");
+    const microRightNumerator = document.querySelector("#microRightNumerator");
+    const microUprightNumerator = document.querySelector("#microUprightNumerator");
+    const microDenominator = document.querySelector("#microDenominator");
+    const microtonalStatus = document.querySelector("#microtonalStatus");
+    const microtonalNumbersToggle = document.querySelector("#microtonalNumbersToggle");
     const settingsDetails = document.querySelector(".settings-details");
     const keyboard = document.querySelector("#keyboard");
     const keySizeSlider = document.querySelector("#keySizeSlider");
     const keySizeValue = document.querySelector("#keySizeValue");
+    const rotationSlider = document.querySelector("#rotationSlider");
+    const rotationValue = document.querySelector("#rotationValue");
     const pitchColorGrid = document.querySelector("#pitchColorGrid");
     const paletteChoiceGrid = document.querySelector("#paletteChoiceGrid");
     const resetPalette = document.querySelector("#resetPalette");
@@ -547,6 +652,24 @@
 
     function midiToFrequency(midi) {
       return 440 * 2 ** ((midi - 69) / 12);
+    }
+
+    function updateMicrotonalSteps() {
+      if (!keyboardConfig.microtonal) return;
+      const rightNumerator = Number(microRightNumerator.value);
+      const uprightNumerator = Number(microUprightNumerator.value);
+      const denominator = Number(microDenominator.value);
+      if (![rightNumerator, uprightNumerator, denominator].every(Number.isInteger) || denominator <= 0) {
+        microtonalStatus.textContent = "Numerators and denominator must be integers; denominator must be positive.";
+        return false;
+      }
+      keyboardConfig.rightStep = rightNumerator / denominator;
+      keyboardConfig.uprightStep = uprightNumerator / denominator;
+      keyboardConfig.microtonalDenominator = denominator;
+      keyboardConfig.microtonalRightNumerator = rightNumerator;
+      keyboardConfig.microtonalUprightNumerator = uprightNumerator;
+      microtonalStatus.textContent = `Steps: ${rightNumerator}/${denominator} and ${uprightNumerator}/${denominator} octaves`;
+      return true;
     }
 
     function gaussianWeight(midi) {
@@ -594,6 +717,8 @@
       currentModeId = modeId;
       keyboardConfig = { ...baseKeyboardConfig, ...keyboardModes[currentModeId] };
       modeSelect.value = currentModeId;
+      microtonalSettings.classList.toggle("is-visible", keyboardConfig.microtonal === true);
+      updateMicrotonalSteps();
       syncChordModeAvailability();
       requestAnimationFrame(renderKeyboard);
     }
@@ -630,7 +755,7 @@
         swatch.className = "pitch-swatch";
         swatch.type = "button";
         swatch.style.setProperty("--swatch-color", color);
-        swatch.dataset.label = pitchNames[pitchClass];
+        swatch.dataset.label = pitchSwatchLabels[pitchClass];
         swatch.setAttribute("aria-label", `${pitchNames[pitchClass]} color`);
         swatch.classList.toggle("is-selected", pitchClass === selectedPitchClass);
         swatch.addEventListener("click", () => {
@@ -679,6 +804,55 @@
       keySizeValue.textContent = `${roundedSize}px`;
     }
 
+    function setRotation(degrees) {
+      const normalized = Math.min(180, Math.max(-180, Math.round(Number(degrees))));
+      document.documentElement.style.setProperty("--keyboard-rotation", `${normalized}deg`);
+      document.documentElement.style.setProperty("--keyboard-counter-rotation", `${-normalized}deg`);
+      rotationSlider.value = String(normalized);
+      rotationValue.textContent = `${normalized}°`;
+    }
+
+    function updateUrlState() {
+      const params = new URLSearchParams();
+      params.set("mode", currentModeId);
+      params.set("chord", chordModeEnabled ? "1" : "0");
+      params.set("chordOpacity", String(Math.round(chordDisplayOpacity * 100)));
+      params.set("keySize", keySizeSlider.value);
+      params.set("rotation", rotationSlider.value);
+      params.set("numbers", microtonalNumbersEnabled ? "1" : "0");
+      params.set("right", microRightNumerator.value);
+      params.set("upright", microUprightNumerator.value);
+      params.set("denominator", microDenominator.value);
+      params.set("palette", pitchColors.join(","));
+      history.replaceState(null, "", `${location.pathname}?${params}`);
+    }
+
+    function loadUrlState() {
+      const params = new URLSearchParams(location.search);
+      if (keyboardModes[params.get("mode")]) setMode(params.get("mode"));
+      if (params.has("right")) microRightNumerator.value = params.get("right");
+      if (params.has("upright")) microUprightNumerator.value = params.get("upright");
+      if (params.has("denominator")) microDenominator.value = params.get("denominator");
+      if (params.has("palette")) {
+        const colors = params.get("palette").split(",");
+        if (colors.length === pitchColors.length && colors.every((color) => /^#[0-9a-f]{6}$/i.test(color))) {
+          pitchColors.splice(0, pitchColors.length, ...colors);
+          renderPaletteEditor();
+        }
+      }
+      updateMicrotonalSteps();
+      if (params.has("numbers")) {
+        microtonalNumbersEnabled = params.get("numbers") !== "0";
+        microtonalNumbersToggle.checked = microtonalNumbersEnabled;
+      }
+      if (params.has("chordOpacity")) setChordDisplayOpacity(params.get("chordOpacity"));
+      if (params.has("keySize")) setKeySize(params.get("keySize"));
+      setRotation(params.get("rotation") ?? 0);
+      chordModeEnabled = currentModeId === "harmonic" && params.get("chord") === "1";
+      chordModeToggle.checked = chordModeEnabled;
+      syncChordModeAvailability();
+    }
+
     function initializeKeySize() {
       setKeySize(defaultKeySize());
     }
@@ -691,9 +865,10 @@
       const rightDelta = (doubledX - anchorDoubledX + rowDelta) / 2;
       const uprightDelta = -rowDelta;
 
+      const octaveScale = keyboardConfig.microtonal ? 12 : 1;
       return anchor.midi
-        + rightDelta * keyboardConfig.rightStep
-        + uprightDelta * keyboardConfig.uprightStep;
+        + rightDelta * keyboardConfig.rightStep * octaveScale
+        + uprightDelta * keyboardConfig.uprightStep * octaveScale;
     }
 
     function rowParity(row) {
@@ -745,6 +920,28 @@
       return ((midi % keyboardConfig.edo) + keyboardConfig.edo) % keyboardConfig.edo;
     }
 
+    function colorForPitch(midi) {
+      if (!keyboardConfig.microtonal) return pitchColors[pitchClassOfMidi(midi)];
+      const octavePosition = ((midi / 12) % 1 + 1) % 1;
+      const hue = octavePosition * 360;
+      return `hsl(${hue} 78% 58%)`;
+    }
+
+    function microtonalNumberAt(row, column) {
+      const anchor = keyboardConfig.anchor;
+      const rowDelta = row - anchor.row;
+      const doubledX = column * 2 + rowParity(row);
+      const anchorDoubledX = anchor.column * 2 + rowParity(anchor.row);
+      const rightDelta = (doubledX - anchorDoubledX + rowDelta) / 2;
+      const uprightDelta = -rowDelta;
+      const numerator = Math.round(
+        rightDelta * keyboardConfig.microtonalRightNumerator
+        + uprightDelta * keyboardConfig.microtonalUprightNumerator
+      );
+      const denominator = keyboardConfig.microtonalDenominator;
+      return ((numerator % denominator) + denominator) % denominator;
+    }
+
     function uniquePitchClassesFromChordVoices() {
       const pitchClasses = new Set();
 
@@ -793,8 +990,8 @@
 
       if (matches.length) {
         return {
-          brief: matches.map((match) => match.brief).join(" / "),
-          full: matches.map((match) => match.full).join(" / "),
+          brief: matches.map((match) => match.brief).join("\n"),
+          full: matches.map((match) => match.full).join("\n"),
           recognized: true
         };
       }
@@ -806,12 +1003,24 @@
       };
     }
 
+    function scaleChordText(briefText, fullText) {
+      const longestBriefLine = Math.max(1, ...briefText.split("\n").map((line) => line.length));
+      const longestFullLine = Math.max(1, ...fullText.split("\n").map((line) => line.length));
+      const lineCount = Math.max(1, briefText.split("\n").length);
+      const briefScale = Math.min(1, Math.max(0.34, 14 / longestBriefLine, 3 / lineCount));
+      const fullScale = Math.min(1, Math.max(0.46, 72 / longestFullLine));
+
+      document.documentElement.style.setProperty("--chord-brief-scale", String(briefScale));
+      document.documentElement.style.setProperty("--chord-full-scale", String(fullScale));
+    }
+
     function updateChordDisplay() {
       if (!chordModeEnabled) {
         chordDisplay.classList.remove("is-visible");
         chordDisplay.classList.remove("is-unrecognized");
         chordBrief.textContent = "";
         chordFull.textContent = "";
+        scaleChordText("", "");
         return;
       }
 
@@ -822,11 +1031,13 @@
         chordDisplay.classList.remove("is-unrecognized");
         chordBrief.textContent = "";
         chordFull.textContent = "";
+        scaleChordText("", "");
         return;
       }
 
       chordBrief.textContent = chord.brief;
       chordFull.textContent = chord.full;
+      scaleChordText(chord.brief, chord.full);
       chordDisplay.classList.add("is-visible");
       chordDisplay.classList.toggle("is-unrecognized", !chord.recognized);
     }
@@ -984,23 +1195,15 @@
     }
 
     function renderKeyboard() {
+      const layerSize = Math.ceil(Math.hypot(window.innerWidth, window.innerHeight));
+      document.documentElement.style.setProperty("--keyboard-layer-size", `${layerSize}px`);
       keyboard.replaceChildren();
       keyboard.setAttribute("aria-label", `${keyboardConfig.name} isomorphic keyboard`);
 
       const bounds = visibleGridBounds();
-
       for (let row = bounds.rowMin; row <= bounds.rowMax; row += 1) {
         for (let column = bounds.columnMin; column <= bounds.columnMax; column += 1) {
           const { x, y, keySize } = keyPosition(row, column);
-
-          if (
-            x > keyboard.clientWidth ||
-            y > keyboard.clientHeight ||
-            x + keySize < 0 ||
-            y + keySize < 0
-          ) {
-            continue;
-          }
 
           const midi = noteAt(row, column);
           const frequency = midiToFrequency(midi);
@@ -1010,11 +1213,16 @@
           const key = document.createElement("div");
 
           key.className = "key";
+          if (keyboardConfig.microtonal && microtonalNumbersEnabled) {
+            key.classList.add("microtonal-numbered");
+            key.dataset.microtonalNumber = String(microtonalNumberAt(row, column));
+          }
           key.classList.toggle("is-muted", !isAudible);
           key.setAttribute("role", "button");
           key.tabIndex = 0;
-          key.style.setProperty("--key-color", pitchColors[pitchClass]);
-          key.style.setProperty("--key-glow-color", brightenHexColor(pitchColors[pitchClass]));
+          const keyColor = colorForPitch(midi);
+          key.style.setProperty("--key-color", keyColor);
+          key.style.setProperty("--key-glow-color", keyboardConfig.microtonal ? keyColor : brightenHexColor(keyColor));
           key.style.transform = `translate(${x}px, ${y}px)`;
           key.setAttribute("aria-label", `Pitch class ${pitchClass}`);
           key.dataset.midi = String(midi);
@@ -1029,23 +1237,48 @@
     }
 
     createModeOptions();
+    microtonalSettings.classList.toggle("is-visible", keyboardConfig.microtonal === true);
+    updateMicrotonalSteps();
     setChordDisplayOpacity(chordDisplayOpacity * 100);
     syncChordModeAvailability();
     renderPaletteEditor();
     initializeKeySize();
+    setRotation(0);
+    loadUrlState();
     renderKeyboard();
-    modeSelect.addEventListener("change", () => setMode(modeSelect.value));
+    modeSelect.addEventListener("change", () => { setMode(modeSelect.value); updateUrlState(); });
+    const handleMicrotonalInput = () => {
+      if (updateMicrotonalSteps()) {
+        stopAllVoices();
+        requestAnimationFrame(renderKeyboard);
+        updateUrlState();
+      }
+    };
+    microRightNumerator.addEventListener("change", handleMicrotonalInput);
+    microUprightNumerator.addEventListener("change", handleMicrotonalInput);
+    microDenominator.addEventListener("change", handleMicrotonalInput);
+    microtonalNumbersToggle.addEventListener("change", () => {
+      microtonalNumbersEnabled = microtonalNumbersToggle.checked;
+      requestAnimationFrame(renderKeyboard);
+      updateUrlState();
+    });
     chordModeToggle.addEventListener("change", () => {
       chordModeEnabled = currentModeId === "harmonic" && chordModeToggle.checked;
       stopAllVoices();
       syncChordModeAvailability();
       requestAnimationFrame(renderKeyboard);
+      updateUrlState();
     });
-    chordOpacitySlider.addEventListener("input", () => setChordDisplayOpacity(chordOpacitySlider.value));
-    resetPalette.addEventListener("click", resetPitchColors);
+    chordOpacitySlider.addEventListener("input", () => { setChordDisplayOpacity(chordOpacitySlider.value); updateUrlState(); });
+    resetPalette.addEventListener("click", () => { resetPitchColors(); updateUrlState(); });
     keySizeSlider.addEventListener("input", () => {
       setKeySize(keySizeSlider.value);
       requestAnimationFrame(renderKeyboard);
+      updateUrlState();
+    });
+    rotationSlider.addEventListener("input", () => {
+      setRotation(rotationSlider.value);
+      updateUrlState();
     });
     window.addEventListener("resize", renderKeyboard);
     settingsDetails.addEventListener("toggle", () => requestAnimationFrame(renderKeyboard));
