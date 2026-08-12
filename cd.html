@@ -7,6 +7,13 @@
     <!-- KaTeX 核心 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+    <script>
+        window.MathJax = {
+            loader: { load: ['[tex]/amscd'] },
+            tex: { packages: { '[+]': ['amscd'] }, displayMath: [['$$', '$$']] }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
     <style>
         /* 颜色变量 —— 方便整体替换 */
@@ -81,6 +88,44 @@
             align-items: center;
             gap: 0.5rem 0.8rem;
             width: 100%;
+        }
+
+        .mode-switch {
+            display: inline-flex;
+            border-bottom: 1px solid var(--border-light);
+            align-self: flex-start;
+        }
+        .label-side-control {
+            display: inline-flex;
+            gap: 2px;
+        }
+        .label-side-control.is-hidden {
+            display: none;
+        }
+        .label-side-btn {
+            min-width: 3rem;
+            border: none;
+            border-bottom: 1px solid var(--border-light);
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0.45rem 0.7rem;
+        }
+        .label-side-btn.active {
+            color: var(--text-dark);
+            border-bottom-color: var(--border-focus);
+        }
+        .mode-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0.55rem 1rem;
+            font-size: 0.95rem;
+        }
+        .mode-btn.active {
+            color: var(--text-dark);
+            box-shadow: inset 0 -2px 0 var(--border-focus);
         }
 
         .input-field {
@@ -165,6 +210,45 @@
             background-color: var(--selected-bg);
         }
 
+        .swap-table td.cd-gap-cell {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .preview-table td {
+            background: transparent;
+            cursor: default;
+        }
+        .cd-diagram-preview {
+            border-collapse: collapse;
+            margin: auto;
+        }
+        .cd-diagram-preview td {
+            background: transparent;
+            text-align: center;
+            vertical-align: middle;
+            padding: 0;
+        }
+        .cd-diagram-preview .cd-node-preview {
+            min-width: 4rem;
+            height: 3rem;
+        }
+        .cd-diagram-preview .cd-horizontal-preview {
+            min-width: 7rem;
+            height: 3rem;
+            padding: 0 0.4rem;
+        }
+        .cd-diagram-preview .cd-vertical-preview {
+            min-width: 4rem;
+            height: 5rem;
+            padding: 0.3rem;
+            white-space: nowrap;
+        }
+        .cd-diagram-preview .cd-intersection-preview {
+            min-width: 7rem;
+            visibility: hidden;
+        }
+
         /* 原地编辑输入框 */
         .cell-editor {
             width: 100%;
@@ -204,6 +288,33 @@
             gap: 6px;
         }
 
+        .edge-label-input {
+            width: 7rem;
+            flex: none;
+        }
+
+        .label-side-control {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .label-side-control.is-hidden { display: none; }
+        .label-side-input { width: 6rem; }
+        .cd-preview {
+            margin-top: 12px;
+            background: #fff;
+            border: 1px solid var(--pre-code-border);
+            padding: 14px;
+            min-height: 5rem;
+            overflow-x: auto;
+            color: var(--pre-code-text);
+        }
+
+        .arrow-btn.is-hidden,
+        .edge-label-input.is-hidden {
+            display: none;
+        }
+
         .arrow-btn {
             min-width: 2.8rem;
             background: transparent;
@@ -232,6 +343,16 @@
             background: var(--preview-bg);
             padding: 16px;
             border-radius: 0;
+        }
+        .output-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+            gap: 12px;
+            align-items: stretch;
+        }
+        .output-layout pre { height: 100%; }
+        @media (max-width: 720px) {
+            .output-layout { grid-template-columns: 1fr; }
         }
         .markdown-header {
             display: flex;
@@ -312,6 +433,11 @@
         <div style="font-size:0.9rem; color:#6AC6E8;">单击节点编辑 · 单击边选中 · 双击边编辑</div>
     </div>
 
+    <div class="mode-switch" role="group" aria-label="输出模式">
+        <button class="mode-btn active" data-mode="array">Array 模式</button>
+        <button class="mode-btn" data-mode="cd">CD 模式</button>
+    </div>
+
     <!-- 第一行：行列输入 + 重新生成按钮 -->
     <div class="row">
         <div style="display: flex; gap: 0.5rem; align-items: baseline;">
@@ -333,15 +459,21 @@
     <!-- 边编辑工具栏 -->
     <div class="edge-toolbar" id="edgeToolbar">
         <span class="selection-info" id="selectedEdgeLabel">-</span>
+        <div id="labelSideControl" class="label-side-control is-hidden" role="group" aria-label="箭头标签">
+            <input type="text" id="edgeLabelFirst" class="input-field label-side-input" placeholder="上/左标签" aria-label="上或左标签">
+            <input type="text" id="edgeLabelSecond" class="input-field label-side-input" placeholder="下/右标签" aria-label="下或右标签">
+        </div>
         <div class="arrow-buttons" id="arrowButtonGroup">
-            <button class="arrow-btn" data-arrow="\leftarrow" title="\leftarrow">←</button>
-            <button class="arrow-btn" data-arrow="\rightarrow" title="\rightarrow">→</button>
-            <button class="arrow-btn" data-arrow="\uparrow" title="\uparrow">↑</button>
-            <button class="arrow-btn" data-arrow="\downarrow" title="\downarrow">↓</button>
-            <button class="arrow-btn" data-arrow="\nwarrow" title="\nwarrow">↖</button>
-            <button class="arrow-btn" data-arrow="\nearrow" title="\nearrow">↗</button>
-            <button class="arrow-btn" data-arrow="\swarrow" title="\swarrow">↙</button>
-            <button class="arrow-btn" data-arrow="\searrow" title="\searrow">↘</button>
+            <button class="arrow-btn" data-arrow="\leftarrow" data-direction="left" title="向左">←</button>
+            <button class="arrow-btn" data-arrow="\rightarrow" data-direction="right" title="向右">→</button>
+            <button class="arrow-btn" data-arrow="\uparrow" data-direction="up" title="向上">↑</button>
+            <button class="arrow-btn" data-arrow="\downarrow" data-direction="down" title="向下">↓</button>
+            <button class="arrow-btn cd-special-arrow" data-arrow="@=" title="横向等号">＝</button>
+            <button class="arrow-btn cd-special-arrow" data-arrow="@||" title="竖向等号">‖</button>
+            <button class="arrow-btn diagonal-arrow" data-arrow="\nwarrow" title="\nwarrow">↖</button>
+            <button class="arrow-btn diagonal-arrow" data-arrow="\nearrow" title="\nearrow">↗</button>
+            <button class="arrow-btn diagonal-arrow" data-arrow="\swarrow" title="\swarrow">↙</button>
+            <button class="arrow-btn diagonal-arrow" data-arrow="\searrow" title="\searrow">↘</button>
             <button class="arrow-btn empty-btn" data-arrow="" title="清空">␣ 空</button>
         </div>
     </div>
@@ -352,7 +484,10 @@
             <h3>Markdown 代码</h3>
             <button class="copy-btn" id="copyMarkdownBtn">复制代码</button>
         </div>
-        <pre id="markdownOutput">$$\n\\begin{array}{ccc}\n &  \\\\\n\\end{array}\n$$</pre>
+        <div class="output-layout">
+            <pre id="markdownOutput">$$\n\\begin{array}{ccc}\n &  \\\\\n\\end{array}\n$$</pre>
+            <div id="diagramPreview" class="cd-preview" aria-label="交换图预览"></div>
+        </div>
         <div id="copyFeedback" class="preview-hint" style="text-align:right;"></div>
     </div>
 
@@ -380,6 +515,12 @@
         let gridRows = 2 * rows - 1;
         let gridCols = 2 * cols - 1;
         let cellContents = [];
+        let mode = 'array';
+        let cdEdges = {};
+        let arrayState = null;
+        let cdState = null;
+        let cdEdgeState = null;
+        let previewVersion = 0;
 
         let selectedRow = null;
         let selectedCol = null;
@@ -394,6 +535,11 @@
         const arrowButtons = document.querySelectorAll('.arrow-btn');
         const copyBtn = document.getElementById('copyMarkdownBtn');
         const copyFeedback = document.getElementById('copyFeedback');
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        const edgeLabelFirst = document.getElementById('edgeLabelFirst');
+        const edgeLabelSecond = document.getElementById('edgeLabelSecond');
+        const labelSideControl = document.getElementById('labelSideControl');
+        const diagramPreview = document.getElementById('diagramPreview');
 
         // --- 初始化 / 重置网格内容，并添加默认箭头 ---
         function initCellContents() {
@@ -436,6 +582,44 @@
             return arr;
         }
 
+        function initCdContents() {
+            const arr = Array(gridRows).fill().map(() => Array(gridCols).fill(''));
+            cdEdges = {};
+            cellContents = arr;
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols - 1; j++) setCdEdge(i * 2, j * 2 + 1, 'right', '', '');
+            }
+            for (let i = 0; i < rows - 1; i++) {
+                for (let j = 0; j < cols; j++) setCdEdge(i * 2 + 1, j * 2, 'down', '', '');
+            }
+            return arr;
+        }
+
+        function isEdgeCell(row, col) {
+            return (row % 2 === 0 && col % 2 === 1) || (row % 2 === 1 && col % 2 === 0);
+        }
+
+        function edgeKey(row, col) {
+            return `${row},${col}`;
+        }
+
+        function cdArrowPreview(direction, firstLabel, secondLabel) {
+            const labels = {
+                right: `\\underset{${secondLabel || ''}}{\\overset{${firstLabel || ''}}{\\longrightarrow}}`,
+                left: `\\underset{${secondLabel || ''}}{\\overset{${firstLabel || ''}}{\\longleftarrow}}`,
+                down: `${firstLabel || ''}\\;\\downarrow\\;${secondLabel || ''}`,
+                up: `${firstLabel || ''}\\;\\uparrow\\;${secondLabel || ''}`,
+                equalsHorizontal: '=',
+                equalsVertical: '\\Vert'
+            };
+            return labels[direction] || '';
+        }
+
+        function setCdEdge(row, col, direction, firstLabel, secondLabel) {
+            cdEdges[edgeKey(row, col)] = { direction, firstLabel: firstLabel || '', secondLabel: secondLabel || '' };
+            cellContents[row][col] = cdArrowPreview(direction, firstLabel, secondLabel);
+        }
+
         // --- 使用 KaTeX 渲染单元格 ---
         function renderMathInGrid() {
             const tds = gridContainer.querySelectorAll('td');
@@ -469,7 +653,8 @@
                 html += '<tr>';
                 for (let j = 0; j < c; j++) {
                     const isNode = (i % 2 === 0 && j % 2 === 0);
-                    const cellClass = isNode ? 'node-cell' : 'edge-cell';
+                    const isCdGap = mode === 'cd' && i % 2 === 1 && j % 2 === 1;
+                    const cellClass = isNode ? 'node-cell' : `edge-cell${isCdGap ? ' cd-gap-cell' : ''}`;
                     html += `<td class="${cellClass}" data-row="${i}" data-col="${j}"></td>`;
                 }
                 html += '</tr>';
@@ -507,10 +692,35 @@
             } else {
                 selectedEdgeLabel.innerText = `未选中边`;
             }
+            updateCdToolbar();
+        }
+
+        function updateCdToolbar() {
+            const isCd = mode === 'cd';
+            labelSideControl.classList.toggle('is-hidden', !isCd);
+            document.querySelectorAll('.diagonal-arrow').forEach(btn => btn.classList.toggle('is-hidden', isCd));
+            const horizontal = selectedRow !== null && selectedRow % 2 === 0 && selectedCol % 2 === 1;
+            const vertical = selectedRow !== null && selectedRow % 2 === 1 && selectedCol % 2 === 0;
+            document.querySelectorAll('.cd-special-arrow').forEach(btn => {
+                const verticalEquals = btn.dataset.arrow === '@||';
+                btn.classList.toggle('is-hidden', !isCd || !((verticalEquals && vertical) || (!verticalEquals && horizontal)));
+            });
+            document.querySelectorAll('.arrow-btn[data-direction]').forEach(btn => {
+                const direction = btn.dataset.direction;
+                const incompatible = isCd && ((horizontal && !['left', 'right'].includes(direction)) || (vertical && !['up', 'down'].includes(direction)));
+                btn.classList.toggle('is-hidden', incompatible);
+            });
+            const edge = selectedRow === null ? null : cdEdges[edgeKey(selectedRow, selectedCol)];
+            edgeLabelFirst.placeholder = vertical ? '左标签' : '上标签';
+            edgeLabelSecond.placeholder = vertical ? '右标签' : '下标签';
+            edgeLabelFirst.value = isCd && edge ? (edge.firstLabel || '') : '';
+            edgeLabelSecond.value = isCd && edge ? (edge.secondLabel || '') : '';
+            edgeLabelFirst.disabled = edgeLabelSecond.disabled = isCd && selectedRow === null;
         }
 
         // --- 生成 markdown ---
         function generateMarkdown() {
+            if (mode === 'cd') return generateCdMarkdown();
             const r = gridRows;
             const c = gridCols;
             const colFormat = 'c'.repeat(c);
@@ -529,8 +739,89 @@
             return `$$\n\\begin{array}{${colFormat}}\n${body}\n\\end{array}\n$$`;
         }
 
+        function cdArrowToken(edge) {
+            if (!edge) return '@.';
+            if (edge.direction === 'equalsHorizontal') return '@=';
+            if (edge.direction === 'equalsVertical') return '@||';
+            const first = edge.firstLabel ? `{${edge.firstLabel}}` : '';
+            const second = edge.secondLabel ? `{${edge.secondLabel}}` : '';
+            return {
+                right: `@>${first}>${second}>`,
+                left: `@<${first}<${second}<`,
+                down: `@V${first}V${second}V`,
+                up: `@A${first}A${second}A`
+            }[edge.direction];
+        }
+
+        function generateCdMarkdown() {
+            const lines = [];
+            for (let i = 0; i < rows; i++) {
+                const nodeLine = [];
+                for (let j = 0; j < cols; j++) {
+                    nodeLine.push(cellContents[i * 2][j * 2] || '');
+                    if (j < cols - 1) nodeLine.push(cdArrowToken(cdEdges[edgeKey(i * 2, j * 2 + 1)]));
+                }
+                lines.push(nodeLine.join(' '));
+                if (i < rows - 1) {
+                    const verticalLine = [];
+                    for (let j = 0; j < cols; j++) verticalLine.push(cdArrowToken(cdEdges[edgeKey(i * 2 + 1, j * 2)]));
+                    lines.push(verticalLine.join(' '));
+                }
+            }
+            return `$$\n\\begin{CD}\n${lines.join(' \\\\\n')}\n\\end{CD}\n$$`;
+        }
+
         function updateMarkdown() {
             markdownOutput.innerText = generateMarkdown();
+            updateDiagramPreview();
+        }
+
+        function updateDiagramPreview() {
+            if (mode === 'cd') {
+                updateCdDiagramPreview();
+                return;
+            }
+            let html = '<table class="swap-table preview-table">';
+            for (let i = 0; i < gridRows; i++) {
+                html += '<tr>';
+                for (let j = 0; j < gridCols; j++) {
+                    const isCdGap = mode === 'cd' && i % 2 === 1 && j % 2 === 1;
+                    html += `<td class="${isCdGap ? 'cd-gap-cell' : ''}" data-preview-row="${i}" data-preview-col="${j}"></td>`;
+                }
+                html += '</tr>';
+            }
+            diagramPreview.innerHTML = `${html}</table>`;
+            diagramPreview.querySelectorAll('td').forEach(td => {
+                const row = Number(td.dataset.previewRow);
+                const col = Number(td.dataset.previewCol);
+                const content = cellContents[row]?.[col] || '';
+                if (!content || td.classList.contains('cd-gap-cell')) return;
+                try {
+                    katex.render(content, td, { displayMode: false, throwOnError: false, output: 'html' });
+                } catch (e) {
+                    td.textContent = content;
+                }
+            });
+        }
+
+        function updateCdDiagramPreview() {
+            const source = generateCdMarkdown();
+            const version = ++previewVersion;
+            diagramPreview.textContent = source;
+
+            function typesetWhenReady() {
+                if (version !== previewVersion || mode !== 'cd') return;
+                if (!window.MathJax?.typesetPromise) {
+                    setTimeout(typesetWhenReady, 100);
+                    return;
+                }
+                MathJax.typesetClear?.([diagramPreview]);
+                diagramPreview.textContent = source;
+                MathJax.typesetPromise([diagramPreview]).catch(() => {
+                    if (version === previewVersion) diagramPreview.textContent = source;
+                });
+            }
+            typesetWhenReady();
         }
 
         // --- 复制功能 ---
@@ -625,6 +916,7 @@
                 clearEdgeSelection();
                 startEditing(td, row, col);
             } else {
+                if (mode === 'cd' && !isEdgeCell(row, col)) return;
                 // 边：执行选中/取消选中（工具栏专用）
                 if (selectedRow !== null && selectedCol !== null) {
                     const prevTd = document.querySelector(`.swap-table td[data-row="${selectedRow}"][data-col="${selectedCol}"]`);
@@ -654,6 +946,13 @@
                 // 节点双击忽略（因为单击已编辑），避免冲突
                 return;
             } else {
+                if (mode === 'cd') {
+                    if (!isEdgeCell(row, col)) return;
+                    if (selectedRow !== row || selectedCol !== col) selectEdge(row, col);
+                    edgeLabelFirst.focus();
+                    edgeLabelFirst.select();
+                    return;
+                }
                 // 边：先确保该边被选中，然后开始编辑
                 selectEdge(row, col);   // 这会更新 selectedRow/Col 并添加高亮
                 startEditing(td, row, col);
@@ -679,8 +978,48 @@
                 return;
             }
 
-            cellContents[selectedRow][selectedCol] = arrowCmd;
+            if (mode === 'cd' && btn.dataset.direction) {
+                const isHorizontal = selectedRow % 2 === 0;
+                const direction = btn.dataset.direction;
+                if ((isHorizontal && !['left', 'right'].includes(direction)) || (!isHorizontal && !['up', 'down'].includes(direction))) return;
+                setCdEdge(selectedRow, selectedCol, direction, edgeLabelFirst.value.trim(), edgeLabelSecond.value.trim());
+            } else if (mode === 'cd' && arrowCmd === '@=') {
+                setCdEdge(selectedRow, selectedCol, 'equalsHorizontal', '', '');
+            } else if (mode === 'cd' && arrowCmd === '@||') {
+                setCdEdge(selectedRow, selectedCol, 'equalsVertical', '', '');
+            } else if (mode === 'cd' && arrowCmd === '') {
+                delete cdEdges[edgeKey(selectedRow, selectedCol)];
+                cellContents[selectedRow][selectedCol] = '';
+            } else {
+                cellContents[selectedRow][selectedCol] = arrowCmd;
+            }
             renderGrid();    // 重绘，保持选中 (selected不变)
+            updateMarkdown();
+        }
+
+        function changeMode(newMode) {
+            if (newMode === mode) return;
+            if (mode === 'array') {
+                arrayState = cellContents;
+            } else {
+                cdState = cellContents;
+                cdEdgeState = cdEdges;
+            }
+            mode = newMode;
+            selectedRow = null;
+            selectedCol = null;
+            if (mode === 'cd') {
+                if (cdState && cdState.length === gridRows && cdState[0].length === gridCols) {
+                    cellContents = cdState;
+                    cdEdges = cdEdgeState || {};
+                } else {
+                    cellContents = initCdContents();
+                }
+            } else {
+                cellContents = arrayState || initCellContents();
+            }
+            modeButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === mode));
+            renderGrid();
             updateMarkdown();
         }
 
@@ -695,17 +1034,18 @@
             rowsInput.value = newRows;
             colsInput.value = newCols;
 
-            if (newRows !== rows || newCols !== cols) {
-                rows = newRows;
-                cols = newCols;
-                gridRows = 2 * rows - 1;
-                gridCols = 2 * cols - 1;
-                cellContents = initCellContents();
-                selectedRow = null;
-                selectedCol = null;
-                renderGrid();
-                updateMarkdown();
-            }
+            rows = newRows;
+            cols = newCols;
+            gridRows = 2 * rows - 1;
+            gridCols = 2 * cols - 1;
+            arrayState = null;
+            cdState = null;
+            cdEdgeState = null;
+            cellContents = mode === 'cd' ? initCdContents() : initCellContents();
+            selectedRow = null;
+            selectedCol = null;
+            renderGrid();
+            updateMarkdown();
         }
 
         // --- 初始化 ---
@@ -725,6 +1065,17 @@
             arrowButtons.forEach(btn => {
                 btn.addEventListener('click', handleArrowClick);
             });
+
+            modeButtons.forEach(btn => btn.addEventListener('click', () => changeMode(btn.dataset.mode)));
+            [edgeLabelFirst, edgeLabelSecond].forEach(input => input.addEventListener('input', () => {
+                if (mode !== 'cd' || selectedRow === null) return;
+                const edge = cdEdges[edgeKey(selectedRow, selectedCol)];
+                if (!edge) return;
+                setCdEdge(selectedRow, selectedCol, edge.direction, edgeLabelFirst.value.trim(), edgeLabelSecond.value.trim());
+                const td = document.querySelector(`.swap-table td[data-row="${selectedRow}"][data-col="${selectedCol}"]`);
+                if (td && window.katex) katex.render(cellContents[selectedRow][selectedCol], td, { displayMode: false, throwOnError: false, output: 'html' });
+                updateMarkdown();
+            }));
 
             applyBtn.addEventListener('click', updateDim);
             copyBtn.addEventListener('click', copyMarkdown);
