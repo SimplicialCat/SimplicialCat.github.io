@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>正二十面体五子棋</title>
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #0a1120; font-family: "Segoe UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif; }
+canvas { display: block; }
+#ui { position: fixed; top: 18px; left: 18px; width: 258px; padding: 16px 18px; background: rgba(11, 18, 34, 0.88); border: 1px solid rgba(140, 190, 235, 0.18); border-radius: 16px; color: #dceeff; backdrop-filter: blur(10px); box-shadow: 0 16px 44px rgba(0, 0, 0, 0.38); z-index: 10; }
+h1 { margin: 0 0 6px; font-size: 19px; letter-spacing: 0.02em; color: #eaf4ff; }
+.subtitle { margin: 0 0 14px; font-size: 12px; line-height: 1.6; color: #8fa9c9; }
+.turn-row { display: flex; align-items: center; gap: 8px; padding: 9px 11px; border: 1px solid rgba(140, 190, 235, 0.14); border-radius: 10px; background: rgba(90, 150, 220, 0.07); }
+.turn-label { font-size: 12px; color: #8fa9c9; }
+.turn-value { display: inline-flex; align-items: center; gap: 7px; margin-left: auto; font-size: 14px; font-weight: 600; color: #eaf4ff; }
+.piece { width: 14px; height: 14px; border-radius: 50%; display: inline-block; flex: 0 0 auto; }
+.piece.black { background: #0c0f14; border: 1px solid #a8c2e0; box-shadow: 0 0 0 1px rgba(160, 190, 220, 0.28), 0 0 8px rgba(160, 190, 220, 0.32); }
+.piece.white { background: #f7f9fc; border: 1px solid #dfe8f2; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45), 0 0 9px rgba(220, 235, 255, 0.6); }
+.status { min-height: 42px; margin-top: 12px; padding: 10px 11px; border: 1px solid rgba(140, 190, 235, 0.12); border-radius: 10px; background: rgba(255, 255, 255, 0.035); font-size: 12px; line-height: 1.5; color: #aac2dd; }
+.status.win { color: #e8f4ff; border-color: rgba(190, 225, 255, 0.55); background: rgba(150, 200, 255, 0.12); }
+.meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 12px; font-size: 11px; color: #7791b1; }
+.meta b { color: #cfe4ff; font-weight: 600; }
+.mode-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.mode-row label { flex: 0 0 auto; font-size: 12px; color: #8fa9c9; }
+.mode-row select { width: 100%; background: #0e1626; color: #eaf4ff; border: 1px solid rgba(150, 195, 240, 0.18); border-radius: 8px; padding: 7px 8px; font-size: 12px; }
+.legend { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; margin-top: 12px; }
+.legend-row { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #c6d9ef; }
+.dot { width: 12px; height: 12px; border-radius: 50%; flex: 0 0 auto; }
+.dot.empty { background: #a8c8ee; box-shadow: 0 0 8px rgba(168, 200, 238, 0.6); }
+.equator-line { width: 18px; height: 3px; border-radius: 2px; background: #7fb8f2; box-shadow: 0 0 8px rgba(127, 184, 242, 0.6); flex: 0 0 auto; }
+.controls-row { display: flex; align-items: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+button { appearance: none; border: 1px solid rgba(150, 195, 240, 0.18); background: rgba(120, 180, 240, 0.08); color: #eaf4ff; border-radius: 8px; padding: 7px 10px; font-size: 12px; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; }
+button:hover { background: rgba(120, 180, 240, 0.16); border-color: rgba(170, 210, 250, 0.35); }
+label.checkbox { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #a8c0dd; cursor: pointer; }
+input[type="checkbox"] { width: 14px; height: 14px; accent-color: #6fb1f2; cursor: pointer; }
+#tooltip { position: fixed; left: 0; top: 0; z-index: 20; padding: 6px 10px; border: 1px solid rgba(170, 210, 250, 0.24); border-radius: 8px; background: rgba(8, 14, 27, 0.94); color: #eaf4ff; font-size: 12px; white-space: nowrap; pointer-events: none; transform: translate(-50%, -140%); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.38); }
+@media (max-width: 560px) {
+  #ui { left: 10px; right: 10px; top: 10px; width: auto; }
+}
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="ui">
+  <h1>正二十面体五子棋</h1>
+  <p class="subtitle">拖动旋转 · 滚轮缩放 · 点击空点落子<br>任意一条大圆连续五子获胜</p>
+  <div class="mode-row">
+    <label for="gameMode">模式</label>
+    <select id="gameMode">
+      <option value="two">双人对战</option>
+      <option value="ai">人机对战</option>
+    </select>
+  </div>
+  <div class="mode-row" id="humanSideRow" style="display: none;">
+    <label for="humanSide">执子</label>
+    <select id="humanSide">
+      <option value="black">人先手 · 黑棋</option>
+      <option value="white">人后手 · 白棋</option>
+    </select>
+  </div>
+  <div class="turn-row">
+    <span class="turn-label">当前回合</span>
+    <span class="turn-value" id="currentTurn"><span class="piece black"></span>黑棋</span>
+  </div>
+  <div id="status" class="status">等待黑棋落子</div>
+  <div class="meta">
+    <span>空点 <b id="countEmpty">62</b></span>
+    <span>大圆 <b>42</b></span>
+    <span>第 <b id="moveCount">0</b> 手</span>
+  </div>
+  <div class="legend">
+    <div class="legend-row"><span class="dot empty"></span>空点</div>
+    <div class="legend-row"><span class="piece black"></span>黑棋</div>
+    <div class="legend-row"><span class="piece white"></span>白棋</div>
+    <div class="legend-row"><span class="equator-line"></span>大圆</div>
+  </div>
+  <div class="controls-row">
+    <button id="resetGame">重新开局</button>
+    <button id="resetView">重置视角</button>
+
+  </div>
+</div>
+<div id="tooltip" style="display: none;"></div>
+<script type="module">
+import * as THREE from 'three';
+import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
+
+const SPHERE_RADIUS = 1;
+const CIRCLE_OFFSET = 0.008;
+const PLAYERS = [
+  { name: '黑棋', color: 0x0c0f14, emissive: 0x2c405e, metalness: 0.35, roughness: 0.3 },
+  { name: '白棋', color: 0xf7f9fc, emissive: 0x9fb7d2, metalness: 0.12, roughness: 0.26 }
+];
+const EMPTY_COLOR = 0xa8c8ee;
+const EMPTY_EMISSIVE = 0x2a4a70;
+const HOVER_EMISSIVE = 0x9ecbff;
+
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a1120);
+
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 0, 4.2);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.AmbientLight(0xb9cde4, 1.5));
+scene.add(new THREE.HemisphereLight(0xdfeaff, 0x2c3a4c, 2.1));
+const keyLight = new THREE.DirectionalLight(0xffffff, 0.6);
+keyLight.position.set(4, 6, 7);
+scene.add(keyLight);
+const fillLight = new THREE.DirectionalLight(0x9fc6f2, 1.0);
+fillLight.position.set(-3, -2, 4);
+scene.add(fillLight);
+const rimLight = new THREE.DirectionalLight(0x6fb1f2, 0.3);
+rimLight.position.set(-5, -2, -4);
+scene.add(rimLight);
+
+const board = new THREE.Group();
+scene.add(board);
+
+const sphere = new THREE.Mesh(
+  new THREE.SphereGeometry(SPHERE_RADIUS, 96, 64),
+  new THREE.MeshStandardMaterial({
+    color: 0x6b7d94,
+    roughness: 1,
+    metalness: 0
+  })
+);
+board.add(sphere);
+
+const lastMoveLight = new THREE.PointLight(0x4da3ff, 1.5, 1.1, 2);
+board.add(lastMoveLight);
+
+function buildTopology(geometry) {
+  const positions = geometry.getAttribute('position');
+  const index = geometry.getIndex();
+  const vertexMap = new Map();
+  const edgeMap = new Map();
+  const vertices = [];
+  const edges = [];
+  const faces = [];
+
+  const keyFor = (x, y, z) => `${x.toFixed(5)},${y.toFixed(5)},${z.toFixed(5)}`;
+
+  function addVertex(x, y, z) {
+    const key = keyFor(x, y, z);
+    if (vertexMap.has(key)) return vertexMap.get(key);
+    const vertexIndex = vertices.length;
+    vertices.push(new THREE.Vector3(x, y, z));
+    vertexMap.set(key, vertexIndex);
+    return vertexIndex;
+  }
+
+  function addEdge(a, b) {
+    const key = a < b ? `${a}:${b}` : `${b}:${a}`;
+    if (edgeMap.has(key)) return;
+    const point = vertices[a].clone().add(vertices[b]).multiplyScalar(0.5);
+    const edgeIndex = edges.length;
+    edges.push({ a, b, point });
+    edgeMap.set(key, edgeIndex);
+  }
+
+  function addFace(a, b, c) {
+    const point = vertices[a].clone().add(vertices[b]).add(vertices[c]).divideScalar(3);
+    faces.push({ a, b, c, point });
+  }
+
+  const triangleCount = index ? index.count : positions.count;
+  for (let i = 0; i < triangleCount; i += 3) {
+    const ia = index ? index.getX(i) : i;
+    const ib = index ? index.getX(i + 1) : i + 1;
+    const ic = index ? index.getX(i + 2) : i + 2;
+    const pa = new THREE.Vector3().fromBufferAttribute(positions, ia);
+    const pb = new THREE.Vector3().fromBufferAttribute(positions, ib);
+    const pc = new THREE.Vector3().fromBufferAttribute(positions, ic);
+    const a = addVertex(pa.x, pa.y, pa.z);
+    const b = addVertex(pb.x, pb.y, pb.z);
+    const c = addVertex(pc.x, pc.y, pc.z);
+    addEdge(a, b);
+    addEdge(b, c);
+    addEdge(c, a);
+    addFace(a, b, c);
+  }
+
+  return { vertices, edges, faces };
+}
+
+const topologyGeometry = new THREE.IcosahedronGeometry(SPHERE_RADIUS, 0);
+const topology = buildTopology(topologyGeometry);
+topologyGeometry.dispose();
+
+const points = [];
+function addPoint(vector, type, index) {
+  const point = {
+    vector: vector.clone().normalize(),
+    type,
+    index,
+    owner: null,
+    isWinning: false,
+    mesh: null
+  };
+  points.push(point);
+  return point;
+}
+
+topology.vertices.forEach((vector, index) => addPoint(vector, 'vertex', index));
+topology.edges.forEach((item, index) => addPoint(item.point, 'edge', index));
+topology.faces.forEach((item, index) => addPoint(item.point, 'face', index));
+
+const equators = [];
+function createEquator(normal, type, index, color, opacity) {
+  const n = normal.clone().normalize();
+  const reference = Math.abs(n.x) < 0.9 ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0);
+  const u = new THREE.Vector3().crossVectors(n, reference).normalize();
+  const v = new THREE.Vector3().crossVectors(n, u).normalize();
+
+  const circlePoints = [];
+  const segments = 160;
+  for (let i = 0; i <= segments; i += 1) {
+    const theta = (i / segments) * Math.PI * 2;
+    const point = new THREE.Vector3().copy(u).multiplyScalar(Math.cos(theta)).addScaledVector(v, Math.sin(theta));
+    circlePoints.push(point.multiplyScalar(SPHERE_RADIUS + CIRCLE_OFFSET));
+  }
+  const geometry = new THREE.BufferGeometry().setFromPoints(circlePoints);
+  const material = new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+  const line = new THREE.LineLoop(geometry, material);
+  board.add(line);
+
+  const ordered = points
+    .filter((point) => Math.abs(point.vector.dot(n)) < 0.00001)
+    .map((point) => ({ point, angle: Math.atan2(point.vector.dot(v), point.vector.dot(u)) }))
+    .sort((a, b) => a.angle - b.angle)
+    .map((item) => item.point);
+
+  equators.push({ normal: n, line, points: ordered, type, index, baseColor: color, baseOpacity: opacity });
+}
+
+topology.vertices.forEach((vector, index) => {
+  createEquator(vector, 'vertex', index, 0xd5e8ff, 0.75);
+});
+topology.edges.forEach((item, index) => {
+  createEquator(item.point, 'edge', index, 0xaec9e8, 0.5);
+});
+
+const buttonMeshes = [];
+const POINT_RADIUS = 0.058;
+
+points.forEach((point) => {
+  const geometry = new THREE.SphereGeometry(POINT_RADIUS, 24, 16);
+  const material = new THREE.MeshStandardMaterial({
+    color: EMPTY_COLOR,
+    roughness: 0.4,
+    metalness: 0.1,
+    emissive: EMPTY_EMISSIVE,
+    emissiveIntensity: 0.12,
+    transparent: true,
+    opacity: 0.3
+  });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.copy(point.vector).multiplyScalar(SPHERE_RADIUS);
+  mesh.userData.point = point;
+  point.mesh = mesh;
+  mesh.visible = true;
+  board.add(mesh);
+  buttonMeshes.push(mesh);
+});
+
+const controls = new TrackballControls(camera, renderer.domElement);
+controls.target.set(0, 0, 0);
+controls.rotateSpeed = 2.0;
+controls.zoomSpeed = 1.0;
+controls.panSpeed = 0.2;
+controls.noPan = true;
+controls.staticMoving = false;
+controls.dynamicDampingFactor = 0.12;
+controls.minDistance = 1.8;
+controls.maxDistance = 8;
+controls.update();
+
+const raycaster = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+const worldPoint = new THREE.Vector3();
+const tooltip = document.getElementById('tooltip');
+const statusPanel = document.getElementById('status');
+const turnPanel = document.getElementById('currentTurn');
+const emptyCountPanel = document.getElementById('countEmpty');
+const moveCountPanel = document.getElementById('moveCount');
+const gameModeSelect = document.getElementById('gameMode');
+const humanSideSelect = document.getElementById('humanSide');
+const humanSideRow = document.getElementById('humanSideRow');
+
+let hoveredPoint = null;
+let currentPlayer = 0;
+let moveCount = 0;
+let gameOver = false;
+let pointerDownPos = null;
+let dragDistance = 0;
+let gameMode = 'two';
+let humanSide = 'black';
+let aiColor = null;
+let aiTimer = null;
+let lastMovePoint = null;
+
+function pointLabel(point) {
+  const typeName = point.type === 'vertex' ? '顶点' : point.type === 'edge' ? '棱中点' : '面中心';
+  return `${typeName} #${point.index + 1}`;
+}
+
+function moveLastMoveGlow(point) {
+  lastMovePoint = point;
+  if (point) {
+    const position = point.vector.clone().multiplyScalar(SPHERE_RADIUS + 0.045);
+    lastMoveLight.position.copy(position);
+    lastMoveLight.visible = true;
+    lastMoveLight.intensity = 1.5;
+  } else {
+    lastMoveLight.visible = false;
+  }
+}
+
+function refreshVisual(point) {
+  const mesh = point.mesh;
+  const player = point.owner === null ? null : PLAYERS[point.owner];
+
+  let color = EMPTY_COLOR;
+  let emissive = EMPTY_EMISSIVE;
+  let metalness = 0.1;
+  let roughness = 0.4;
+  let emissiveIntensity = 0.12;
+  let scale = 1;
+
+  if (player) {
+    color = player.color;
+    emissive = player.emissive;
+    metalness = player.metalness;
+    roughness = player.roughness;
+    emissiveIntensity = point.owner === 0 ? 0.65 : 0.28;
+    scale = 1.18;
+  }
+
+  if (point.isWinning) {
+    emissive = player.emissive;
+    emissiveIntensity = 1;
+  } else if (point === hoveredPoint) {
+    emissive = HOVER_EMISSIVE;
+    emissiveIntensity = 0.8;
+    scale = player ? 1.3 : 1.34;
+  }
+
+  mesh.material.color.set(color);
+  mesh.material.emissive.set(emissive);
+  mesh.material.metalness = metalness;
+  mesh.material.roughness = roughness;
+  mesh.material.emissiveIntensity = emissiveIntensity;
+  mesh.material.transparent = !player;
+  mesh.material.opacity = player ? 1 : 0.3;
+  mesh.scale.setScalar(scale);
+}
+
+function hideTooltip() {
+  tooltip.style.display = 'none';
+}
+
+function updateTooltipPosition() {
+  if (!hoveredPoint) return;
+  hoveredPoint.mesh.getWorldPosition(worldPoint);
+  worldPoint.project(camera);
+  if (worldPoint.z > 1 || worldPoint.z < -1) {
+    hideTooltip();
+    return;
+  }
+  tooltip.style.display = 'block';
+  tooltip.style.left = `${(worldPoint.x * 0.5 + 0.5) * window.innerWidth}px`;
+  tooltip.style.top = `${(-worldPoint.y * 0.5 + 0.5) * window.innerHeight}px`;
+}
+
+function setHoveredPoint(point) {
+  if (hoveredPoint === point) return;
+  const previous = hoveredPoint;
+  hoveredPoint = point;
+  if (previous) refreshVisual(previous);
+  if (hoveredPoint) {
+    tooltip.textContent = pointLabel(hoveredPoint);
+    refreshVisual(hoveredPoint);
+    updateTooltipPosition();
+  } else {
+    hideTooltip();
+  }
+}
+
+function updateTurnUI() {
+  const player = PLAYERS[currentPlayer];
+  const pieceClass = currentPlayer === 0 ? 'black' : 'white';
+  const sideLabel = gameMode === 'ai' ? (currentPlayer === aiColor ? ' · 机器' : ' · 你') : '';
+  turnPanel.innerHTML = `<span class="piece ${pieceClass}"></span>${player.name}${sideLabel}`;
+}
+
+function updateMeta() {
+  const emptyCount = points.filter((point) => point.owner === null).length;
+  emptyCountPanel.textContent = emptyCount;
+  moveCountPanel.textContent = moveCount;
+}
+
+function findWinningRun(equator, owner) {
+  const count = equator.points.length;
+  for (let start = 0; start < count; start += 1) {
+    let run = 0;
+    const runPoints = [];
+    for (let offset = 0; offset < count; offset += 1) {
+      const point = equator.points[(start + offset) % count];
+      if (point.owner === owner) {
+        run += 1;
+        runPoints.push(point);
+        if (run >= 5) return runPoints.slice(run - 5);
+      } else {
+        run = 0;
+        runPoints.length = 0;
+      }
+    }
+  }
+  return null;
+}
+
+function checkWin(owner) {
+  for (const equator of equators) {
+    const winningPoints = findWinningRun(equator, owner);
+    if (winningPoints) return { equator, points: winningPoints };
+  }
+  return null;
+}
+
+function placePiece(point) {
+  point.owner = currentPlayer;
+  point.mesh.visible = true;
+  moveCount += 1;
+  refreshVisual(point);
+  moveLastMoveGlow(point);
+  updateMeta();
+
+  const win = checkWin(currentPlayer);
+  if (win) {
+    gameOver = true;
+    win.points.forEach((winningPoint) => {
+      winningPoint.isWinning = true;
+      refreshVisual(winningPoint);
+    });
+    win.equator.line.material.color.set(0xdff1ff);
+    win.equator.line.material.opacity = 0.95;
+    statusPanel.textContent = `${PLAYERS[currentPlayer].name}获胜：连续五子！`;
+    statusPanel.classList.add('win');
+    return;
+  }
+
+  if (moveCount >= points.length) {
+    gameOver = true;
+    statusPanel.textContent = '棋盘已满，平局。';
+    return;
+  }
+
+  currentPlayer = 1 - currentPlayer;
+  updateTurnUI();
+  if (gameMode === 'ai' && currentPlayer === aiColor) {
+    statusPanel.textContent = '机器思考中...';
+    scheduleAiMove();
+  } else {
+    statusPanel.textContent = `轮到${PLAYERS[currentPlayer].name}落子`;
+  }
+}
+
+const AI_CANDIDATE_LIMIT = 16;
+const AI_DEPTH = 2;
+const WIN_SCORE = 1000000;
+
+function scoreCircle(bits) {
+  const length = bits.length;
+  if (bits.every((bit) => bit === 1)) return WIN_SCORE;
+  let score = 0;
+  for (let start = 0; start < length; start += 1) {
+    if (!bits[start]) continue;
+    if (bits[(start - 1 + length) % length]) continue;
+    let run = 0;
+    while (bits[(start + run) % length] && run < length) run += 1;
+    if (run >= 5) score += WIN_SCORE;
+    else if (run === 4) score += 12000;
+    else if (run === 3) score += 1200;
+    else if (run === 2) score += 120;
+    else score += 10;
+  }
+  return score;
+}
+
+function evaluateForPlayer(player) {
+  let score = 0;
+  for (const equator of equators) {
+    const bits = equator.points.map((point) => point.owner === player ? 1 : 0);
+    score += scoreCircle(bits);
+  }
+  return score;
+}
+
+function evaluateBoard(player, opponent) {
+  return evaluateForPlayer(player) - evaluateForPlayer(opponent);
+}
+
+function candidateMoves(player) {
+  const empty = points.filter((point) => point.owner === null);
+  if (empty.length <= AI_CANDIDATE_LIMIT) return empty;
+  return empty
+    .map((point) => {
+      point.owner = player;
+      const score = evaluateBoard(player, 1 - player);
+      point.owner = null;
+      return { point, score };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, AI_CANDIDATE_LIMIT)
+    .map((item) => item.point);
+}
+
+function findImmediateMove(player) {
+  for (const point of points) {
+    if (point.owner !== null) continue;
+    point.owner = player;
+    const wins = checkWin(player);
+    point.owner = null;
+    if (wins) return point;
+  }
+  return null;
+}
+
+function minimax(depth, alpha, beta, movingPlayer, aiPlayer, humanPlayer) {
+  if (depth === 0) return evaluateBoard(aiPlayer, humanPlayer);
+  const maximizing = movingPlayer === aiPlayer;
+  const moves = candidateMoves(movingPlayer);
+  if (!moves.length) return evaluateBoard(aiPlayer, humanPlayer);
+  let best = maximizing ? -Infinity : Infinity;
+  for (const point of moves) {
+    point.owner = movingPlayer;
+    if (checkWin(movingPlayer)) {
+      point.owner = null;
+      return maximizing ? WIN_SCORE - depth : -WIN_SCORE + depth;
+    }
+    const value = minimax(depth - 1, alpha, beta, 1 - movingPlayer, aiPlayer, humanPlayer);
+    point.owner = null;
+    if (maximizing) {
+      best = Math.max(best, value);
+      alpha = Math.max(alpha, best);
+    } else {
+      best = Math.min(best, value);
+      beta = Math.min(beta, best);
+    }
+    if (beta <= alpha) break;
+  }
+  return best;
+}
+
+function chooseAiMove(player) {
+  const winningMove = findImmediateMove(player);
+  if (winningMove) return winningMove;
+  const blockingMove = findImmediateMove(1 - player);
+  if (blockingMove) return blockingMove;
+  const candidates = candidateMoves(player);
+  if (!candidates.length) return null;
+  const aiPlayer = player;
+  const humanPlayer = 1 - player;
+  let bestMove = candidates[0];
+  let bestScore = -Infinity;
+  for (const point of candidates) {
+    point.owner = player;
+    if (checkWin(player)) {
+      point.owner = null;
+      return point;
+    }
+    const value = minimax(AI_DEPTH - 1, -Infinity, Infinity, humanPlayer, aiPlayer, humanPlayer);
+    point.owner = null;
+    if (value > bestScore) {
+      bestScore = value;
+      bestMove = point;
+    }
+  }
+  return bestMove;
+}
+
+function scheduleAiMove() {
+  if (aiTimer) clearTimeout(aiTimer);
+  aiTimer = setTimeout(() => {
+    aiTimer = null;
+    if (gameMode !== 'ai' || gameOver || currentPlayer !== aiColor) return;
+    statusPanel.textContent = '机器思考中...';
+    const move = chooseAiMove(aiColor);
+    if (move) placePiece(move);
+    else {
+      gameOver = true;
+      statusPanel.textContent = '没有可落子位置。';
+    }
+  }, 350);
+}
+
+function resetGame() {
+  if (aiTimer) {
+    clearTimeout(aiTimer);
+    aiTimer = null;
+  }
+  points.forEach((point) => {
+    point.owner = null;
+    point.isWinning = false;
+    refreshVisual(point);
+    point.mesh.visible = true;
+  });
+  equators.forEach((equator) => {
+    equator.line.material.color.set(equator.baseColor);
+    equator.line.material.opacity = equator.baseOpacity;
+  });
+  currentPlayer = 0;
+  moveCount = 0;
+  gameOver = false;
+  moveLastMoveGlow(null);
+  setHoveredPoint(null);
+  updateTurnUI();
+  updateMeta();
+  statusPanel.classList.remove('win');
+  if (gameMode === 'ai' && aiColor === 0) {
+    statusPanel.textContent = '机器思考中...';
+    scheduleAiMove();
+  } else {
+    statusPanel.textContent = '等待黑棋落子';
+  }
+}
+
+function updateNDC(event) {
+  const rect = renderer.domElement.getBoundingClientRect();
+  ndc.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  ndc.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+}
+
+function visibleHits(event) {
+  updateNDC(event);
+  raycaster.setFromCamera(ndc, camera);
+  const visibleButtons = buttonMeshes.filter((mesh) => mesh.visible);
+  const hits = raycaster.intersectObjects([sphere, ...visibleButtons], false);
+  const nearest = hits[0];
+  if (!nearest || !visibleButtons.includes(nearest.object)) return [];
+  return [nearest];
+}
+
+function updateHover(event) {
+  const hits = visibleHits(event);
+  const point = hits.length ? hits[0].object.userData.point : null;
+  const aiTurn = gameMode === 'ai' && currentPlayer === aiColor;
+  const legal = point && !gameOver && point.owner === null && !aiTurn;
+  setHoveredPoint(legal ? point : null);
+  renderer.domElement.style.cursor = legal ? 'pointer' : 'default';
+}
+
+function handleClick(event) {
+  if (gameOver) return;
+  if (gameMode === 'ai' && currentPlayer === aiColor) {
+    statusPanel.textContent = '等待机器落子...';
+    return;
+  }
+  const hits = visibleHits(event);
+  if (!hits.length) return;
+  const point = hits[0].object.userData.point;
+  if (point.owner !== null) {
+    statusPanel.textContent = '该点已有棋子';
+    return;
+  }
+  placePiece(point);
+}
+
+renderer.domElement.addEventListener('pointerdown', (event) => {
+  pointerDownPos = { x: event.clientX, y: event.clientY };
+  dragDistance = 0;
+});
+
+renderer.domElement.addEventListener('pointermove', (event) => {
+  if (pointerDownPos) {
+    const dx = event.clientX - pointerDownPos.x;
+    const dy = event.clientY - pointerDownPos.y;
+    dragDistance = Math.max(dragDistance, Math.hypot(dx, dy));
+  }
+
+  if (pointerDownPos && dragDistance > 5) {
+    setHoveredPoint(null);
+    renderer.domElement.style.cursor = 'grabbing';
+  } else {
+    updateHover(event);
+  }
+});
+
+renderer.domElement.addEventListener('pointerup', (event) => {
+  const wasClick = pointerDownPos && dragDistance <= 5;
+  pointerDownPos = null;
+  if (wasClick) handleClick(event);
+  updateHover(event);
+});
+
+renderer.domElement.addEventListener('pointerleave', () => {
+  setHoveredPoint(null);
+});
+
+function updateModeFromUI() {
+  gameMode = gameModeSelect.value;
+  humanSide = humanSideSelect.value;
+  aiColor = gameMode === 'ai' ? (humanSide === 'black' ? 1 : 0) : null;
+  humanSideRow.style.display = gameMode === 'ai' ? 'flex' : 'none';
+  resetGame();
+}
+
+document.getElementById('resetGame').addEventListener('click', resetGame);
+gameModeSelect.addEventListener('change', updateModeFromUI);
+humanSideSelect.addEventListener('change', updateModeFromUI);
+
+document.getElementById('resetView').addEventListener('click', () => {
+  camera.position.set(0, 0, 4.2);
+  camera.up.set(0, 1, 0);
+  camera.lookAt(0, 0, 0);
+  controls.target.set(0, 0, 0);
+  controls.update();
+});
+
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+updateModeFromUI();
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  if (hoveredPoint) updateTooltipPosition();
+  renderer.render(scene, camera);
+}
+
+animate();
+</script>
+</body>
+</html>
