@@ -8,35 +8,22 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; background: #0a1120; font-family: "Segoe UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif; }
 canvas { display: block; }
-#ui { position: fixed; top: 18px; left: 18px; width: 258px; padding: 16px 18px; background: rgba(11, 18, 34, 0.88); border: 1px solid rgba(140, 190, 235, 0.18); border-radius: 16px; color: #dceeff; backdrop-filter: blur(10px); box-shadow: 0 16px 44px rgba(0, 0, 0, 0.38); z-index: 10; }
-h1 { margin: 0 0 6px; font-size: 19px; letter-spacing: 0.02em; color: #eaf4ff; }
-.subtitle { margin: 0 0 14px; font-size: 12px; line-height: 1.6; color: #8fa9c9; }
-.turn-row { display: flex; align-items: center; gap: 8px; padding: 9px 11px; border: 1px solid rgba(140, 190, 235, 0.14); border-radius: 10px; background: rgba(90, 150, 220, 0.07); }
-.turn-label { font-size: 12px; color: #8fa9c9; }
-.turn-value { display: inline-flex; align-items: center; gap: 7px; margin-left: auto; font-size: 14px; font-weight: 600; color: #eaf4ff; }
-.piece { width: 14px; height: 14px; border-radius: 50%; display: inline-block; flex: 0 0 auto; }
-.piece.black { background: #0c0f14; border: 1px solid #a8c2e0; box-shadow: 0 0 0 1px rgba(160, 190, 220, 0.28), 0 0 8px rgba(160, 190, 220, 0.32); }
-.piece.white { background: #f7f9fc; border: 1px solid #dfe8f2; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45), 0 0 9px rgba(220, 235, 255, 0.6); }
-.status { min-height: 42px; margin-top: 12px; padding: 10px 11px; border: 1px solid rgba(140, 190, 235, 0.12); border-radius: 10px; background: rgba(255, 255, 255, 0.035); font-size: 12px; line-height: 1.5; color: #aac2dd; }
-.status.win { color: #e8f4ff; border-color: rgba(190, 225, 255, 0.55); background: rgba(150, 200, 255, 0.12); }
-.meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 12px; font-size: 11px; color: #7791b1; }
-.meta b { color: #cfe4ff; font-weight: 600; }
-.mode-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
-.mode-row label { flex: 0 0 auto; font-size: 12px; color: #8fa9c9; }
-.mode-row select { width: 100%; background: #0e1626; color: #eaf4ff; border: 1px solid rgba(150, 195, 240, 0.18); border-radius: 8px; padding: 7px 8px; font-size: 12px; }
-.legend { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; margin-top: 12px; }
-.legend-row { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #c6d9ef; }
-.dot { width: 12px; height: 12px; border-radius: 50%; flex: 0 0 auto; }
-.dot.empty { background: #a8c8ee; box-shadow: 0 0 8px rgba(168, 200, 238, 0.6); }
-.equator-line { width: 18px; height: 3px; border-radius: 2px; background: #7fb8f2; box-shadow: 0 0 8px rgba(127, 184, 242, 0.6); flex: 0 0 auto; }
-.controls-row { display: flex; align-items: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-button { appearance: none; border: 1px solid rgba(150, 195, 240, 0.18); background: rgba(120, 180, 240, 0.08); color: #eaf4ff; border-radius: 8px; padding: 7px 10px; font-size: 12px; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; }
+#topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 10; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 12px; background: rgba(11, 18, 34, 0.92); border-bottom: 1px solid rgba(140, 190, 235, 0.16); color: #dceeff; backdrop-filter: blur(10px); }
+.brand { font-size: 14px; font-weight: 600; color: #eaf4ff; white-space: nowrap; }
+select { background: #0e1626; color: #eaf4ff; border: 1px solid rgba(150, 195, 240, 0.2); border-radius: 8px; padding: 5px 8px; font-size: 12px; max-width: 150px; }
+.top-group { display: inline-flex; align-items: center; gap: 6px; }
+.turn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #eaf4ff; white-space: nowrap; }
+.piece { width: 12px; height: 12px; border-radius: 50%; display: inline-block; flex: 0 0 auto; }
+.piece.black { background: #0c0f14; border: 1px solid #a8c2e0; box-shadow: 0 0 0 1px rgba(160, 190, 220, 0.28), 0 0 7px rgba(160, 190, 220, 0.3); }
+.piece.white { background: #f7f9fc; border: 1px solid #dfe8f2; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4), 0 0 7px rgba(220, 235, 255, 0.55); }
+.status { font-size: 12px; color: #aac2dd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
+.status.win { color: #e8f4ff; }
+.spacer { flex: 1 1 auto; }
+button { appearance: none; border: 1px solid rgba(150, 195, 240, 0.18); background: rgba(120, 180, 240, 0.08); color: #eaf4ff; border-radius: 8px; padding: 6px 9px; font-size: 12px; cursor: pointer; white-space: nowrap; transition: background 0.15s ease, border-color 0.15s ease; }
 button:hover { background: rgba(120, 180, 240, 0.16); border-color: rgba(170, 210, 250, 0.35); }
-label.checkbox { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #a8c0dd; cursor: pointer; }
-input[type="checkbox"] { width: 14px; height: 14px; accent-color: #6fb1f2; cursor: pointer; }
 #tooltip { position: fixed; left: 0; top: 0; z-index: 20; padding: 6px 10px; border: 1px solid rgba(170, 210, 250, 0.24); border-radius: 8px; background: rgba(8, 14, 27, 0.94); color: #eaf4ff; font-size: 12px; white-space: nowrap; pointer-events: none; transform: translate(-50%, -140%); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.38); }
-@media (max-width: 560px) {
-  #ui { left: 10px; right: 10px; top: 10px; width: auto; }
+@media (max-width: 700px) {
+  .status { order: 10; width: 100%; max-width: none; }
 }
 </style>
 <script type="importmap">
@@ -49,46 +36,24 @@ input[type="checkbox"] { width: 14px; height: 14px; accent-color: #6fb1f2; curso
 </script>
 </head>
 <body>
-<div id="ui">
-  <h1>正二十面体五子棋</h1>
-  <p class="subtitle">拖动旋转 · 滚轮缩放 · 点击空点落子<br>任意一条大圆连续五子获胜</p>
-  <div class="mode-row">
-    <label for="gameMode">模式</label>
-    <select id="gameMode">
-      <option value="two">双人对战</option>
-      <option value="ai">人机对战</option>
-    </select>
-  </div>
-  <div class="mode-row" id="humanSideRow" style="display: none;">
-    <label for="humanSide">执子</label>
-    <select id="humanSide">
+<div id="topbar">
+  <span class="brand">正二十面体五子棋</span>
+  <select id="gameMode" title="对战模式">
+    <option value="two">双人对战</option>
+    <option value="ai">人机对战</option>
+  </select>
+  <span class="top-group" id="humanSideRow" style="display: none;">
+    <select id="humanSide" title="执子">
       <option value="black">人先手 · 黑棋</option>
       <option value="white">人后手 · 白棋</option>
     </select>
-  </div>
-  <div class="turn-row">
-    <span class="turn-label">当前回合</span>
-    <span class="turn-value" id="currentTurn"><span class="piece black"></span>黑棋</span>
-  </div>
-  <div id="status" class="status">等待黑棋落子</div>
-  <div class="meta">
-    <span>空点 <b id="countEmpty">62</b></span>
-    <span>大圆 <b>42</b></span>
-    <span>第 <b id="moveCount">0</b> 手</span>
-  </div>
-  <div class="legend">
-    <div class="legend-row"><span class="dot empty"></span>空点</div>
-    <div class="legend-row"><span class="piece black"></span>黑棋</div>
-    <div class="legend-row"><span class="piece white"></span>白棋</div>
-    <div class="legend-row"><span class="equator-line"></span>大圆</div>
-  </div>
-  <div class="controls-row">
-    <button id="resetGame">重新开局</button>
-    <button id="resetView">重置视角</button>
-
-  </div>
-</div>
-<div id="tooltip" style="display: none;"></div>
+  </span>
+  <span class="turn" id="currentTurn"></span>
+  <span class="status" id="status"></span>
+  <span class="spacer"></span>
+  <button id="resetGame">重新开局</button>
+  <button id="resetView">重置视角</button>
+</div><div id="tooltip" style="display: none;"></div>
 <script type="module">
 import * as THREE from 'three';
 import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
@@ -295,8 +260,7 @@ const worldPoint = new THREE.Vector3();
 const tooltip = document.getElementById('tooltip');
 const statusPanel = document.getElementById('status');
 const turnPanel = document.getElementById('currentTurn');
-const emptyCountPanel = document.getElementById('countEmpty');
-const moveCountPanel = document.getElementById('moveCount');
+
 const gameModeSelect = document.getElementById('gameMode');
 const humanSideSelect = document.getElementById('humanSide');
 const humanSideRow = document.getElementById('humanSideRow');
@@ -407,11 +371,6 @@ function updateTurnUI() {
   turnPanel.innerHTML = `<span class="piece ${pieceClass}"></span>${player.name}${sideLabel}`;
 }
 
-function updateMeta() {
-  const emptyCount = points.filter((point) => point.owner === null).length;
-  emptyCountPanel.textContent = emptyCount;
-  moveCountPanel.textContent = moveCount;
-}
 
 function findWinningRun(equator, owner) {
   const count = equator.points.length;
@@ -447,7 +406,6 @@ function placePiece(point) {
   moveCount += 1;
   refreshVisual(point);
   moveLastMoveGlow(point);
-  updateMeta();
 
   const win = checkWin(currentPlayer);
   if (win) {
@@ -540,6 +498,28 @@ function findImmediateMove(player) {
   return null;
 }
 
+function findOpenThreeBlocks(player) {
+  const blocks = new Map();
+  for (const equator of equators) {
+    const sequence = equator.points;
+    const count = sequence.length;
+    for (let start = 0; start < count; start += 1) {
+      if (sequence[start].owner !== player) continue;
+      const previousIndex = (start - 1 + count) % count;
+      if (sequence[previousIndex].owner === player) continue;
+      let run = 0;
+      while (run < count && sequence[(start + run) % count].owner === player) run += 1;
+      const nextIndex = (start + run) % count;
+      if (run === 3 && sequence[previousIndex].owner === null && sequence[nextIndex].owner === null) {
+        [sequence[previousIndex], sequence[nextIndex]].forEach((point) => {
+          blocks.set(point, (blocks.get(point) || 0) + 1);
+        });
+      }
+    }
+  }
+  return [...blocks.entries()].sort((a, b) => b[1] - a[1]).map((entry) => entry[0]);
+}
+
 function minimax(depth, alpha, beta, movingPlayer, aiPlayer, humanPlayer) {
   if (depth === 0) return evaluateBoard(aiPlayer, humanPlayer);
   const maximizing = movingPlayer === aiPlayer;
@@ -571,6 +551,8 @@ function chooseAiMove(player) {
   if (winningMove) return winningMove;
   const blockingMove = findImmediateMove(1 - player);
   if (blockingMove) return blockingMove;
+  const openThreeBlocks = findOpenThreeBlocks(1 - player);
+  if (openThreeBlocks.length) return openThreeBlocks[0];
   const candidates = candidateMoves(player);
   if (!candidates.length) return null;
   const aiPlayer = player;
@@ -629,7 +611,6 @@ function resetGame() {
   moveLastMoveGlow(null);
   setHoveredPoint(null);
   updateTurnUI();
-  updateMeta();
   statusPanel.classList.remove('win');
   if (gameMode === 'ai' && aiColor === 0) {
     statusPanel.textContent = '机器思考中...';
