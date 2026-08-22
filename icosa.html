@@ -472,19 +472,55 @@ function evaluateBoard(player, opponent) {
   return evaluateForPlayer(player) - evaluateForPlayer(opponent);
 }
 
+function findFourThreatPoints(player) {
+  const threatPoints = new Map();
+  for (const point of points) {
+    if (point.owner !== null) continue;
+    point.owner = player;
+    let threats = 0;
+    for (const equator of equators) {
+      const sequence = equator.points;
+      const count = sequence.length;
+      let found = false;
+      for (let start = 0; start < count; start += 1) {
+        if (sequence[start].owner !== player) continue;
+        const previousIndex = (start - 1 + count) % count;
+        if (sequence[previousIndex].owner === player) continue;
+        let run = 0;
+        while (run < count && sequence[(start + run) % count].owner === player) run += 1;
+        if (run >= 4) {
+          found = true;
+          break;
+        }
+      }
+      if (found) threats += 1;
+    }
+    point.owner = null;
+    if (threats > 0) threatPoints.set(point, threats);
+  }
+  return [...threatPoints.entries()].sort((a, b) => b[1] - a[1]).map((entry) => entry[0]);
+}
+
 function candidateMoves(player) {
   const empty = points.filter((point) => point.owner === null);
-  if (empty.length <= AI_CANDIDATE_LIMIT) return empty;
-  return empty
-    .map((point) => {
-      point.owner = player;
-      const score = evaluateBoard(player, 1 - player);
-      point.owner = null;
-      return { point, score };
-    })
-    .sort((a, b) => b.score - a.score)
-    .slice(0, AI_CANDIDATE_LIMIT)
-    .map((item) => item.point);
+  if (!empty.length) return empty;
+  const ordered = new Map();
+  findFourThreatPoints(player).forEach((point) => ordered.set(point, true));
+  if (empty.length <= AI_CANDIDATE_LIMIT) {
+    empty.forEach((point) => ordered.set(point, true));
+  } else {
+    empty
+      .map((point) => {
+        point.owner = player;
+        const score = evaluateBoard(player, 1 - player);
+        point.owner = null;
+        return { point, score };
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, AI_CANDIDATE_LIMIT)
+      .forEach((item) => ordered.set(item.point, true));
+  }
+  return [...ordered.keys()];
 }
 
 function findImmediateMove(player) {
@@ -498,27 +534,6 @@ function findImmediateMove(player) {
   return null;
 }
 
-function findOpenThreeBlocks(player) {
-  const blocks = new Map();
-  for (const equator of equators) {
-    const sequence = equator.points;
-    const count = sequence.length;
-    for (let start = 0; start < count; start += 1) {
-      if (sequence[start].owner !== player) continue;
-      const previousIndex = (start - 1 + count) % count;
-      if (sequence[previousIndex].owner === player) continue;
-      let run = 0;
-      while (run < count && sequence[(start + run) % count].owner === player) run += 1;
-      const nextIndex = (start + run) % count;
-      if (run === 3 && sequence[previousIndex].owner === null && sequence[nextIndex].owner === null) {
-        [sequence[previousIndex], sequence[nextIndex]].forEach((point) => {
-          blocks.set(point, (blocks.get(point) || 0) + 1);
-        });
-      }
-    }
-  }
-  return [...blocks.entries()].sort((a, b) => b[1] - a[1]).map((entry) => entry[0]);
-}
 
 function minimax(depth, alpha, beta, movingPlayer, aiPlayer, humanPlayer) {
   if (depth === 0) return evaluateBoard(aiPlayer, humanPlayer);
@@ -551,8 +566,10 @@ function chooseAiMove(player) {
   if (winningMove) return winningMove;
   const blockingMove = findImmediateMove(1 - player);
   if (blockingMove) return blockingMove;
-  const openThreeBlocks = findOpenThreeBlocks(1 - player);
-  if (openThreeBlocks.length) return openThreeBlocks[0];
+  const opponentFourThreats = findFourThreatPoints(1 - player);
+  if (opponentFourThreats.length) return opponentFourThreats[0];
+  const ownFourThreats = findFourThreatPoints(player);
+  if (ownFourThreats.length) return ownFourThreats[0];
   const candidates = candidateMoves(player);
   if (!candidates.length) return null;
   const aiPlayer = player;
