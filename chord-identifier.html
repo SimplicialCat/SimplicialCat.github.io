@@ -94,7 +94,7 @@ h1{margin:0;font-size:clamp(17px,2vw,23px)}
   <h1>和弦识别器</h1>
   <div class="toolbar">
    <button id="clearButton" class="button danger">清空</button>
-   <button id="playButton" class="button primary">播放和弦</button>
+   <button id="playButton" class="button primary">播放已选</button>
    <button id="holdSwitch" class="switch" role="switch" aria-checked="false">点选模式</button>
    <button id="pedalSwitch" class="switch" role="switch" aria-checked="true">延音踏板</button>
   </div>
@@ -451,7 +451,8 @@ function isChordTone(shape,rootPitchClass,pitchClass){
 }
 
 function isAllowedSlashBass(shape,rootPitchClass,bassPitchClass){
- return !isExtendedChordShape(shape)||isChordTone(shape,rootPitchClass,bassPitchClass);
+ if(shape.required.length<2||isExtendedChordShape(shape))return isChordTone(shape,rootPitchClass,bassPitchClass);
+ return true;
 }
 
 function promoteSlashReadings(allResults,bassPitchClass,inputPitchClasses){
@@ -571,8 +572,9 @@ holdSwitch.addEventListener("click",()=>{
  holdSwitch.classList.toggle("on",holdModeOn);
  holdSwitch.setAttribute("aria-checked",String(holdModeOn));
  holdSwitch.textContent=holdModeOn?"按住模式":"点选模式";
+ playButton.hidden=holdModeOn;
  clearButton.hidden=holdModeOn;
- pianoShell.style.touchAction=holdModeOn?"none":"pan-x";
+ pianoShell.style.touchAction="pan-x";
  if(holdModeOn){
   [...selectedMidis].forEach(midi=>stopVoice(midi,.08));
   clearSelection();
