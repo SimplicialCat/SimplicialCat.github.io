@@ -1,0 +1,1352 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>和弦进行编辑器</title>
+<style>
+:root{color-scheme:dark}
+html,body{height:100%}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI Variable Display","Segoe UI",Aptos,"Microsoft YaHei UI","Microsoft YaHei",sans-serif;color:#eaf0ff;background:#05060f;overflow:hidden}
+#bg{position:fixed;inset:-15%;z-index:-3;background:#05060f}
+.grain{position:fixed;inset:-100%;z-index:-2;opacity:.08;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cpath d='M20 20h1v1h-1zM43 55h1v1h-1zM82 33h1v1h-1z'/%3E%3C/svg%3E");animation:grainShift 12s steps(6) infinite}
+@keyframes grainShift{to{transform:translate(-62px,-44px)}}
+.app{max-width:1540px;margin:0 auto;height:100%;padding:16px;display:flex;flex-direction:column;gap:12px}
+.piano-group{display:flex;flex-direction:column;gap:12px;flex:0 0 auto;min-height:0}
+.piano-group.collapsed{display:flex}
+.piano-group.collapsed #recognitionPanel,
+.piano-group.collapsed .piano-shell{display:none}
+.piano-actions{justify-content:flex-start}
+.piano-actions .button,
+.piano-actions .button.danger{height:37px}
+.piano-group.collapsed #clearButton,
+.piano-group.collapsed #playButton{display:none}
+.app.keyboard-collapsed .editor-panel{flex:1 1 auto}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.button{cursor:pointer;color:#fff;border:0;background:#14172c;height:37px;padding:0 13px;border-radius:11px;font:inherit;font-size:12px;transition:.22s ease;display:inline-flex;align-items:center;justify-content:center}
+.button:hover{background:#20264a;transform:translateY(-1px)}
+.button.danger{height:44px;padding:0 18px;min-width:78px;color:#fff;background:#ff3f5e;box-shadow:0 8px 24px rgba(255,73,100,.24);font-size:14px;font-weight:700}
+.button.danger:hover{background:#ff5170;box-shadow:0 10px 32px rgba(255,73,100,.34);transform:translateY(-2px)}
+.button.primary{color:#00121d;background:#6fe9f7}
+.button.primary:hover{box-shadow:0 8px 28px rgba(105,241,218,.22)}
+.panel{position:relative;min-height:104px;padding:14px 18px;border-radius:20px;border:1px solid rgba(255,255,255,.09);background:#0d1020;box-shadow:0 12px 44px rgba(2,3,15,.38);overflow:hidden}
+#recognitionPanel{height:104px}
+#recognitionPanel{display:flex;align-items:center}
+#outputZone{margin-top:0;width:100%}
+.indicator{width:11px;height:11px;border-radius:50%;background:#485074;transition:.15s}
+.indicator.on{background:#57ffbc;box-shadow:0 0 12px #57ffbc}
+.label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.62}
+.empty-main{font-size:clamp(18px,2.4vw,26px);font-weight:700;line-height:1.1;margin-top:8px}
+.chord-line{font-size:clamp(26px,2.7vw,38px);line-height:1.05;margin-top:8px;display:flex;gap:7px;flex-wrap:wrap;align-items:center;text-shadow:0 0 22px rgba(100,107,255,.25)}
+.name-chip{display:inline-flex;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:13px;padding:.42em .7em;font-size:calc(var(--match-scale,1)*1em);opacity:var(--match-opacity,1)}
+.name-chip.accurate{color:#001626;background:#8be4f7;border-color:rgba(155,245,255,.74);box-shadow:0 10px 30px rgba(91,234,222,.32);opacity:1}
+.name-chip{cursor:pointer}
+.tag-line{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap}
+.tag{border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.11);padding:3px 8px;font-size:11px}
+.piano-shell{position:relative;flex:1 1 180px;max-height:280px;min-height:150px;overflow-x:auto;overflow-y:hidden;touch-action:pan-x;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(132,160,255,.52) transparent;cursor:grab;user-select:none}
+.piano-shell.dragging{cursor:grabbing}
+.piano-shell::-webkit-scrollbar{height:8px}
+.piano-shell::-webkit-scrollbar-thumb{background:rgba(132,160,255,.42);border-radius:99px}
+.keyboard{--white-key-width:46px;height:100%;width:calc(var(--total-white-count,29)*var(--white-key-width));display:grid;grid-template-columns:repeat(var(--total-white-count,29),var(--white-key-width));align-items:end}
+.white-key{position:relative;height:100%;border:0;border-right:1px solid #c9cee4;border-radius:0 0 7px 7px;background:#f3f5fb;color:#37405e;outline:none;transition:.16s ease;z-index:1}
+.white-key::before{content:attr(data-name);position:absolute;right:5px;bottom:5px;font-size:9px;opacity:.42}
+.white-key.active{background:#2ec3f2;color:#00344a;box-shadow:0 6px 28px rgba(56,196,255,.62)}
+.white-key.pointer{background:#7ee0ff;transform:scale(.986)}
+.black-key{position:absolute;top:0;left:var(--left);width:calc(var(--white-key-width)*.59);height:61%;transform:translateX(-50%);border:0;border-bottom:none;border-radius:0 0 4px 4px;background:#12141f;color:#dfecfb;outline:none;transition:.17s cubic-bezier(.2,.7,.2,1);z-index:4;box-shadow:-4px 2px 12px rgba(4,6,20,.39),3px 3px 12px rgba(4,6,20,.29)}
+.black-key span{position:absolute;bottom:4px;left:0;right:0;font-size:8px;color:#eee7;text-align:center}
+.black-key.active{background:#6a41f8;box-shadow:0 3px 19px rgba(117,86,248,.7)}
+.black-key.pointer{background:#5431dd;transform:translateX(-50%) scale(.97)}
+.ripple{position:fixed;z-index:10;border-radius:50%;pointer-events:none;background:rgba(149,246,255,.18);mix-blend-mode:screen;animation:rippleOut .64s ease-out forwards}
+@keyframes rippleOut{from{opacity:.9;transform:scale(.35)}to{opacity:0;transform:scale(2.2)}}
+.editor-panel{min-height:0;flex:1 1 auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.editor-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.editor-toolbar .button{height:31px;padding:0 10px;font-size:11px}
+.editor-toolbar .button.primary{min-width:56px}
+#playProgressionButton{min-width:86px;padding:0 18px;color:#001626;background:#8be4f7;font-weight:700}
+#playProgressionButton:hover{background:#a8ecfa}
+#bpmInput{height:31px;width:86px;border:1px solid rgba(255,255,255,.12);border-radius:9px;background:#14172c;color:#eaf0ff;font:inherit;font-size:14px;text-align:center;outline:none}
+#bpmInput:focus{border-color:#8be4f7}
+.timeline-shell{flex:1 1 auto;height:250px;min-height:140px;overflow-x:auto;overflow-y:auto;scrollbar-gutter:stable;border-radius:12px;background:#101327;border:1px solid rgba(255,255,255,.07);cursor:text;touch-action:none;user-select:none}
+.timeline-shell.dragging,.timeline-shell.dragging *{cursor:grabbing!important}
+.timeline{--timeline-gap:20px;--timeline-row-gap:18px;--chord-block-height:104px;position:relative;width:max-content;min-width:100%;height:auto;min-height:100%;padding-right:var(--timeline-gap);display:flex;flex-direction:column;gap:var(--timeline-row-gap);align-items:flex-start}
+.timeline-row{flex:0 0 auto;width:max-content;min-width:100%;height:var(--chord-block-height);display:flex;gap:var(--timeline-gap);align-items:flex-start}
+.timeline-row.empty-row{border:1px dashed rgba(255,255,255,.13);border-radius:14px;background:rgba(255,255,255,.025)}
+.timeline-row.empty-row:hover{border-color:rgba(139,228,247,.36);background:rgba(139,228,247,.05)}
+.chord-block{position:relative;flex:0 0 auto;height:var(--chord-block-height);width:calc(var(--duration) * 88px);min-width:88px;background:transparent;border-right:0;border-radius:0;color:#eaf2ff;display:block;cursor:pointer;user-select:none}
+.chord-block-body{position:relative;width:100%;height:100%;background:hsl(var(--root-hue,210) var(--chord-saturation,42%) 32%);border:1px solid hsl(var(--root-hue,210) var(--chord-saturation,42%) 54%);border-radius:14px;color:inherit;display:flex;align-items:center;justify-content:center;padding:0 8px;overflow:hidden}
+.chord-block:hover .chord-block-body{background:hsl(var(--root-hue,210) var(--chord-saturation,42%) 38%)}
+.chord-block.selected .chord-block-body{background:hsl(var(--root-hue,210) var(--chord-saturation,42%) 23%);border-color:#74efe4;box-shadow:inset 0 0 0 2px #74efe4;color:#efffff}
+.chord-block.playing .chord-block-body{background:hsl(var(--root-hue,210) var(--chord-saturation,42%) 18%);border-color:#62f8ad;box-shadow:inset 0 0 0 2px #62f8ad}
+.pitch-lines{position:absolute;inset:0;pointer-events:none}
+.pitch-line{position:absolute;left:8%;right:8%;height:2px;border-radius:99px;background:rgba(255,255,255,.22)}
+.pitch-line.bass{left:8%;right:42%;background:rgba(255,255,255,.34)}
+.chord-label{font-weight:700;font-size:22px;line-height:1.1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+.resize-handle{position:absolute;top:0;right:0;width:12px;height:100%;cursor:ew-resize;z-index:3}
+.cursor-line{position:absolute;top:var(--cursor-top,0);height:var(--cursor-height,100%);width:2px;background:#8be4f7;transform:translateX(-1px);pointer-events:none;z-index:4;box-shadow:0 0 10px #8be4f7}
+@media (orientation:landscape) and (max-height:620px){
+ .app{padding:6px 8px;gap:4px}
+.toolbar{gap:5px;flex-wrap:nowrap}
+ .button{height:29px;font-size:10px}
+ .button{padding:0 8px;border-radius:8px}
+ .button.danger{height:29px;padding:0 9px;min-width:52px;font-size:10px;border-radius:8px}
+ .panel{min-height:62px;padding:5px 8px;border-radius:10px;box-shadow:0 4px 18px rgba(2,3,15,.3)}
+ .indicator{width:6px;height:6px}
+ .label{font-size:8px;letter-spacing:.06em}
+ .empty-main{font-size:15px;margin-top:1px}
+ .chord-line{font-size:16px;gap:4px;margin-top:1px;max-height:40px;overflow:hidden}
+ .name-chip{padding:.18em .4em;border-radius:8px}
+ .tag-line{margin-top:2px;gap:4px}
+ .tag{padding:1px 5px;font-size:8px}
+ .tag-line{display:none}
+ .panel#recognitionPanel{height:36px;min-height:36px;padding:4px 6px}
+ .empty-main{font-size:13px;margin-top:0}
+ .chord-line{font-size:19px;gap:3px;margin-top:0;height:28px;max-height:28px;overflow:hidden}
+ .name-chip{padding:.08em .22em;border-radius:6px;font-size:16px}
+ .editor-panel{flex:1 1 auto;min-height:88px;padding:4px 6px;gap:4px}
+ .editor-toolbar{gap:4px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+ .editor-toolbar::-webkit-scrollbar{display:none}
+ .editor-toolbar .button{height:24px;padding:0 7px;font-size:9px;border-radius:7px}
+ .editor-toolbar .button.primary{min-width:40px}
+ #bpmInput{height:24px;width:68px;font-size:12px;border-radius:7px}
+ .timeline-shell{min-height:56px;max-height:110px;border-radius:6px}
+ .timeline{--chord-block-height:46px;row-gap:6px}
+ .timeline.empty::after{font-size:9px}
+ .chord-label{font-size:15px}
+ .piano-shell{flex:0 1 150px;min-height:0}
+}
+</style>
+</head>
+<body>
+<div id="bg"></div><div class="grain"></div>
+<main class="app">
+ <section class="panel editor-panel" id="editorPanel">
+  <div class="editor-toolbar">
+    <button id="playProgressionButton" class="button">▶ 播放</button>
+   <input id="bpmInput" type="number" min="20" max="300" step="1" value="120" inputmode="numeric" aria-label="BPM">
+   <button id="copyChordsButton" class="button">复制</button>
+   <button id="pasteChordsButton" class="button">粘贴</button>
+   <button id="deleteChordsButton" class="button danger">删除</button>
+   <button id="downloadProgressionButton" class="button">下载</button>
+   <label class="button" for="progressionFileInput">上传</label>
+   <input id="progressionFileInput" type="file" accept=".json,application/json" hidden>
+  </div>
+  <div class="timeline-shell" id="timelineShell"><div class="timeline empty" id="timeline"><div class="cursor-line" id="cursorLine"></div></div></div>
+ </section>
+ <div class="piano-group" id="pianoGroup">
+  <section class="panel" id="recognitionPanel">
+   <div id="outputZone" class="empty-main">选择琴键开始识别</div>
+  </section>
+  <div class="toolbar piano-actions">
+   <button id="pianoToggleButton" class="button" aria-expanded="true" aria-controls="pianoGroup">隐藏键盘</button>
+   <button id="clearButton" class="button danger">清空</button>
+   <button id="playButton" class="button primary">播放已选</button>
+  </div>
+  <div class="piano-shell" id="pianoShell"><div id="keyboard" class="keyboard"></div></div>
+ </div>
+</main>
+
+<script>
+(function(){
+"use strict";
+
+const FIRST_MIDI=36,LAST_MIDI=83;
+const NOTE_NAMES=["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"];
+const BLACK_PCS=new Set([1,3,6,8,10]);
+const WHITE_PCS=[0,2,4,5,7,9,11];
+const selectedMidis=[],playingVoices=new Map(),keyElements=new Map();
+let pendingMouseKey=null;
+const chordColorCache=new WeakMap();
+let audioContext=null,masterGain=null,convolver=null,delayNode=null,delayFeedback=null,pianoNoiseBuffer=null;
+
+const outputZone=document.getElementById("outputZone");
+const panelElement=document.getElementById("recognitionPanel");
+const pianoShell=document.getElementById("pianoShell");
+const appElement=document.querySelector(".app");
+const pianoGroup=document.getElementById("pianoGroup");
+const pianoToggleButton=document.getElementById("pianoToggleButton");
+const timelineElement=document.getElementById("timeline");
+const timelineShell=document.getElementById("timelineShell");
+const cursorLine=document.getElementById("cursorLine");
+const progressionFileInput=document.getElementById("progressionFileInput");
+const playProgressionButton=document.getElementById("playProgressionButton");
+const bpmInput=document.getElementById("bpmInput");
+const copyChordsButton=document.getElementById("copyChordsButton");
+const pasteChordsButton=document.getElementById("pasteChordsButton");
+const deleteChordsButton=document.getElementById("deleteChordsButton");
+const downloadProgressionButton=document.getElementById("downloadProgressionButton");
+
+const progression={version:1,type:"piano-chord-progression",meta:{title:"Untitled",tempo:120,beatsPerBar:4},chords:[]};
+let chordIdSeed=0,cursorIndex=0,selectedChordIds=[],selectionAnchorId=null,clipboardChords=[];
+let progressionTimerId=null,progressionPlayingIndex=-1,progressionPlaybackEndIndex=0;
+let progressionPlaybackStartIndex=0,progressionPlaybackStartAnchor=null;
+let progressionChordStartedAt=0,progressionChordDurationBeats=0;
+let resizeDrag=null,suppressTimelineClick=false,cursorVisualAnchor=null;
+
+function midiFrequency(midi){return 440*Math.pow(2,(midi-69)/12);}
+function midiName(midi){return `${NOTE_NAMES[midi%12]}${Math.floor(midi/12)-1}`;}
+function escapeHtml(value){return String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));}
+function uniquePitchClasses(midis){return [...new Set(midis.map(value=>((value%12)+12)%12))];}
+
+function buildKeyboard(){
+ const keyboardElement=document.getElementById("keyboard");
+ const midiValues=[];for(let midi=FIRST_MIDI;midi<=LAST_MIDI;midi++)midiValues.push(midi);
+ const whiteMidis=midiValues.filter(midi=>WHITE_PCS.includes(midi%12));
+ keyboardElement.style.setProperty("--total-white-count",String(whiteMidis.length));
+ keyboardElement.style.setProperty("--white-total-minus-one",String(Math.max(0,whiteMidis.length-1)));
+ let lastWhiteIndex=-1;
+ for(const midi of midiValues){
+  const pitchClass=midi%12,isBlackKey=BLACK_PCS.has(pitchClass);
+  if(!isBlackKey)lastWhiteIndex++;
+  const key=document.createElement("button");
+  key.type="button";key.tabIndex=-1;key.dataset.midi=String(midi);
+  key.className=isBlackKey?"black-key":"white-key";
+  key.dataset.name=`${NOTE_NAMES[pitchClass]}${Math.floor(midi/12)-1}`;
+  if(isBlackKey){
+   key.style.setProperty("--left",`calc((${lastWhiteIndex} + 1)*var(--white-key-width))`);
+   key.innerHTML=`<span>${NOTE_NAMES[pitchClass]}</span>`;
+  }
+  attachKeyEvents(key,midi);
+  keyboardElement.appendChild(key);keyElements.set(midi,key);
+ }
+ syncKeyVisuals();
+}
+
+function attachKeyEvents(key,midi){
+ key.addEventListener("pointerdown",event=>{
+  event.preventDefault();
+  key.classList.add("pointer");
+  window.setTimeout(()=>key.classList.remove("pointer"),140);
+  if(event.pointerType==="mouse"&&event.button===0){
+   pendingMouseKey={pointerId:event.pointerId,midi,key,startX:event.clientX,startY:event.clientY};
+   return;
+  }
+  activatePianoKey(key,midi);
+ });
+}
+
+function activatePianoKey(key,midi){
+ key.classList.add("pointer");
+ window.setTimeout(()=>key.classList.remove("pointer"),140);
+ if(selectedMidis.includes(midi)){
+  stopVoice(midi,.09);
+ }else{
+  ensureAudio();
+  playImmediateNote(midi);
+ }
+ toggleSelected(midi,true);
+}
+
+function commitPendingMouseKey(pointerId){
+ if(!pendingMouseKey||pendingMouseKey.pointerId!==pointerId)return;
+ const pending=pendingMouseKey;
+ pendingMouseKey=null;
+ activatePianoKey(pending.key,pending.midi);
+}
+
+window.addEventListener("pointermove",event=>{
+ if(!pendingMouseKey||event.pointerId!==pendingMouseKey.pointerId)return;
+ if(Math.hypot(event.clientX-pendingMouseKey.startX,event.clientY-pendingMouseKey.startY)>6){
+  pendingMouseKey=null;
+ }
+},{passive:true});
+
+window.addEventListener("pointercancel",event=>{
+ if(pendingMouseKey&&event.pointerId===pendingMouseKey.pointerId){
+  pendingMouseKey=null;
+ }
+});
+function spawnRipple(key,midi){
+ const keyRect=key.getBoundingClientRect();
+ const rippleSize=Math.max(keyRect.width*1.15,keyRect.height*.42);
+ const ripple=document.createElement("div");ripple.className="ripple";
+ ripple.style.left=`${keyRect.left+keyRect.width/2-rippleSize/2}px`;
+ ripple.style.top=`${keyRect.top+keyRect.height*(key.classList.contains("black-key")?.52:.65)-rippleSize/2}px`;
+ ripple.style.width=ripple.style.height=`${rippleSize}px`;
+ document.body.appendChild(ripple);
+ setTimeout(()=>ripple.remove(),650);
+}
+
+function ensureAudio(){
+ if(!audioContext){
+  audioContext=new (window.AudioContext||window.webkitAudioContext)();
+  masterGain=audioContext.createGain();masterGain.gain.value=.85;
+ convolver=audioContext.createConvolver();convolver.buffer=createReverbBuffer(audioContext,2.45,2.1);
+  delayNode=audioContext.createDelay(1.25);delayNode.delayTime.value=.235;
+  delayFeedback=audioContext.createGain();delayFeedback.gain.value=.10;
+  delayNode.connect(delayFeedback).connect(delayNode);
+  pianoNoiseBuffer=audioContext.createBuffer(1,Math.floor(audioContext.sampleRate*.12),audioContext.sampleRate);
+  const noiseData=pianoNoiseBuffer.getChannelData(0);
+  for(let index=0;index<noiseData.length;index++)noiseData[index]=(Math.random()*2-1)*Math.pow(1-index/noiseData.length,2.4);
+  const wetGain=audioContext.createGain();wetGain.gain.value=.15;
+ masterGain.connect(audioContext.destination);
+ masterGain.connect(convolver);convolver.connect(wetGain);wetGain.connect(audioContext.destination);
+  masterGain.connect(delayNode);delayNode.connect(wetGain);
+ }else if(audioContext.state==="suspended"){audioContext.resume();}
+}
+
+function createReverbBuffer(context,duration,decayPower){
+ const sampleRate=context.sampleRate,sampleCount=Math.floor(duration*sampleRate);
+ const buffer=context.createBuffer(2,sampleCount,sampleRate);
+ for(let channel=0;channel<buffer.numberOfChannels;channel++){
+  const channelData=buffer.getChannelData(channel);
+  for(let index=0;index<sampleCount;index++){
+   channelData[index]=(Math.random()*2-1)*Math.pow(1-index/sampleCount,decayPower);
+  }
+ }
+ return buffer;
+}
+
+function midiLoudnessGain(midi){
+ const points=[[21,1.72],[36,1.64],[48,1.38],[60,1.00],[72,.94],[84,.88],[108,.76]];
+ if(midi<=points[0][0])return points[0][1];
+ for(let index=1;index<points.length;index++){
+  const upper=points[index],lower=points[index-1];
+  if(midi<=upper[0]){
+   const ratio=(midi-lower[0])/(upper[0]-lower[0]);
+   const blend=(1-Math.cos(Math.PI*ratio))/2;
+   return lower[1]+(upper[1]-lower[1])*blend;
+  }
+ }
+ return points[points.length-1][1];
+}
+
+function scheduleNote(midi,velocity=.88,delaySeconds=0,options={}){
+ ensureAudio();
+ const startTime=audioContext.currentTime+Math.max(0,delaySeconds);
+ const useSustain=options.sustain===true;
+ const durationSeconds=options.durationSeconds===undefined?(useSustain?11.0:4.2):options.durationSeconds;
+ stopVoice(midi,.03);
+ const fundamentalFrequency=midiFrequency(midi)*(1+(Math.random()-.5)*.0016);
+ const loudnessGain=midiLoudnessGain(midi);
+ const fundamental=audioContext.createOscillator(),bodyModulator=audioContext.createOscillator(),tineModulator=audioContext.createOscillator();
+ const bodyModulation=audioContext.createGain(),tineModulation=audioContext.createGain();
+ fundamental.type="sine";bodyModulator.type="sine";tineModulator.type="sine";
+ fundamental.frequency.value=fundamentalFrequency;
+ bodyModulator.frequency.value=fundamentalFrequency*1.003;
+ tineModulator.frequency.value=fundamentalFrequency*14.01;
+ const voiceGain=audioContext.createGain(),highpass=audioContext.createBiquadFilter(),filter=audioContext.createBiquadFilter();
+ highpass.type="highpass";highpass.frequency.value=Math.min(140,Math.max(65,fundamentalFrequency*.22));highpass.Q.value=.7;
+ filter.type="lowpass";filter.Q.value=.72;
+ const initialCutoff=Math.min(14500,Math.max(3600,fundamentalFrequency*7+3400+velocity*3600));
+ const sustainedCutoff=Math.min(initialCutoff*.58,Math.max(1500,fundamentalFrequency*3.4));
+ filter.frequency.setValueAtTime(initialCutoff,startTime);
+ filter.frequency.exponentialRampToValueAtTime(sustainedCutoff,startTime+Math.min(4.5,durationSeconds));
+ voiceGain.gain.setValueAtTime(.0001,startTime);
+ voiceGain.gain.linearRampToValueAtTime(.24*velocity*loudnessGain,startTime+.004);
+ if(durationSeconds<.7){
+  voiceGain.gain.setValueAtTime(.24*velocity*loudnessGain,startTime+durationSeconds*.4);
+  voiceGain.gain.exponentialRampToValueAtTime(.0001,startTime+durationSeconds);
+ }else{
+  voiceGain.gain.exponentialRampToValueAtTime(.12*velocity*loudnessGain,startTime+.55);
+ }
+ if(useSustain&&durationSeconds>=.7){
+  voiceGain.gain.setTargetAtTime(.048*velocity*loudnessGain,startTime+.70,1.05);
+  voiceGain.gain.setTargetAtTime(.0001,startTime+8.4,.95);
+ }else if(durationSeconds>=.7){
+  voiceGain.gain.setTargetAtTime(.028*velocity*loudnessGain,startTime+.95,.58);
+  voiceGain.gain.setTargetAtTime(.0001,startTime+2.30,.55);
+ }
+ const bodyDepth=fundamentalFrequency*(1.45+velocity*1.35)*Math.max(.58,1.02-midi/127*.36);
+ bodyModulation.gain.setValueAtTime(bodyDepth,startTime);
+ bodyModulation.gain.exponentialRampToValueAtTime(fundamentalFrequency*.12,startTime+.65);
+ bodyModulation.gain.setTargetAtTime(fundamentalFrequency*.05,startTime+.65,1.10);
+ const tineDepth=fundamentalFrequency*(.14+velocity*.46);
+ tineModulation.gain.setValueAtTime(tineDepth,startTime);
+ tineModulation.gain.exponentialRampToValueAtTime(fundamentalFrequency*.008,startTime+.075);
+ bodyModulator.connect(bodyModulation).connect(fundamental.frequency);
+ tineModulator.connect(tineModulation).connect(fundamental.frequency);
+ const strikeSource=audioContext.createBufferSource();strikeSource.buffer=pianoNoiseBuffer;
+ const strikeFilter=audioContext.createBiquadFilter();strikeFilter.type="bandpass";
+ strikeFilter.frequency.value=Math.min(8800,Math.max(2400,fundamentalFrequency*11));strikeFilter.Q.value=.8;
+ const strikeGain=audioContext.createGain();
+ strikeGain.gain.setValueAtTime(.028*velocity,startTime);
+ strikeGain.gain.exponentialRampToValueAtTime(.0002,startTime+.062);
+ strikeSource.connect(strikeFilter).connect(strikeGain).connect(highpass);
+ fundamental.connect(voiceGain);
+ voiceGain.connect(highpass);highpass.connect(filter);filter.connect(masterGain);
+ const oscillators=[fundamental,bodyModulator,tineModulator,strikeSource];
+ oscillators.forEach(oscillator=>oscillator.start(startTime));
+ oscillators.forEach(oscillator=>oscillator.stop(startTime+durationSeconds));
+ playingVoices.set(midi,{oscillators,gain:voiceGain});
+ setTimeout(()=>{
+  const activeVoice=playingVoices.get(midi);
+  if(activeVoice&&activeVoice.oscillators===oscillators)playingVoices.delete(midi);
+  },durationSeconds*1000+120);
+ return startTime;
+}
+
+function stopVoice(midi,fadeDuration=.16){
+ const voice=playingVoices.get(midi);if(!voice)return false;
+ playingVoices.delete(midi);const nowTime=audioContext.currentTime;
+ try{
+  voice.gain.gain.cancelScheduledValues(nowTime);
+  voice.gain.gain.setValueAtTime(Math.max(.0002,voice.gain.gain.value||.0002),nowTime);
+  voice.gain.gain.exponentialRampToValueAtTime(.0001,nowTime+fadeDuration);
+  voice.oscillators.forEach(oscillator=>oscillator.stop(nowTime+fadeDuration+.06));
+ }catch(error){}
+ return true;
+}
+
+function playImmediateNote(midi){
+ const key=keyElements.get(midi);
+ if(key)spawnRipple(key,midi);
+ scheduleNote(midi,.92,0,{sustain:false,durationSeconds:.95});
+}
+
+function playCurrentChord(){
+ if(selectedMidis.length===0)return;
+ ensureAudio();
+ [...selectedMidis].sort((firstValue,secondValue)=>firstValue-secondValue)
+   .forEach((midi,index)=>scheduleNote(midi,.9,index*.032,{sustain:false,durationSeconds:1.45}));
+}
+
+function toggleSelected(midi,suppressStop=false){
+ const selectedIndex=selectedMidis.indexOf(midi);
+ if(selectedIndex>=0){
+  selectedMidis.splice(selectedIndex,1);
+ }else{
+  selectedMidis.push(midi);
+ }
+ syncKeyVisuals();renderRecognition();
+}
+
+function syncKeyVisuals(){
+ for(const [midi,keyElement] of keyElements){
+  keyElement.classList.toggle("active",selectedMidis.includes(midi));
+ }
+}
+
+function clearSelection(){
+ selectedMidis.length=0;syncKeyVisuals();renderRecognition();
+}
+
+function setPianoCollapsed(collapsed){
+ appElement.classList.toggle("keyboard-collapsed",collapsed);
+ pianoGroup.classList.toggle("collapsed",collapsed);
+ pianoToggleButton.textContent=collapsed?"显示键盘":"隐藏键盘";
+ pianoToggleButton.setAttribute("aria-expanded",String(!collapsed));
+}
+
+function setSelection(midis){
+ selectedMidis.length=0;
+ selectedMidis.push(...midis.map(Number).filter(Number.isFinite));
+ syncKeyVisuals();renderRecognition();
+}
+
+const TIMELINE_BEAT_WIDTH=88;
+const TIMELINE_GAP=20;
+const TIMELINE_CLICK_BIAS=1;
+
+function createTimelineRow(isEmpty=false){
+ const row=document.createElement("div");
+ row.className=isEmpty?"timeline-row empty-row":"timeline-row";
+ return row;
+}
+
+function nextChordId(){
+ chordIdSeed+=1;
+ return `c${chordIdSeed}`;
+}
+
+function clampCursor(value){
+ return Math.max(0,Math.min(progression.chords.length,Number.isFinite(value)?Math.round(value):0));
+}
+
+function createChord(midis,displayLabel="",durationBeats=2){
+ return {
+  id:nextChordId(),
+  durationBeats:Math.max(1,Math.round(durationBeats)),
+  keys:[...midis].map(Number).filter(value=>Number.isInteger(value)&&value>=0&&value<=127).sort((first,second)=>first-second),
+  displayLabel:String(displayLabel||"")
+ };
+}
+
+function getBestChordLabel(midis){
+ if(midis.length===0)return "";
+ const interpretations=getChordInterpretations(midis);
+ return interpretations[0]?.label||midis.map(midiName).join(" ");
+}
+
+function getChordInterpretations(midis){
+ if(midis.length===0)return [];
+ const inputPitchClasses=uniquePitchClasses(midis);
+ const bassPitchClass=((Math.min(...midis)%12)+12)%12;
+ let interpretations=[];
+ for(let rootPitchClass=0;rootPitchClass<12;rootPitchClass++){
+  interpretations.push(...assessRoot(rootPitchClass,inputPitchClasses,bassPitchClass));
+ }
+ interpretations.push(...collectSlashCandidates(inputPitchClasses,bassPitchClass));
+ interpretations=interpretations.filter(result=>["perfect","exact","slash","clean-exact","extended-fuzzy"].includes(result.tier));
+ interpretations.sort(compareInterpretations);
+ promoteSlashReadings(interpretations,bassPitchClass,inputPitchClasses);
+ interpretations.sort(compareInterpretations);
+ return interpretations;
+}
+
+function getChordColor(chord){
+ if(chordColorCache.has(chord))return chordColorCache.get(chord);
+ const inputPitchClasses=uniquePitchClasses(chord.keys);
+ const interpretation=getChordInterpretations(chord.keys)[0];
+ const rootPitchClass=interpretation?.rootPitchClass??((chord.keys[0]%12)+12)%12;
+ const shape=interpretation?.shape;
+ const chordTones=shape?new Set(inputPitchClasses.filter(pitchClass=>isChordTone(shape,rootPitchClass,pitchClass))):new Set(inputPitchClasses);
+ if(shape&&inputPitchClasses.includes(((chord.keys[0]%12)+12)%12))chordTones.add(((chord.keys[0]%12)+12)%12);
+ const toneCount=Math.max(1,chordTones.size);
+ const saturation=toneCount<=3?"76%":toneCount===4?"58%":toneCount===5?"46%":"36%";
+ const color={hue:rootPitchClass*30,saturation,toneCount};
+ chordColorCache.set(chord,color);
+ return color;
+}
+
+function getChordLabelText(chord){
+ return chord.displayLabel||getBestChordLabel(chord.keys);
+}
+
+function cursorStartsVisualRow(){
+ const blocks=timelineElement.querySelectorAll(".chord-block");
+ if(cursorIndex===0)return true;
+ const beforeBlock=blocks[cursorIndex-1];
+ const afterBlock=blocks[cursorIndex];
+ if(afterBlock&&(!beforeBlock||Math.abs(beforeBlock.offsetTop-afterBlock.offsetTop)>TIMELINE_CLICK_BIAS)){
+  return cursorVisualAnchor?.position!=="row-end";
+ }
+ if(cursorIndex===blocks.length)return cursorVisualAnchor?.position==="row-start";
+ return false;
+}
+
+function setChordSelection(ids,anchorId=null){
+ const validIds=new Set(progression.chords.map(chord=>chord.id));
+ selectedChordIds=ids.filter(id=>validIds.has(id));
+ selectionAnchorId=anchorId&&validIds.has(anchorId)?anchorId:selectionAnchorId;
+}
+
+function selectedChordIndices(){
+ const idToIndex=new Map(progression.chords.map((chord,index)=>[chord.id,index]));
+ return selectedChordIds.map(id=>idToIndex.get(id)).filter(index=>index!==undefined).sort((first,second)=>first-second);
+}
+
+function calculateCursorGeometry(){
+ const blocks=timelineElement.querySelectorAll(".chord-block");
+ if(cursorVisualAnchor){
+  return {...cursorVisualAnchor};
+ }
+ if(cursorIndex<blocks.length){
+  const nextBlock=blocks[cursorIndex];
+  const previousBlock=blocks[cursorIndex-1];
+  const startsRow=!previousBlock||Math.abs(previousBlock.offsetTop-nextBlock.offsetTop)>TIMELINE_CLICK_BIAS;
+  return {
+   left:startsRow?0:previousBlock.offsetLeft+previousBlock.offsetWidth+TIMELINE_GAP/2,
+   top:nextBlock.offsetTop,
+   height:nextBlock.offsetHeight
+  };
+ }
+ if(cursorIndex<=0){
+  return {left:0,top:cursorVisualAnchor?.top||0,height:cursorVisualAnchor?.height||parseInt(getComputedStyle(timelineElement).getPropertyValue("--chord-block-height"),10)||timelineElement.clientHeight};
+ }
+ const block=blocks[cursorIndex-1];
+ return {left:block.offsetLeft+block.offsetWidth+TIMELINE_GAP/2,top:block.offsetTop,height:block.offsetHeight};
+}
+
+function positionCursorLine(){
+ const geometry=calculateCursorGeometry();
+ cursorLine.style.left=`${geometry.left}px`;
+ cursorLine.style.setProperty("--cursor-top",`${geometry.top}px`);
+ cursorLine.style.setProperty("--cursor-height",`${geometry.height}px`);
+ return geometry;
+}
+
+function syncCursorVisualAnchor(emptyRow){
+ if(!cursorVisualAnchor)return;
+ const blocks=timelineElement.querySelectorAll(".chord-block");
+ if(cursorIndex>=blocks.length){
+  if(cursorVisualAnchor.position==="row-end"&&blocks.length){
+   const block=blocks[blocks.length-1];
+   cursorVisualAnchor={left:block.offsetLeft+block.offsetWidth+TIMELINE_GAP/2,top:block.offsetTop,height:block.offsetHeight,position:"row-end"};
+  }else{
+   cursorVisualAnchor={left:0,top:emptyRow.offsetTop,height:emptyRow.offsetHeight,position:"row-start"};
+  }
+  return;
+ }
+ const nextBlock=blocks[cursorIndex];
+ const previousBlock=blocks[cursorIndex-1];
+ if(!previousBlock){
+  cursorVisualAnchor={left:0,top:nextBlock.offsetTop,height:nextBlock.offsetHeight,position:"row-start"};
+ }else if(Math.abs(previousBlock.offsetTop-nextBlock.offsetTop)>TIMELINE_CLICK_BIAS){
+  if(cursorVisualAnchor.position==="row-end"){
+   cursorVisualAnchor={left:previousBlock.offsetLeft+previousBlock.offsetWidth+TIMELINE_GAP/2,top:previousBlock.offsetTop,height:previousBlock.offsetHeight,position:"row-end"};
+  }else{
+   cursorVisualAnchor={left:0,top:nextBlock.offsetTop,height:nextBlock.offsetHeight,position:"row-start"};
+  }
+ }else{
+  cursorVisualAnchor={left:previousBlock.offsetLeft+previousBlock.offsetWidth+TIMELINE_GAP/2,top:nextBlock.offsetTop,height:nextBlock.offsetHeight};
+ }
+}
+
+function scrollCursorIntoView(){
+ const geometry=positionCursorLine();
+ if(geometry.left<timelineShell.scrollLeft)timelineShell.scrollLeft=geometry.left;
+ if(geometry.left>timelineShell.scrollLeft+timelineShell.clientWidth-12)timelineShell.scrollLeft=geometry.left-timelineShell.clientWidth+12;
+ if(geometry.top<timelineShell.scrollTop)timelineShell.scrollTop=geometry.top;
+ if(geometry.top+geometry.height>timelineShell.scrollTop+timelineShell.clientHeight)timelineShell.scrollTop=geometry.top+geometry.height-timelineShell.clientHeight;
+}
+
+function renderProgression(){
+ const validIds=new Set(progression.chords.map(chord=>chord.id));
+ selectedChordIds=selectedChordIds.filter(id=>validIds.has(id));
+ if(selectionAnchorId&&!validIds.has(selectionAnchorId))selectionAnchorId=null;
+ cursorIndex=clampCursor(cursorIndex);
+ timelineElement.classList.toggle("empty",progression.chords.length===0);
+ [...timelineElement.querySelectorAll(".timeline-row")].forEach(element=>element.remove());
+ let currentRow=createTimelineRow();
+ const finishRow=()=>{
+  if(currentRow.children.length)timelineElement.insertBefore(currentRow,cursorLine);
+ };
+ progression.chords.forEach((chord,index)=>{
+  if(currentRow.children.length&&chord.rowBreakBefore){
+   finishRow();
+   currentRow=createTimelineRow();
+  }
+ const block=document.createElement("div");
+ block.className="chord-block";
+  block.dataset.id=chord.id;
+  block.dataset.index=String(index);
+ block.style.setProperty("--duration",String(chord.durationBeats));
+ const chordColor=getChordColor(chord);
+ block.style.setProperty("--root-hue",String(chordColor.hue));
+ block.style.setProperty("--chord-saturation",chordColor.saturation);
+  const body=document.createElement("div");
+  body.className="chord-block-body";
+  if(selectedChordIds.includes(chord.id))block.classList.add("selected");
+  if(index===progressionPlayingIndex)block.classList.add("playing");
+  const label=document.createElement("span");
+  label.className="chord-label";
+  label.textContent=getChordLabelText(chord);
+  label.title=chord.keys.map(midiName).join(" ");
+  const pitchLines=document.createElement("div");
+  pitchLines.className="pitch-lines";
+  [...chord.keys].sort((first,second)=>first-second).forEach(midi=>{
+   const line=document.createElement("div");
+   line.className=`pitch-line${midi===Math.min(...chord.keys)?" bass":""}`;
+   const visibleMidi=Math.min(LAST_MIDI,Math.max(FIRST_MIDI,midi));
+   line.style.top=`${100-(visibleMidi-FIRST_MIDI)/(LAST_MIDI-FIRST_MIDI)*100}%`;
+   line.title=`${midiName(midi)}${midi===Math.min(...chord.keys)?" · 低音":""}`;
+   pitchLines.appendChild(line);
+  });
+  const handle=document.createElement("div");
+  handle.className="resize-handle";
+  handle.dataset.id=chord.id;
+  body.append(pitchLines,label);
+  block.append(body,handle);
+  currentRow.appendChild(block);
+ });
+ finishRow();
+ const emptyRow=createTimelineRow(true);
+ timelineElement.insertBefore(emptyRow,cursorLine);
+ syncCursorVisualAnchor(emptyRow);
+ const cursorGeometry=positionCursorLine();
+ if(cursorGeometry.left<timelineShell.scrollLeft)timelineShell.scrollLeft=cursorGeometry.left;
+ if(cursorGeometry.left>timelineShell.scrollLeft+timelineShell.clientWidth-12)timelineShell.scrollLeft=cursorGeometry.left-timelineShell.clientWidth+12;
+ if(cursorGeometry.top<timelineShell.scrollTop)timelineShell.scrollTop=cursorGeometry.top;
+ if(cursorGeometry.top+cursorGeometry.height>timelineShell.scrollTop+timelineShell.clientHeight)timelineShell.scrollTop=cursorGeometry.top+cursorGeometry.height-timelineShell.clientHeight;
+}
+
+function insertChordAtCursor(chord){
+ if(!chord.keys.length)return;
+ cursorIndex=clampCursor(cursorIndex);
+ const startsNewRow=cursorStartsVisualRow();
+ if(startsNewRow&&progression.chords[cursorIndex])progression.chords[cursorIndex].rowBreakBefore=false;
+ cursorVisualAnchor=null;
+ const inserted={...chord,id:nextChordId(),keys:[...chord.keys],durationBeats:chord.durationBeats,rowBreakBefore:startsNewRow&&cursorIndex>0};
+ progression.chords.splice(cursorIndex,0,inserted);
+ cursorIndex+=1;
+ setChordSelection([inserted.id],inserted.id);
+ renderProgression();
+}
+
+function insertCurrentChord(displayLabel){
+ if(selectedMidis.length===0)return;
+ insertChordAtCursor(createChord(selectedMidis,displayLabel||getBestChordLabel(selectedMidis),2));
+ [...selectedMidis].forEach(midi=>stopVoice(midi,.08));
+ clearSelection();
+}
+
+function deleteSelectedChords(){
+ const selectedSet=new Set(selectedChordIds);
+ progression.chords=progression.chords.filter(chord=>!selectedSet.has(chord.id));
+ selectedChordIds=[];selectionAnchorId=null;
+ cursorVisualAnchor=null;
+ cursorIndex=clampCursor(cursorIndex);
+ stopProgressionPlayback();
+ renderProgression();
+}
+
+function copySelectedChords(){
+ const selectedSet=new Set(selectedChordIds);
+ clipboardChords=progression.chords.filter(chord=>selectedSet.has(chord.id)).map(chord=>({...chord,keys:[...chord.keys]}));
+}
+
+function pasteClipboardChords(){
+ if(clipboardChords.length===0)return;
+ const pastedIds=[];
+ const startsNewRow=cursorStartsVisualRow();
+ clipboardChords.forEach((chord,pasteIndex)=>{
+  const clone=createChord(chord.keys,chord.displayLabel,chord.durationBeats);
+  clone.rowBreakBefore=chord.rowBreakBefore===true||(pasteIndex===0&&startsNewRow&&cursorIndex>0);
+  if(pasteIndex===0&&startsNewRow&&progression.chords[cursorIndex])progression.chords[cursorIndex].rowBreakBefore=false;
+  progression.chords.splice(cursorIndex,0,clone);
+  cursorIndex+=1;pastedIds.push(clone.id);
+ });
+ setChordSelection(pastedIds,pastedIds[pastedIds.length-1]);
+ cursorVisualAnchor=null;
+ renderProgression();
+}
+
+function normalizeProgressionChord(raw){
+ if(!raw||typeof raw!=="object")throw new Error("和弦必须是对象");
+ const keys=Array.isArray(raw.keys)?raw.keys.map(Number):[];
+ if(keys.length===0||keys.some(value=>!Number.isInteger(value)||value<0||value>127))throw new Error("和弦必须包含精确 MIDI 键位");
+ const durationBeats=raw.durationBeats===undefined?2:raw.durationBeats;
+ if(!Number.isInteger(durationBeats)||durationBeats<1)throw new Error("时值必须是正整数拍");
+ return {id:nextChordId(),durationBeats,keys:[...new Set(keys)].sort((first,second)=>first-second),displayLabel:typeof raw.displayLabel==="string"?raw.displayLabel:"",rowBreakBefore:raw.rowBreakBefore===true};
+}
+
+function importProgression(value){
+ let data=value;
+ if(typeof value==="string")data=JSON.parse(value);
+ if(!data||typeof data!=="object")throw new Error("JSON 内容无效");
+ if(!Array.isArray(data.chords))throw new Error("JSON 缺少 chords 数组");
+ if(data.meta&&typeof data.meta!=="object")throw new Error("meta 必须是对象");
+ stopProgressionPlayback();
+ progression.version=1;
+ progression.type="piano-chord-progression";
+ progression.meta={title:"Untitled",tempo:120,beatsPerBar:4,...(data.meta||{})};
+ const importedTempo=Math.round(Number(progression.meta.tempo));
+ progression.meta.tempo=Number.isFinite(importedTempo)?Math.min(300,Math.max(20,importedTempo)):120;
+ bpmInput.value=progression.meta.tempo;
+ progression.chords=data.chords.map(normalizeProgressionChord);
+ selectedChordIds=[];selectionAnchorId=null;cursorIndex=0;clipboardChords=[];cursorVisualAnchor=null;
+ renderProgression();
+}
+
+function progressionToJSON(){
+ return JSON.stringify({
+  version:1,
+  type:"piano-chord-progression",
+  meta:progression.meta,
+  chords:progression.chords.map(chord=>({id:chord.id,durationBeats:chord.durationBeats,keys:chord.keys,displayLabel:chord.displayLabel,rowBreakBefore:chord.rowBreakBefore===true}))
+ },null,2);
+}
+
+function downloadProgression(){
+ const blob=new Blob([progressionToJSON()],{type:"application/json"});
+ const temporaryUrl=URL.createObjectURL(blob);
+ const anchor=document.createElement("a");
+ anchor.href=temporaryUrl;
+ anchor.download=`${(progression.meta.title||"progression").replace(/[\\/:*?"<>|]/g,"_")}.json`;
+ anchor.click();
+ URL.revokeObjectURL(temporaryUrl);
+}
+
+function stopProgressionVoices(){
+ const chord=progression.chords[progressionPlayingIndex];
+ if(chord)chord.keys.forEach(midi=>stopVoice(midi,.12));
+}
+
+function stopProgressionPlayback(restoreStartCursor=false){
+ clearTimeout(progressionTimerId);
+ progressionTimerId=null;
+ stopProgressionVoices();
+ progressionPlayingIndex=-1;
+ progressionPlaybackEndIndex=0;
+ if(restoreStartCursor){
+  cursorIndex=clampCursor(progressionPlaybackStartIndex);
+  cursorVisualAnchor=progressionPlaybackStartAnchor?{...progressionPlaybackStartAnchor}:null;
+ }
+ progressionPlaybackStartAnchor=null;
+ playProgressionButton.disabled=false;
+ playProgressionButton.textContent="▶ 播放";
+ renderProgression();
+}
+
+function getRowEndIndex(index){
+ const blocks=timelineElement.querySelectorAll(".chord-block");
+ if(index>=blocks.length)return blocks.length;
+ const startBlock=blocks[index];
+ if(!startBlock)return index;
+ const row=startBlock.closest(".timeline-row");
+ if(!row)return blocks.length;
+ const rowBlocks=[...row.querySelectorAll(".chord-block")];
+ return index-rowBlocks.indexOf(startBlock)+rowBlocks.length;
+}
+
+function getCursorRowEndIndex(index){
+ const blocks=timelineElement.querySelectorAll(".chord-block");
+ if(index>=blocks.length)return blocks.length;
+ const beforeBlock=blocks[index-1];
+ const afterBlock=blocks[index];
+ const referenceBlock=cursorVisualAnchor?.position==="row-end"?beforeBlock:(afterBlock||beforeBlock);
+ const row=referenceBlock?.closest(".timeline-row");
+ if(!row)return index;
+ const rowBlocks=[...row.querySelectorAll(".chord-block")];
+ const referenceIndex=rowBlocks.indexOf(afterBlock);
+ if(referenceIndex<0)return index;
+ return index+rowBlocks.length-referenceIndex;
+}
+
+function getCursorRowStartIndex(index){
+ const blocks=timelineElement.querySelectorAll(".chord-block");
+ if(blocks.length===0)return 0;
+ if(index>=blocks.length&&cursorVisualAnchor?.position==="row-start")return blocks.length;
+ const afterBlock=blocks[index];
+ const beforeBlock=blocks[index-1];
+ const referenceBlock=afterBlock||beforeBlock;
+ if(!referenceBlock)return clampCursor(index);
+ const row=referenceBlock.closest(".timeline-row");
+ if(!row)return clampCursor(index);
+ const rowBlocks=[...row.querySelectorAll(".chord-block")];
+ return rowBlocks.length?Number(rowBlocks[0].dataset.index):clampCursor(index);
+}
+
+function playChordAtIndex(index){
+ const chordCount=progression.chords.length;
+ if(index>=progressionPlaybackEndIndex||index>=chordCount){
+  stopProgressionPlayback(true);
+  return;
+ }
+ const chord=progression.chords[index];
+ progressionPlayingIndex=index;
+ cursorIndex=index;
+ setSelection(chord.keys);
+ chord.keys.forEach((midi,noteIndex)=>scheduleNote(midi,.9,noteIndex*.03,{sustain:true}));
+ renderProgression();
+ progressionChordStartedAt=performance.now();
+ progressionChordDurationBeats=chord.durationBeats;
+ progressionTimerId=setTimeout(()=>{
+  stopProgressionVoices();
+  playChordAtIndex(index+1);
+ },chord.durationBeats*60000/getProgressionTempo());
+}
+
+function getProgressionTempo(){
+ const tempo=Math.round(Number(bpmInput.value));
+ return Number.isFinite(tempo)?Math.min(300,Math.max(20,tempo)):120;
+}
+
+function rescheduleProgressionChordForTempo(){
+ if(progressionTimerId===null||progressionPlayingIndex<0)return;
+ const chord=progression.chords[progressionPlayingIndex];
+ if(!chord)return;
+ const tempo=getProgressionTempo();
+ const elapsedBeats=(performance.now()-progressionChordStartedAt)/60000*tempo;
+ const remainingBeats=Math.max(.02,progressionChordDurationBeats-elapsedBeats);
+ clearTimeout(progressionTimerId);
+ progressionTimerId=setTimeout(()=>{
+  stopProgressionVoices();
+  playChordAtIndex(progressionPlayingIndex+1);
+ },remainingBeats*60000/tempo);
+}
+
+function applyBpmInput(){
+ const tempo=Math.round(Number(bpmInput.value));
+ if(!Number.isFinite(tempo)){bpmInput.value=progression.meta.tempo||120;return;}
+ const bounded=Math.min(300,Math.max(20,tempo));
+ bpmInput.value=bounded;
+ progression.meta.tempo=bounded;
+ rescheduleProgressionChordForTempo();
+}
+
+function startProgressionPlayback(){
+ if(progression.chords.length===0)return;
+ const requestedIndex=clampCursor(cursorIndex);
+ const startIndex=getCursorRowStartIndex(requestedIndex);
+ progressionPlaybackEndIndex=getCursorRowEndIndex(startIndex);
+ if(requestedIndex<startIndex||requestedIndex>progressionPlaybackEndIndex||startIndex>=progressionPlaybackEndIndex)return;
+ progressionPlaybackStartIndex=requestedIndex;
+ progressionPlaybackStartAnchor=cursorVisualAnchor?{...cursorVisualAnchor}:null;
+ cursorVisualAnchor=null;
+ stopProgressionVoices();
+ clearTimeout(progressionTimerId);
+ scrollCursorIntoView();
+ ensureAudio();
+ [...playingVoices.keys()].forEach(midi=>stopVoice(midi,.05));
+ playProgressionButton.textContent="暂停";
+ playChordAtIndex(startIndex);
+}
+
+function timelineClickPosition(event,block){
+ const rect=block.getBoundingClientRect();
+ return event.clientX<rect.left+rect.width/2;
+}
+
+function selectChordByClick(event){
+ const block=event.target.closest(".chord-block");
+ if(!block){
+   const timelineRect=timelineElement.getBoundingClientRect();
+   const clickX=event.clientX-timelineRect.left;
+   const clickY=event.clientY-timelineRect.top;
+   const blocks=timelineElement.querySelectorAll(".chord-block");
+   if(blocks.length===0){
+    const blockHeight=parseInt(getComputedStyle(timelineElement).getPropertyValue("--chord-block-height"),10)||timelineElement.clientHeight;
+    const emptyRow=timelineElement.querySelector(".timeline-row.empty-row");
+    cursorIndex=0;
+    cursorVisualAnchor={left:0,top:emptyRow?emptyRow.offsetTop:Math.max(0,clickY-blockHeight/2),height:blockHeight,position:"row-start"};
+   }else{
+    const rowGap=parseFloat(getComputedStyle(timelineElement).rowGap)||0;
+    const rows=[];
+    blocks.forEach((blockElement,index)=>{
+     const row=rows.find(item=>Math.abs(item.top-blockElement.offsetTop)<=TIMELINE_CLICK_BIAS);
+     if(row){
+      row.indices.push(index);
+     }else{
+      rows.push({top:blockElement.offsetTop,height:blockElement.offsetHeight,indices:[index]});
+     }
+    });
+    const lastRow=rows[rows.length-1];
+    const lastRowBottom=lastRow.top+lastRow.height;
+    if(clickY>lastRowBottom+rowGap/2){
+     cursorIndex=blocks.length;
+     cursorVisualAnchor={left:0,top:lastRowBottom+rowGap,height:lastRow.height,position:"row-start"};
+    }else{
+     const targetRow=rows.reduce((best,current)=>{
+      const bestDistance=Math.abs(best.top+best.height/2-clickY);
+      const currentDistance=Math.abs(current.top+current.height/2-clickY);
+      return currentDistance<bestDistance?current:best;
+     });
+     const firstIndex=targetRow.indices[0],lastIndex=targetRow.indices[targetRow.indices.length-1];
+     const centerY=targetRow.top+targetRow.height/2;
+     const boundaries=[{x:0,index:firstIndex}];
+     for(let boundaryIndex=1;boundaryIndex<targetRow.indices.length;boundaryIndex++){
+      const previousBlock=blocks[targetRow.indices[boundaryIndex-1]];
+      const currentBlock=blocks[targetRow.indices[boundaryIndex]];
+      boundaries.push({x:previousBlock.offsetLeft+previousBlock.offsetWidth+TIMELINE_GAP/2,index:targetRow.indices[boundaryIndex]});
+     }
+     const lastBlock=blocks[lastIndex];
+     boundaries.push({x:lastBlock.offsetLeft+lastBlock.offsetWidth+TIMELINE_GAP/2,index:lastIndex+1});
+     const nearest=boundaries.reduce((best,current)=>Math.abs(current.x-clickX)<Math.abs(best.x-clickX)?current:best);
+     cursorIndex=nearest.index;
+     if(nearest.index===firstIndex){
+      cursorVisualAnchor={left:0,top:targetRow.top,height:targetRow.height,position:"row-start"};
+     }else if(nearest.index===lastIndex+1){
+      cursorVisualAnchor={left:lastBlock.offsetLeft+lastBlock.offsetWidth+TIMELINE_GAP/2,top:targetRow.top,height:targetRow.height,position:"row-end"};
+     }else{
+      cursorVisualAnchor={left:nearest.x,top:targetRow.top,height:targetRow.height};
+     }
+    }
+   selectedChordIds=[];selectionAnchorId=null;
+  renderProgression();
+  return;
+ }
+ }
+ const index=Number(block.dataset.index);
+ const chord=progression.chords[index];
+ const beforeBlock=timelineClickPosition(event,block);
+ if(event.ctrlKey||event.metaKey){
+  const selectedIndex=selectedChordIds.indexOf(chord.id);
+  if(selectedIndex>=0)selectedChordIds.splice(selectedIndex,1);else selectedChordIds.push(chord.id);
+  selectionAnchorId=chord.id;
+ }else if(event.shiftKey&&selectionAnchorId){
+  const anchorIndex=progression.chords.findIndex(item=>item.id===selectionAnchorId);
+  if(anchorIndex>=0){
+   const firstIndex=Math.min(anchorIndex,index),lastIndex=Math.max(anchorIndex,index);
+   selectedChordIds=progression.chords.slice(firstIndex,lastIndex+1).map(item=>item.id);
+  }else selectedChordIds=[chord.id];
+ }else{
+  selectedChordIds=[chord.id];
+  selectionAnchorId=chord.id;
+ }
+ cursorIndex=beforeBlock?index:index+1;
+ cursorVisualAnchor=!beforeBlock?{left:block.offsetLeft+block.offsetWidth+TIMELINE_GAP/2,top:block.offsetTop,height:block.offsetHeight,position:"row-end"}:null;
+ setSelection(chord.keys);
+ playCurrentChord();
+ renderProgression();
+}
+
+function applyResizeValue(element,duration){
+ element.style.setProperty("--duration",String(Math.max(1,duration)));
+ positionCursorLine();
+}
+
+function beginResizeDrag(event,chord,side){
+ event.preventDefault();event.stopPropagation();
+ const previous=progression.chords[progression.chords.indexOf(chord)-1];
+ resizeDrag={pointerId:event.pointerId,id:chord.id,side,previousId:previous?.id,startX:event.clientX,startDuration:chord.durationBeats,startPreviousDuration:previous?.durationBeats||0,moved:false};
+ try{event.currentTarget.setPointerCapture(event.pointerId);}catch(error){}
+}
+
+function updateResizeDrag(event){
+ if(!resizeDrag||event.pointerId!==resizeDrag.pointerId)return;
+ const pixels=event.clientX-resizeDrag.startX;
+ const beats=Math.trunc(pixels/TIMELINE_BEAT_WIDTH);
+ if(beats===0)return;
+ resizeDrag.moved=true;
+ const element=timelineElement.querySelector(`[data-id="${resizeDrag.id}"]`);
+ const previousElement=resizeDrag.previousId?timelineElement.querySelector(`[data-id="${resizeDrag.previousId}"]`):null;
+ if(resizeDrag.side==="right"){
+  applyResizeValue(element,resizeDrag.startDuration+beats);
+ }else if(previousElement){
+  applyResizeValue(previousElement,resizeDrag.startPreviousDuration+beats);
+ }else{
+  applyResizeValue(element,resizeDrag.startDuration-beats);
+ }
+}
+
+function endResizeDrag(event){
+ if(!resizeDrag||event.pointerId!==resizeDrag.pointerId)return;
+ const dragged=resizeDrag;
+ resizeDrag=null;
+ for(const item of progression.chords){
+  const element=timelineElement.querySelector(`[data-id="${item.id}"]`);
+  item.durationBeats=Math.max(1,Math.round(Number(element?.style.getPropertyValue("--duration"))||item.durationBeats));
+ }
+ if(dragged.moved)suppressTimelineClick=true;
+ renderProgression();
+ setTimeout(()=>{suppressTimelineClick=false;},0);
+}
+
+timelineElement.addEventListener("click",event=>{
+ if(suppressTimelineClick)return;
+ selectChordByClick(event);
+});
+timelineElement.addEventListener("pointerdown",event=>{
+ const handle=event.target.closest(".resize-handle");
+ if(!handle)return;
+ const chord=progression.chords[Number(handle.closest(".chord-block").dataset.index)];
+ if(chord)beginResizeDrag(event,chord,"right");
+});
+let timelineScrollPointerId=null,timelineScrollStartX=0,timelineScrollStartY=0,timelineScrollStartLeft=0,timelineScrollStartTop=0,timelineScrollDragging=false;
+timelineShell.addEventListener("pointerdown",event=>{
+ if(event.pointerType==="mouse"&&event.button!==0)return;
+ if(event.target.closest(".resize-handle"))return;
+ timelineScrollPointerId=event.pointerId;
+ timelineScrollStartX=event.clientX;
+ timelineScrollStartY=event.clientY;
+ timelineScrollStartLeft=timelineShell.scrollLeft;
+ timelineScrollStartTop=timelineShell.scrollTop;
+ timelineScrollDragging=false;
+});
+window.addEventListener("pointermove",event=>{
+ if(event.pointerId!==timelineScrollPointerId)return;
+ const deltaX=event.clientX-timelineScrollStartX,deltaY=event.clientY-timelineScrollStartY;
+ if(!timelineScrollDragging&&Math.hypot(deltaX,deltaY)>6){
+  timelineScrollDragging=true;
+  timelineShell.classList.add("dragging");
+ }
+ if(timelineScrollDragging){
+  timelineShell.scrollLeft=timelineScrollStartLeft-deltaX;
+  timelineShell.scrollTop=timelineScrollStartTop-deltaY;
+ }
+});
+function endTimelineScroll(event){
+ if(event.pointerId!==timelineScrollPointerId)return;
+ const wasDragging=timelineScrollDragging;
+ timelineScrollPointerId=null;
+ timelineScrollDragging=false;
+ timelineShell.classList.remove("dragging");
+ if(wasDragging){
+  suppressTimelineClick=true;
+  setTimeout(()=>{suppressTimelineClick=false;},0);
+ }
+}
+window.addEventListener("pointerup",endTimelineScroll);
+window.addEventListener("pointercancel",endTimelineScroll);
+window.addEventListener("pointermove",updateResizeDrag);
+window.addEventListener("pointerup",endResizeDrag);
+window.addEventListener("pointercancel",endResizeDrag);
+document.addEventListener("keydown",event=>{
+ if(event.ctrlKey||event.metaKey){
+  if(event.key.toLowerCase()==="c"){copySelectedChords();return;}
+  if(event.key.toLowerCase()==="x"){copySelectedChords();deleteSelectedChords();return;}
+  if(event.key.toLowerCase()==="v"){event.preventDefault();pasteClipboardChords();return;}
+ }
+ if(event.key==="Delete"||event.key==="Backspace")deleteSelectedChords();
+});
+
+/* Chord library. Required intervals use normalized semitones above each possible root. */
+const CHORD_SHAPES=[
+ {symbol:"",title:"大三和弦",rank:100,required:[4,7]},
+ {symbol:"m",title:"小三和弦",rank:99,required:[3,7]},
+ {symbol:"dim",title:"减三和弦",rank:77,required:[3,6]},
+ {symbol:"+",title:"增三和弦",rank:57,required:[4,8]},
+ {symbol:"sus4",title:"挂留四度和弦",rank:74,required:[5,7]},
+ {symbol:"sus2",title:"挂留二度和弦",rank:62,required:[2,7]},
+ {symbol:"5",title:"强力和弦",rank:46,required:[7]},
+ {symbol:"6",title:"大六和弦",rank:76,required:[4,7,9]},
+ {symbol:"m6",title:"小六和弦",rank:53,required:[3,9],optional:[7]},
+ {symbol:"6/9",title:"六九和弦",rank:49,required:[4,7,9,14]},
+ {symbol:"maj7",title:"大七和弦",rank:91,required:[4,11],optional:[7]},
+ {symbol:"7",title:"属七和弦",rank:93,required:[4,10],optional:[7]},
+ {symbol:"m7",title:"小七和弦",rank:89,required:[3,10],optional:[7]},
+ {symbol:"mMaj7",title:"小主大七和弦",rank:38,required:[3,11],optional:[7]},
+ {symbol:"ø7",title:"半减七和弦",rank:66,required:[3,6,10]},
+ {symbol:"o7",title:"减七和弦",rank:70,required:[3,6,9]},
+ {symbol:"7♯5",title:"增属七和弦",rank:27,required:[4,8,10]},
+ {symbol:"7♭5",title:"降五属七和弦",rank:25,required:[4,6,10]},
+ {symbol:"maj7♯5",title:"增大七和弦",rank:21,required:[4,8,11]},
+ {symbol:"maj7♭5",title:"降五大七和弦",rank:19,required:[4,6,11]},
+ {symbol:"add9",title:"加九和弦",rank:81,required:[4,7,14]},
+ {symbol:"m(add9)",title:"小加九和弦",rank:48,required:[3,7,14]},
+ {symbol:"add11",title:"加十一和弦",rank:31,required:[4,7,17]},
+ {symbol:"m(add11)",title:"小加十一和弦",rank:24,required:[3,7,17]},
+ {symbol:"add♯11",title:"加升十一和弦",rank:20,required:[4,7,18]},
+ {symbol:"9",title:"九和弦",rank:85,required:[4,10,14],optional:[7]},
+ {symbol:"maj9",title:"大九和弦",rank:83,required:[4,11,14],optional:[7]},
+ {symbol:"m9",title:"小九和弦",rank:76,required:[3,10,14],optional:[7]},
+ {symbol:"mMaj9",title:"小主大九和弦",rank:26,required:[3,11,14],optional:[7]},
+ {symbol:"7(add9)",title:"属七附加九",rank:34,required:[4,10,14],optional:[7]},
+ {symbol:"7sus4",title:"七挂四和弦",rank:71,required:[5,10],optional:[7,14]},
+ {symbol:"9sus4",title:"九挂四和弦",rank:44,required:[5,10,14],optional:[7]},
+ {symbol:"7♭9",title:"降九属七和弦",rank:39,required:[4,10,13],optional:[7]},
+ {symbol:"7♯9",title:"升九属七和弦",rank:33,required:[4,10,15],optional:[7]},
+ {symbol:"7♭5(♯9)",title:"变化属七和弦",rank:16,required:[4,6,10,15]},
+ {symbol:"maj11",title:"大十一和弦",rank:47,required:[4,11,17],optional:[7,14]},
+ {symbol:"11",title:"十一和弦",rank:42,required:[4,10,17],optional:[7,14]},
+ {symbol:"m11",title:"小十一和弦",rank:51,required:[3,10,17],optional:[7,14]},
+ {symbol:"11sus4",title:"十一挂四和弦",rank:28,required:[5,10,17],optional:[7,14]},
+ {symbol:"maj13",title:"大十三和弦",rank:56,required:[4,11,21],optional:[7,14,18]},
+ {symbol:"13",title:"十三和弦",rank:59,required:[4,10,21],optional:[7,14,18]},
+ {symbol:"m13",title:"小十三和弦",rank:45,required:[3,10,21],optional:[7,14]},
+ {symbol:"13sus4",title:"十三挂四和弦",rank:30,required:[5,10,21],optional:[7,14]}
+];
+
+function analyzeTemplate(rootPitchClass,inputPitchClasses,shape){
+ const relativeIntervals=new Set(inputPitchClasses.map(pitchClass=>((pitchClass-rootPitchClass)%12+12)%12));
+ const requiredIntervals=new Set(shape.required.map(interval=>interval%12));
+ const optionalIntervals=new Set((shape.optional||[]).map(interval=>interval%12));
+ const missingRequired=[],unknownNotes=[];
+ for(const requiredInterval of requiredIntervals){
+  if(!relativeIntervals.has(requiredInterval))missingRequired.push(requiredInterval);
+ }
+ for(const interval of relativeIntervals){
+  if(interval!==0&&!requiredIntervals.has(interval)&&!optionalIntervals.has(interval))unknownNotes.push(interval);
+ }
+ return {missingRequired,unknownNotes};
+}
+
+function intervalDegreeText(interval){
+ const degreeNames={2:"9",3:"♭3",4:"3",5:"11",6:"♭5",7:"5",8:"♯5",9:"13",10:"♭7",11:"7"};
+ return degreeNames[interval]||`${interval}`;
+}
+
+function assessRoot(rootPitchClass,inputPitchClasses,bassPitchClass){
+ const candidates=[];
+ for(const shape of CHORD_SHAPES){
+  const analysis=analyzeTemplate(rootPitchClass,inputPitchClasses,shape);
+  const missingCount=analysis.missingRequired.length,unknownCount=analysis.unknownNotes.length;
+  const hasRootPitchClass=inputPitchClasses.some(pitchClass=>((pitchClass-rootPitchClass)%12+12)%12===0);
+  let tier,tags=[],scoreAdjustment=0;
+  if(!hasRootPitchClass){
+   tier="missing-root";
+   tags=["缺根音"];scoreAdjustment=-4;
+  }else if(missingCount===0&&unknownCount===0){
+   tier=shape.optional?"exact":"perfect";
+   tags=tier==="perfect"?["完美匹配"]:["完整 voicing"];
+   scoreAdjustment=tier==="perfect"?4:2.5;
+  }else if(missingCount===0&&unknownCount>0&&unknownCount<=2){
+   tier="extended-fuzzy";
+   tags=[`${unknownCount} 个附加色`];scoreAdjustment=-unknownCount*.52;
+  }else if(missingCount===1&&unknownCount<=2&&inputPitchClasses.length>=2){
+   tier="approximate";
+   tags=[`缺 ${intervalDegreeText(analysis.missingRequired[0])}`];scoreAdjustment=-2.2-unknownCount*8;
+  }else continue;
+  const rootPositionBonus=bassPitchClass===rootPitchClass?16:0;
+  let label=`${NOTE_NAMES[rootPitchClass]}${shape.symbol}`;
+  if(bassPitchClass!==rootPitchClass&&!isAllowedSlashBass(shape,rootPitchClass,bassPitchClass))continue;
+  if(bassPitchClass!==rootPitchClass)label+=`/${NOTE_NAMES[bassPitchClass]}`;
+  candidates.push({label,title:`${NOTE_NAMES[rootPitchClass]}${shape.symbol}`,description:shape.title,tier,tags,
+   score:shape.rank+scoreAdjustment+rootPositionBonus,shape,scoreRank:shape.rank,rootPitchClass,rootPosition:bassPitchClass===rootPitchClass});
+}
+ return candidates;
+}
+
+function isExtendedChordShape(shape){
+ return /(7|9|11|13)/.test(shape.symbol);
+}
+
+function isChordTone(shape,rootPitchClass,pitchClass){
+ const relativeInterval=((pitchClass-rootPitchClass)%12+12)%12;
+ return shape.required.some(interval=>interval%12===relativeInterval)||(shape.optional||[]).some(interval=>interval%12===relativeInterval);
+}
+
+function isAllowedSlashBass(shape,rootPitchClass,bassPitchClass){
+ if(shape.required.length<2||isExtendedChordShape(shape))return isChordTone(shape,rootPitchClass,bassPitchClass);
+ return true;
+}
+
+function promoteSlashReadings(allResults,bassPitchClass,inputPitchClasses){
+ for(const result of allResults){
+  if(bassPitchClass===result.rootPitchClass)continue;
+  const reducedPitchClasses=inputPitchClasses.filter(pitchClass=>pitchClass!==bassPitchClass);
+  if(reducedPitchClasses.length<2)continue;
+  const reducedResults=assessRoot(result.rootPitchClass,reducedPitchClasses,result.rootPitchClass);
+  const viableBase=reducedResults.filter(candidate=>{
+   return ["perfect","exact","clean-exact"].includes(candidate.tier)&&candidate.scoreRank>=70&&(candidate.shape.required.length>=2||result.shape.symbol==="5");
+  }).filter(candidate=>isAllowedSlashBass(candidate.shape,result.rootPitchClass,bassPitchClass)).find(Boolean);
+  if(viableBase&&(result.tier==="extended-fuzzy"||result.tier==="clean-exact")){
+   result.label=viableBase.title;
+   if(bassPitchClass!==result.rootPitchClass)result.label+=`/${NOTE_NAMES[bassPitchClass]}`;
+   result.tier="slash";result.tags=["斜杠和弦"];result.score=Math.max(result.score,viableBase.scoreRank+1);
+  }
+ }
+}
+
+function compareInterpretations(firstResult,secondResult){
+ const tierOrder={perfect:0,exact:1,"slash":2,clean:3,"extended-fuzzy":4,approximate:5,"missing-root":6};
+ const hasPerfectBassCore=result=>result.tier==="slash"&&result.baseTier==="perfect";
+ const effectiveTierOrder=result=>{
+  if(hasPerfectBassCore(result))return tierOrder.exact;
+  const baseTierOrder=tierOrder[result.tier]??98;
+  return result.tier==="perfect"&&!result.rootPosition?tierOrder.exact:baseTierOrder;
+ };
+ const firstTierOrder=effectiveTierOrder(firstResult);
+ const secondTierOrder=effectiveTierOrder(secondResult);
+ if(firstTierOrder!==secondTierOrder)return firstTierOrder-secondTierOrder;
+ const slashCoreScore=result=>result.scoreRank+4;
+ const firstScore=hasPerfectBassCore(firstResult)?slashCoreScore(firstResult):firstResult.score;
+ const secondScore=hasPerfectBassCore(secondResult)?slashCoreScore(secondResult):secondResult.score;
+ return secondScore-firstScore;
+}
+
+function collectSlashCandidates(inputPitchClasses,bassPitchClass){
+ const slashCandidates=[];
+ for(let rootPitchClass=0;rootPitchClass<12;rootPitchClass++){
+  if(bassPitchClass===rootPitchClass)continue;
+  const reducedPitchClasses=inputPitchClasses.filter(pitchClass=>pitchClass!==bassPitchClass);
+  if(reducedPitchClasses.length<2)continue;
+  const reducedResults=assessRoot(rootPitchClass,reducedPitchClasses,rootPitchClass);
+  const bestBase=reducedResults.filter(candidate=>{
+   return ["perfect","exact","clean-exact"].includes(candidate.tier)&&candidate.scoreRank>=70&&candidate.shape.required.length>=2;
+ }).filter(candidate=>isAllowedSlashBass(candidate.shape,rootPitchClass,bassPitchClass)).sort(compareInterpretations)[0];
+ const hasSlashRoot=inputPitchClasses.some(pitchClass=>((pitchClass-rootPitchClass)%12+12)%12===0);
+ if(!bestBase||!hasSlashRoot)continue;
+  slashCandidates.push({
+   label:`${bestBase.title}/${NOTE_NAMES[bassPitchClass]}`,
+   title:`${bestBase.title}/${NOTE_NAMES[bassPitchClass]}`,
+   description:`${bestBase.description} · 低音 ${NOTE_NAMES[bassPitchClass]}`,
+   tier:"slash",baseTier:bestBase.tier,tags:["斜杠和弦"],score:bestBase.scoreRank+2,shape:bestBase.shape,scoreRank:bestBase.scoreRank,rootPitchClass
+  });
+ }
+ return slashCandidates;
+}
+
+function renderRecognition(){
+ if(selectedMidis.length===0){
+  outputZone.className="empty-main";
+  outputZone.innerHTML='选择琴键开始识别';
+  return;
+ }
+ const inputPitchClasses=uniquePitchClasses(selectedMidis);
+ const lowestMidi=Math.min(...selectedMidis);
+ const bassPitchClass=((lowestMidi%12)+12)%12;
+ let interpretations=[];
+ for(let rootPitchClass=0;rootPitchClass<12;rootPitchClass++){
+ interpretations.push(...assessRoot(rootPitchClass,inputPitchClasses,bassPitchClass));
+ }
+ interpretations.push(...collectSlashCandidates(inputPitchClasses,bassPitchClass));
+ let displayableResults=interpretations.filter(result=>{
+  return ["perfect","exact","slash","clean-exact","extended-fuzzy"].includes(result.tier);
+ });
+ displayableResults.sort(compareInterpretations);
+ promoteSlashReadings(displayableResults,bassPitchClass,inputPitchClasses);
+ displayableResults.sort(compareInterpretations);
+ const uniqueResults=[];
+ for(const interpretation of displayableResults){
+  if(!uniqueResults.some(item=>item.label===interpretation.label)){
+   uniqueResults.push(interpretation);
+  }
+  if(uniqueResults.length>=8)break;
+ }
+ if(uniqueResults.length===0){
+  outputZone.className="empty-main";
+  outputZone.innerHTML='未识别和弦';
+  return;
+ }
+ const matchQuality={perfect:[1,.94],exact:[1,.94],slash:[.72,.56],"clean-exact":[.68,.52],"extended-fuzzy":[.62,.46]};
+ outputZone.className="chord-line";
+ outputZone.innerHTML=uniqueResults.map((interpretation,index)=>{
+  const tooltip=`${interpretation.description}`;
+  const [matchScale,matchOpacity]=matchQuality[interpretation.tier]||[.5,.34];
+  const isAccurate=index===0&&["perfect","exact"].includes(interpretation.tier);
+  return `<button type="button" class="name-chip${isAccurate?" accurate":""}" style="--match-scale:${matchScale};--match-opacity:${matchOpacity}" data-label="${escapeHtml(interpretation.label)}" title="${escapeHtml(tooltip)}"><b>${escapeHtml(interpretation.label)}</b></button>`;
+ }).join("");
+ [...outputZone.querySelectorAll(".name-chip")].forEach(chip=>{
+  chip.addEventListener("click",()=>{
+   insertCurrentChord(chip.dataset.label);
+  });
+ });
+}
+
+document.getElementById("clearButton").addEventListener("click",()=>{
+ [...selectedMidis].forEach(midi=>stopVoice(midi,.08));clearSelection();
+});
+pianoToggleButton.addEventListener("click",()=>{
+ setPianoCollapsed(!pianoGroup.classList.contains("collapsed"));
+});
+document.getElementById("playButton").addEventListener("click",playCurrentChord);
+playProgressionButton.addEventListener("click",()=>{
+ if(progressionPlayingIndex>=0)stopProgressionPlayback();
+ else startProgressionPlayback();
+});
+bpmInput.addEventListener("change",applyBpmInput);
+copyChordsButton.addEventListener("click",copySelectedChords);
+pasteChordsButton.addEventListener("click",pasteClipboardChords);
+deleteChordsButton.addEventListener("click",deleteSelectedChords);
+downloadProgressionButton.addEventListener("click",downloadProgression);
+progressionFileInput.addEventListener("change",()=>{
+ const file=progressionFileInput.files[0];
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{importProgression(String(reader.result));}
+  catch(error){alert(`导入失败：${error.message}`);}
+ };
+ reader.readAsText(file);
+ progressionFileInput.value="";
+});
+buildKeyboard();renderRecognition();renderProgression();
+window.addEventListener("resize",()=>renderProgression());
+document.getElementById("pianoShell").style.touchAction="pan-x";
+window.addEventListener("pointerup",event=>{
+ for(const keyElement of keyElements.values())keyElement.classList.remove("pointer");
+},{passive:true});
+window.addEventListener("pointercancel",event=>{
+ for(const keyElement of keyElements.values())keyElement.classList.remove("pointer");
+});
+let mouseScrollPointerId=null,mouseScrollStartX=0,mouseScrollStartLeft=0,mouseScrollDragging=false;
+pianoShell.addEventListener("pointerdown",event=>{
+ if(event.pointerType!=="mouse"||event.button!==0)return;
+ mouseScrollPointerId=event.pointerId;
+ mouseScrollStartX=event.clientX;
+ mouseScrollStartLeft=pianoShell.scrollLeft;
+ mouseScrollDragging=false;
+ pianoShell.setPointerCapture(event.pointerId);
+});
+pianoShell.addEventListener("pointermove",event=>{
+ if(event.pointerId!==mouseScrollPointerId)return;
+ const deltaX=event.clientX-mouseScrollStartX;
+ if(!mouseScrollDragging&&Math.abs(deltaX)>6){
+  mouseScrollDragging=true;
+  pianoShell.classList.add("dragging");
+ }
+ if(mouseScrollDragging)pianoShell.scrollLeft=mouseScrollStartLeft-deltaX;
+});
+function endMouseScroll(event){
+ if(event.pointerId!==mouseScrollPointerId)return;
+ const wasDragging=mouseScrollDragging;
+ mouseScrollPointerId=null;
+ mouseScrollDragging=false;
+ pianoShell.classList.remove("dragging");
+ try{pianoShell.releasePointerCapture(event.pointerId);}catch(error){}
+ if(!wasDragging)commitPendingMouseKey(event.pointerId);
+}
+pianoShell.addEventListener("pointerup",endMouseScroll);
+pianoShell.addEventListener("pointercancel",endMouseScroll);
+pianoShell.addEventListener("wheel",event=>{
+ if(Math.abs(event.deltaY)>Math.abs(event.deltaX)&&pianoShell.scrollWidth>pianoShell.clientWidth){
+  pianoShell.scrollLeft+=event.deltaY;
+ }
+},{passive:true});
+})();
+</script>
+</body>
+</html>
