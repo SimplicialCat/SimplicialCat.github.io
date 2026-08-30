@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fermat Calabi–Yau 投影</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f1e8;
+      --ink: #1f1e1b;
+      --muted: rgba(31, 30, 27, .55);
+      --hairline: rgba(31, 30, 27, .18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    }
+
+    #scene {
+      position: fixed;
+      inset: 0;
+      display: block;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    #scene:active {
+      cursor: grabbing;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    header {
+      position: absolute;
+      top: 34px;
+      left: 38px;
+      max-width: min(78vw, 560px);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.05rem, 2.1vw, 1.32rem);
+      font-weight: 500;
+      letter-spacing: .09em;
+      font-variant-caps: small-caps;
+    }
+
+    .equation {
+      margin: .42rem 0 0;
+      font-size: clamp(1rem, 2vw, 1.22rem);
+      font-style: italic;
+    }
+
+    .equation sup {
+      font-size: .68em;
+      font-style: normal;
+    }
+
+    .settings {
+      position: absolute;
+      top: 34px;
+      right: 38px;
+      text-align: right;
+      pointer-events: auto;
+    }
+
+    .settings-toggle {
+      padding: 0 0 .32rem;
+      border: 0;
+      border-bottom: 1px solid var(--ink);
+      background: none;
+      color: var(--ink);
+      font: inherit;
+      font-size: .8rem;
+      letter-spacing: .05em;
+      cursor: pointer;
+    }
+
+    .settings-panel {
+      margin-top: 1.15rem;
+      width: min(280px, calc(100vw - 76px));
+    }
+
+    .settings-title {
+      margin: 0 0 .6rem;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+
+    .style-options {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      font-size: .82rem;
+    }
+
+    .style-option {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .style-option input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .style-option span {
+      display: inline-block;
+      padding-bottom: .22rem;
+      border-bottom: 1px solid transparent;
+      color: var(--muted);
+      transition: color .18s ease, border-color .18s ease;
+    }
+
+    .style-option input:checked + span {
+      color: var(--ink);
+      border-bottom-color: var(--ink);
+    }
+
+    .style-option input:focus-visible + span {
+      outline: 1px solid var(--ink);
+      outline-offset: 3px;
+    }
+
+    .controls {
+      position: absolute;
+      left: 38px;
+      bottom: 32px;
+      width: min(400px, calc(100vw - 76px));
+      padding-top: 18px;
+      pointer-events: auto;
+    }
+
+    .control {
+      display: grid;
+      grid-template-columns: 1.7rem 1fr 4.5rem;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: .8rem;
+      font-size: .94rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 14px;
+      margin: 0;
+      background: transparent;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 1px;
+      background: var(--hairline);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 10px;
+      height: 10px;
+      margin-top: -4.5px;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+      background: var(--paper);
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 1px;
+      background: var(--hairline);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 8px;
+      height: 8px;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+      background: var(--paper);
+    }
+
+    output {
+      min-width: 4.5rem;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .axes-control {
+      grid-template-columns: 1fr;
+      justify-items: end;
+    }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .toggle input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .toggle-track {
+      position: relative;
+      width: 30px;
+      height: 15px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      background: transparent;
+      transition: background .18s ease;
+    }
+
+    .toggle-track::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--ink);
+      transition: transform .18s ease;
+    }
+
+    .toggle input:checked + .toggle-track {
+      background: rgba(31, 30, 27, .09);
+    }
+
+    .toggle input:checked + .toggle-track::after {
+      transform: translateX(15px);
+    }
+
+    .toggle input:focus-visible + .toggle-track {
+      outline: 1px solid var(--ink);
+      outline-offset: 3px;
+    }
+
+    .webgl-error {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      margin: 0;
+      font-size: .88rem;
+      color: var(--muted);
+    }
+
+    .note {
+      margin: 1rem 0 0;
+      font-size: .78rem;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .formula {
+      display: block;
+      margin-top: .18rem;
+      font-style: italic;
+    }
+
+    @media (max-width: 560px) {
+      header {
+        top: 24px;
+        left: 24px;
+        max-width: min(58vw, 420px);
+      }
+
+      .controls {
+        left: 24px;
+        right: 24px;
+        bottom: 24px;
+        width: auto;
+      }
+
+      .settings {
+        top: 24px;
+        right: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <div class="overlay">
+    <header>
+      <h1>Fermat Calabi–Yau</h1>
+      <p class="equation">z<sub>1</sub><sup>n</sup> + z<sub>2</sub><sup>n</sup> = 1</p>
+    </header>
+
+    <div class="settings">
+      <button id="settings-toggle" class="settings-toggle" type="button" aria-controls="settings-panel" aria-expanded="false">显示设置</button>
+      <section id="settings-panel" class="settings-panel" hidden>
+        <label class="control">
+          <span>n</span>
+          <input id="degree" type="range" min="2" max="8" step="1" value="5">
+          <output id="degree-value">5</output>
+        </label>
+        <label class="control">
+          <span>θ</span>
+          <input id="angle" type="range" min="0" max="6.283185307" step="0.001" value="0.72">
+          <output id="angle-value">0.72</output>
+        </label>
+        <p class="settings-title">显示风格</p>
+        <div class="style-options" role="radiogroup" aria-label="显示风格">
+          <label class="style-option">
+            <input type="radio" name="display-style" value="grid">
+            <span>网格</span>
+          </label>
+          <label class="style-option">
+            <input type="radio" name="display-style" value="surface">
+            <span>曲面</span>
+          </label>
+          <label class="style-option">
+            <input type="radio" name="display-style" value="both" checked>
+            <span>网格+曲面</span>
+          </label>
+        </div>
+        <div class="control axes-control">
+          <label class="toggle">
+            <input id="show-axes" type="checkbox" checked>
+            <span class="toggle-track"></span>
+            <span>坐标轴</span>
+          </label>
+        </div>
+      </section>
+    </div>
+
+    <section class="controls">
+      <p class="note">
+        正交投影 C² ≅ ℝ⁴ → ℝ³，拖拽旋转。
+        <span class="formula">ker π<sub>θ</sub> = ℝ(cos θ, sin θ)</span>
+        <span class="formula">π<sub>θ</sub>(z₁, z₂) = (sin θ Re z₁ − cos θ Re z₂, Im z₁, Im z₂)</span>
+      </p>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const canvas = document.getElementById("scene");
+      const gl = canvas.getContext("webgl", { antialias: true, alpha: false });
+      const degreeInput = document.getElementById("degree");
+      const degreeValue = document.getElementById("degree-value");
+      const angleInput = document.getElementById("angle");
+      const angleValue = document.getElementById("angle-value");
+      const axesInput = document.getElementById("show-axes");
+      const settingsToggle = document.getElementById("settings-toggle");
+      const settingsPanel = document.getElementById("settings-panel");
+      const titleElement = document.querySelector("header h1");
+      const styleInputs = Array.from(document.querySelectorAll("input[name='display-style']"));
+
+      let surfaceBuffer = null;
+      let gridBuffer = null;
+      let axesBuffer = null;
+      let surfaceVertexCount = 0;
+      let gridVertexCount = 0;
+      let axesVertexCount = 0;
+      let surfaceProgram = null;
+      let lineProgram = null;
+      let surfaceUniforms = {};
+      let lineUniforms = {};
+      let surfaceAttributes = {};
+      let lineAttributes = {};
+      let renderScheduled = false;
+      let showAxes = axesInput.checked;
+      let displayStyle = styleInputs.find(input => input.checked).value;
+      let zoom = 1;
+      let orientation = quaternionMultiply(
+        quaternionFromAxisAngle([1, 0, 0], 0.28),
+        quaternionFromAxisAngle([0, 1, 0], -0.62)
+      );
+      let rotationMatrix = quaternionToMatrix(orientation);
+
+      const radiusMax = 1.22;
+      const innerRadialSteps = 38;
+      const outerRadialSteps = 10;
+      const angularSteps = 110;
+
+      const surfaceVertexShaderSource = `
+        attribute vec3 a_position;
+        attribute vec3 a_normal;
+        uniform mat3 u_rotation;
+        uniform vec2 u_resolution;
+        uniform vec2 u_center;
+        uniform float u_scale;
+        varying vec3 v_normal;
+        varying float v_depth;
+        void main() {
+          vec3 rotated = u_rotation * a_position;
+          vec2 screen = u_center + rotated.xy * u_scale;
+          gl_Position = vec4(
+            2.0 * screen.x / u_resolution.x - 1.0,
+            1.0 - 2.0 * screen.y / u_resolution.y,
+            -rotated.z / 3.0,
+            1.0
+          );
+          v_normal = u_rotation * a_normal;
+          v_depth = rotated.z;
+        }
+      `;
+
+      const surfaceFragmentShaderSource = `
+        precision mediump float;
+        varying vec3 v_normal;
+        uniform vec3 u_lightDirection;
+        void main() {
+          vec3 normal = normalize(v_normal);
+          float diffuse = abs(dot(normal, normalize(u_lightDirection)));
+          float shade = 0.58 + 0.42 * diffuse;
+          gl_FragColor = vec4(vec3(shade), 1.0);
+        }
+      `;
+
+      const lineVertexShaderSource = `
+        attribute vec3 a_position;
+        uniform mat3 u_rotation;
+        uniform vec2 u_resolution;
+        uniform vec2 u_center;
+        uniform float u_scale;
+        varying float v_depth;
+        void main() {
+          vec3 rotated = u_rotation * a_position;
+          vec2 screen = u_center + rotated.xy * u_scale;
+          gl_Position = vec4(
+            2.0 * screen.x / u_resolution.x - 1.0,
+            1.0 - 2.0 * screen.y / u_resolution.y,
+            -rotated.z / 3.0 - 0.003,
+            1.0
+          );
+          v_depth = rotated.z;
+        }
+      `;
+
+      const lineFragmentShaderSource = `
+        precision mediump float;
+        varying float v_depth;
+        uniform vec4 u_color;
+        void main() {
+          float normalizedDepth = clamp((v_depth + 3.0) / 6.0, 0.0, 1.0);
+          float alpha = u_color.a * (0.08 + normalizedDepth * 0.48);
+          gl_FragColor = vec4(u_color.rgb, alpha);
+        }
+      `;
+
+      const axisLength = 2.55;
+      const axesVertices = new Float32Array([
+        -axisLength, 0, 0, axisLength, 0, 0,
+        0, -axisLength, 0, 0, axisLength, 0,
+        0, 0, -axisLength, 0, 0, axisLength
+      ]);
+
+      function compileShader(type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+          throw new Error(gl.getShaderInfoLog(shader) || "Shader compilation failed.");
+        }
+        return shader;
+      }
+
+      function createProgram(vertexSource, fragmentSource) {
+        const program = gl.createProgram();
+        gl.attachShader(program, compileShader(gl.VERTEX_SHADER, vertexSource));
+        gl.attachShader(program, compileShader(gl.FRAGMENT_SHADER, fragmentSource));
+        gl.linkProgram(program);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+          throw new Error(gl.getProgramInfoLog(program) || "Program linking failed.");
+        }
+        return program;
+      }
+
+      function rotationMatrixToWebGL(matrix) {
+        return [
+          matrix[0][0], matrix[1][0], matrix[2][0],
+          matrix[0][1], matrix[1][1], matrix[2][1],
+          matrix[0][2], matrix[1][2], matrix[2][2]
+        ];
+      }
+
+      function insideOfZ1(radius, angle, degree) {
+        const powered = Math.pow(radius, degree);
+        return [
+          1 - powered * Math.cos(degree * angle),
+          -powered * Math.sin(degree * angle)
+        ];
+      }
+
+      function surfacePointFromInside(radius, angle, inside, argument, branch, degree) {
+        const modulus = Math.hypot(inside[0], inside[1]);
+        const rootModulus = Math.pow(modulus, 1 / degree);
+        const rootAngle = argument / degree + 2 * Math.PI * branch / degree;
+        return [
+          radius * Math.cos(angle),
+          radius * Math.sin(angle),
+          rootModulus * Math.cos(rootAngle),
+          rootModulus * Math.sin(rootAngle)
+        ];
+      }
+
+      function surfacePoint(radius, angle, branch, degree) {
+        const inside = insideOfZ1(radius, angle, degree);
+        return surfacePointFromInside(
+          radius,
+          angle,
+          inside,
+          Math.atan2(inside[1], inside[0]),
+          branch,
+          degree
+        );
+      }
+
+      function projectToR3(point, theta) {
+        const sinTheta = Math.sin(theta);
+        const cosTheta = Math.cos(theta);
+        return [
+          sinTheta * point[0] - cosTheta * point[2],
+          point[1],
+          point[3]
+        ];
+      }
+
+      function appendGridTriangles(gridPoints, vertices) {
+        const rowCount = gridPoints.length;
+        const columnCount = gridPoints[0].length;
+        const pushTriangle = (first, second, third) => {
+          const normal = triangleNormal(first, second, third);
+          vertices.push(
+            first[0], first[1], first[2], normal[0], normal[1], normal[2],
+            second[0], second[1], second[2], normal[0], normal[1], normal[2],
+            third[0], third[1], third[2], normal[0], normal[1], normal[2]
+          );
+        };
+
+        for (let radiusIndex = 0; radiusIndex < rowCount - 1; radiusIndex += 1) {
+          for (let angleIndex = 0; angleIndex < columnCount - 1; angleIndex += 1) {
+            const first = gridPoints[radiusIndex][angleIndex];
+            const second = gridPoints[radiusIndex][angleIndex + 1];
+            const third = gridPoints[radiusIndex + 1][angleIndex];
+            const fourth = gridPoints[radiusIndex + 1][angleIndex + 1];
+            pushTriangle(first, third, fourth);
+            pushTriangle(first, fourth, second);
+          }
+        }
+      }
+
+      function buildInnerSurfaceGrid(degree, theta, branch) {
+        const gridPoints = [];
+        for (let radiusIndex = 0; radiusIndex <= innerRadialSteps; radiusIndex += 1) {
+          const radius = radiusIndex / innerRadialSteps;
+          const row = [];
+          for (let angleIndex = 0; angleIndex <= angularSteps; angleIndex += 1) {
+            const angle = 2 * Math.PI * angleIndex / angularSteps;
+            const inside = insideOfZ1(radius, angle, degree);
+            const argument = Math.atan2(inside[1], inside[0]);
+            row.push(projectToR3(
+              surfacePointFromInside(radius, angle, inside, argument, branch, degree),
+              theta
+            ));
+          }
+          gridPoints.push(row);
+        }
+        return gridPoints;
+      }
+
+      function buildOuterSurfaceGrid(degree, theta, branch, sector) {
+        const sectorSteps = Math.max(8, Math.ceil(angularSteps / degree));
+        const sectorStart = 2 * Math.PI * sector / degree;
+        const sectorWidth = 2 * Math.PI / degree;
+        const gridPoints = [];
+
+        for (let radiusIndex = 0; radiusIndex <= outerRadialSteps; radiusIndex += 1) {
+          const radius = 1 + (radiusMax - 1) * radiusIndex / outerRadialSteps;
+          const row = [];
+          for (let angleIndex = 0; angleIndex <= sectorSteps; angleIndex += 1) {
+            const angle = sectorStart + sectorWidth * angleIndex / sectorSteps;
+            const inside = insideOfZ1(radius, angle, degree);
+            let argument = Math.atan2(inside[1], inside[0]);
+            if (angleIndex === 0) {
+              argument = -Math.PI;
+            } else if (angleIndex === sectorSteps) {
+              argument = Math.PI;
+            }
+            row.push(projectToR3(
+              surfacePointFromInside(radius, angle, inside, argument, branch, degree),
+              theta
+            ));
+          }
+          gridPoints.push(row);
+        }
+        return gridPoints;
+      }
+
+      function buildSurfaceModel(degree, theta) {
+        const vertices = [];
+        const polylines = [];
+
+        for (let branch = 0; branch < degree; branch += 1) {
+          const innerGrid = buildInnerSurfaceGrid(degree, theta, branch);
+          appendGridTriangles(innerGrid, vertices);
+
+          for (let angleIndex = 0; angleIndex <= angularSteps; angleIndex += 1) {
+            polylines.push({
+              points: innerGrid.map(row => row[angleIndex]),
+              depth: 0,
+              kind: 'grid'
+            });
+          }
+          for (let radiusIndex = 1; radiusIndex <= innerRadialSteps; radiusIndex += 1) {
+            polylines.push({
+              points: innerGrid[radiusIndex],
+              depth: 0,
+              kind: 'curve'
+            });
+          }
+
+          for (let sector = 0; sector < degree; sector += 1) {
+            const outerGrid = buildOuterSurfaceGrid(degree, theta, branch, sector);
+            appendGridTriangles(outerGrid, vertices);
+
+            for (let angleIndex = 0; angleIndex <= outerGrid[0].length - 1; angleIndex += 1) {
+              polylines.push({
+                points: outerGrid.map(row => row[angleIndex]),
+                depth: 0,
+                kind: 'grid'
+              });
+            }
+            for (let radiusIndex = 1; radiusIndex <= outerRadialSteps; radiusIndex += 1) {
+              polylines.push({
+                points: outerGrid[radiusIndex],
+                depth: 0,
+                kind: 'curve'
+              });
+            }
+          }
+        }
+
+        return { vertices, polylines };
+      }
+
+
+
+
+
+
+      function triangleNormal(first, second, third) {
+        const firstEdge = [
+          second[0] - first[0],
+          second[1] - first[1],
+          second[2] - first[2]
+        ];
+        const secondEdge = [
+          third[0] - first[0],
+          third[1] - first[1],
+          third[2] - first[2]
+        ];
+        const normal = [
+          firstEdge[1] * secondEdge[2] - firstEdge[2] * secondEdge[1],
+          firstEdge[2] * secondEdge[0] - firstEdge[0] * secondEdge[2],
+          firstEdge[0] * secondEdge[1] - firstEdge[1] * secondEdge[0]
+        ];
+        const length = Math.hypot(normal[0], normal[1], normal[2]);
+        return length > 0
+          ? [normal[0] / length, normal[1] / length, normal[2] / length]
+          : [0, 0, 1];
+      }
+
+
+
+
+
+      function flattenPolylines(lines) {
+        const vertices = [];
+        for (const line of lines) {
+          for (let pointIndex = 1; pointIndex < line.points.length; pointIndex += 1) {
+            const previous = line.points[pointIndex - 1];
+            const current = line.points[pointIndex];
+            vertices.push(
+              previous[0], previous[1], previous[2],
+              current[0], current[1], current[2]
+            );
+          }
+        }
+        return vertices;
+      }
+
+      function quaternionFromAxisAngle(axis, angle) {
+        const halfAngle = angle / 2;
+        const sine = Math.sin(halfAngle);
+        return [
+          Math.cos(halfAngle),
+          axis[0] * sine,
+          axis[1] * sine,
+          axis[2] * sine
+        ];
+      }
+
+      function quaternionMultiply(first, second) {
+        return [
+          first[0] * second[0] - first[1] * second[1] - first[2] * second[2] - first[3] * second[3],
+          first[0] * second[1] + first[1] * second[0] + first[2] * second[3] - first[3] * second[2],
+          first[0] * second[2] - first[1] * second[3] + first[2] * second[0] + first[3] * second[1],
+          first[0] * second[3] + first[1] * second[2] - first[2] * second[1] + first[3] * second[0]
+        ];
+      }
+
+      function normalizeQuaternion(quaternion) {
+        const length = Math.hypot(quaternion[0], quaternion[1], quaternion[2], quaternion[3]);
+        return [
+          quaternion[0] / length,
+          quaternion[1] / length,
+          quaternion[2] / length,
+          quaternion[3] / length
+        ];
+      }
+
+      function quaternionToMatrix(quaternion) {
+        const [w, x, y, z] = normalizeQuaternion(quaternion);
+        return [
+          [1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)],
+          [2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x)],
+          [2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)]
+        ];
+      }
+
+      function rotatePoint(point) {
+        const matrix = rotationMatrix;
+        return [
+          matrix[0][0] * point[0] + matrix[0][1] * point[1] + matrix[0][2] * point[2],
+          matrix[1][0] * point[0] + matrix[1][1] * point[1] + matrix[1][2] * point[2],
+          matrix[2][0] * point[0] + matrix[2][1] * point[1] + matrix[2][2] * point[2]
+        ];
+      }
+
+      function initializeGL() {
+        if (!gl) {
+          return false;
+        }
+
+        surfaceProgram = createProgram(surfaceVertexShaderSource, surfaceFragmentShaderSource);
+        lineProgram = createProgram(lineVertexShaderSource, lineFragmentShaderSource);
+        surfaceUniforms = {
+          rotation: gl.getUniformLocation(surfaceProgram, "u_rotation"),
+          resolution: gl.getUniformLocation(surfaceProgram, "u_resolution"),
+          center: gl.getUniformLocation(surfaceProgram, "u_center"),
+          scale: gl.getUniformLocation(surfaceProgram, "u_scale"),
+          lightDirection: gl.getUniformLocation(surfaceProgram, "u_lightDirection")
+        };
+        lineUniforms = {
+          rotation: gl.getUniformLocation(lineProgram, "u_rotation"),
+          resolution: gl.getUniformLocation(lineProgram, "u_resolution"),
+          center: gl.getUniformLocation(lineProgram, "u_center"),
+          scale: gl.getUniformLocation(lineProgram, "u_scale"),
+          color: gl.getUniformLocation(lineProgram, "u_color")
+        };
+        surfaceAttributes = {
+          position: gl.getAttribLocation(surfaceProgram, "a_position"),
+          normal: gl.getAttribLocation(surfaceProgram, "a_normal")
+        };
+        lineAttributes = {
+          position: gl.getAttribLocation(lineProgram, "a_position")
+        };
+
+        surfaceBuffer = gl.createBuffer();
+        gridBuffer = gl.createBuffer();
+        axesBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, axesBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, axesVertices, gl.STATIC_DRAW);
+        axesVertexCount = axesVertices.length / 3;
+        return true;
+      }
+
+      function drawSurface(scale, centerX, centerY) {
+        gl.useProgram(surfaceProgram);
+        gl.bindBuffer(gl.ARRAY_BUFFER, surfaceBuffer);
+        gl.enableVertexAttribArray(surfaceAttributes.position);
+        gl.vertexAttribPointer(surfaceAttributes.position, 3, gl.FLOAT, false, 24, 0);
+        gl.enableVertexAttribArray(surfaceAttributes.normal);
+        gl.vertexAttribPointer(surfaceAttributes.normal, 3, gl.FLOAT, false, 24, 12);
+        gl.uniformMatrix3fv(surfaceUniforms.rotation, false, rotationMatrixToWebGL(rotationMatrix));
+        gl.uniform2f(surfaceUniforms.resolution, canvas.width, canvas.height);
+        gl.uniform2f(surfaceUniforms.center, centerX, centerY);
+        gl.uniform1f(surfaceUniforms.scale, scale);
+        gl.uniform3f(surfaceUniforms.lightDirection, 0.38, 0.64, 0.67);
+        gl.drawArrays(gl.TRIANGLES, 0, surfaceVertexCount);
+        gl.disableVertexAttribArray(surfaceAttributes.normal);
+      }
+
+      function drawLines(buffer, count, color, scale, centerX, centerY) {
+        gl.useProgram(lineProgram);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.enableVertexAttribArray(lineAttributes.position);
+        gl.vertexAttribPointer(lineAttributes.position, 3, gl.FLOAT, false, 12, 0);
+        gl.uniformMatrix3fv(lineUniforms.rotation, false, rotationMatrixToWebGL(rotationMatrix));
+        gl.uniform2f(lineUniforms.resolution, canvas.width, canvas.height);
+        gl.uniform2f(lineUniforms.center, centerX, centerY);
+        gl.uniform1f(lineUniforms.scale, scale);
+        gl.uniform4f(lineUniforms.color, color[0], color[1], color[2], color[3]);
+        gl.drawArrays(gl.LINES, 0, count);
+      }
+
+      function render() {
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.clearColor(0.9608, 0.9451, 0.9098, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LEQUAL);
+        gl.disable(gl.CULL_FACE);
+
+        const scale = Math.min(canvas.width, canvas.height) / 7.0 * zoom;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height * 0.53;
+
+        if ((displayStyle === "surface" || displayStyle === "both") && surfaceVertexCount > 0) {
+          gl.disable(gl.BLEND);
+          gl.depthMask(true);
+          drawSurface(scale, centerX, centerY);
+        }
+
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        gl.depthMask(false);
+
+        if (showAxes && axesVertexCount > 0) {
+          drawLines(axesBuffer, axesVertexCount, [0.12, 0.12, 0.12, 0.28], scale, centerX, centerY);
+        }
+
+        if ((displayStyle === "grid" || displayStyle === "both") && gridVertexCount > 0) {
+          drawLines(gridBuffer, gridVertexCount, [0.12, 0.12, 0.12, 0.55], scale, centerX, centerY);
+        }
+
+        gl.depthMask(true);
+        gl.disable(gl.BLEND);
+      }
+
+      function requestRender() {
+        if (renderScheduled) {
+          return;
+        }
+        renderScheduled = true;
+        requestAnimationFrame(() => {
+          renderScheduled = false;
+          render();
+        });
+      }
+
+      function resize() {
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        canvas.width = Math.round(width * pixelRatio);
+        canvas.height = Math.round(height * pixelRatio);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        requestRender();
+      }
+
+      function updateProjection() {
+        const degree = Number(degreeInput.value);
+        const theta = Number(angleInput.value);
+        degreeValue.textContent = String(degree);
+        angleValue.textContent = theta.toFixed(2);
+        const surfaceModel = buildSurfaceModel(degree, theta);
+        const surfaceVertices = surfaceModel.vertices;
+        const gridVertices = flattenPolylines(surfaceModel.polylines);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, surfaceBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(surfaceVertices), gl.STATIC_DRAW);
+        surfaceVertexCount = surfaceVertices.length / 6;
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, gridBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(gridVertices), gl.STATIC_DRAW);
+        gridVertexCount = gridVertices.length / 3;
+        requestRender();
+      }
+
+      let pointerId = null;
+      let previousX = 0;
+      let previousY = 0;
+
+      function rotateFromDrag(deltaX, deltaY) {
+        const dragLength = Math.hypot(deltaX, deltaY);
+        if (dragLength === 0) {
+          return;
+        }
+
+        const angle = dragLength * 0.006;
+        const axis = [-deltaY / dragLength, deltaX / dragLength, 0];
+        const rotation = quaternionFromAxisAngle(axis, angle);
+        orientation = normalizeQuaternion(quaternionMultiply(rotation, orientation));
+        rotationMatrix = quaternionToMatrix(orientation);
+      }
+
+      canvas.addEventListener("pointerdown", event => {
+        pointerId = event.pointerId;
+        previousX = event.clientX;
+        previousY = event.clientY;
+        canvas.setPointerCapture(pointerId);
+      });
+
+      canvas.addEventListener("pointermove", event => {
+        if (event.pointerId !== pointerId) {
+          return;
+        }
+        rotateFromDrag(event.clientX - previousX, event.clientY - previousY);
+        previousX = event.clientX;
+        previousY = event.clientY;
+        requestRender();
+      });
+
+      canvas.addEventListener("pointerup", event => {
+        if (event.pointerId === pointerId) {
+          pointerId = null;
+          canvas.releasePointerCapture(event.pointerId);
+        }
+      });
+
+      canvas.addEventListener("pointercancel", () => {
+        pointerId = null;
+      });
+
+      canvas.addEventListener("wheel", event => {
+        event.preventDefault();
+        zoom *= Math.exp(-event.deltaY * 0.0012);
+        zoom = Math.max(0.55, Math.min(2.1, zoom));
+        requestRender();
+      }, { passive: false });
+
+      degreeInput.addEventListener("input", updateProjection);
+      angleInput.addEventListener("input", updateProjection);
+      axesInput.addEventListener("change", () => {
+        showAxes = axesInput.checked;
+        requestRender();
+      });
+      settingsToggle.addEventListener("click", () => {
+        const willShow = settingsPanel.hidden;
+        settingsPanel.hidden = !willShow;
+        titleElement.hidden = willShow;
+        settingsToggle.textContent = willShow ? "隐藏设置" : "显示设置";
+        settingsToggle.setAttribute("aria-expanded", String(willShow));
+      });
+      styleInputs.forEach(input => {
+        input.addEventListener("change", () => {
+          if (input.checked) {
+            displayStyle = input.value;
+            requestRender();
+          }
+        });
+      });
+      window.addEventListener("resize", resize);
+
+      let initialized = false;
+
+      try {
+        initialized = initializeGL();
+      } catch (error) {
+        console.error(error);
+        document.body.insertAdjacentHTML(
+          "beforeend",
+          `<p class="webgl-error">${error.message}</p>`
+        );
+      }
+
+      if (!initialized) {
+        if (!gl || !document.querySelector(".webgl-error")) {
+          document.body.insertAdjacentHTML("beforeend", "<p class=\"webgl-error\">WebGL is required.</p>");
+        }
+        return;
+      }
+
+      resize();
+      updateProjection();
+    })();
+  </script>
+</body>
+</html>
