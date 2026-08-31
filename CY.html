@@ -42,6 +42,12 @@
       cursor: grabbing;
     }
 
+    #axis-labels {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
     .overlay {
       position: fixed;
       inset: 0;
@@ -310,6 +316,7 @@
 </head>
 <body>
   <canvas id="scene"></canvas>
+  <canvas id="axis-labels"></canvas>
   <div class="overlay">
     <header>
       <h1>Fermat Calabi–Yau</h1>
@@ -332,21 +339,17 @@
         <p class="settings-title">显示风格</p>
         <div class="style-options" role="radiogroup" aria-label="显示风格">
           <label class="style-option">
-            <input type="radio" name="display-style" value="grid">
+            <input type="radio" name="display-style" value="grid" checked>
             <span>网格</span>
           </label>
           <label class="style-option">
             <input type="radio" name="display-style" value="surface">
             <span>曲面</span>
           </label>
-          <label class="style-option">
-            <input type="radio" name="display-style" value="both" checked>
-            <span>网格+曲面</span>
-          </label>
         </div>
         <div class="control axes-control">
           <label class="toggle">
-            <input id="show-axes" type="checkbox" checked>
+            <input id="show-axes" type="checkbox">
             <span class="toggle-track"></span>
             <span>坐标轴</span>
           </label>
@@ -369,6 +372,8 @@
 
       const canvas = document.getElementById("scene");
       const gl = canvas.getContext("webgl", { antialias: true, alpha: false });
+      const axisLabelCanvas = document.getElementById("axis-labels");
+      const axisLabelContext = axisLabelCanvas.getContext("2d");
       const degreeInput = document.getElementById("degree");
       const degreeValue = document.getElementById("degree-value");
       const angleInput = document.getElementById("angle");
@@ -402,11 +407,10 @@
       let rotationMatrix = quaternionToMatrix(orientation);
 
       const radiusMax = 1.22;
-      const innerRadialSteps = 38;
-      const outerRadialSteps = 10;
-      const angularSteps = 110;
+      const cameraDistance = 5.2;
 
       const surfaceVertexShaderSource = `
+        const float cameraDistance = ${cameraDistance.toFixed(2)};
         attribute vec3 a_position;
         attribute vec3 a_normal;
         uniform mat3 u_rotation;
@@ -417,13 +421,15 @@
         varying float v_depth;
         void main() {
           vec3 rotated = u_rotation * a_position;
-          vec2 screen = u_center + rotated.xy * u_scale;
-          gl_Position = vec4(
+          float viewDistance = cameraDistance - rotated.z;
+          float perspectiveScale = cameraDistance / viewDistance;
+          vec2 screen = u_center + rotated.xy * u_scale * perspectiveScale;
+          vec2 normalizedScreen = vec2(
             2.0 * screen.x / u_resolution.x - 1.0,
-            1.0 - 2.0 * screen.y / u_resolution.y,
-            -rotated.z / 3.0,
-            1.0
+            1.0 - 2.0 * screen.y / u_resolution.y
           );
+          float clipZ = -rotated.z / 3.0 * viewDistance;
+          gl_Position = vec4(normalizedScreen * viewDistance, clipZ, viewDistance);
           v_normal = u_rotation * a_normal;
           v_depth = rotated.z;
         }
@@ -442,6 +448,7 @@
       `;
 
       const lineVertexShaderSource = `
+        const float cameraDistance = ${cameraDistance.toFixed(2)};
         attribute vec3 a_position;
         uniform mat3 u_rotation;
         uniform vec2 u_resolution;
@@ -450,13 +457,15 @@
         varying float v_depth;
         void main() {
           vec3 rotated = u_rotation * a_position;
-          vec2 screen = u_center + rotated.xy * u_scale;
-          gl_Position = vec4(
+          float viewDistance = cameraDistance - rotated.z;
+          float perspectiveScale = cameraDistance / viewDistance;
+          vec2 screen = u_center + rotated.xy * u_scale * perspectiveScale;
+          vec2 normalizedScreen = vec2(
             2.0 * screen.x / u_resolution.x - 1.0,
-            1.0 - 2.0 * screen.y / u_resolution.y,
-            -rotated.z / 3.0 - 0.003,
-            1.0
+            1.0 - 2.0 * screen.y / u_resolution.y
           );
+          float clipZ = (-rotated.z / 3.0 - 0.003) * viewDistance;
+          gl_Position = vec4(normalizedScreen * viewDistance, clipZ, viewDistance);
           v_depth = rotated.z;
         }
       `;
@@ -473,6 +482,11 @@
       `;
 
       const axisLength = 2.55;
+      const axisLabels = [
+        { text: "x", point: [axisLength, 0, 0] },
+        { text: "y", point: [0, axisLength, 0] },
+        { text: "z", point: [0, 0, axisLength] }
+      ];
       const axesVertices = new Float32Array([
         -axisLength, 0, 0, axisLength, 0, 0,
         0, -axisLength, 0, 0, axisLength, 0,
@@ -550,118 +564,532 @@
         ];
       }
 
-      function appendGridTriangles(gridPoints, vertices) {
-        const rowCount = gridPoints.length;
-        const columnCount = gridPoints[0].length;
-        const pushTriangle = (first, second, third) => {
-          const normal = triangleNormal(first, second, third);
-          vertices.push(
-            first[0], first[1], first[2], normal[0], normal[1], normal[2],
-            second[0], second[1], second[2], normal[0], normal[1], normal[2],
-            third[0], third[1], third[2], normal[0], normal[1], normal[2]
+      function projectedFermatPoint(radius, angle, branch, degree, theta) {
+        const inside = insideOfZ1(radius, angle, degree);
+        return projectToR3(
+          surfacePointFromInside(
+            radius,
+            angle,
+            inside,
+            Math.atan2(inside[1], inside[0]),
+            branch,
+            degree
+          ),
+          theta
+        );
+      }
+
+      function subtractPoints(first, second) {
+        return [first[0] - second[0], first[1] - second[1], first[2] - second[2]];
+      }
+
+      function pointDistance(first, second) {
+        return Math.hypot(first[0] - second[0], first[1] - second[1], first[2] - second[2]);
+      }
+
+      function crossProductLength(first, second) {
+        return Math.hypot(
+          first[1] * second[2] - first[2] * second[1],
+          first[2] * second[0] - first[0] * second[2],
+          first[0] * second[1] - first[1] * second[0]
+        );
+      }
+
+      function surfaceAreaElement(
+        radius,
+        angle,
+        radiusMinimum,
+        radiusMaximum,
+        angleMinimum,
+        angleMaximum,
+        pointFunction
+      ) {
+        const step = 0.0015;
+        const lowerRadius = Math.max(radiusMinimum, radius - step);
+        const upperRadius = Math.min(radiusMaximum, radius + step);
+        const radiusDelta = upperRadius - lowerRadius;
+        const radiusPoint = pointFunction(upperRadius, angle);
+        const previousRadiusPoint = pointFunction(lowerRadius, angle);
+        let angleDelta;
+        let anglePoint;
+        let previousAnglePoint;
+        if (angle - step < angleMinimum) {
+          angleDelta = step;
+          previousAnglePoint = pointFunction(radius, angle);
+          anglePoint = pointFunction(radius, angle + step);
+        } else if (angle + step > angleMaximum) {
+          angleDelta = step;
+          previousAnglePoint = pointFunction(radius, angle - step);
+          anglePoint = pointFunction(radius, angle);
+        } else {
+          angleDelta = 2 * step;
+          previousAnglePoint = pointFunction(radius, angle - step);
+          anglePoint = pointFunction(radius, angle + step);
+        }
+        return crossProductLength(
+          [
+            (radiusPoint[0] - previousRadiusPoint[0]) / radiusDelta,
+            (radiusPoint[1] - previousRadiusPoint[1]) / radiusDelta,
+            (radiusPoint[2] - previousRadiusPoint[2]) / radiusDelta
+          ],
+          [
+            (anglePoint[0] - previousAnglePoint[0]) / angleDelta,
+            (anglePoint[1] - previousAnglePoint[1]) / angleDelta,
+            (anglePoint[2] - previousAnglePoint[2]) / angleDelta
+          ]
+        );
+      }
+
+      function areaWeightedRadii(
+        radiusMinimum,
+        radiusMaximum,
+        angleStart,
+        angleEnd,
+        rowCount,
+        areaFunction
+      ) {
+        const radiusSamples = 96;
+        const angleSamples = 80;
+        const sampleRadii = [];
+        const lineAreas = [];
+        const angleDelta = (angleEnd - angleStart) / angleSamples;
+
+        for (let radiusIndex = 0; radiusIndex <= radiusSamples; radiusIndex += 1) {
+          const radius = radiusMinimum + (radiusMaximum - radiusMinimum) * radiusIndex / radiusSamples;
+          let lineArea = 0;
+          for (let angleIndex = 0; angleIndex < angleSamples; angleIndex += 1) {
+            const firstAngle = angleStart + angleIndex * angleDelta;
+            const secondAngle = angleStart + (angleIndex + 1) * angleDelta;
+            lineArea += 0.5 * (
+              Math.sqrt(Math.max(0, areaFunction(radius, firstAngle))) +
+              Math.sqrt(Math.max(0, areaFunction(radius, secondAngle)))
+            ) * angleDelta;
+          }
+          sampleRadii.push(radius);
+          lineAreas.push(lineArea);
+        }
+
+        const cumulativeAreas = [0];
+        for (let radiusIndex = 1; radiusIndex <= radiusSamples; radiusIndex += 1) {
+          const radiusDelta = sampleRadii[radiusIndex] - sampleRadii[radiusIndex - 1];
+          cumulativeAreas.push(cumulativeAreas[radiusIndex - 1] + 0.5 * (
+            lineAreas[radiusIndex - 1] + lineAreas[radiusIndex]
+          ) * radiusDelta);
+        }
+
+        const totalArea = cumulativeAreas[cumulativeAreas.length - 1];
+        if (!(totalArea > 0) || !Number.isFinite(totalArea)) {
+          return Array.from({ length: rowCount + 1 }, (_, index) =>
+            radiusMinimum + (radiusMaximum - radiusMinimum) * index / rowCount
           );
-        };
+        }
 
-        for (let radiusIndex = 0; radiusIndex < rowCount - 1; radiusIndex += 1) {
-          for (let angleIndex = 0; angleIndex < columnCount - 1; angleIndex += 1) {
-            const first = gridPoints[radiusIndex][angleIndex];
-            const second = gridPoints[radiusIndex][angleIndex + 1];
-            const third = gridPoints[radiusIndex + 1][angleIndex];
-            const fourth = gridPoints[radiusIndex + 1][angleIndex + 1];
-            pushTriangle(first, third, fourth);
-            pushTriangle(first, fourth, second);
+        return Array.from({ length: rowCount + 1 }, (_, index) => {
+          const targetArea = totalArea * index / rowCount;
+          let upperIndex = 1;
+          while (upperIndex < cumulativeAreas.length - 1 && cumulativeAreas[upperIndex] < targetArea) {
+            upperIndex += 1;
+          }
+          const lowerIndex = upperIndex - 1;
+          const areaSpan = cumulativeAreas[upperIndex] - cumulativeAreas[lowerIndex];
+          const fraction = areaSpan > 0
+            ? (targetArea - cumulativeAreas[lowerIndex]) / areaSpan
+            : 0;
+          const radius = sampleRadii[lowerIndex] + fraction * (
+            sampleRadii[upperIndex] - sampleRadii[lowerIndex]
+          );
+          return Math.max(radiusMinimum, Math.min(radiusMaximum, radius));
+        });
+      }
+
+      function curveLength(start, end, pointFunction) {
+        const samples = 128;
+        let length = 0;
+        let previousPoint = pointFunction(start);
+        for (let sampleIndex = 1; sampleIndex <= samples; sampleIndex += 1) {
+          const parameter = start + (end - start) * sampleIndex / samples;
+          const currentPoint = pointFunction(parameter);
+          length += pointDistance(currentPoint, previousPoint);
+          previousPoint = currentPoint;
+        }
+        return length;
+      }
+
+      function distributedCurveParameters(start, end, segmentCount, pointFunction, includeEnd) {
+        const fineSamples = Math.max(64, segmentCount * 4);
+        const cumulativeLengths = [0];
+        let previousPoint = pointFunction(start);
+        for (let sampleIndex = 1; sampleIndex <= fineSamples; sampleIndex += 1) {
+          const parameter = start + (end - start) * sampleIndex / fineSamples;
+          const currentPoint = pointFunction(parameter);
+          cumulativeLengths.push(
+            cumulativeLengths[sampleIndex - 1] + pointDistance(currentPoint, previousPoint)
+          );
+          previousPoint = currentPoint;
+        }
+
+        const totalLength = cumulativeLengths[fineSamples];
+        const result = [];
+        const lastIndex = includeEnd ? segmentCount : segmentCount - 1;
+        for (let segmentIndex = 0; segmentIndex <= lastIndex; segmentIndex += 1) {
+          if (totalLength <= 0) {
+            result.push(start + (end - start) * segmentIndex / segmentCount);
+            continue;
+          }
+
+          const targetLength = totalLength * segmentIndex / segmentCount;
+          let upperIndex = 1;
+          while (upperIndex < fineSamples && cumulativeLengths[upperIndex] < targetLength) {
+            upperIndex += 1;
+          }
+          const lowerIndex = upperIndex - 1;
+          const lengthSpan = cumulativeLengths[upperIndex] - cumulativeLengths[lowerIndex];
+          const fraction = lengthSpan > 0
+            ? (targetLength - cumulativeLengths[lowerIndex]) / lengthSpan
+            : 0;
+          const lowerParameter = start + (end - start) * lowerIndex / fineSamples;
+          const upperParameter = start + (end - start) * upperIndex / fineSamples;
+          result.push(lowerParameter + fraction * (upperParameter - lowerParameter));
+        }
+        return result;
+      }
+
+      function averageRadialSpacing(radius, previousRadius, nextRadius, samples, pointFunction) {
+        let total = 0;
+        let count = 0;
+        for (let sampleIndex = 0; sampleIndex < samples; sampleIndex += 1) {
+          const angle = 2 * Math.PI * (sampleIndex + 0.5) / samples;
+          const point = pointFunction(radius, angle);
+          if (previousRadius !== null) {
+            total += pointDistance(point, pointFunction(previousRadius, angle));
+            count += 1;
+          }
+          if (nextRadius !== null) {
+            total += pointDistance(point, pointFunction(nextRadius, angle));
+            count += 1;
+          }
+        }
+        return count > 0 ? total / count : 0;
+      }
+
+      function averageSectorRadialSpacing(
+        radius,
+        previousRadius,
+        nextRadius,
+        start,
+        end,
+        samples,
+        pointFunction
+      ) {
+        let total = 0;
+        let count = 0;
+        for (let sampleIndex = 0; sampleIndex < samples; sampleIndex += 1) {
+          const angle = start + (end - start) * (sampleIndex + 0.5) / samples;
+          const point = pointFunction(radius, angle);
+          if (previousRadius !== null) {
+            total += pointDistance(point, pointFunction(previousRadius, angle));
+            count += 1;
+          }
+          if (nextRadius !== null) {
+            total += pointDistance(point, pointFunction(nextRadius, angle));
+            count += 1;
+          }
+        }
+        return count > 0 ? total / count : 0;
+      }
+
+      function pushSurfaceTriangle(first, second, third, vertices) {
+        const normal = triangleNormal(first, second, third);
+        vertices.push(
+          first[0], first[1], first[2], normal[0], normal[1], normal[2],
+          second[0], second[1], second[2], normal[0], normal[1], normal[2],
+          third[0], third[1], third[2], normal[0], normal[1], normal[2]
+        );
+      }
+
+      function appendRingTriangles(rows, vertices) {
+        for (let rowIndex = 1; rowIndex < rows.length; rowIndex += 1) {
+          const previousRow = rows[rowIndex - 1];
+          const currentRow = rows[rowIndex];
+          if (previousRow.length === 1) {
+            for (let angleIndex = 0; angleIndex < currentRow.length; angleIndex += 1) {
+              pushSurfaceTriangle(
+                previousRow[0],
+                currentRow[angleIndex],
+                currentRow[(angleIndex + 1) % currentRow.length],
+                vertices
+              );
+            }
+            continue;
+          }
+
+          const previousSegments = previousRow.length;
+          const currentSegments = currentRow.length;
+          let previousIndex = 0;
+          let currentIndex = 0;
+          while (previousIndex < previousSegments || currentIndex < currentSegments) {
+            if ((previousIndex + 1) / previousSegments <= (currentIndex + 1) / currentSegments) {
+              pushSurfaceTriangle(
+                previousRow[previousIndex % previousSegments],
+                currentRow[currentIndex % currentSegments],
+                previousRow[(previousIndex + 1) % previousSegments],
+                vertices
+              );
+              previousIndex += 1;
+            } else {
+              pushSurfaceTriangle(
+                previousRow[previousIndex % previousSegments],
+                currentRow[currentIndex % currentSegments],
+                currentRow[(currentIndex + 1) % currentSegments],
+                vertices
+              );
+              currentIndex += 1;
+            }
           }
         }
       }
 
-      function buildInnerSurfaceGrid(degree, theta, branch) {
-        const gridPoints = [];
-        for (let radiusIndex = 0; radiusIndex <= innerRadialSteps; radiusIndex += 1) {
-          const radius = radiusIndex / innerRadialSteps;
-          const row = [];
-          for (let angleIndex = 0; angleIndex <= angularSteps; angleIndex += 1) {
-            const angle = 2 * Math.PI * angleIndex / angularSteps;
-            const inside = insideOfZ1(radius, angle, degree);
-            const argument = Math.atan2(inside[1], inside[0]);
-            row.push(projectToR3(
-              surfacePointFromInside(radius, angle, inside, argument, branch, degree),
-              theta
-            ));
+      function appendSectorTriangles(rows, vertices) {
+        for (let rowIndex = 1; rowIndex < rows.length; rowIndex += 1) {
+          const previousRow = rows[rowIndex - 1];
+          const currentRow = rows[rowIndex];
+          if (previousRow.length === 1) {
+            for (let angleIndex = 0; angleIndex < currentRow.length - 1; angleIndex += 1) {
+              pushSurfaceTriangle(
+                previousRow[0],
+                currentRow[angleIndex],
+                currentRow[angleIndex + 1],
+                vertices
+              );
+            }
+            continue;
           }
-          gridPoints.push(row);
+
+          const previousSegments = previousRow.length - 1;
+          const currentSegments = currentRow.length - 1;
+          let previousIndex = 0;
+          let currentIndex = 0;
+          while (previousIndex < previousSegments || currentIndex < currentSegments) {
+            if (previousIndex === previousSegments) {
+              pushSurfaceTriangle(
+                previousRow[previousSegments],
+                currentRow[currentIndex],
+                currentRow[currentIndex + 1],
+                vertices
+              );
+              currentIndex += 1;
+            } else if (currentIndex === currentSegments) {
+              pushSurfaceTriangle(
+                previousRow[previousIndex],
+                currentRow[currentSegments],
+                previousRow[previousIndex + 1],
+                vertices
+              );
+              previousIndex += 1;
+            } else if (
+              (previousIndex + 1) / previousSegments <=
+              (currentIndex + 1) / currentSegments
+            ) {
+              pushSurfaceTriangle(
+                previousRow[previousIndex],
+                currentRow[currentIndex],
+                previousRow[previousIndex + 1],
+                vertices
+              );
+              previousIndex += 1;
+            } else {
+              pushSurfaceTriangle(
+                previousRow[previousIndex],
+                currentRow[currentIndex],
+                currentRow[currentIndex + 1],
+                vertices
+              );
+              currentIndex += 1;
+            }
+          }
         }
-        return gridPoints;
       }
 
-      function buildOuterSurfaceGrid(degree, theta, branch, sector) {
-        const sectorSteps = Math.max(8, Math.ceil(angularSteps / degree));
+      function appendRingCurves(rows, polylines) {
+        for (const row of rows) {
+          if (row.length > 1) {
+            polylines.push({ points: [...row, row[0]], depth: 0, kind: "curve" });
+          }
+        }
+      }
+
+      function appendSectorCurves(rows, polylines) {
+        for (const row of rows) {
+          polylines.push({ points: [...row], depth: 0, kind: "curve" });
+        }
+      }
+
+      function appendRadialCurves(rows, curveCount, polylines, closed) {
+        for (let curveIndex = 0; curveIndex < curveCount; curveIndex += 1) {
+          const fraction = curveIndex / curveCount;
+          const points = [];
+          for (const row of rows) {
+            const pointIndex = closed
+              ? Math.round(fraction * row.length) % row.length
+              : Math.round(fraction * (row.length - 1));
+            points.push(row[pointIndex]);
+          }
+          polylines.push({ points, depth: 0, kind: "grid" });
+        }
+      }
+
+      function buildInnerSurfaceRows(degree, theta, branch, radialSteps, maximumSegments) {
+        const pointFunction = (radius, angle) =>
+          projectedFermatPoint(radius, angle, branch, degree, theta);
+        const radii = areaWeightedRadii(
+          0,
+          1,
+          0,
+          2 * Math.PI,
+          radialSteps,
+            (radius, angle) => surfaceAreaElement(
+              radius,
+              angle,
+              0,
+              1,
+              0,
+              2 * Math.PI,
+              (sampleRadius, sampleAngle) => pointFunction(sampleRadius, sampleAngle)
+          )
+        );
+        const rows = [[pointFunction(0, 0)]];
+
+        for (let radiusIndex = 1; radiusIndex <= radialSteps; radiusIndex += 1) {
+          const radius = radii[radiusIndex];
+          const previousRadius = radii[radiusIndex - 1];
+          const nextRadius = radiusIndex < radialSteps ? radii[radiusIndex + 1] : null;
+          const radialSpacing = averageRadialSpacing(
+            radius,
+            previousRadius,
+            nextRadius,
+            24,
+            pointFunction
+          );
+          const circumference = curveLength(0, 2 * Math.PI, angle => pointFunction(radius, angle));
+          const segmentCount = Math.max(
+            8,
+            Math.min(maximumSegments, Math.round(circumference / Math.max(1e-5, radialSpacing)))
+          );
+          const angles = distributedCurveParameters(
+            0,
+            2 * Math.PI,
+            segmentCount,
+            angle => pointFunction(radius, angle),
+            false
+          );
+          rows.push(angles.map(angle => pointFunction(radius, angle)));
+        }
+        return rows;
+      }
+
+      function buildOuterSurfaceRows(
+        degree,
+        theta,
+        branch,
+        sector,
+        radialSteps,
+        maximumSegments
+      ) {
         const sectorStart = 2 * Math.PI * sector / degree;
         const sectorWidth = 2 * Math.PI / degree;
-        const gridPoints = [];
+        const sectorEnd = sectorStart + sectorWidth;
+        const pointFunction = (radius, angle) =>
+          projectedFermatPoint(radius, angle, branch, degree, theta);
+        const radii = areaWeightedRadii(
+          1,
+          radiusMax,
+          sectorStart,
+          sectorEnd,
+          radialSteps,
+            (radius, angle) => surfaceAreaElement(
+              radius,
+              angle,
+              1,
+              radiusMax,
+              sectorStart,
+              sectorEnd,
+              (sampleRadius, sampleAngle) => pointFunction(sampleRadius, sampleAngle)
+          )
+        );
+        const rows = [];
 
-        for (let radiusIndex = 0; radiusIndex <= outerRadialSteps; radiusIndex += 1) {
-          const radius = 1 + (radiusMax - 1) * radiusIndex / outerRadialSteps;
-          const row = [];
-          for (let angleIndex = 0; angleIndex <= sectorSteps; angleIndex += 1) {
-            const angle = sectorStart + sectorWidth * angleIndex / sectorSteps;
-            const inside = insideOfZ1(radius, angle, degree);
-            let argument = Math.atan2(inside[1], inside[0]);
-            if (angleIndex === 0) {
-              argument = -Math.PI;
-            } else if (angleIndex === sectorSteps) {
-              argument = Math.PI;
-            }
-            row.push(projectToR3(
-              surfacePointFromInside(radius, angle, inside, argument, branch, degree),
-              theta
-            ));
-          }
-          gridPoints.push(row);
+        for (let radiusIndex = 0; radiusIndex <= radialSteps; radiusIndex += 1) {
+          const radius = radii[radiusIndex];
+          const previousRadius = radiusIndex > 0 ? radii[radiusIndex - 1] : null;
+          const nextRadius = radiusIndex < radialSteps ? radii[radiusIndex + 1] : null;
+          const radialSpacing = averageSectorRadialSpacing(
+            radius,
+            previousRadius,
+            nextRadius,
+            sectorStart,
+            sectorEnd,
+            24,
+            pointFunction
+          );
+          const arcLength = curveLength(
+            sectorStart,
+            sectorEnd,
+            angle => pointFunction(radius, angle)
+          );
+          const segmentCount = Math.max(
+            6,
+            Math.min(maximumSegments, Math.round(arcLength / Math.max(1e-5, radialSpacing)))
+          );
+          const angles = distributedCurveParameters(
+            sectorStart,
+            sectorEnd,
+            segmentCount,
+            angle => pointFunction(radius, angle),
+            true
+          );
+          rows.push(angles.map(angle => pointFunction(radius, angle)));
         }
-        return gridPoints;
+        return rows;
       }
 
       function buildSurfaceModel(degree, theta) {
         const vertices = [];
         const polylines = [];
+        const highDetail = displayStyle === "surface";
+        const innerRadialSteps = highDetail ? 52 : 36;
+        const innerMaximumSegments = highDetail ? 132 : 96;
+        const innerRadialCurves = highDetail ? 48 : 36;
+        const outerRadialSteps = highDetail ? 28 : 16;
+        const outerMaximumSegments = Math.max(
+          12,
+          Math.ceil((highDetail ? 132 : 96) / degree)
+        );
+        const outerRadialCurves = Math.max(6, Math.round(outerMaximumSegments * 0.55));
 
         for (let branch = 0; branch < degree; branch += 1) {
-          const innerGrid = buildInnerSurfaceGrid(degree, theta, branch);
-          appendGridTriangles(innerGrid, vertices);
-
-          for (let angleIndex = 0; angleIndex <= angularSteps; angleIndex += 1) {
-            polylines.push({
-              points: innerGrid.map(row => row[angleIndex]),
-              depth: 0,
-              kind: 'grid'
-            });
-          }
-          for (let radiusIndex = 1; radiusIndex <= innerRadialSteps; radiusIndex += 1) {
-            polylines.push({
-              points: innerGrid[radiusIndex],
-              depth: 0,
-              kind: 'curve'
-            });
-          }
+          const innerRows = buildInnerSurfaceRows(
+            degree,
+            theta,
+            branch,
+            innerRadialSteps,
+            innerMaximumSegments
+          );
+          appendRingTriangles(innerRows, vertices);
+          appendRingCurves(innerRows, polylines);
+          appendRadialCurves(innerRows, innerRadialCurves, polylines, true);
 
           for (let sector = 0; sector < degree; sector += 1) {
-            const outerGrid = buildOuterSurfaceGrid(degree, theta, branch, sector);
-            appendGridTriangles(outerGrid, vertices);
-
-            for (let angleIndex = 0; angleIndex <= outerGrid[0].length - 1; angleIndex += 1) {
-              polylines.push({
-                points: outerGrid.map(row => row[angleIndex]),
-                depth: 0,
-                kind: 'grid'
-              });
-            }
-            for (let radiusIndex = 1; radiusIndex <= outerRadialSteps; radiusIndex += 1) {
-              polylines.push({
-                points: outerGrid[radiusIndex],
-                depth: 0,
-                kind: 'curve'
-              });
-            }
+            const outerRows = buildOuterSurfaceRows(
+              degree,
+              theta,
+              branch,
+              sector,
+              outerRadialSteps,
+              outerMaximumSegments
+            );
+            appendSectorTriangles(outerRows, vertices);
+            appendSectorCurves(outerRows, polylines);
+            appendRadialCurves(outerRows, outerRadialCurves, polylines, false);
           }
         }
 
@@ -762,6 +1190,46 @@
         ];
       }
 
+      function drawAxisLabels(scale, centerX, centerY) {
+        if (!axisLabelContext) {
+          return;
+        }
+
+        axisLabelContext.clearRect(0, 0, axisLabelCanvas.width, axisLabelCanvas.height);
+        if (!showAxes) {
+          return;
+        }
+
+        const pixelRatio = axisLabelCanvas.width / Math.max(1, window.innerWidth);
+        axisLabelContext.font = `${Math.round(13 * pixelRatio)}px "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif`;
+        axisLabelContext.fillStyle = "rgba(31, 30, 27, .68)";
+        axisLabelContext.textAlign = "center";
+        axisLabelContext.textBaseline = "middle";
+
+        for (const label of axisLabels) {
+          const rotated = rotatePoint(label.point);
+          const viewDistance = cameraDistance - rotated[2];
+          if (viewDistance <= 0) {
+            continue;
+          }
+
+          const perspectiveScale = cameraDistance / viewDistance;
+          const screenX = centerX + rotated[0] * scale * perspectiveScale;
+          const screenY = centerY + rotated[1] * scale * perspectiveScale;
+          const directionX = screenX - centerX;
+          const directionY = screenY - centerY;
+          const directionLength = Math.hypot(directionX, directionY);
+          const labelOffset = Math.round(18 * pixelRatio);
+          const outwardX = directionLength > 0 ? directionX / directionLength : 0;
+          const outwardY = directionLength > 0 ? directionY / directionLength : -1;
+          axisLabelContext.fillText(
+            label.text,
+            screenX + outwardX * labelOffset,
+            screenY + outwardY * labelOffset
+          );
+        }
+      }
+
       function initializeGL() {
         if (!gl) {
           return false;
@@ -841,7 +1309,7 @@
         const centerX = canvas.width / 2;
         const centerY = canvas.height * 0.53;
 
-        if ((displayStyle === "surface" || displayStyle === "both") && surfaceVertexCount > 0) {
+        if ((displayStyle === "surface") && surfaceVertexCount > 0) {
           gl.disable(gl.BLEND);
           gl.depthMask(true);
           drawSurface(scale, centerX, centerY);
@@ -855,12 +1323,13 @@
           drawLines(axesBuffer, axesVertexCount, [0.12, 0.12, 0.12, 0.28], scale, centerX, centerY);
         }
 
-        if ((displayStyle === "grid" || displayStyle === "both") && gridVertexCount > 0) {
+        if ((displayStyle === "grid") && gridVertexCount > 0) {
           drawLines(gridBuffer, gridVertexCount, [0.12, 0.12, 0.12, 0.55], scale, centerX, centerY);
         }
 
         gl.depthMask(true);
         gl.disable(gl.BLEND);
+        drawAxisLabels(scale, centerX, centerY);
       }
 
       function requestRender() {
@@ -882,6 +1351,10 @@
         canvas.height = Math.round(height * pixelRatio);
         canvas.style.width = `${width}px`;
         canvas.style.height = `${height}px`;
+        axisLabelCanvas.width = canvas.width;
+        axisLabelCanvas.height = canvas.height;
+        axisLabelCanvas.style.width = `${width}px`;
+        axisLabelCanvas.style.height = `${height}px`;
         requestRender();
       }
 
@@ -973,7 +1446,7 @@
         input.addEventListener("change", () => {
           if (input.checked) {
             displayStyle = input.value;
-            requestRender();
+            updateProjection();
           }
         });
       });
