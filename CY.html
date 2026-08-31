@@ -333,7 +333,7 @@
         </label>
         <label class="control">
           <span>θ</span>
-          <input id="angle" type="range" min="0" max="6.283185307" step="0.001" value="0.72">
+          <input id="angle" type="range" min="0" max="1.57079632679" step="0.001" value="0.72">
           <output id="angle-value">0.72</output>
         </label>
         <p class="settings-title">显示风格</p>
@@ -579,12 +579,33 @@
         );
       }
 
+      function projectedOuterPoint(rho, tau, branch, sector, degree, theta) {
+        const radius = 1 + (radiusMax - 1) * rho;
+        const sectorStart = 2 * Math.PI * sector / degree;
+        const angle = sectorStart + 2 * Math.PI * tau / degree;
+        const inside = insideOfZ1(radius, angle, degree);
+        let argument = Math.atan2(inside[1], inside[0]);
+        if (tau <= 0) {
+          argument = -Math.PI;
+        } else if (tau >= 1) {
+          argument = Math.PI;
+        }
+        return projectToR3(
+          surfacePointFromInside(radius, angle, inside, argument, branch, degree),
+          theta
+        );
+      }
+
       function subtractPoints(first, second) {
         return [first[0] - second[0], first[1] - second[1], first[2] - second[2]];
       }
 
       function pointDistance(first, second) {
         return Math.hypot(first[0] - second[0], first[1] - second[1], first[2] - second[2]);
+      }
+
+      function dotProduct(first, second) {
+        return first[0] * second[0] + first[1] * second[1] + first[2] * second[2];
       }
 
       function crossProductLength(first, second) {
@@ -713,6 +734,26 @@
           previousPoint = currentPoint;
         }
         return length;
+      }
+
+      function sampleOpenCurve(start, end, pointFunction, targetEdge, minimum, maximum) {
+        const segmentCount = Math.max(
+          minimum,
+          Math.min(maximum, Math.ceil(curveLength(start, end, pointFunction) / targetEdge))
+        );
+        return Array.from({ length: segmentCount + 1 }, (_, index) =>
+          start + (end - start) * index / segmentCount
+        );
+      }
+
+      function sampleClosedCurve(start, end, pointFunction, targetEdge, minimum, maximum) {
+        const segmentCount = Math.max(
+          minimum,
+          Math.min(maximum, Math.ceil(curveLength(start, end, pointFunction) / targetEdge))
+        );
+        return Array.from({ length: segmentCount }, (_, index) =>
+          start + (end - start) * index / segmentCount
+        );
       }
 
       function distributedCurveParameters(start, end, segmentCount, pointFunction, includeEnd) {
@@ -1052,54 +1093,724 @@
         return rows;
       }
 
-      function buildSurfaceModel(degree, theta) {
-        const vertices = [];
-        const polylines = [];
-        const highDetail = displayStyle === "surface";
-        const innerRadialSteps = highDetail ? 52 : 36;
-        const innerMaximumSegments = highDetail ? 132 : 96;
-        const innerRadialCurves = highDetail ? 48 : 36;
-        const outerRadialSteps = highDetail ? 28 : 16;
-        const outerMaximumSegments = Math.max(
-          12,
-          Math.ceil((highDetail ? 132 : 96) / degree)
+      function hyperbolicComplexPower(realPart, imaginaryPart, exponent) {
+        const modulus = Math.hypot(realPart, imaginaryPart);
+        if (modulus === 0) {
+          return [0, 0];
+        }
+        const argument = Math.atan2(imaginaryPart, realPart);
+        const scaledModulus = Math.pow(modulus, exponent);
+        const scaledArgument = argument * exponent;
+        return [
+          scaledModulus * Math.cos(scaledArgument),
+          scaledModulus * Math.sin(scaledArgument)
+        ];
+      }
+
+      function hyperbolicBranchMultiply(point, branchAngle) {
+        const cosine = Math.cos(branchAngle);
+        const sine = Math.sin(branchAngle);
+        return [
+          point[0] * cosine - point[1] * sine,
+          point[0] * sine + point[1] * cosine
+        ];
+      }
+
+      function hyperbolicParameterPoint(a, b, firstBranch, secondBranch, degree) {
+        const coshA = Math.cosh(a);
+        const sinhA = Math.sinh(a);
+        const cosB = Math.cos(b);
+        const sinB = Math.sin(b);
+        const coshW = hyperbolicComplexPower(
+          coshA * cosB,
+          sinhA * sinB,
+          2 / degree
         );
-        const outerRadialCurves = Math.max(6, Math.round(outerMaximumSegments * 0.55));
+        const sinhW = hyperbolicComplexPower(
+          sinhA * cosB,
+          coshA * sinB,
+          2 / degree
+        );
+        const z1 = hyperbolicBranchMultiply(
+          coshW,
+          2 * Math.PI * firstBranch / degree
+        );
+        const z2 = hyperbolicBranchMultiply(
+          sinhW,
+          2 * Math.PI * secondBranch / degree
+        );
+        return [z1[0], z1[1], z2[0], z2[1]];
+      }
 
-        for (let branch = 0; branch < degree; branch += 1) {
-          const innerRows = buildInnerSurfaceRows(
-            degree,
-            theta,
-            branch,
-            innerRadialSteps,
-            innerMaximumSegments
-          );
-          appendRingTriangles(innerRows, vertices);
-          appendRingCurves(innerRows, polylines);
-          appendRadialCurves(innerRows, innerRadialCurves, polylines, true);
+      function projectHyperbolicPoint(point, theta) {
+        const sine = Math.sin(theta);
+        const cosine = Math.cos(theta);
+        return [
+          -sine * point[0] + cosine * point[2],
+          point[1],
+          point[3]
+        ];
+      }
 
-          for (let sector = 0; sector < degree; sector += 1) {
-            const outerRows = buildOuterSurfaceRows(
-              degree,
-              theta,
-              branch,
-              sector,
-              outerRadialSteps,
-              outerMaximumSegments
-            );
-            appendSectorTriangles(outerRows, vertices);
-            appendSectorCurves(outerRows, polylines);
-            appendRadialCurves(outerRows, outerRadialCurves, polylines, false);
+      function pushHyperbolicTriangle(first, second, third, vertices) {
+        const normal = triangleNormal(first, second, third);
+        vertices.push(
+          first[0], first[1], first[2], normal[0], normal[1], normal[2],
+          second[0], second[1], second[2], normal[0], normal[1], normal[2],
+          third[0], third[1], third[2], normal[0], normal[1], normal[2]
+        );
+      }
+
+      function appendHyperbolicPatch(model, gridPoints, includeSurface) {
+        const rowCount = gridPoints.length;
+        const columnCount = gridPoints[0].length;
+
+        if (includeSurface) {
+          for (let rowIndex = 0; rowIndex < rowCount - 1; rowIndex += 1) {
+            for (let columnIndex = 0; columnIndex < columnCount - 1; columnIndex += 1) {
+              const first = gridPoints[rowIndex][columnIndex];
+              const second = gridPoints[rowIndex][columnIndex + 1];
+              const third = gridPoints[rowIndex + 1][columnIndex];
+              const fourth = gridPoints[rowIndex + 1][columnIndex + 1];
+              pushHyperbolicTriangle(first, third, fourth, model.vertices);
+              pushHyperbolicTriangle(first, fourth, second, model.vertices);
+            }
           }
         }
 
-        return { vertices, polylines };
+        for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+          model.polylines.push({
+            points: gridPoints[rowIndex],
+            depth: 0,
+            kind: 'grid'
+          });
+        }
+        for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
+          model.polylines.push({
+            points: gridPoints.map(row => row[columnIndex]),
+            depth: 0,
+            kind: 'grid'
+          });
+        }
+      }
+
+      function buildHyperbolicSurfaceModel(degree, theta) {
+        const model = { vertices: [], polylines: [] };
+        const includeSurface = displayStyle === 'surface';
+        const stepCount = 50;
+        const aValues = Array.from({ length: stepCount + 1 }, (_, index) =>
+          -1.5 + 3 * index / stepCount
+        );
+        const bValues = Array.from({ length: stepCount + 1 }, (_, index) =>
+          0.5 * Math.PI * index / stepCount
+        );
+
+        for (let firstBranch = 0; firstBranch < degree; firstBranch += 1) {
+          for (let secondBranch = 0; secondBranch < degree; secondBranch += 1) {
+            const gridPoints = aValues.map(a => bValues.map(b => {
+              const point4D = hyperbolicParameterPoint(
+                a,
+                b,
+                firstBranch,
+                secondBranch,
+                degree
+              );
+              return projectHyperbolicPoint(point4D, theta);
+            }));
+            appendHyperbolicPatch(model, gridPoints, includeSurface);
+          }
+        }
+
+        return model;
+      }
+
+      function buildSurfaceModel(degree, theta) {
+        return buildHyperbolicSurfaceModel(degree, theta);
       }
 
 
 
 
 
+
+      function isotropicPointMetric(pointFunction, first, second) {
+        const step = 1e-4;
+        const firstPositive = pointFunction(first + step, second);
+        const firstNegative = pointFunction(first - step, second);
+        const secondPositive = pointFunction(first, second + step);
+        const secondNegative = pointFunction(first, second - step);
+        const firstTangent = [
+          (firstPositive[0] - firstNegative[0]) / (2 * step),
+          (firstPositive[1] - firstNegative[1]) / (2 * step),
+          (firstPositive[2] - firstNegative[2]) / (2 * step)
+        ];
+        const secondTangent = [
+          (secondPositive[0] - secondNegative[0]) / (2 * step),
+          (secondPositive[1] - secondNegative[1]) / (2 * step),
+          (secondPositive[2] - secondNegative[2]) / (2 * step)
+        ];
+        const g11 = dotProduct(firstTangent, firstTangent);
+        const g22 = dotProduct(secondTangent, secondTangent);
+        const g12 = dotProduct(firstTangent, secondTangent);
+        const trace = g11 + g22;
+        const determinant = Math.max(1e-14, g11 * g22 - g12 * g12);
+        const discriminant = Math.hypot(g11 - g22, 2 * g12);
+        const largestEigenvalue = Math.max(1e-10, (trace + discriminant) / 2);
+        return {
+          stretch: Math.sqrt(largestEigenvalue),
+          density: Math.sqrt(determinant)
+        };
+      }
+
+      function isotropicSpacing(pointFunction, first, second, quality) {
+        const metric = isotropicPointMetric(pointFunction, first, second);
+        return Math.max(
+          quality.minimumSpacing,
+          Math.min(quality.maximumSpacing, quality.targetEdge / metric.stretch)
+        );
+      }
+
+      function isotropicRandomSource(seed) {
+        let state = seed >>> 0;
+        return () => {
+          state = (state + 0x6d2b79f5) >>> 0;
+          let value = Math.imul(state ^ (state >>> 15), 1 | state);
+          value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value;
+          return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function isotropicPointKey(point) {
+        return `${Math.round(point[0] * 1e10)}:${Math.round(point[1] * 1e10)}`;
+      }
+
+      function isotropicPoissonSample(boundaryPoints, domain, pointFunction, quality, seed) {
+        const points = [];
+        const pointRadii = [];
+        const seen = new Set();
+        const random = isotropicRandomSource(seed);
+        for (const point of boundaryPoints) {
+          const key = isotropicPointKey(point);
+          if (!seen.has(key)) {
+            seen.add(key);
+            points.push(point);
+            pointRadii.push(isotropicSpacing(pointFunction, point[0], point[1], quality));
+          }
+        }
+
+        const minimumRadius = Math.max(1e-4, Math.min(...pointRadii));
+        const cellSize = Math.max(1e-4, minimumRadius / Math.SQRT2);
+        const gridWidth = Math.max(1, Math.ceil(domain.width / cellSize));
+        const gridHeight = Math.max(1, Math.ceil(domain.height / cellSize));
+        const grid = Array.from({ length: gridWidth * gridHeight }, () => []);
+        const cellIndexOf = point => {
+          const cellX = Math.min(gridWidth - 1, Math.max(0, Math.floor((point[0] - domain.x) / cellSize)));
+          const cellY = Math.min(gridHeight - 1, Math.max(0, Math.floor((point[1] - domain.y) / cellSize)));
+          return cellY * gridWidth + cellX;
+        };
+        points.forEach((point, index) => grid[cellIndexOf(point)].push(index));
+
+        const hasNearbyPoint = (point, radius) => {
+          const range = Math.max(radius, quality.maximumSpacing);
+          const minimumX = Math.max(0, Math.floor((point[0] - range - domain.x) / cellSize));
+          const maximumX = Math.min(gridWidth - 1, Math.floor((point[0] + range - domain.x) / cellSize));
+          const minimumY = Math.max(0, Math.floor((point[1] - range - domain.y) / cellSize));
+          const maximumY = Math.min(gridHeight - 1, Math.floor((point[1] + range - domain.y) / cellSize));
+          for (let cellY = minimumY; cellY <= maximumY; cellY += 1) {
+            for (let cellX = minimumX; cellX <= maximumX; cellX += 1) {
+              for (const index of grid[cellY * gridWidth + cellX]) {
+                const requiredDistance = 0.8 * Math.max(radius, pointRadii[index]);
+                if (Math.hypot(point[0] - points[index][0], point[1] - points[index][1]) < requiredDistance) {
+                  return true;
+                }
+              }
+            }
+          }
+          return false;
+        };
+
+        const active = points.map((_, index) => index);
+        while (active.length > 0) {
+          const activeIndex = Math.floor(random() * active.length);
+          const sourceIndex = active[activeIndex];
+          const source = points[sourceIndex];
+          const sourceRadius = pointRadii[sourceIndex];
+          let accepted = false;
+
+          for (let attempt = 0; attempt < 18; attempt += 1) {
+            const angle = random() * 2 * Math.PI;
+            const distance = sourceRadius * (1 + random());
+            const candidate = [
+              source[0] + distance * Math.cos(angle),
+              source[1] + distance * Math.sin(angle)
+            ];
+            if (!domain.contains(candidate[0], candidate[1])) {
+              continue;
+            }
+
+            const candidateRadius = isotropicSpacing(pointFunction, candidate[0], candidate[1], quality);
+            if (hasNearbyPoint(candidate, candidateRadius)) {
+              continue;
+            }
+
+            const pointIndex = points.length;
+            points.push(candidate);
+            pointRadii.push(candidateRadius);
+            grid[cellIndexOf(candidate)].push(pointIndex);
+            active.push(pointIndex);
+            accepted = true;
+            break;
+          }
+
+          if (!accepted) {
+            active.splice(activeIndex, 1);
+          }
+        }
+
+        return points;
+      }
+
+      function orientIsotropicTriangle(triangle, points) {
+        const [a, b, c] = triangle;
+        const orientation = (points[b][0] - points[a][0]) * (points[c][1] - points[a][1]) -
+          (points[b][1] - points[a][1]) * (points[c][0] - points[a][0]);
+        return orientation < 0 ? [a, c, b] : triangle;
+      }
+
+      function isotropicCircumcircleContains(triangle, points, point) {
+        const [a, b, c] = triangle;
+        const ax = points[a][0] - point[0];
+        const ay = points[a][1] - point[1];
+        const bx = points[b][0] - point[0];
+        const by = points[b][1] - point[1];
+        const cx = points[c][0] - point[0];
+        const cy = points[c][1] - point[1];
+        const aa = ax * ax + ay * ay;
+        const bb = bx * bx + by * by;
+        const cc = cx * cx + cy * cy;
+        return ax * (by * cc - bb * cy) -
+          ay * (bx * cc - bb * cx) +
+          aa * (bx * cy - by * cx) > 1e-12;
+      }
+
+      function isotropicPointInTriangle(triangle, points, point) {
+        const [a, b, c] = triangle;
+        const first = (points[b][0] - points[a][0]) * (point[1] - points[a][1]) -
+          (points[b][1] - points[a][1]) * (point[0] - points[a][0]);
+        const second = (points[c][0] - points[b][0]) * (point[1] - points[b][1]) -
+          (points[c][1] - points[b][1]) * (point[0] - points[b][0]);
+        const third = (points[a][0] - points[c][0]) * (point[1] - points[c][1]) -
+          (points[a][1] - points[c][1]) * (point[0] - points[c][0]);
+        return first >= -1e-10 && second >= -1e-10 && third >= -1e-10;
+      }
+
+      function isotropicDelaunay(points) {
+        let minimumX = Infinity;
+        let maximumX = -Infinity;
+        let minimumY = Infinity;
+        let maximumY = -Infinity;
+        for (const point of points) {
+          minimumX = Math.min(minimumX, point[0]);
+          maximumX = Math.max(maximumX, point[0]);
+          minimumY = Math.min(minimumY, point[1]);
+          maximumY = Math.max(maximumY, point[1]);
+        }
+        const extent = Math.max(maximumX - minimumX, maximumY - minimumY, 1e-5);
+        const centerX = (minimumX + maximumX) / 2;
+        const centerY = (minimumY + maximumY) / 2;
+        const superPoints = points.concat([
+          [centerX - 12 * extent, centerY - 12 * extent],
+          [centerX + 12 * extent, centerY - 12 * extent],
+          [centerX, centerY + 12 * extent]
+        ]);
+        const triangles = [{
+          vertices: orientIsotropicTriangle([points.length, points.length + 1, points.length + 2], superPoints),
+          neighbors: [-1, -1, -1],
+          alive: true
+        }];
+        const pointTriangles = Array.from({ length: points.length }, () => []);
+        const gridExtent = Math.max(extent, 1e-5);
+        const gridSize = Math.max(4, Math.min(48, Math.ceil(Math.sqrt(points.length) * 2)));
+        const gridWidth = gridSize;
+        const gridHeight = gridSize;
+        const grid = Array.from({ length: gridWidth * gridHeight }, () => []);
+        points.forEach((point, index) => {
+          const cellX = Math.min(gridWidth - 1, Math.max(0, Math.floor((point[0] - minimumX) / gridExtent * gridWidth)));
+          const cellY = Math.min(gridHeight - 1, Math.max(0, Math.floor((point[1] - minimumY) / gridExtent * gridHeight)));
+          grid[cellY * gridWidth + cellX].push(index);
+        });
+
+        const locateStart = point => {
+          const cellX = Math.min(gridWidth - 1, Math.max(0, Math.floor((point[0] - minimumX) / gridExtent * gridWidth)));
+          const cellY = Math.min(gridHeight - 1, Math.max(0, Math.floor((point[1] - minimumY) / gridExtent * gridHeight)));
+          let bestIndex = -1;
+          let bestDistance = Infinity;
+          for (let range = 1; range < Math.max(gridWidth, gridHeight); range += 1) {
+            const maximumCellX = Math.min(gridWidth - 1, cellX + range);
+            const maximumCellY = Math.min(gridHeight - 1, cellY + range);
+            for (let searchY = Math.max(0, cellY - range); searchY <= maximumCellY; searchY += 1) {
+              for (let searchX = Math.max(0, cellX - range); searchX <= maximumCellX; searchX += 1) {
+                for (const index of grid[searchY * gridWidth + searchX]) {
+                  const distance = Math.hypot(point[0] - points[index][0], point[1] - points[index][1]);
+                  if (distance < bestDistance) {
+                    bestDistance = distance;
+                    bestIndex = index;
+                  }
+                }
+              }
+            }
+            if (bestIndex >= 0) {
+              break;
+            }
+          }
+
+          if (bestIndex >= 0) {
+            for (const triangleIndex of pointTriangles[bestIndex]) {
+              if (triangles[triangleIndex].alive) {
+                return triangleIndex;
+              }
+            }
+          }
+          return triangles.findIndex(triangle => triangle.alive);
+        };
+
+        for (let pointIndex = 0; pointIndex < points.length; pointIndex += 1) {
+          const point = points[pointIndex];
+          let currentIndex = locateStart(point);
+          let guard = 0;
+          while (guard++ < 1000) {
+            const triangle = triangles[currentIndex];
+            const [a, b, c] = triangle.vertices;
+            const orientationAB = (superPoints[b][0] - superPoints[a][0]) * (point[1] - superPoints[a][1]) -
+              (superPoints[b][1] - superPoints[a][1]) * (point[0] - superPoints[a][0]);
+            const orientationBC = (superPoints[c][0] - superPoints[b][0]) * (point[1] - superPoints[b][1]) -
+              (superPoints[c][1] - superPoints[b][1]) * (point[0] - superPoints[b][0]);
+            const orientationCA = (superPoints[a][0] - superPoints[c][0]) * (point[1] - superPoints[c][1]) -
+              (superPoints[a][1] - superPoints[c][1]) * (point[0] - superPoints[c][0]);
+            if (orientationAB >= -1e-10 && orientationBC >= -1e-10 && orientationCA >= -1e-10) {
+              break;
+            }
+            if (orientationAB < -1e-10 && triangle.neighbors[0] >= 0) {
+              currentIndex = triangle.neighbors[0];
+            } else if (orientationBC < -1e-10 && triangle.neighbors[1] >= 0) {
+              currentIndex = triangle.neighbors[1];
+            } else if (orientationCA < -1e-10 && triangle.neighbors[2] >= 0) {
+              currentIndex = triangle.neighbors[2];
+            } else {
+              currentIndex = triangles.findIndex(candidate => candidate.alive);
+            }
+          }
+
+          if (
+            currentIndex < 0 ||
+            !triangles[currentIndex].alive ||
+            !isotropicPointInTriangle(triangles[currentIndex].vertices, superPoints, point)
+          ) {
+            currentIndex = triangles.findIndex(triangle => triangle.alive &&
+              isotropicPointInTriangle(triangle.vertices, superPoints, point));
+          }
+
+          const badIndices = [];
+          const badSet = new Set();
+          const stack = [currentIndex];
+          while (stack.length > 0) {
+            const triangleIndex = stack.pop();
+            if (triangleIndex < 0) {
+              continue;
+            }
+            if (badSet.has(triangleIndex)) {
+              continue;
+            }
+            const triangle = triangles[triangleIndex];
+            if (!triangle.alive || !isotropicCircumcircleContains(triangle.vertices, superPoints, point)) {
+              continue;
+            }
+            badSet.add(triangleIndex);
+            badIndices.push(triangleIndex);
+            stack.push(...triangle.neighbors);
+          }
+
+          const boundaryEdges = [];
+          for (const badIndex of badIndices) {
+            const triangle = triangles[badIndex];
+            for (let edgeIndex = 0; edgeIndex < 3; edgeIndex += 1) {
+              const first = triangle.vertices[edgeIndex];
+              const second = triangle.vertices[(edgeIndex + 1) % 3];
+              const neighbor = triangle.neighbors[edgeIndex];
+              if (neighbor < 0 || !triangles[neighbor].alive || !badSet.has(neighbor)) {
+                boundaryEdges.push({ first, second, neighbor });
+              }
+            }
+          }
+
+          for (const badIndex of badIndices) {
+            triangles[badIndex].alive = false;
+          }
+
+          const newTriangles = [];
+          for (const edge of boundaryEdges) {
+            const triangleIndex = triangles.length;
+            const vertices = orientIsotropicTriangle([edge.first, edge.second, pointIndex], superPoints);
+            triangles.push({ vertices, neighbors: [-1, -1, -1], alive: true });
+            newTriangles.push(triangleIndex);
+            pointTriangles[pointIndex].push(triangleIndex);
+            for (const vertexIndex of vertices) {
+              if (vertexIndex < pointIndex) {
+                pointTriangles[vertexIndex].push(triangleIndex);
+              }
+            }
+          }
+
+          for (const triangleIndex of newTriangles) {
+            const triangle = triangles[triangleIndex];
+            for (let edgeIndex = 0; edgeIndex < 3; edgeIndex += 1) {
+              const first = triangle.vertices[edgeIndex];
+              const second = triangle.vertices[(edgeIndex + 1) % 3];
+              for (const otherIndex of newTriangles) {
+                if (otherIndex === triangleIndex) {
+                  continue;
+                }
+                const other = triangles[otherIndex];
+                const otherEdgeIndex = other.vertices.findIndex((vertex, index) => {
+                  const next = other.vertices[(index + 1) % 3];
+                  return (vertex === first && next === second) || (vertex === second && next === first);
+                });
+                if (otherEdgeIndex >= 0) {
+                  triangle.neighbors[edgeIndex] = otherIndex;
+                  other.neighbors[otherEdgeIndex] = triangleIndex;
+                }
+              }
+            }
+
+            for (const edge of boundaryEdges) {
+              if (edge.neighbor < 0) {
+                continue;
+              }
+              const edgeFirst = edge.first;
+              const edgeSecond = edge.second;
+              const edgeIndex = triangle.vertices.findIndex((vertex, index) => {
+                const next = triangle.vertices[(index + 1) % 3];
+                return (vertex === edgeFirst && next === edgeSecond) ||
+                  (vertex === edgeSecond && next === edgeFirst);
+              });
+              const outside = triangles[edge.neighbor];
+              const outsideEdgeIndex = outside.vertices.findIndex((vertex, index) => {
+                const next = outside.vertices[(index + 1) % 3];
+                return (vertex === edgeFirst && next === edgeSecond) ||
+                  (vertex === edgeSecond && next === edgeFirst);
+              });
+              if (edgeIndex >= 0 && outsideEdgeIndex >= 0) {
+                triangle.neighbors[edgeIndex] = edge.neighbor;
+                outside.neighbors[outsideEdgeIndex] = triangleIndex;
+              }
+            }
+          }
+        }
+
+        return triangles.filter(triangle => triangle.alive && triangle.vertices.every(
+          vertexIndex => vertexIndex < points.length
+        )).map(triangle => triangle.vertices);
+      }
+
+      function appendIsotropicPatch(paramPoints, triangles, pointFunction, model) {
+        const positions = paramPoints.map(point => pointFunction(point[0], point[1]));
+        const edges = new Set();
+        for (const [a, b, c] of triangles) {
+          const first = positions[a];
+          const second = positions[b];
+          const third = positions[c];
+          const normal = triangleNormal(first, second, third);
+          model.vertices.push(
+            first[0], first[1], first[2], normal[0], normal[1], normal[2],
+            second[0], second[1], second[2], normal[0], normal[1], normal[2],
+            third[0], third[1], third[2], normal[0], normal[1], normal[2]
+          );
+          for (let edgeIndex = 0; edgeIndex < 3; edgeIndex += 1) {
+            const firstIndex = [a, b, c][edgeIndex];
+            const secondIndex = [a, b, c][(edgeIndex + 1) % 3];
+            const key = firstIndex < secondIndex
+              ? `${firstIndex}:${secondIndex}`
+              : `${secondIndex}:${firstIndex}`;
+            if (!edges.has(key)) {
+              edges.add(key);
+              model.polylines.push({
+                points: [positions[firstIndex], positions[secondIndex]],
+                depth: 0,
+                kind: "grid"
+              });
+            }
+          }
+        }
+      }
+
+      function buildIsotropicPatch(domain, boundaryPoints, pointFunction, quality, seed, model) {
+        const boundaryCount = new Set(boundaryPoints.map(isotropicPointKey)).size;
+        let points = isotropicPoissonSample(
+          boundaryPoints,
+          domain,
+          pointFunction,
+          quality,
+          seed
+        );
+
+        for (let iteration = 0; iteration < quality.lloydIterations; iteration += 1) {
+          const triangles = isotropicDelaunay(points);
+          const neighbors = Array.from({ length: points.length }, () => new Set());
+          for (const [a, b, c] of triangles) {
+            neighbors[a].add(b);
+            neighbors[a].add(c);
+            neighbors[b].add(a);
+            neighbors[b].add(c);
+            neighbors[c].add(a);
+            neighbors[c].add(b);
+          }
+          const weights = points.map(point => isotropicPointMetric(
+            pointFunction,
+            point[0],
+            point[1]
+          ).density);
+          points = points.map((point, index) => {
+            if (index < boundaryCount) {
+              return point;
+            }
+            let weightTotal = 0;
+            let centroidX = 0;
+            let centroidY = 0;
+            for (const neighborIndex of neighbors[index]) {
+              const weight = weights[neighborIndex] + 1e-8;
+              weightTotal += weight;
+              centroidX += weight * points[neighborIndex][0];
+              centroidY += weight * points[neighborIndex][1];
+            }
+            if (weightTotal === 0) {
+              return point;
+            }
+            return domain.clamp(
+              point[0] + 0.65 * (centroidX / weightTotal - point[0]),
+              point[1] + 0.65 * (centroidY / weightTotal - point[1])
+            );
+          });
+        }
+
+        appendIsotropicPatch(points, isotropicDelaunay(points), pointFunction, model);
+      }
+
+      function buildIsotropicSurfaceModel(degree, theta) {
+        const model = { vertices: [], polylines: [] };
+        const highDetail = displayStyle === "surface";
+        const quality = {
+          targetEdge: highDetail ? 0.075 : 0.095,
+          minimumSpacing: highDetail ? 0.034 : 0.046,
+          maximumSpacing: highDetail ? 0.14 : 0.18,
+          maximumBoundarySegments: highDetail ? 128 : 96,
+          lloydIterations: 2
+        };
+
+        for (let branch = 0; branch < degree; branch += 1) {
+          const innerPointFunction = (x, y) => {
+            const radius = Math.hypot(x, y);
+            return projectedFermatPoint(radius, Math.atan2(y, x), branch, degree, theta);
+          };
+          const innerBoundaryAngles = sampleClosedCurve(
+            0,
+            2 * Math.PI,
+            angle => innerPointFunction(Math.cos(angle), Math.sin(angle)),
+            quality.targetEdge,
+            24,
+            quality.maximumBoundarySegments
+          ).map(angle => [Math.cos(angle), Math.sin(angle)]);
+          const innerDomain = {
+            x: -1,
+            y: -1,
+            width: 2,
+            height: 2,
+            contains: (x, y) => x * x + y * y <= 1.000001,
+            clamp: (x, y) => {
+              const radius = Math.hypot(x, y);
+              if (radius <= 0.999) {
+                return [x, y];
+              }
+              const scale = 0.999 / Math.max(radius, 1e-8);
+              return [x * scale, y * scale];
+            }
+          };
+          buildIsotropicPatch(
+            innerDomain,
+            innerBoundaryAngles,
+            innerPointFunction,
+            quality,
+            1000 + branch,
+            model
+          );
+
+          for (let sector = 0; sector < degree; sector += 1) {
+            const outerPointFunction = (rho, tau) =>
+              projectedOuterPoint(rho, tau, branch, sector, degree, theta);
+            const bottom = sampleOpenCurve(
+              0,
+              1,
+              tau => outerPointFunction(0, tau),
+              quality.targetEdge,
+              8,
+              quality.maximumBoundarySegments
+            ).map(tau => [0, tau]);
+            const top = sampleOpenCurve(
+              0,
+              1,
+              tau => outerPointFunction(1, tau),
+              quality.targetEdge,
+              8,
+              quality.maximumBoundarySegments
+            ).map(tau => [1, tau]);
+            const left = sampleOpenCurve(
+              0,
+              1,
+              rho => outerPointFunction(rho, 0),
+              quality.targetEdge,
+              3,
+              24
+            ).map(rho => [rho, 0]);
+            const right = sampleOpenCurve(
+              0,
+              1,
+              rho => outerPointFunction(rho, 1),
+              quality.targetEdge,
+              3,
+              24
+            ).map(rho => [rho, 1]);
+            const outerBoundary = [];
+            const seen = new Set();
+            for (const point of [...bottom, ...top.slice(1, -1), ...left.slice(1, -1), ...right.slice(1, -1)]) {
+              const key = isotropicPointKey(point);
+              if (!seen.has(key)) {
+                seen.add(key);
+                outerBoundary.push(point);
+              }
+            }
+            const outerDomain = {
+              x: 0,
+              y: 0,
+              width: 1,
+              height: 1,
+              contains: (rho, tau) => rho >= -1e-8 && rho <= 1.000001 && tau >= -1e-8 && tau <= 1.000001,
+              clamp: (rho, tau) => [
+                Math.max(0, Math.min(1, rho)),
+                Math.max(0, Math.min(1, tau))
+              ]
+            };
+            buildIsotropicPatch(
+              outerDomain,
+              outerBoundary,
+              outerPointFunction,
+              quality,
+              2000 + branch * degree + sector,
+              model
+            );
+          }
+        }
+
+        return model;
+      }
 
       function triangleNormal(first, second, third) {
         const firstEdge = [
