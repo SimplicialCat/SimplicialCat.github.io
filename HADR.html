@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Higher Algebra Done Right 讨论班介绍" />
+    <title>Higher Algebra Done Right</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="/favicon.ico" />
+    <script>
+        (function () {
+            var theme = new URLSearchParams(location.search).get("theme");
+            var dark = theme ? theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+            document.documentElement.dataset.theme = dark ? "dark" : "light";
+        })();
+    </script>
+    <style>
+        .hero {
+            padding: 48px 0 12px;
+        }
+
+        .hero-title {
+            font-size: 2.4rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            color: var(--navy);
+            margin: 0 0 8px;
+        }
+
+        .hero-subtitle {
+            color: var(--text-faint);
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0 20px;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            padding: 8px 6px;
+            border-bottom: 1px solid var(--line-light);
+            text-align: left;
+            color: var(--text-dim);
+        }
+
+        th {
+            color: var(--navy);
+            font-weight: 600;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body class="lang-zh">
+    <script>
+        (function () {
+            var lang = new URLSearchParams(location.search).get("lang");
+            document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
+            document.body.classList.toggle("lang-en", lang === "en");
+            document.body.classList.toggle("lang-zh", lang !== "en");
+        })();
+    </script>
+    <div id="customCursor"></div>
+
+    <div class="layout">
+        <header class="sidebar">
+            <h1 class="site-title">
+                <img src="simplopedia.svg" alt="" class="title-logo" />
+                HADR
+                <span class="subtitle">
+                    Higher Algebra Done Right
+                </span>
+            </h1>
+            <nav aria-label="页面导航">
+                <a class="nav-link active" href="#intro"><span class="en">Introduction</span><span class="zh">前言</span></a>
+                <a class="nav-link" href="#organization"><span class="en">Organization</span><span class="zh">会务组织</span></a>
+                <a class="nav-link" href="#prerequisites"><span class="en">Prerequisites</span><span class="zh">前置知识</span></a>
+                <a class="nav-link" href="#conventions"><span class="en">Conventions</span><span class="zh">重要约定</span></a>
+            </nav>
+            <div class="switches">
+                <div class="switch-row">
+                    <span class="switch-cap on" id="cap-en">EN</span>
+                    <button class="switch" id="lang-switch" role="switch" aria-checked="false"
+                            aria-label="Switch language / 切换语言" onclick="toggleLang()">
+                        <span class="knob"></span>
+                    </button>
+                    <span class="switch-cap" id="cap-zh">中</span>
+                </div>
+                <div class="switch-row">
+                    <span class="switch-cap on" id="cap-light">☀</span>
+                    <button class="switch" id="theme-switch" role="switch" aria-checked="false"
+                            aria-label="Toggle dark mode / 切换暗色" onclick="toggleTheme()">
+                        <span class="knob"></span>
+                    </button>
+                    <span class="switch-cap" id="cap-dark">☾</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+            <section id="intro" class="content-section">
+                <div class="hero">
+                    <h2 class="hero-title">Higher Algebra Done Right</h2>
+                    <p class="hero-subtitle">
+                        <span class="en">Seminar Plan (Draft, Version 2)</span>
+                        <span class="zh">讨论班计划 (拟稿 第2版)</span>
+                    </p>
+                </div>
+                <p>
+                    <span class="en">Higher Algebra is a book by Professor Jacob Lurie. Its main purpose is to establish theories of several kinds of algebra, such as commutative algebra and associative algebra, in ∞-categories (especially stable ∞-categories).</span>
+                    <span class="zh">Higher Algebra 是 Jacob Lurie 教授的著作, 主要目的是建立 ∞-范畴 (特别是稳定 ∞-范畴) 中交换代数和结合代数等几种代数的理论.</span>
+                </p>
+                <p>
+                    <span class="en">Higher Algebra Done Right is a group founded in 2023 by several students at Qiuzhen College from the classes of 2020 through 2023. At that time we began learning the concepts of higher category theory, dreaming of an essential understanding of Higher Algebra stripped of its model-theoretic shell. Three years later, in the summer of 2026, we finally felt that we had enough experience to read every chapter of Higher Algebra and to understand its model-independent essence. So it is time to hold this seminar and turn that experience into a shared consensus.</span>
+                    <span class="zh">Higher Algebra Done Right 是求真书院的几位 0 至 3 字班同学于 2023 年建立的群组. 那时我们开始学习高阶范畴的概念, 梦想对 Higher Algebra 获得一个剥去模型外壳的本质的理解. 三年后, 2026 年的夏天, 我们终于认为自己具备足够的阅历读懂 Higher Algebra 的每个章节, 以及其 “模型无关” (model-independent) 的本质. 因此是时候举办讨论班, 将这些阅历固化下来成为共识了.</span>
+                </p>
+            </section>
+
+            <section id="organization" class="content-section">
+                <h2><span class="en">Organization</span><span class="zh">会务组织</span></h2>
+                <p>
+                    <span class="en">The seminar is planned for the Fall 2026 semester at Qiuzhen College. To finish the plan within one semester, there will be one talk each week. The Fall 2026 semester begins on September 14.</span>
+                    <span class="zh">讨论班计划于 2026 年秋季学期在求真书院举办. 为了在一学期之内完成计划, 每周举办一场. 2026 年秋季学期从 9 月 14 日开始.</span>
+                </p>
+                <p class="convention">
+                    <span class="en">Specific time and place: TBD.</span>
+                    <span class="zh">具体时间地点待定.</span>
+                </p>
+                <p>
+                    <span class="en">By default I (Wang Jinyi) will be the speaker, but before each talk anyone is welcome to volunteer to lead it. Please provide an abstract, ideally notes (Chinese, TeX/Markdown), following the conventions below. You do not need to follow the exposition of HA; covering the corresponding topics is enough.</span>
+                    <span class="zh">主讲人默认为我 (王进一), 每一讲之前都欢迎任何人报名认领本次的主讲. 请提供摘要, 最好能提供讲稿 (中文, tex/markdown), 参照下文的重要约定. 不需要按照 HA 的讲法, 覆盖对应话题即可.</span>
+                </p>
+            </section>
+
+            <section id="prerequisites" class="content-section">
+                <h2><span class="en">Prerequisites</span><span class="zh">前置知识</span></h2>
+                <p>
+                    <span class="en">Participants should have some mathematical maturity and be familiar with the following concepts:</span>
+                    <span class="zh">讨论班需要参与者具有一定数学成熟度, 并了解以下概念:</span>
+                </p>
+                <ul>
+                    <li>
+                        <span class="en">Basic concepts of ordinary category theory</span>
+                        <span class="zh">传统范畴论的基本概念</span>
+                        <ul>
+                            <li><span class="en">limits, colimits, adjoint functors;</span><span class="zh">极限, 余极限, 伴随函子;</span></li>
+                            <li><span class="en">associative algebras, commutative algebras;</span><span class="zh">结合代数, 交换代数;</span></li>
+                            <li><span class="en">fibered categories, straightening–unstraightening;</span><span class="zh">纤维范畴, 直化–反直化;</span></li>
+                            <li><span class="en">presentable categories, the adjoint functor theorem;</span><span class="zh">可表现范畴, 伴随函子定理;</span></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="en">Basic concepts of ordinary homotopy theory</span>
+                        <span class="zh">传统同伦论基本概念</span>
+                        <ul>
+                            <li><span class="en">homotopy, homotopy equivalence, homotopy limits/colimits;</span><span class="zh">同伦, 同伦等价, 同伦极限/余极限;</span></li>
+                            <li><span class="en">spectra, spectral sequences.</span><span class="zh">谱, 谱序列.</span></li>
+                        </ul>
+                    </li>
+                </ul>
+                <p>
+                    <span class="en">The following background would be helpful:</span>
+                    <span class="zh">具有如下背景则更好:</span>
+                </p>
+                <ul>
+                    <li><span class="en">homotopy type theory (HoTT) — identity types, the univalence axiom;</span><span class="zh">同伦类型论 (HoTT) - 等式类型, 泛等公理;</span></li>
+                    <li><span class="en">topos theory.</span><span class="zh">意象理论.</span></li>
+                </ul>
+            </section>
+
+            <section id="conventions" class="content-section">
+                <h2><span class="en">Conventions</span><span class="zh">重要约定</span></h2>
+                <p>
+                    <span class="en">We hope all participants accept <strong>anima</strong> as a primitive mathematical concept, in the same way that <strong>sets</strong> are primitive in traditional mathematics.</span>
+                    <span class="zh">希望所有参与者接受以<strong>生象</strong> (anima) 为原生概念的数学, 如同传统数学中的<strong>集合</strong>一般.</span>
+                </p>
+                <p>
+                    <span class="en">By default, we will call an (∞,1)-category a <strong>category</strong>, an (∞,n)-category an n-category, and a stable ∞-category a <strong>stable category</strong>. Traditional “categories” will be called (1,1)-categories and automatically regarded as (∞,1)-categories; in particular, we will not use the notion of a “nerve”.</span>
+                    <span class="zh">我们将默认称 (∞,1)-范畴为<strong>范畴</strong>, (∞,n)-范畴为 n-范畴, 稳定 ∞-范畴为<strong>稳定范畴</strong>. 传统的 “范畴” 将称为 (1,1)-范畴并自动视为 (∞,1)-范畴, 即我们不会使用 “脉” (nerve) 的概念.</span>
+                </p>
+                <p>
+                    <span class="en">Category-theoretic concepts will mean their ∞-categorical versions by default. For example, we will not say “homotopy” limits or “derived” tensor products; we will simply say limits and tensor products.</span>
+                    <span class="zh">范畴论概念将默认为 ∞-范畴论的版本, 例如我们不会说 “同伦” 极限, “导出” 张量积, 而是直接说极限, 张量积.</span>
+                </p>
+
+                <h3><span class="en">Terminology</span><span class="zh">翻译</span></h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th><span class="en">Term</span><span class="zh">术语</span></th>
+                            <th><span class="en">Translation</span><span class="zh">翻译</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>anima</td><td>生象</td></tr>
+                        <tr><td>calculus</td><td>演算</td></tr>
+                        <tr><td>coherence</td><td>融贯性</td></tr>
+                        <tr><td>coherent operad</td><td>凝聚算畴</td></tr>
+                        <tr><td>operad</td><td>算畴</td></tr>
+                        <tr><td>presentable category</td><td>可表现范畴</td></tr>
+                        <tr><td>proper</td><td>紧合</td></tr>
+                        <tr><td>topos</td><td>意象</td></tr>
+                        <tr><td>univalence</td><td>泛等性</td></tr>
+                        <tr><td>wreath product</td><td>圈积</td></tr>
+                    </tbody>
+                </table>
+
+                <h3><span class="en">Model independence</span><span class="zh">模型无关</span></h3>
+                <p>
+                    <span class="en">We hope all participants use model-independent language as much as possible. In particular, please avoid the following notions:</span>
+                    <span class="zh">希望所有参与者尽量使用模型无关的语言, 即尽量避免使用如下概念:</span>
+                </p>
+                <ul>
+                    <li>
+                        <span class="en">the <strong>simplicial set model</strong> of ∞-categories and Kan complexes (although <strong>simplicial anima</strong> and <strong>Segal anima</strong> are reasonable);</span>
+                        <span class="zh">∞-范畴的<strong>单纯集模型</strong>, Kan 复形 (但<strong>单纯生象</strong>与 <strong>Segal 生象</strong>的概念是合理的);</span>
+                    </li>
+                    <li>
+                        <span class="en">the <strong>topological category model</strong> of ∞-categories, including concrete topological spaces (instead, use <strong>anima</strong> presented by topological spaces);</span>
+                        <span class="zh">∞-范畴的<strong>拓扑范畴模型</strong>, 包括具体的拓扑空间 (转而使用拓扑空间表现的<strong>生象</strong>);</span>
+                    </li>
+                    <li>
+                        <span class="en">the notion of a <strong>model category</strong>, including fibrant replacement;</span>
+                        <span class="zh"><strong>模型范畴</strong>的概念, 包括 fibrant replacement;</span>
+                    </li>
+                    <li>
+                        <span class="en">the notion of a <strong>fibered category</strong> (instead, use functors to <strong>Cat</strong>);</span>
+                        <span class="zh"><strong>纤维范畴</strong>的概念 (转而使用到 <strong>Cat</strong> 的函子);</span>
+                    </li>
+                    <li>
+                        <span class="en">the <strong>chain complex model</strong> of stable categories (unless the purpose of the talk is to introduce chain complexes) and <strong>differential graded categories</strong> (dg categories).</span>
+                        <span class="zh">稳定范畴的<strong>链复形模型</strong> (除非报告的目的就是介绍链复形), <strong>微分分次范畴</strong> (dg category).</span>
+                    </li>
+                </ul>
+                <p>
+                    <span class="en">We will ignore issues of “large” and “small” categories. For example, the category of categories <strong>Cat</strong> may itself be viewed as a category; we trust that a suitable hierarchy of type-theoretic universes can handle these issues.</span>
+                    <span class="zh">我们将忽略范畴的 “大” 与 “小” 的问题, 例如范畴的范畴 <strong>Cat</strong> 本身也可以视为一个范畴; 相信适当的类型论宇宙层级能够处理这些问题.</span>
+                </p>
+                <p>
+                    <span class="en">Since the mathematical foundations for ∞-categories are temporarily incomplete, we will not be able to pursue complete rigor.</span>
+                    <span class="zh">由于 ∞-范畴相关数学基础的暂时缺失, 我们将无法追求完全的严谨性.</span>
+                </p>
+
+                <h3><span class="en">Use of AI tools</span><span class="zh">AI 工具的使用</span></h3>
+                <p>
+                    <span class="en">This seminar encourages the use of AI tools. Following the Leiden Declaration, participants are asked to disclose the tools they used and their purposes, and to take responsibility for the accuracy of the final content.</span>
+                    <span class="zh">本讨论班鼓励 AI 工具的使用, 并希望参与者根据《莱顿宣言》, 透明地披露使用的工具以及目的, 并对最终内容的准确性负责.</span>
+                </p>
+                <p>
+                    <span class="en">The text portions of this draft seminar plan did not use any AI tools.</span>
+                    <span class="zh">这份讨论班计划拟稿的文字部分未使用任何 AI 工具.</span>
+                </p>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const themeSwitch = document.getElementById("theme-switch");
+        const langSwitch = document.getElementById("lang-switch");
+        const cursor = document.getElementById("customCursor");
+        const isDark = () => document.documentElement.dataset.theme === "dark";
+        const isChinese = () => document.body.classList.contains("lang-zh");
+
+        function setLanguage(language, updateURL) {
+            const chinese = language === "zh";
+            document.documentElement.lang = chinese ? "zh-CN" : "en";
+            document.body.classList.toggle("lang-zh", chinese);
+            document.body.classList.toggle("lang-en", !chinese);
+            langSwitch.classList.toggle("on", chinese);
+            langSwitch.setAttribute("aria-checked", chinese);
+            document.getElementById("cap-en").classList.toggle("on", !chinese);
+            document.getElementById("cap-zh").classList.toggle("on", chinese);
+            if (updateURL) {
+                const url = new URL(window.location);
+                url.searchParams.set("lang", language);
+                window.history.replaceState({}, "", url);
+            }
+        }
+
+        function toggleLang() {
+            setLanguage(isChinese() ? "en" : "zh", true);
+        }
+
+        function initLanguage() {
+            const language = new URLSearchParams(window.location.search).get("lang");
+            setLanguage(language === "en" ? "en" : "zh", false);
+        }
+
+        function setTheme(theme, updateURL) {
+            document.documentElement.dataset.theme = theme;
+            const dark = theme === "dark";
+            themeSwitch.classList.toggle("on", dark);
+            themeSwitch.setAttribute("aria-checked", dark);
+            document.getElementById("cap-light").classList.toggle("on", !dark);
+            document.getElementById("cap-dark").classList.toggle("on", dark);
+            if (updateURL) {
+                const url = new URL(window.location);
+                url.searchParams.set("theme", theme);
+                window.history.replaceState({}, "", url);
+            }
+            document.dispatchEvent(new CustomEvent("themechange"));
+        }
+
+        function toggleTheme() {
+            setTheme(isDark() ? "light" : "dark", true);
+        }
+
+        function initTheme() {
+            const theme = new URLSearchParams(window.location.search).get("theme");
+            if (theme === "dark" || theme === "light") {
+                setTheme(theme, false);
+                return;
+            }
+            const media = window.matchMedia("(prefers-color-scheme: dark)");
+            setTheme(media.matches ? "dark" : "light", false);
+            media.addEventListener("change", event => {
+                if (!new URLSearchParams(window.location.search).get("theme")) {
+                    setTheme(event.matches ? "dark" : "light", false);
+                }
+            });
+        }
+
+        function initScrollSpy() {
+            const links = [...document.querySelectorAll(".nav-link")];
+            const sections = [...document.querySelectorAll(".content-section")];
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    links.forEach(link => {
+                        link.classList.toggle("active", link.hash === "#" + entry.target.id);
+                    });
+                });
+            }, { rootMargin: "-15% 0px -70% 0px" });
+            sections.forEach(section => observer.observe(section));
+        }
+
+        function initTriangles() {
+            const field = document.createElement("div");
+            field.className = "tri-field";
+            field.setAttribute("aria-hidden", "true");
+            document.body.appendChild(field);
+
+            const palette = () => isDark()
+                ? ["#C7D2F2", "#8DA4EA", "#3560B0", "#6E7FE8", "#33508F"]
+                : ["#253055", "#465BAF", "#6AC6E8", "#7E7DFF", "#BACBF0"];
+            const triangles = [];
+            const count = Math.max(7, Math.min(14, Math.round(window.innerWidth / 110)));
+
+            for (let i = 0; i < count; i++) {
+                const element = document.createElement("i");
+                const data = {
+                    element,
+                    x: Math.random() * 100,
+                    y: Math.random() * 130 - 15,
+                    size: 40 + Math.random() * 110,
+                    speed: .05 + Math.random() * .25,
+                    rotation: Math.floor(Math.random() * 360),
+                    color: Math.floor(Math.random() * 5)
+                };
+                element.style.width = data.size + "px";
+                element.style.height = data.size + "px";
+                element.style.left = data.x + "vw";
+                element.style.background = palette()[data.color];
+                element.style.opacity = (.04 + Math.random() * .06).toFixed(3);
+                field.appendChild(element);
+                triangles.push(data);
+            }
+
+            document.addEventListener("themechange", () => {
+                triangles.forEach(triangle => {
+                    triangle.element.style.background = palette()[triangle.color];
+                });
+            });
+
+            let lastScrollY = -1;
+            (function render() {
+                const scrollY = window.scrollY;
+                if (scrollY !== lastScrollY) {
+                    lastScrollY = scrollY;
+                    const span = window.innerHeight * 1.3;
+                    triangles.forEach(triangle => {
+                        let y = (triangle.y / 100) * window.innerHeight - scrollY * triangle.speed;
+                        y = ((y % span) + span) % span - window.innerHeight * .15;
+                        triangle.element.style.transform = `translateY(${y.toFixed(1)}px) rotate(${triangle.rotation}deg)`;
+                    });
+                }
+                requestAnimationFrame(render);
+            })();
+        }
+
+        function initCursor() {
+            document.addEventListener("mousemove", event => {
+                cursor.style.left = event.clientX + "px";
+                cursor.style.top = event.clientY + "px";
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initLanguage();
+            initTheme();
+            initScrollSpy();
+            initTriangles();
+            initCursor();
+        });
+    </script>
+</body>
+</html>
