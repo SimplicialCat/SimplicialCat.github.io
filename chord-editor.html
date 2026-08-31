@@ -673,6 +673,12 @@ function insertCurrentChord(displayLabel){
 
 function deleteSelectedChords(){
  const selectedSet=new Set(selectedChordIds);
+ const firstDeletedIndex=progression.chords.findIndex(chord=>selectedSet.has(chord.id));
+ if(firstDeletedIndex>=0){
+  const deletedChord=progression.chords[firstDeletedIndex];
+  const nextChord=progression.chords[firstDeletedIndex+1];
+  if(deletedChord.rowBreakBefore&&nextChord&&!selectedSet.has(nextChord.id))nextChord.rowBreakBefore=true;
+ }
  progression.chords=progression.chords.filter(chord=>!selectedSet.has(chord.id));
  selectedChordIds=[];selectionAnchorId=null;
  cursorVisualAnchor=null;
