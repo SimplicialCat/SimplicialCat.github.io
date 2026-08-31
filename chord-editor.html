@@ -25,13 +25,13 @@ body{margin:0;font-family:"Segoe UI Variable Display","Segoe UI",Aptos,"Microsof
 .piano-group.collapsed #playButton{display:none}
 .app.keyboard-collapsed .editor-panel{flex:1 1 auto}
 .toolbar{display:flex;gap:8px;flex-wrap:wrap}
-.button{cursor:pointer;color:#fff;border:0;background:#14172c;height:37px;padding:0 13px;border-radius:11px;font:inherit;font-size:12px;transition:.22s ease;display:inline-flex;align-items:center;justify-content:center}
+.button{cursor:pointer;color:#fff;border:0;background:#14172c;height:37px;padding:0 13px;border-radius:7px;font:inherit;font-size:12px;transition:.22s ease;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;flex:0 0 auto}
 .button:hover{background:#20264a;transform:translateY(-1px)}
-.button.danger{height:44px;padding:0 18px;min-width:78px;color:#fff;background:#ff3f5e;box-shadow:0 8px 24px rgba(255,73,100,.24);font-size:14px;font-weight:700}
+.button.danger{height:44px;padding:0 18px;min-width:78px;color:#fff;background:#ff3f5e;box-shadow:0 8px 24px rgba(255,73,100,.24);font-size:14px;font-weight:700;border-radius:7px}
 .button.danger:hover{background:#ff5170;box-shadow:0 10px 32px rgba(255,73,100,.34);transform:translateY(-2px)}
 .button.primary{color:#00121d;background:#6fe9f7}
 .button.primary:hover{box-shadow:0 8px 28px rgba(105,241,218,.22)}
-.panel{position:relative;min-height:104px;padding:14px 18px;border-radius:20px;border:1px solid rgba(255,255,255,.09);background:#0d1020;box-shadow:0 12px 44px rgba(2,3,15,.38);overflow:hidden}
+.panel{position:relative;min-height:104px;padding:14px 18px;border-radius:12px;background:#0d1020;box-shadow:0 12px 44px rgba(2,3,15,.38);overflow:hidden}
 #recognitionPanel{height:104px}
 #recognitionPanel{display:flex;align-items:center}
 #outputZone{margin-top:0;width:100%}
@@ -40,21 +40,22 @@ body{margin:0;font-family:"Segoe UI Variable Display","Segoe UI",Aptos,"Microsof
 .label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.62}
 .empty-main{font-size:clamp(18px,2.4vw,26px);font-weight:700;line-height:1.1;margin-top:8px}
 .chord-line{font-size:clamp(26px,2.7vw,38px);line-height:1.05;margin-top:8px;display:flex;gap:7px;flex-wrap:wrap;align-items:center;text-shadow:0 0 22px rgba(100,107,255,.25)}
-.name-chip{display:inline-flex;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:13px;padding:.42em .7em;font-size:calc(var(--match-scale,1)*1em);opacity:var(--match-opacity,1)}
+.name-chip{display:inline-flex;align-items:center;background:rgba(255,255,255,.06);border-radius:8px;padding:.42em .7em;font-size:calc(var(--match-scale,1)*1em);opacity:var(--match-opacity,1)}
 .name-chip.accurate{color:#001626;background:#8be4f7;border-color:rgba(155,245,255,.74);box-shadow:0 10px 30px rgba(91,234,222,.32);opacity:1}
 .name-chip{cursor:pointer}
 .tag-line{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap}
-.tag{border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.11);padding:3px 8px;font-size:11px}
+.tag{border-radius:999px;background:rgba(255,255,255,.08);padding:3px 8px;font-size:11px}
 .piano-shell{position:relative;flex:1 1 180px;max-height:280px;min-height:150px;overflow-x:auto;overflow-y:hidden;touch-action:pan-x;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(132,160,255,.52) transparent;cursor:grab;user-select:none}
 .piano-shell.dragging{cursor:grabbing}
 .piano-shell::-webkit-scrollbar{height:8px}
 .piano-shell::-webkit-scrollbar-thumb{background:rgba(132,160,255,.42);border-radius:99px}
 .keyboard{--white-key-width:46px;height:100%;width:calc(var(--total-white-count,29)*var(--white-key-width));display:grid;grid-template-columns:repeat(var(--total-white-count,29),var(--white-key-width));align-items:end}
-.white-key{position:relative;height:100%;border:0;border-right:1px solid #c9cee4;border-radius:0 0 7px 7px;background:#f3f5fb;color:#37405e;outline:none;transition:.16s ease;z-index:1}
+.white-key{position:relative;height:100%;border:0;border-radius:0 0 4px 4px;background:#f3f5fb;color:#37405e;outline:none;transition:.16s ease;z-index:1}
+.white-key:not(:last-child){border-right:1px solid #c9cee4}
 .white-key::before{content:attr(data-name);position:absolute;right:5px;bottom:5px;font-size:9px;opacity:.42}
 .white-key.active{background:#2ec3f2;color:#00344a;box-shadow:0 6px 28px rgba(56,196,255,.62)}
 .white-key.pointer{background:#7ee0ff;transform:scale(.986)}
-.black-key{position:absolute;top:0;left:var(--left);width:calc(var(--white-key-width)*.59);height:61%;transform:translateX(-50%);border:0;border-bottom:none;border-radius:0 0 4px 4px;background:#12141f;color:#dfecfb;outline:none;transition:.17s cubic-bezier(.2,.7,.2,1);z-index:4;box-shadow:-4px 2px 12px rgba(4,6,20,.39),3px 3px 12px rgba(4,6,20,.29)}
+.black-key{position:absolute;top:0;left:var(--left);width:calc(var(--white-key-width)*.59);height:61%;transform:translateX(-50%);border:0;border-bottom:none;border-radius:0 0 3px 3px;background:#12141f;color:#dfecfb;outline:none;transition:.17s cubic-bezier(.2,.7,.2,1);z-index:4;box-shadow:-4px 2px 12px rgba(4,6,20,.39),3px 3px 12px rgba(4,6,20,.29)}
 .black-key span{position:absolute;bottom:4px;left:0;right:0;font-size:8px;color:#eee7;text-align:center}
 .black-key.active{background:#6a41f8;box-shadow:0 3px 19px rgba(117,86,248,.7)}
 .black-key.pointer{background:#5431dd;transform:translateX(-50%) scale(.97)}
@@ -66,16 +67,16 @@ body{margin:0;font-family:"Segoe UI Variable Display","Segoe UI",Aptos,"Microsof
 .editor-toolbar .button.primary{min-width:56px}
 #playProgressionButton{min-width:86px;padding:0 18px;color:#001626;background:#8be4f7;font-weight:700}
 #playProgressionButton:hover{background:#a8ecfa}
-#bpmInput{height:31px;width:86px;border:1px solid rgba(255,255,255,.12);border-radius:9px;background:#14172c;color:#eaf0ff;font:inherit;font-size:14px;text-align:center;outline:none}
+#bpmInput{height:31px;width:86px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#14172c;color:#eaf0ff;font:inherit;font-size:14px;text-align:center;outline:none;flex:0 0 auto}
 #bpmInput:focus{border-color:#8be4f7}
-.timeline-shell{flex:1 1 auto;height:250px;min-height:140px;overflow-x:auto;overflow-y:auto;scrollbar-gutter:stable;border-radius:12px;background:#101327;border:1px solid rgba(255,255,255,.07);cursor:text;touch-action:none;user-select:none}
+.timeline-shell{flex:1 1 auto;height:250px;min-height:140px;overflow-x:auto;overflow-y:auto;scrollbar-gutter:stable;border-radius:8px;background:#101327;cursor:text;touch-action:none;user-select:none}
 .timeline-shell.dragging,.timeline-shell.dragging *{cursor:grabbing!important}
 .timeline{--timeline-gap:20px;--timeline-row-gap:18px;--chord-block-height:104px;position:relative;width:max-content;min-width:100%;height:auto;min-height:100%;padding-right:var(--timeline-gap);display:flex;flex-direction:column;gap:var(--timeline-row-gap);align-items:flex-start}
 .timeline-row{flex:0 0 auto;width:max-content;min-width:100%;height:var(--chord-block-height);display:flex;gap:var(--timeline-gap);align-items:flex-start}
-.timeline-row.empty-row{border:1px dashed rgba(255,255,255,.13);border-radius:14px;background:rgba(255,255,255,.025)}
-.timeline-row.empty-row:hover{border-color:rgba(139,228,247,.36);background:rgba(139,228,247,.05)}
+.timeline-row.empty-row{border-radius:8px;background:rgba(255,255,255,.025)}
+.timeline-row.empty-row:hover{background:rgba(139,228,247,.05)}
 .chord-block{position:relative;flex:0 0 auto;height:var(--chord-block-height);width:calc(var(--duration) * 88px);min-width:88px;background:transparent;border-right:0;border-radius:0;color:#eaf2ff;display:block;cursor:pointer;user-select:none}
-.chord-block-body{position:relative;width:100%;height:100%;background:hsl(var(--root-hue,210) var(--chord-saturation,42%) 32%);border:1px solid hsl(var(--root-hue,210) var(--chord-saturation,42%) 54%);border-radius:14px;color:inherit;display:flex;align-items:center;justify-content:center;padding:0 8px;overflow:hidden}
+.chord-block-body{position:relative;width:100%;height:100%;background:hsl(var(--root-hue,210) var(--chord-saturation,42%) 32%);border:1px solid hsl(var(--root-hue,210) var(--chord-saturation,42%) 54%);border-radius:8px;color:inherit;display:flex;align-items:center;justify-content:center;padding:0 8px;overflow:hidden}
 .chord-block:hover .chord-block-body{background:hsl(var(--root-hue,210) var(--chord-saturation,42%) 38%)}
 .chord-block.selected .chord-block-body{background:hsl(var(--root-hue,210) var(--chord-saturation,42%) 23%);border-color:#74efe4;box-shadow:inset 0 0 0 2px #74efe4;color:#efffff}
 .chord-block.playing .chord-block-body{background:hsl(var(--root-hue,210) var(--chord-saturation,42%) 18%);border-color:#62f8ad;box-shadow:inset 0 0 0 2px #62f8ad}
@@ -85,13 +86,12 @@ body{margin:0;font-family:"Segoe UI Variable Display","Segoe UI",Aptos,"Microsof
 .chord-label{font-weight:700;font-size:22px;line-height:1.1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
 .resize-handle{position:absolute;top:0;right:0;width:12px;height:100%;cursor:ew-resize;z-index:3}
 .cursor-line{position:absolute;top:var(--cursor-top,0);height:var(--cursor-height,100%);width:2px;background:#8be4f7;transform:translateX(-1px);pointer-events:none;z-index:4;box-shadow:0 0 10px #8be4f7}
-@media (orientation:landscape) and (max-height:620px){
+@media (max-height:620px){
  .app{padding:6px 8px;gap:4px}
-.toolbar{gap:5px;flex-wrap:nowrap}
- .button{height:29px;font-size:10px}
- .button{padding:0 8px;border-radius:8px}
- .button.danger{height:29px;padding:0 9px;min-width:52px;font-size:10px;border-radius:8px}
- .panel{min-height:62px;padding:5px 8px;border-radius:10px;box-shadow:0 4px 18px rgba(2,3,15,.3)}
+ .toolbar{gap:4px;flex-wrap:wrap}
+  .button{height:28px;padding:0 8px;font-size:10px;border-radius:5px}
+  .button.danger{height:28px;padding:0 8px;min-width:0;font-size:10px;border-radius:5px}
+  .panel{min-height:62px;padding:5px 8px;border-radius:8px;box-shadow:0 4px 18px rgba(2,3,15,.3)}
  .indicator{width:6px;height:6px}
  .label{font-size:8px;letter-spacing:.06em}
  .empty-main{font-size:15px;margin-top:1px}
@@ -104,13 +104,12 @@ body{margin:0;font-family:"Segoe UI Variable Display","Segoe UI",Aptos,"Microsof
  .empty-main{font-size:13px;margin-top:0}
  .chord-line{font-size:19px;gap:3px;margin-top:0;height:28px;max-height:28px;overflow:hidden}
  .name-chip{padding:.08em .22em;border-radius:6px;font-size:16px}
- .editor-panel{flex:1 1 auto;min-height:88px;padding:4px 6px;gap:4px}
- .editor-toolbar{gap:4px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
- .editor-toolbar::-webkit-scrollbar{display:none}
- .editor-toolbar .button{height:24px;padding:0 7px;font-size:9px;border-radius:7px}
+ .editor-panel{flex:1 1 auto;min-height:82px;padding:4px 6px;gap:4px}
+ .editor-toolbar{gap:3px;flex-wrap:wrap;overflow:visible}
+ .editor-toolbar .button{height:24px;padding:0 7px;font-size:9px;border-radius:4px}
  .editor-toolbar .button.primary{min-width:40px}
- #bpmInput{height:24px;width:68px;font-size:12px;border-radius:7px}
- .timeline-shell{min-height:56px;max-height:110px;border-radius:6px}
+ #bpmInput{height:24px;width:68px;font-size:12px;border-radius:4px}
+ .timeline-shell{min-height:56px;max-height:110px;border-radius:5px}
  .timeline{--chord-block-height:46px;row-gap:6px}
  .timeline.empty::after{font-size:9px}
  .chord-label{font-size:15px}
@@ -159,6 +158,7 @@ const WHITE_PCS=[0,2,4,5,7,9,11];
 const selectedMidis=[],playingVoices=new Map(),keyElements=new Map();
 let pendingMouseKey=null;
 const activeMidiNotes=new Set();
+let midiConnected=false;
 const chordColorCache=new WeakMap();
 let audioContext=null,masterGain=null,convolver=null,delayNode=null,delayFeedback=null,pianoNoiseBuffer=null;
 
@@ -257,6 +257,7 @@ async function setupWebMidi(){
  connectMidiButton.disabled=true;
  try{
   const access=await navigator.requestMIDIAccess({sysex:false});
+  midiConnected=true;
   connectMidiButton.textContent="MIDI 已连接";
   const connectedInputs=new WeakSet();
   const connectInput=input=>{
@@ -277,6 +278,7 @@ function handleMidiMessage(event){
  const [status,note,velocity]=event.data;
  const command=status&0xf0;
  if(command===0x90&&velocity>0){
+  if(midiConnected&&activeMidiNotes.size===0)clearSelection();
   if(activeMidiNotes.has(note))return;
   activeMidiNotes.add(note);
   const key=keyElements.get(note);
@@ -1114,6 +1116,8 @@ document.addEventListener("keydown",event=>{
 const CHORD_SHAPES=[
  {symbol:"",title:"大三和弦",rank:100,required:[4,7]},
  {symbol:"m",title:"小三和弦",rank:99,required:[3,7]},
+ {symbol:"",title:"大三和弦（省略五音）",rank:80,required:[4]},
+ {symbol:"m",title:"小三和弦（省略五音）",rank:30,required:[3]},
  {symbol:"dim",title:"减三和弦",rank:77,required:[3,6]},
  {symbol:"+",title:"增三和弦",rank:57,required:[4,8]},
  {symbol:"sus4",title:"挂留四度和弦",rank:74,required:[5,7]},
@@ -1122,20 +1126,23 @@ const CHORD_SHAPES=[
  {symbol:"6",title:"大六和弦",rank:76,required:[4,7,9]},
  {symbol:"m6",title:"小六和弦",rank:53,required:[3,9],optional:[7]},
  {symbol:"6/9",title:"六九和弦",rank:49,required:[4,7,9,14]},
+ {symbol:"m6/9",title:"小六九和弦",rank:84,required:[3,7,9,14]},
  {symbol:"maj7",title:"大七和弦",rank:91,required:[4,11],optional:[7]},
  {symbol:"7",title:"属七和弦",rank:93,required:[4,10],optional:[7]},
  {symbol:"m7",title:"小七和弦",rank:89,required:[3,10],optional:[7]},
  {symbol:"mMaj7",title:"小主大七和弦",rank:38,required:[3,11],optional:[7]},
  {symbol:"ø7",title:"半减七和弦",rank:66,required:[3,6,10]},
  {symbol:"o7",title:"减七和弦",rank:70,required:[3,6,9]},
+ {symbol:"o7♭9",title:"减七降九和弦",rank:68,required:[3,6,9,13]},
  {symbol:"7♯5",title:"增属七和弦",rank:27,required:[4,8,10]},
  {symbol:"7♭5",title:"降五属七和弦",rank:25,required:[4,6,10]},
  {symbol:"maj7♯5",title:"增大七和弦",rank:21,required:[4,8,11]},
  {symbol:"maj7♭5",title:"降五大七和弦",rank:19,required:[4,6,11]},
- {symbol:"add9",title:"加九和弦",rank:81,required:[4,7,14]},
- {symbol:"m(add9)",title:"小加九和弦",rank:48,required:[3,7,14]},
+ {symbol:"add9",title:"加九和弦",rank:81,required:[4,14],optional:[7]},
+ {symbol:"m(add9)",title:"小加九和弦",rank:48,required:[3,14],optional:[7]},
  {symbol:"add11",title:"加十一和弦",rank:31,required:[4,7,17]},
  {symbol:"m(add11)",title:"小加十一和弦",rank:24,required:[3,7,17]},
+ {symbol:"m7add11",title:"小七加十一和弦",rank:86,required:[3,10,17],optional:[7]},
  {symbol:"add♯11",title:"加升十一和弦",rank:20,required:[4,7,18]},
  {symbol:"9",title:"九和弦",rank:85,required:[4,10,14],optional:[7]},
  {symbol:"maj9",title:"大九和弦",rank:83,required:[4,11,14],optional:[7]},
