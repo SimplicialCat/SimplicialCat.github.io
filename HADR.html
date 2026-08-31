@@ -16,7 +16,7 @@
     </script>
     <style>
         .hero {
-            padding: 48px 0 12px;
+            padding: 0 0 12px;
         }
 
         .hero-title {
@@ -106,10 +106,10 @@
         <main class="container">
             <section id="intro" class="content-section">
                 <div class="hero">
-                    <h2 class="hero-title">Higher Algebra Done Right</h2>
+                    <h2 class="hero-title">Higher Algebra Done Right 讨论班</h2>
                     <p class="hero-subtitle">
                         <span class="en">Seminar Plan (Draft, Version 2)</span>
-                        <span class="zh">讨论班计划 (拟稿 第2版)</span>
+                        <span class="zh">计划 (拟稿 第2版)</span>
                     </p>
                 </div>
                 <p>
@@ -135,6 +135,20 @@
                 <p>
                     <span class="en">By default I (Wang Jinyi) will be the speaker, but before each talk anyone is welcome to volunteer to lead it. Please provide an abstract, ideally notes (Chinese, TeX/Markdown), following the conventions below. You do not need to follow the exposition of HA; covering the corresponding topics is enough.</span>
                     <span class="zh">主讲人默认为我 (王进一), 每一讲之前都欢迎任何人报名认领本次的主讲. 请提供摘要, 最好能提供讲稿 (中文, tex/markdown), 参照下文的重要约定. 不需要按照 HA 的讲法, 覆盖对应话题即可.</span>
+                </p>
+                <h3><span class="en">Online Participation</span><span class="zh">在线参会</span></h3>
+                <p>
+                    <span class="en">All talks will be streamed live via Tencent Meeting.</span>
+                    <span class="zh">讨论班的每次报告均会通过腾讯会议直播并录制.</span>
+                </p>
+                <p style="font-weight:bold; font-size:1.2em;">
+                    <span class="en">Meeting ID: </span>
+                    <span class="zh">会议号：</span>
+                    <span id="meeting-id" style="letter-spacing:2px;">598-747-9669</span>
+                    <button id="copy-btn" style="font-weight:normal; font-size:0.8em; margin-left:10px; cursor:pointer; background:none; border:1px solid #ccc; border-radius:4px; padding:2px 8px;">
+                        <span class="en">Copy</span>
+                        <span class="zh">复制</span>
+                    </button>
                 </p>
             </section>
 
@@ -408,6 +422,46 @@
             initTriangles();
             initCursor();
         });
+
+        document.getElementById('copy-btn').addEventListener('click', function() {
+  // 获取会议号（去掉连字符）
+  const idEl = document.getElementById('meeting-id');
+  const rawId = idEl.textContent.replace(/-/g, ''); // 若需要纯数字复制
+
+  // 复制到剪贴板
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(rawId).then(() => {
+      showCopied(this);
+    }).catch(() => {
+      fallbackCopy(idEl.textContent, this);
+    });
+  } else {
+    fallbackCopy(idEl.textContent, this);
+  }
+});
+
+function fallbackCopy(text, btn) {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand('copy');
+    showCopied(btn);
+  } catch (e) {}
+  document.body.removeChild(textarea);
+}
+
+function showCopied(btn) {
+  // 改变按钮内的文字
+  btn.innerHTML = '<span class="en">Copied</span><span class="zh">已复制</span>';
+  btn.style.borderColor = '#28a745';
+  // 2秒后恢复
+  setTimeout(() => {
+    btn.innerHTML = '<span class="en">Copy</span><span class="zh">复制</span>';
+    btn.style.borderColor = '#ccc';
+  }, 2000);
+}
     </script>
 </body>
 </html>
