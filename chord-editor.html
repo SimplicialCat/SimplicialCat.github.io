@@ -20,6 +20,7 @@ body{margin:0;font-family:"Segoe UI Variable Display","Segoe UI",Aptos,"Microsof
 .piano-actions{justify-content:flex-start}
 .piano-actions .button,
 .piano-actions .button.danger{height:37px}
+.button:disabled{opacity:.55;pointer-events:none}
 .piano-group.collapsed #clearButton,
 .piano-group.collapsed #playButton{display:none}
 .app.keyboard-collapsed .editor-panel{flex:1 1 auto}
@@ -139,6 +140,7 @@ body{margin:0;font-family:"Segoe UI Variable Display","Segoe UI",Aptos,"Microsof
   </section>
   <div class="toolbar piano-actions">
    <button id="pianoToggleButton" class="button" aria-expanded="true" aria-controls="pianoGroup">隐藏键盘</button>
+   <button id="connectMidiButton" class="button">连接 MIDI 设备</button>
    <button id="clearButton" class="button danger">清空</button>
    <button id="playButton" class="button primary">播放已选</button>
   </div>
@@ -156,6 +158,7 @@ const BLACK_PCS=new Set([1,3,6,8,10]);
 const WHITE_PCS=[0,2,4,5,7,9,11];
 const selectedMidis=[],playingVoices=new Map(),keyElements=new Map();
 let pendingMouseKey=null;
+const activeMidiNotes=new Set();
 const chordColorCache=new WeakMap();
 let audioContext=null,masterGain=null,convolver=null,delayNode=null,delayFeedback=null,pianoNoiseBuffer=null;
 
@@ -165,6 +168,7 @@ const pianoShell=document.getElementById("pianoShell");
 const appElement=document.querySelector(".app");
 const pianoGroup=document.getElementById("pianoGroup");
 const pianoToggleButton=document.getElementById("pianoToggleButton");
+const connectMidiButton=document.getElementById("connectMidiButton");
 const timelineElement=document.getElementById("timeline");
 const timelineShell=document.getElementById("timelineShell");
 const cursorLine=document.getElementById("cursorLine");
@@ -242,6 +246,44 @@ function commitPendingMouseKey(pointerId){
  const pending=pendingMouseKey;
  pendingMouseKey=null;
  activatePianoKey(pending.key,pending.midi);
+}
+
+async function setupWebMidi(){
+ if(!navigator.requestMIDIAccess){
+  connectMidiButton.textContent="MIDI 不受支持";
+  connectMidiButton.disabled=true;
+  return;
+ }
+ connectMidiButton.disabled=true;
+ try{
+  const access=await navigator.requestMIDIAccess({sysex:false});
+  connectMidiButton.textContent="MIDI 已连接";
+  const connectedInputs=new WeakSet();
+  const connectInput=input=>{
+   if(connectedInputs.has(input))return;
+   connectedInputs.add(input);
+   input.addEventListener("midimessage",handleMidiMessage);
+  };
+  access.inputs.forEach(connectInput);
+  access.addEventListener("statechange",()=>access.inputs.forEach(connectInput));
+ }catch(error){
+  connectMidiButton.textContent="连接 MIDI 设备";
+  connectMidiButton.disabled=false;
+ }
+}
+
+function handleMidiMessage(event){
+ if(!event.data||event.data.length<3)return;
+ const [status,note,velocity]=event.data;
+ const command=status&0xf0;
+ if(command===0x90&&velocity>0){
+  if(activeMidiNotes.has(note))return;
+  activeMidiNotes.add(note);
+  const key=keyElements.get(note);
+  if(key)activatePianoKey(key,note);
+ }else if(command===0x80||(command===0x90&&velocity===0)){
+  activeMidiNotes.delete(note);
+ }
 }
 
 window.addEventListener("pointermove",event=>{
@@ -1288,6 +1330,7 @@ document.getElementById("clearButton").addEventListener("click",()=>{
 pianoToggleButton.addEventListener("click",()=>{
  setPianoCollapsed(!pianoGroup.classList.contains("collapsed"));
 });
+connectMidiButton.addEventListener("click",setupWebMidi);
 document.getElementById("playButton").addEventListener("click",playCurrentChord);
 playProgressionButton.addEventListener("click",()=>{
  if(progressionPlayingIndex>=0)stopProgressionPlayback();
