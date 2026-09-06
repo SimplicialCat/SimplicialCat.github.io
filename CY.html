@@ -11,6 +11,16 @@
       --ink: #1f1e1b;
       --muted: rgba(31, 30, 27, .55);
       --hairline: rgba(31, 30, 27, .18);
+      --toggle-active: rgba(31, 30, 27, .09);
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --paper: #181614;
+      --ink: #f5f1e8;
+      --muted: rgba(245, 241, 232, .58);
+      --hairline: rgba(245, 241, 232, .2);
+      --toggle-active: rgba(245, 241, 232, .12);
     }
 
     * {
@@ -150,6 +160,15 @@
       outline-offset: 3px;
     }
 
+    .color-controls {
+      margin-top: .7rem;
+    }
+
+    .color-control {
+      grid-template-columns: 4rem 1fr 4.5rem;
+      margin-bottom: .55rem;
+    }
+
     .controls {
       position: absolute;
       left: 38px;
@@ -258,7 +277,7 @@
     }
 
     .toggle input:checked + .toggle-track {
-      background: rgba(31, 30, 27, .09);
+      background: var(--toggle-active);
     }
 
     .toggle input:checked + .toggle-track::after {
@@ -347,6 +366,56 @@
             <span>曲面</span>
           </label>
         </div>
+        <div class="color-controls">
+          <p class="settings-title">颜色</p>
+          <div class="control color-control">
+            <span>背景</span>
+            <div class="style-options" role="radiogroup" aria-label="背景色">
+              <label class="style-option">
+                <input type="radio" name="background-color" value="light" checked>
+                <span>浅色</span>
+              </label>
+              <label class="style-option">
+                <input type="radio" name="background-color" value="dark">
+                <span>深色</span>
+              </label>
+            </div>
+          </div>
+          <label class="control color-control">
+            <span>色相</span>
+            <input id="surface-hue" type="range" min="0" max="360" step="1" value="210">
+            <output id="surface-hue-value">210°</output>
+          </label>
+          <label class="control color-control">
+            <span>亮度</span>
+            <input id="surface-lightness" type="range" min="0" max="100" step="1" value="62">
+            <output id="surface-lightness-value">62%</output>
+          </label>
+          <label class="control color-control">
+            <span>饱和度</span>
+            <input id="surface-saturation" type="range" min="0" max="100" step="1" value="72">
+            <output id="surface-saturation-value">72%</output>
+          </label>
+        </div>
+        <p class="settings-title">质感</p>
+        <div class="style-options" role="radiogroup" aria-label="曲面质感">
+          <label class="style-option">
+            <input type="radio" name="surface-material" value="matte" checked>
+            <span>哑光</span>
+          </label>
+          <label class="style-option">
+            <input type="radio" name="surface-material" value="ceramic">
+            <span>陶瓷</span>
+          </label>
+          <label class="style-option">
+            <input type="radio" name="surface-material" value="satin">
+            <span>缎面</span>
+          </label>
+          <label class="style-option">
+            <input type="radio" name="surface-material" value="metal">
+            <span>金属</span>
+          </label>
+        </div>
         <div class="control axes-control">
           <label class="toggle">
             <input id="show-axes" type="checkbox">
@@ -383,6 +452,14 @@
       const settingsPanel = document.getElementById("settings-panel");
       const titleElement = document.querySelector("header h1");
       const styleInputs = Array.from(document.querySelectorAll("input[name='display-style']"));
+      const backgroundColorInputs = Array.from(document.querySelectorAll("input[name='background-color']"));
+      const materialInputs = Array.from(document.querySelectorAll("input[name='surface-material']"));
+      const surfaceHueInput = document.getElementById("surface-hue");
+      const surfaceLightnessInput = document.getElementById("surface-lightness");
+      const surfaceSaturationInput = document.getElementById("surface-saturation");
+      const surfaceHueValue = document.getElementById("surface-hue-value");
+      const surfaceLightnessValue = document.getElementById("surface-lightness-value");
+      const surfaceSaturationValue = document.getElementById("surface-saturation-value");
 
       let surfaceBuffer = null;
       let gridBuffer = null;
@@ -399,6 +476,12 @@
       let renderScheduled = false;
       let showAxes = axesInput.checked;
       let displayStyle = styleInputs.find(input => input.checked).value;
+      let backgroundTheme = backgroundColorInputs.find(input => input.checked).value;
+      let material = materialInputs.find(input => input.checked).value;
+      let surfaceHue = Number(surfaceHueInput.value);
+      let surfaceLightness = Number(surfaceLightnessInput.value) / 100;
+      let surfaceSaturation = Number(surfaceSaturationInput.value) / 100;
+      let surfaceColor = hslToRgb(surfaceHue / 360, surfaceSaturation, surfaceLightness);
       let zoom = 1;
       let orientation = quaternionMultiply(
         quaternionFromAxisAngle([1, 0, 0], 0.28),
@@ -408,6 +491,69 @@
 
       const radiusMax = 1.22;
       const cameraDistance = 5.2;
+
+      const themeClearColors = {
+        light: [0.9608, 0.9451, 0.9098],
+        dark: [0.0941, 0.0863, 0.0784]
+      };
+      const themeInkColors = {
+        light: [0.0706, 0.0706, 0.0667],
+        dark: [0.9608, 0.9451, 0.9098]
+      };
+      const gridColors = {
+        black: [0.0706, 0.0706, 0.0667],
+        white: [0.9608, 0.9451, 0.9098]
+      };
+      const materialPresets = {
+        matte: {
+          specularStrength: 0.06,
+          shininess: 10,
+          fresnelStrength: 0.04,
+          metalness: 0
+        },
+        ceramic: {
+          specularStrength: 0.58,
+          shininess: 64,
+          fresnelStrength: 0.10,
+          metalness: 0
+        },
+        satin: {
+          specularStrength: 0.30,
+          shininess: 30,
+          fresnelStrength: 0.09,
+          metalness: 0.05
+        },
+        metal: {
+          specularStrength: 0.62,
+          shininess: 46,
+          fresnelStrength: 0.24,
+          metalness: 0.78
+        }
+      };
+
+      function hslToRgb(hue, saturation, lightness) {
+        const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
+        const hueSegment = hue * 6;
+        const secondary = chroma * (1 - Math.abs(hueSegment % 2 - 1));
+        const match = lightness - chroma / 2;
+        let rgb;
+
+        if (hueSegment < 1) {
+          rgb = [chroma, secondary, 0];
+        } else if (hueSegment < 2) {
+          rgb = [secondary, chroma, 0];
+        } else if (hueSegment < 3) {
+          rgb = [0, chroma, secondary];
+        } else if (hueSegment < 4) {
+          rgb = [0, secondary, chroma];
+        } else if (hueSegment < 5) {
+          rgb = [secondary, 0, chroma];
+        } else {
+          rgb = [chroma, 0, secondary];
+        }
+
+        return rgb.map(channel => channel + match);
+      }
 
       const surfaceVertexShaderSource = `
         const float cameraDistance = ${cameraDistance.toFixed(2)};
@@ -439,11 +585,24 @@
         precision mediump float;
         varying vec3 v_normal;
         uniform vec3 u_lightDirection;
+        uniform vec3 u_color;
+        uniform float u_specularStrength;
+        uniform float u_shininess;
+        uniform float u_fresnelStrength;
+        uniform float u_metalness;
         void main() {
           vec3 normal = normalize(v_normal);
-          float diffuse = abs(dot(normal, normalize(u_lightDirection)));
-          float shade = 0.58 + 0.42 * diffuse;
-          gl_FragColor = vec4(vec3(shade), 1.0);
+          vec3 lightDirection = normalize(u_lightDirection);
+          vec3 viewDirection = vec3(0.0, 0.0, 1.0);
+          vec3 halfwayDirection = normalize(lightDirection + viewDirection);
+          float facing = abs(dot(normal, viewDirection));
+          float diffuse = abs(dot(normal, lightDirection));
+          float specular = pow(abs(dot(normal, halfwayDirection)), u_shininess) * facing;
+          float fresnel = pow(1.0 - facing, 3.0);
+          vec3 specularColor = mix(vec3(1.0), u_color, u_metalness);
+          vec3 shadedColor = u_color * (0.58 + 0.42 * diffuse);
+          shadedColor += specularColor * (specular * u_specularStrength + fresnel * u_fresnelStrength);
+          gl_FragColor = vec4(shadedColor, 1.0);
         }
       `;
 
@@ -1913,7 +2072,9 @@
 
         const pixelRatio = axisLabelCanvas.width / Math.max(1, window.innerWidth);
         axisLabelContext.font = `${Math.round(13 * pixelRatio)}px "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif`;
-        axisLabelContext.fillStyle = "rgba(31, 30, 27, .68)";
+        axisLabelContext.fillStyle = backgroundTheme === "dark"
+          ? "rgba(245, 241, 232, .68)"
+          : "rgba(31, 30, 27, .68)";
         axisLabelContext.textAlign = "center";
         axisLabelContext.textBaseline = "middle";
 
@@ -1953,7 +2114,12 @@
           resolution: gl.getUniformLocation(surfaceProgram, "u_resolution"),
           center: gl.getUniformLocation(surfaceProgram, "u_center"),
           scale: gl.getUniformLocation(surfaceProgram, "u_scale"),
-          lightDirection: gl.getUniformLocation(surfaceProgram, "u_lightDirection")
+          lightDirection: gl.getUniformLocation(surfaceProgram, "u_lightDirection"),
+          color: gl.getUniformLocation(surfaceProgram, "u_color"),
+          specularStrength: gl.getUniformLocation(surfaceProgram, "u_specularStrength"),
+          shininess: gl.getUniformLocation(surfaceProgram, "u_shininess"),
+          fresnelStrength: gl.getUniformLocation(surfaceProgram, "u_fresnelStrength"),
+          metalness: gl.getUniformLocation(surfaceProgram, "u_metalness")
         };
         lineUniforms = {
           rotation: gl.getUniformLocation(lineProgram, "u_rotation"),
@@ -1991,6 +2157,12 @@
         gl.uniform2f(surfaceUniforms.center, centerX, centerY);
         gl.uniform1f(surfaceUniforms.scale, scale);
         gl.uniform3f(surfaceUniforms.lightDirection, 0.38, 0.64, 0.67);
+        gl.uniform3f(surfaceUniforms.color, surfaceColor[0], surfaceColor[1], surfaceColor[2]);
+        const preset = materialPresets[material];
+        gl.uniform1f(surfaceUniforms.specularStrength, preset.specularStrength);
+        gl.uniform1f(surfaceUniforms.shininess, preset.shininess);
+        gl.uniform1f(surfaceUniforms.fresnelStrength, preset.fresnelStrength);
+        gl.uniform1f(surfaceUniforms.metalness, preset.metalness);
         gl.drawArrays(gl.TRIANGLES, 0, surfaceVertexCount);
         gl.disableVertexAttribArray(surfaceAttributes.normal);
       }
@@ -2010,7 +2182,8 @@
 
       function render() {
         gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.clearColor(0.9608, 0.9451, 0.9098, 1.0);
+        const clearColor = themeClearColors[backgroundTheme];
+        gl.clearColor(clearColor[0], clearColor[1], clearColor[2], 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
@@ -2031,11 +2204,13 @@
         gl.depthMask(false);
 
         if (showAxes && axesVertexCount > 0) {
-          drawLines(axesBuffer, axesVertexCount, [0.12, 0.12, 0.12, 0.28], scale, centerX, centerY);
+          const inkColor = themeInkColors[backgroundTheme];
+          drawLines(axesBuffer, axesVertexCount, [inkColor[0], inkColor[1], inkColor[2], 0.28], scale, centerX, centerY);
         }
 
         if ((displayStyle === "grid") && gridVertexCount > 0) {
-          drawLines(gridBuffer, gridVertexCount, [0.12, 0.12, 0.12, 0.55], scale, centerX, centerY);
+          const lineColor = gridColors[backgroundTheme === "light" ? "black" : "white"];
+          drawLines(gridBuffer, gridVertexCount, [lineColor[0], lineColor[1], lineColor[2], 0.55], scale, centerX, centerY);
         }
 
         gl.depthMask(true);
@@ -2152,6 +2327,37 @@
         titleElement.hidden = willShow;
         settingsToggle.textContent = willShow ? "隐藏设置" : "显示设置";
         settingsToggle.setAttribute("aria-expanded", String(willShow));
+      });
+      backgroundColorInputs.forEach(input => {
+        input.addEventListener("change", () => {
+          if (!input.checked) {
+            return;
+          }
+
+          backgroundTheme = input.value;
+          document.documentElement.dataset.theme = backgroundTheme;
+          requestRender();
+        });
+      });
+      materialInputs.forEach(input => {
+        input.addEventListener("change", () => {
+          if (input.checked) {
+            material = input.value;
+            requestRender();
+          }
+        });
+      });
+      [surfaceHueInput, surfaceLightnessInput, surfaceSaturationInput].forEach(input => {
+        input.addEventListener("input", () => {
+          surfaceHue = Number(surfaceHueInput.value);
+          surfaceLightness = Number(surfaceLightnessInput.value) / 100;
+          surfaceSaturation = Number(surfaceSaturationInput.value) / 100;
+          surfaceColor = hslToRgb(surfaceHue / 360, surfaceSaturation, surfaceLightness);
+          surfaceHueValue.textContent = `${Math.round(surfaceHue)}°`;
+          surfaceLightnessValue.textContent = `${Math.round(surfaceLightness * 100)}%`;
+          surfaceSaturationValue.textContent = `${Math.round(surfaceSaturation * 100)}%`;
+          requestRender();
+        });
       });
       styleInputs.forEach(input => {
         input.addEventListener("change", () => {
