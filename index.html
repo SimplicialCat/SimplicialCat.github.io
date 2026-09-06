@@ -967,12 +967,12 @@
             var diff = target - current;
             if (Math.abs(diff) < 0.5) {
                 current = target;
-                window.scrollTo(0, Math.round(current));
+                window.scrollTo({ top: Math.round(current), behavior: 'instant' });
                 animating = false;
                 return;
             }
             current += diff * 0.14;         // 缓动系数: 越小越柔, 越大越跟手
-            window.scrollTo(0, Math.round(current));
+            window.scrollTo({ top: Math.round(current), behavior: 'instant' });
             requestAnimationFrame(step);
         }
 
