@@ -218,12 +218,39 @@
   .info-foot button.primary { background: rgba(224, 82, 63, 0.2); border-color: rgba(224, 82, 63, 0.55); color: #ffc2b8; }
   .info-foot button:hover { border-color: rgba(255, 255, 255, 0.3); }
   @media (max-width: 760px) {
-    .title-panel { top: 78px; max-width: calc(100vw - 36px); }
-    .top-actions { top: 16px; left: 16px; right: 16px; justify-content: space-between; }
+    .title-panel { top: 8px; left: 8px; max-width: calc(100vw - 36px); }
+    .top-actions { top: 8px; left: auto; right: 8px; justify-content: flex-end; }
     .floor-btn { min-width: 38px; }
-    .legend-panel { top: 190px; left: 84px; width: calc(100vw - 102px); max-height: 42vh; }
+    .legend-panel {
+      top: auto;
+      bottom: 58px;
+      left: 8px;
+      right: 8px;
+      width: auto;
+      max-height: 32vh;
+      padding: 4px;
+      z-index: 8;
+    }
+    #legendList {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2px;
+    }
+    .legend-item {
+      gap: 5px;
+      padding: 3px 5px;
+      line-height: 1.1;
+    }
+    .legend-item .num-chip {
+      min-width: 20px;
+      height: 20px;
+      padding: 0 4px;
+      font-size: 10px;
+    }
+    .legend-item .legend-name b { font-size: 11px; }
+    .legend-item .legend-name span { display: none; }
     .legend-panel.hidden { display: block; visibility: hidden; pointer-events: none; }
-    .info-panel { width: calc(100vw - 36px); bottom: 52px; }
+    .info-panel { width: calc(100vw - 36px); bottom: 58px; }
   }
 </style>
 </head>
