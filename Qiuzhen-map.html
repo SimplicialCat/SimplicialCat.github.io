@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>求真立体图</title>
+<style>
+  :root {
+    --accent: #e0523f;
+    --panel: rgba(17, 22, 28, 0.78);
+    --line: rgba(255, 255, 255, 0.09);
+    --text: #e8ecf1;
+    --muted: #97a2ad;
+    --chip: #b7a98c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+    background: #0d1116;
+    color: var(--text);
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  #scene {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: none;
+    pointer-events: none;
+    z-index: 2;
+    background: transparent;
+  }
+  #three-scene {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    touch-action: none;
+    cursor: grab;
+    background:
+      radial-gradient(1100px 700px at 68% 30%, #1b232d 0%, #0d1116 62%),
+      #0d1116;
+  }
+  #three-scene.grabbing { cursor: grabbing; }
+  #three-scene.hovering { cursor: pointer; }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.42);
+  }
+  .title-panel {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    padding: 10px 12px;
+    max-width: 340px;
+    z-index: 10;
+  }
+  .title-panel h1 { font-size: 19px; font-weight: 700; letter-spacing: 0.5px; line-height: 1.3; }
+  .title-panel h1 .floor { color: var(--accent); margin: 0 4px; }
+  .top-actions {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+  }
+  .bottom-actions {
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+  }
+  .floor-switch {
+    position: fixed;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--panel);
+    backdrop-filter: blur(14px);
+  }
+  .floor-btn {
+    border: 0;
+    border-radius: 0;
+    min-width: 52px;
+    text-align: center;
+  }
+  .floor-btn.active {
+    background: rgba(224, 82, 63, 0.18);
+    border-color: transparent;
+  }
+  .floor-btn + .floor-btn { border-left: 0; border-top: 1px solid var(--line); }
+  .chip-btn {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--text);
+    font: inherit;
+    font-size: 12.5px;
+    padding: 8px 13px;
+    border-radius: 4px;
+    cursor: pointer;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .chip-btn:hover { border-color: rgba(255, 255, 255, 0.28); }
+  .chip-btn.active { border-color: rgba(224, 82, 63, 0.75); color: #ffb3a6; }
+  .legend-panel {
+    position: fixed;
+    top: 108px;
+    left: 84px;
+    width: 258px;
+    padding: 10px;
+    z-index: 9;
+    overflow: hidden auto;
+    max-height: calc(100vh - 200px);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.18) transparent;
+  }
+  .legend-panel.hidden { display: none; }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    padding: 7px 9px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .legend-item:hover { background: rgba(255, 255, 255, 0.05); }
+  .legend-item.active { background: rgba(224, 82, 63, 0.16); border-color: rgba(224, 82, 63, 0.5); }
+  .num-chip {
+    flex: 0 0 auto;
+    min-width: 30px;
+    height: 30px;
+    padding: 0 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    background: var(--chip);
+    color: #241d12;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .legend-item.active .num-chip { background: var(--accent); color: #fff; }
+  .legend-name { display: flex; flex-direction: column; min-width: 0; }
+  .legend-name b { font-size: 13.5px; font-weight: 600; }
+  .legend-name span {
+    font-size: 10.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .info-panel {
+    position: fixed;
+    right: 18px;
+    bottom: 56px;
+    width: 296px;
+    padding: 16px 18px;
+    z-index: 10;
+  }
+  .info-panel.hidden { display: none; }
+  .info-head { display: flex; align-items: center; gap: 12px; }
+  .info-head .num-chip { min-width: 38px; height: 38px; font-size: 15px; }
+  .info-title { min-width: 0; }
+  .info-title b { display: block; font-size: 17px; font-weight: 700; }
+  .info-title span {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-top: 2px;
+  }
+  .info-desc { margin-top: 12px; font-size: 12.5px; line-height: 1.75; color: #c8d0d9; }
+  .info-foot { margin-top: 14px; display: flex; gap: 8px; }
+  .info-foot button {
+    flex: 1;
+    appearance: none;
+    font: inherit;
+    font-size: 12.5px;
+    padding: 8px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .info-foot button.primary { background: rgba(224, 82, 63, 0.2); border-color: rgba(224, 82, 63, 0.55); color: #ffc2b8; }
+  .info-foot button:hover { border-color: rgba(255, 255, 255, 0.3); }
+  @media (max-width: 760px) {
+    .title-panel { top: 78px; max-width: calc(100vw - 36px); }
+    .top-actions { top: 16px; left: 16px; right: 16px; justify-content: space-between; }
+    .floor-btn { min-width: 38px; }
+    .legend-panel { top: 190px; left: 84px; width: calc(100vw - 102px); max-height: 42vh; }
+    .legend-panel.hidden { display: block; visibility: hidden; pointer-events: none; }
+    .info-panel { width: calc(100vw - 36px); bottom: 52px; }
+  }
+</style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<canvas id="scene"></canvas>
+<header class="panel title-panel">
+  <h1>求真立体图</h1>
+</header>
+<div class="top-actions">
+  <div class="floor-switch">
+    <button id="floor2F" class="chip-btn floor-btn">2F</button>
+    <button id="floor1F" class="chip-btn floor-btn active">1F</button>
+    <button id="floorG" class="chip-btn floor-btn">G</button>
+    <button id="floorLG" class="chip-btn floor-btn">LG</button>
+  </div>
+</div>
+<div class="bottom-actions">
+  <button id="btnLabels" class="chip-btn active">标签</button>
+  <button id="btnLegend" class="chip-btn active">图例</button>
+</div>
+<aside id="legend" class="panel legend-panel">
+  <div id="legendList"></div>
+</aside>
+<section id="info" class="panel info-panel hidden">
+  <div class="info-head">
+    <span id="infoChip" class="num-chip">1</span>
+    <div class="info-title">
+      <b id="infoZh">至正楼</b>
+      <span id="infoEn">Zhi Zheng Building</span>
+    </div>
+  </div>
+  <p id="infoDesc" class="info-desc"></p>
+  <div class="info-foot">
+    <button id="btnFocus" class="primary">聚焦此楼</button>
+    <button id="btnClose">关闭</button>
+  </div>
+</section>
+<script>
+'use strict';
+
+/* ================= 基础向量工具 ================= */
+function v(x, y, z) { return { x: x, y: y, z: z }; }
+function vsub(a, b) { return v(a.x - b.x, a.y - b.y, a.z - b.z); }
+function vdot(a, b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
+function vcross(a, b) {
+  return v(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
+}
+function vlen(a) { return Math.hypot(a.x, a.y, a.z); }
+function vnorm(a) {
+  var l = vlen(a) || 1;
+  return v(a.x / l, a.y / l, a.z / l);
+}
+function clamp(x, lo, hi) { return Math.min(hi, Math.max(lo, x)); }
+
+/* ================= 地图数据（坐标取自放大的牌示平面图，单位：图面像素 / 10） ================= */
+var S = 0.1;
+function W(px, py) { return v(px * S, py * S, 0); }
+
+var FIRST_FLOOR_H = 9;
+var SECOND_H = 5;
+var SECOND_LINK_BASE = FIRST_FLOOR_H + 0.02;
+var CORRIDOR_H = 0.02;
+var SECOND_CORRIDOR_CENTER = 347.5;
+var SECOND_CORRIDOR_WIDTH = 47;
+var SECOND_CORRIDOR_HALF = SECOND_CORRIDOR_WIDTH / 2;
+var SECOND_LINK_IDS = { b7a: 1, b7b: 1, b8: 1, b9: 1, b10: 1, b2: 1 };
+
+var BUILDINGS = [
+  { id: 'b11', num: '11', group: '11', zh: '立功楼', en: 'Li Gong Building', h: 13,
+    poly: [[185,185],[420,185],[420,350],[365,350],[365,480],[185,480]],
+    desc: '位于图幅西南角，F、E 楼梯分别位于其西北侧和东北侧，是入口视野中最醒目的楼栋之一。' },
+  { id: 'b6a', num: '6', group: '6', zh: '至诚楼（南翼）', en: 'Zhi Cheng Building', h: 11.5,
+    poly: [[455,175],[700,175],[700,450],[455,450]],
+    desc: '至诚楼的主翼，位于 11 号楼东侧，紧邻 E 楼梯，与 10、5 号楼相邻。' },
+  { id: 'b10', num: '10', group: '10', zh: '立言楼', en: 'Li Yan Building', h: 12.5,
+    poly: [[225,505],[465,505],[465,775],[225,775]],
+    secondPolys: [
+      [[225,505],[465,505],[465,640],[225,640]],
+      [[225,640],[SECOND_CORRIDOR_CENTER - SECOND_CORRIDOR_HALF,640],[SECOND_CORRIDOR_CENTER - SECOND_CORRIDOR_HALF,775],[225,775]],
+      [[SECOND_CORRIDOR_CENTER + SECOND_CORRIDOR_HALF,640],[465,640],[465,775],[SECOND_CORRIDOR_CENTER + SECOND_CORRIDOR_HALF,775]]
+    ],
+    desc: '位于 11 号楼南侧，与 5 号楼隔连廊相对，F 楼梯在其西侧。' },
+  { id: 'b5', num: '5', group: '5', zh: '至真楼', en: 'Zhi Zhen Building', h: 11,
+    poly: [[555,505],[715,505],[715,775],[555,775]],
+    desc: '位于 6 号楼北侧、4 号楼南侧，紧邻图幅东侧连廊。' },
+  { id: 'b9', num: '9', group: '9', zh: '立德楼', en: 'Li De Building', h: 11.5,
+    poly: [[230,810],[465,810],[465,1010],[230,1010]],
+    secondPolys: [
+      [[230,810],[SECOND_CORRIDOR_CENTER - SECOND_CORRIDOR_HALF,810],[SECOND_CORRIDOR_CENTER - SECOND_CORRIDOR_HALF,1010],[230,1010]],
+      [[SECOND_CORRIDOR_CENTER + SECOND_CORRIDOR_HALF,810],[465,810],[465,1010],[SECOND_CORRIDOR_CENTER + SECOND_CORRIDOR_HALF,1010]]
+    ],
+    desc: '位于 10 号楼南侧、8 号楼北侧，D 楼梯紧邻其北缘。' },
+  { id: 'b4', num: '4', group: '4', zh: '致知楼', en: 'Zhi Zhi Building', h: 11,
+    poly: [[555,810],[715,810],[715,1010],[555,1010]],
+    desc: '位于 5 号楼北侧、3 号楼南侧，东侧为图幅边缘连廊。' },
+  { id: 'b3', num: '3', group: '3', zh: '格物楼', en: 'Ge Wu Building', h: 10,
+    poly: [[555,1065],[715,1065],[715,1235],[555,1235]],
+    desc: '位于 4 号楼北侧，C 楼梯紧邻其南缘通道。' },
+  { id: 'b8', num: '8', group: '8', zh: '知远楼', en: 'Zhi Yuan Building', h: 12,
+    poly: [[180,1080],[460,1080],[460,1310],[180,1310]],
+    secondPolys: [
+      [[180,1080],[SECOND_CORRIDOR_CENTER - SECOND_CORRIDOR_HALF,1080],[SECOND_CORRIDOR_CENTER - SECOND_CORRIDOR_HALF,1310],[180,1310]],
+      [[SECOND_CORRIDOR_CENTER + SECOND_CORRIDOR_HALF,1080],[460,1080],[460,1310],[SECOND_CORRIDOR_CENTER + SECOND_CORRIDOR_HALF,1310]]
+    ],
+    desc: '位于 6 号楼北侧、7b 翼南侧，是图幅西侧体量最大的楼栋之一。' },
+  { id: 'b7b', num: '7b', group: '7b', zh: '知言楼 b 翼', en: 'Zhi Yan Building', h: 9,
+    poly: [[185,1335],[324,1335],[324,1590],[185,1590]],
+    secondPolys: [[[185,1335],[324,1335],[324,1440],[185,1440]]],
+    desc: '知言楼的 b 翼，位于知言楼通道西侧。' },
+  { id: 'b7a', num: '7a', group: '7a', zh: '知言楼 a 翼', en: 'Zhi Yan Building', h: 8,
+    poly: [[371,1335],[465,1335],[465,1590],[371,1590]],
+    secondPolys: [[[371,1335],[465,1335],[465,1440],[371,1440]]],
+    desc: '知言楼的 a 翼，位于知言楼通道东侧，K 楼梯在其西北侧。' },
+  { id: 'b7n', num: '7n', group: '7n', zh: '知言楼北侧', en: 'Zhi Yan Building North', h: 14,
+    poly: [[185,1440],[545,1440],[545,1590],[185,1590]], secondOnly: true,
+    desc: '知言楼二层北侧建筑，贯通两翼并连接中和楼。' },
+  { id: 'b2', num: '2', group: '2', zh: '中和楼', en: 'Zhong He Building', h: 9.5,
+    poly: [[545,1345],[720,1345],[720,1560],[545,1560]],
+    desc: '位于 7b 翼北侧通道对面，B 楼梯在其南侧，与 1 号楼相邻。' },
+  { id: 'b1', num: '1', group: '1', zh: '至正楼', en: 'Zhi Zheng Building', h: 10.5,
+    poly: [[740,1310],[965,1310],[965,1565],[740,1565]],
+    desc: '位于 2 号楼东侧，J 楼梯在其西南侧，是图幅东南角的主楼。' }
+];
+
+var GRAY = [
+  { id: 'gA', poly: [[615,140],[950,140],[950,395],[645,395],[645,320],[615,320]], h: 11 },
+  { id: 'gB', poly: [[730,520],[970,520],[970,780],[730,780]], h: 12 },
+  { id: 'gC', poly: [[740,810],[970,810],[970,1060],[740,1060]], h: 11.5 },
+  { id: 'gD', poly: [[740,1090],[970,1090],[970,1295],[740,1295]], h: 11 }
+];
+
+var CORRIDORS = [
+  { id: 'corridorAB', group: 'corridor', num: '连', floor: '2F', base: SECOND_LINK_BASE, h: CORRIDOR_H,
+    zh: '知言楼二楼连廊', en: 'Zhi Yan Second-Floor Link',
+    poly: [[324,1330],[371,1330],[371,1377],[324,1377]],
+    desc: '知言楼 a、b 两翼在南端的二楼通过室外连廊相通。' },
+  { id: 'corridorNS', group: 'corridor', num: '连', floor: '2F', base: SECOND_LINK_BASE, h: CORRIDOR_H,
+    zh: '南侧二楼连廊', en: 'South Second-Floor Corridor',
+    poly: [
+      [SECOND_CORRIDOR_CENTER - SECOND_CORRIDOR_HALF,640],
+      [SECOND_CORRIDOR_CENTER + SECOND_CORRIDOR_HALF,640],
+      [SECOND_CORRIDOR_CENTER + SECOND_CORRIDOR_HALF,1335],
+      [SECOND_CORRIDOR_CENTER - SECOND_CORRIDOR_HALF,1335]
+    ],
+    desc: '二楼室外连廊自知言楼南侧向南，穿过知远楼、立德楼，至立言楼中部停止。' }
+];
+
+var STAIRS = [
+  { id: 'F', pos: [165, 530],  desc: '1F 楼梯间，连接书院各层。' },
+  { id: 'E', pos: [485, 500],  desc: '1F 楼梯间，位于 6 号楼与 10 / 5 号楼之间。' },
+  { id: 'D', pos: [415, 1005], desc: '牌示提示：请由此下至 G 层，前往求真讲堂与餐厅（Qiuzhen Auditorium and Restaurants）。' },
+  { id: 'C', pos: [635, 1055], desc: '1F 楼梯间，紧邻 3 号楼南缘。' },
+  { id: 'B', pos: [610, 1335], desc: '1F 楼梯间，位于 2 号楼南侧。' },
+  { id: 'J', pos: [730, 1300], desc: '1F 楼梯间，位于 1 号楼西南侧。' },
+  { id: 'A', pos: [520, 1445], desc: '1F 楼梯间，位于 2 号楼西侧。' },
+  { id: 'K', pos: [125, 1575], desc: '1F 楼梯间，位于 7a 翼西侧。' }
+];
+
+var LEGEND = [
+  { key: '1',  num: '1',  zh: '至正楼',  en: 'Zhi Zheng Building',  ids: ['b1'] },
+  { key: '2',  num: '2',  zh: '中和楼',  en: 'Zhong He Building',   ids: ['b2'] },
+  { key: '3',  num: '3',  zh: '格物楼',  en: 'Ge Wu Building',      ids: ['b3'] },
+  { key: '4',  num: '4',  zh: '致知楼',  en: 'Zhi Zhi Building',    ids: ['b4'] },
+  { key: '5',  num: '5',  zh: '至真楼',  en: 'Zhi Zhen Building',   ids: ['b5'] },
+  { key: '6',  num: '6',  zh: '至诚楼',  en: 'Zhi Cheng Building',  ids: ['b6a'] },
+  { key: '7a', num: '7a', zh: '知言楼',  en: 'Zhi Yan Building',    ids: ['b7a'] },
+  { key: '7b', num: '7b', zh: '知言楼',  en: 'Zhi Yan Building',    ids: ['b7b'] },
+  { key: '7n', num: '7n', zh: '知言楼北侧', en: 'Zhi Yan Building North', ids: ['b7n'] },
+  { key: '8',  num: '8',  zh: '知远楼',  en: 'Zhi Yuan Building',   ids: ['b8'] },
+  { key: '9',  num: '9',  zh: '立德楼',  en: 'Li De Building',      ids: ['b9'] },
+  { key: '10', num: '10', zh: '立言楼',  en: 'Li Yan Building',     ids: ['b10'] },
+  { key: '11', num: '11', zh: '立功楼',  en: 'Li Gong Building',    ids: ['b11'] },
+  { key: 'corridor', num: '连', zh: '二楼室外连廊', en: 'Second-Floor Outdoor Corridors', ids: ['corridorAB', 'corridorNS'] }
+];
+
+var FLOOR_DEPTHS = { '2F': 0, '1F': 0, G: -8, LG: -16 };
+var FLOOR_META = {
+  '2F': { name: '二层', badge: '2F' },
+  '1F': { name: '一层', badge: '1F' },
+  G: { name: '地下一层', badge: 'G' },
+  LG: { name: '地下二层', badge: 'LG' }
+};
+
+var G_ROOMS = [
+  { id: 'G21', num: '21', zh: '至正斋', en: 'Zhi Zheng Zhai', category: 'dorm', poly: [[59,72],[72,72],[72,90],[59,90]], desc: 'G 层东北侧斋舍，与沐曦厅相邻。' },
+  { id: 'G22', num: '22', zh: '宁静斋', en: 'Ning Jing Zhai', category: 'dorm', poly: [[49,77],[57.5,77],[57.5,87],[49,87]], desc: '至美大道东侧的斋舍。' },
+  { id: 'G23', num: '23', zh: '致远斋', en: 'Zhi Yuan Zhai', category: 'dorm', poly: [[49,62],[57.5,62],[57.5,72],[49,72]], desc: '至美大道东侧的斋舍。' },
+  { id: 'G24', num: '24', zh: '物业中心', en: 'Property Management', category: 'service', color: [127, 205, 226], poly: [[52,54.5],[57.5,54.5],[57.5,61],[52,61]], desc: 'G 层物业服务中心，靠近至美大道交叉口。' },
+  { id: 'G25', num: '25', zh: '明志斋', en: 'Ming Zhi Zhai', category: 'dorm', poly: [[48,42],[57.5,42],[57.5,54.5],[48,54.5]], desc: '至美大道东侧的斋舍。' },
+  { id: 'G26', num: '26', zh: '嘉乐斋（餐厅）', en: 'Jia Le Zhai (Restaurant)', category: 'dining', color: [238, 181, 111], poly: [[48,28.5],[57.5,28.5],[57.5,42],[48,42]], desc: 'G 层日常餐厅，位于至美大道东侧。' },
+  { id: 'G27', num: '27', zh: '明哲斋（会议中心）', en: 'Ming Zhe Zhai (Conference Center)', category: 'event', color: [229, 180, 213], poly: [[44.5,5.5],[61.5,5.5],[61.5,23],[44.5,23]], desc: 'G 层会议中心。' },
+  { id: 'G28', num: '28', zh: '厚德斋', en: 'Hou De Zhai', category: 'dorm', poly: [[29.5,58],[43,58],[43,87],[29.5,87]], desc: '至美大道西侧的大体量斋舍。' },
+  { id: 'G29', num: '29', zh: '和乐斋（西餐厅）', en: 'He Le Zhai (Western Restaurant)', category: 'dining', color: [108, 190, 146], poly: [[28.5,8.5],[42,8.5],[42,24],[28.5,24]], desc: 'G 层西餐厅，位于明哲斋西侧。' },
+  { id: 'GWS', num: '—', zh: '求真工作室', en: 'Qiuzhen Workshop', category: 'studio', poly: [[44.5,24],[48,24],[48,29],[44.5,29]], desc: 'G 层工作室空间。' },
+  { id: 'GAV', num: '道', zh: '至美大道', en: 'Avenue of Beauty', category: 'avenue', poly: [[44.5,29],[49,29],[49,77],[44.5,77]], desc: 'G 层南北主通道，本场景将其中心线与 1F 中央通道和 LG 茂源求真大道对齐。' }
+];
+
+G_ROOMS.forEach(function (room) {
+  room.poly = room.poly.map(function (p) { return [p[0] + 4.25, p[1]]; });
+});
+
+var G_LEGEND = [
+  { key: 'G21', num: '21', zh: '至正斋', en: 'Zhi Zheng Zhai', ids: ['G21'] },
+  { key: 'G22', num: '22', zh: '宁静斋', en: 'Ning Jing Zhai', ids: ['G22'] },
+  { key: 'G23', num: '23', zh: '致远斋', en: 'Zhi Yuan Zhai', ids: ['G23'] },
+  { key: 'G24', num: '24', zh: '物业中心', en: 'Property Management', ids: ['G24'] },
+  { key: 'G25', num: '25', zh: '明志斋', en: 'Ming Zhi Zhai', ids: ['G25'] },
+  { key: 'G26', num: '26', zh: '嘉乐斋（餐厅）', en: 'Jia Le Zhai (Restaurant)', ids: ['G26'] },
+  { key: 'G27', num: '27', zh: '明哲斋（会议中心）', en: 'Ming Zhe Zhai (Conference Center)', ids: ['G27'] },
+  { key: 'G28', num: '28', zh: '厚德斋', en: 'Hou De Zhai', ids: ['G28'] },
+  { key: 'G29', num: '29', zh: '和乐斋（西餐厅）', en: 'He Le Zhai (Western Restaurant)', ids: ['G29'] },
+  { key: 'GWS', num: 'W', zh: '求真工作室', en: 'Qiuzhen Workshop', ids: ['GWS'] }
+];
+
+function lgNamed(num, zh, en, color, x0, y0, x1, y1, desc) {
+  return { id: 'LG' + num, num: num, zh: zh, en: en, category: 'dorm', color: color,
+    poly: [[x0, y0], [x1, y0], [x1, y1], [x0, y1]], desc: desc };
+}
+
+var LG_ROOMS = [
+  lgNamed('31', '汇贤斋', 'Hui Xian Zhai', [108, 190, 146], 76, 91, 84, 106,
+    'LG 层东北侧功能区。'),
+  lgNamed('32', '养气斋', 'Yang Qi Zhai', [229, 180, 213], 70, 74, 78, 89,
+    'LG 层东侧功能区。'),
+  lgNamed('33', '达德斋', 'Da De Zhai', [49, 110, 182], 58, 78, 68, 92,
+    'LG 层中部偏东功能区。'),
+  lgNamed('34', '慎乐斋', 'Shen Le Zhai', [238, 181, 111], 58, 16, 80, 48,
+    'LG 层南侧长条功能区。'),
+  lgNamed('35', '自强斋', 'Zi Qiang Zhai', [138, 125, 219], 13, 55, 44, 115,
+    'LG 层中西部大型功能区。'),
+  lgNamed('36', '达道斋', 'Da Dao Zhai', [126, 206, 232], 12, 18, 30, 45,
+    'LG 层西南侧功能区。'),
+  { id: 'LG-SERVICE-A', num: '—', zh: '辅助服务区 A', en: 'Service Area A', category: 'gray', poly: [[58, 55], [82, 55], [82, 70], [58, 70]], desc: 'LG 层辅助服务区域。' },
+  { id: 'LG-SERVICE-B', num: '—', zh: '辅助服务区 B', en: 'Service Area B', category: 'gray', poly: [[58, 108], [82, 108], [82, 135], [58, 135]], desc: 'LG 层辅助服务区域。' },
+  { id: 'LG-SERVICE-C', num: '—', zh: '辅助服务区 C', en: 'Service Area C', category: 'gray', poly: [[48, 140], [80, 140], [80, 160], [48, 160]], desc: 'LG 层辅助服务区域。' },
+  { id: 'LG-SERVICE-D', num: '—', zh: '辅助服务区 D', en: 'Service Area D', category: 'gray', poly: [[12, 125], [40, 125], [40, 158], [12, 158]], desc: 'LG 层辅助服务区域。' },
+  { id: 'LGAV', num: '道', zh: '茂源求真大道', en: 'Mao Yuan Qiuzhen Corridor', category: 'avenue', poly: [[46, 8], [56, 8], [56, 174], [46, 174]], desc: 'LG 层南北主通道。' }
+];
+
+var LG_EXITS = [
+  [14, 6], [33, 6], [49, 6], [60, 6], [86, 71], [86, 104]
+];
+
+(function rescaleUndergroundPlans() {
+  var TARGET_Y = [140, 1615];
+  var AVENUE_X = 510;
+  function fitPlan(rooms, source, sourceAvenueX) {
+    var scale = (TARGET_Y[1] - TARGET_Y[0]) / (source[3] - source[1]);
+    var offsetX = AVENUE_X - sourceAvenueX * scale;
+    var offsetY = TARGET_Y[0] - source[1] * scale;
+    rooms.forEach(function (room) {
+      room.poly = room.poly.map(function (p) {
+        return [p[0] * scale + offsetX, p[1] * scale + offsetY];
+      });
+    });
+    return { scale: scale, offsetX: offsetX, offsetY: offsetY };
+  }
+  fitPlan(G_ROOMS, [32.75, 5.5, 76.25, 90], 51);
+  var fitLG = fitPlan(LG_ROOMS, [10, 8, 85, 177], 51);
+  LG_EXITS = LG_EXITS.map(function (p) {
+    return [p[0] * fitLG.scale + fitLG.offsetX, p[1] * fitLG.scale + fitLG.offsetY];
+  });
+})();
+
+var LG_LEGEND = [
+  { key: 'LG31', num: '31', zh: '汇贤斋', en: 'Hui Xian Zhai', ids: ['LG31'] },
+  { key: 'LG32', num: '32', zh: '养气斋', en: 'Yang Qi Zhai', ids: ['LG32'] },
+  { key: 'LG33', num: '33', zh: '达德斋', en: 'Da De Zhai', ids: ['LG33'] },
+  { key: 'LG34', num: '34', zh: '慎乐斋', en: 'Shen Le Zhai', ids: ['LG34'] },
+  { key: 'LG35', num: '35', zh: '自强斋', en: 'Zi Qiang Zhai', ids: ['LG35'] },
+  { key: 'LG36', num: '36', zh: '达道斋', en: 'Da Dao Zhai', ids: ['LG36'] },
+  { key: 'LG-gray', num: '—', zh: '未编号辅助区', en: 'Unnumbered Service Areas', ids: ['LG-SERVICE-A', 'LG-SERVICE-B', 'LG-SERVICE-C', 'LG-SERVICE-D'] },
+  { key: 'LGAV', num: '道', zh: '茂源求真大道', en: 'Mao Yuan Qiuzhen Corridor', ids: ['LGAV'] }
+];
+
+var FLOOR_ROOMS = { G: G_ROOMS, LG: LG_ROOMS };
+var FLOOR_LEGEND = { G: G_LEGEND, LG: LG_LEGEND };
+
+(function assignRoomGroups() {
+  ['G', 'LG'].forEach(function (floor) {
+    FLOOR_ROOMS[floor].forEach(function (room) {
+      for (var i = 0; i < FLOOR_LEGEND[floor].length; i++) {
+        var group = FLOOR_LEGEND[floor][i];
+        if (group.ids.indexOf(room.id) >= 0) {
+          room.group = group.key;
+          break;
+        }
+      }
+    });
+  });
+})();
+/* ================= 几何构建 ================= */
+function extrudeVolume(ref, poly, base, height, roofKind, wallKind, pickable, floor) {
+  var faces = [];
+  var n = poly.length;
+  var area2 = 0;
+  for (var w = 0; w < n; w++) {
+    var wp = W(poly[w][0], poly[w][1]);
+    var wq = W(poly[(w + 1) % n][0], poly[(w + 1) % n][1]);
+    area2 += wp.x * wq.y - wq.x * wp.y;
+  }
+  var ccw = area2 > 0;
+  var topPts = [], cx = 0, cy = 0;
+  for (var i = 0; i < n; i++) {
+    var p = W(poly[i][0], poly[i][1]);
+    topPts.push(v(p.x, p.y, base + height));
+    cx += p.x; cy += p.y;
+  }
+  cx /= n; cy /= n;
+  var ctr = v(cx, cy, base + height / 2);
+  ref.center = v(cx, cy, base + height * 0.35);
+  faces.push({ pts: topPts, n: v(0, 0, 1), kind: roofKind, pick: pickable, ref: ref, roof: roofKind !== 'corridorDeck', floor: floor });
+  if (height > 0.05) {
+    for (var j = 0; j < n; j++) {
+      var a = W(poly[j][0], poly[j][1]);
+      a.z = base;
+      var c = W(poly[(j + 1) % n][0], poly[(j + 1) % n][1]);
+      c.z = base;
+      var quad = [a, c, v(c.x, c.y, base + height), v(a.x, a.y, base + height)];
+      var nrm = vnorm(vcross(vsub(quad[1], quad[0]), vsub(quad[3], quad[0])));
+      var mid = v((quad[0].x + quad[1].x) / 2, (quad[0].y + quad[1].y) / 2, base + height / 2);
+      if (!ccw) {
+        nrm = v(-nrm.x, -nrm.y, -nrm.z);
+        quad = [quad[0], quad[3], quad[2], quad[1]];
+      }
+      faces.push({ pts: quad, n: nrm, kind: wallKind, pick: pickable, ref: ref, roof: false, floor: floor });
+    }
+  }
+  return faces;
+}
+
+function extrudeBuilding(b, pickable) {
+  return extrudeVolume(b, b.poly, b.base || 0, b.h, b.roofKind || 'roof', b.wallKind || 'wall', pickable);
+}
+
+function extrudeFloorRoom(room, floor) {
+  var faces = [];
+  var n = room.poly.length;
+  var area2 = 0;
+  for (var w = 0; w < n; w++) {
+    var wp = v(room.poly[w][0] * S, room.poly[w][1] * S, 0);
+    var wq = v(room.poly[(w + 1) % n][0] * S, room.poly[(w + 1) % n][1] * S, 0);
+    area2 += wp.x * wq.y - wq.x * wp.y;
+  }
+  var ccw = area2 > 0;
+  var base = FLOOR_DEPTHS[floor];
+  var height = room.category === 'avenue' ? 0.25 : 0.9;
+  var topPts = [], cx = 0, cy = 0;
+  for (var i = 0; i < n; i++) {
+    var p = v(room.poly[i][0] * S, room.poly[i][1] * S, base + height);
+    topPts.push(p);
+    cx += p.x;
+    cy += p.y;
+  }
+  cx /= n;
+  cy /= n;
+  room.floor = floor;
+  room.base = base;
+  room.height = height;
+  room.center = v(cx, cy, base + height + 0.1);
+  var ctr = v(cx, cy, base + height / 2);
+  var pick = room.pick !== false;
+  faces.push({ pts: topPts, n: v(0, 0, 1), kind: 'room', pick: pick, ref: room, roof: true });
+  for (var j = 0; j < n; j++) {
+    var a = v(room.poly[j][0] * S, room.poly[j][1] * S, base);
+    var c = v(room.poly[(j + 1) % n][0] * S, room.poly[(j + 1) % n][1] * S, base);
+    var quad = [a, c, v(c.x, c.y, base + height), v(a.x, a.y, base + height)];
+    var nrm = vnorm(vcross(vsub(quad[1], quad[0]), vsub(quad[3], quad[0])));
+    var mid = v((quad[0].x + quad[1].x) / 2, (quad[0].y + quad[1].y) / 2, base + height / 2);
+    if (!ccw) {
+      nrm = v(-nrm.x, -nrm.y, -nrm.z);
+      quad = [quad[0], quad[3], quad[2], quad[1]];
+    }
+    faces.push({ pts: quad, n: nrm, kind: 'roomWall', pick: pick, ref: room, roof: false });
+  }
+  return faces;
+}
+
+function roundedRectPoly(x0, y0, x1, y1, r) {
+  var pts = [];
+  var corners = [
+    [x1 - r, y1 - r, 0], [x0 + r, y1 - r, Math.PI / 2],
+    [x0 + r, y0 + r, Math.PI], [x1 - r, y0 + r, Math.PI * 1.5]
+  ];
+  for (var k = 0; k < corners.length; k++) {
+    for (var s = 0; s <= 6; s++) {
+      var t = corners[k][2] + (Math.PI / 2) * (s / 6);
+      pts.push([corners[k][0] + r * Math.cos(t), corners[k][1] + r * Math.sin(t)]);
+    }
+  }
+  return pts;
+}
+
+var FACES = [];
+var groundFaces = [];
+var shadowPolys = [];
+var grayFaces = [];
+var FLOOR_FACES = { G: [], LG: [] };
+var UNDER_PLATES = { G: [188, 135, 953, 1617], LG: [150, 135, 809, 1617] };
+
+(function buildGeometry() {
+  var GAP = 0.045;
+  var ring = roundedRectPoly(3, 3, 107.5, 179.5, 2.8);
+  var topPoly = ring.map(function (p) { return v(p[0], p[1], GAP); });
+  groundFaces.push({ pts: topPoly, n: v(0, 0, 1), kind: 'ground', sub: 1, pick: false });
+  for (var i = 0; i < ring.length; i++) {
+    var a = ring[i], c = ring[(i + 1) % ring.length];
+    var quad = [v(a[0], a[1], -2.6), v(c[0], c[1], -2.6), v(c[0], c[1], GAP), v(a[0], a[1], GAP)];
+    var nrm = vnorm(vcross(vsub(quad[1], quad[0]), vsub(quad[3], quad[0])));
+    var mid = v((quad[0].x + quad[1].x) / 2, (quad[0].y + quad[1].y) / 2, -1.2);
+    if (vdot(nrm, vsub(mid, v(55, 91, -1))) < 0) nrm = v(-nrm.x, -nrm.y, -nrm.z);
+    groundFaces.push({ pts: quad, n: nrm, kind: 'ground', sub: 0, pick: false });
+  }
+  var paths = [
+    [465, 480, 555, 1045], [225, 775, 715, 790], [180, 1030, 715, 1060],
+    [180, 1330, 720, 1345], [180, 1560, 970, 1622], [330, 480, 465, 505],
+    [465, 1345, 545, 1560]
+  ];
+  for (var pi = 0; pi < paths.length; pi++) {
+    var r = paths[pi];
+    groundFaces.push({
+      pts: [v(r[0] * S, r[1] * S, GAP * 1.4), v(r[2] * S, r[1] * S, GAP * 1.4),
+            v(r[2] * S, r[3] * S, GAP * 1.4), v(r[0] * S, r[3] * S, GAP * 1.4)],
+      n: v(0, 0, 1), kind: 'path', sub: 2, pick: false
+    });
+  }
+  for (var bi = 0; bi < BUILDINGS.length; bi++) {
+    var building = BUILDINGS[bi];
+    var linked = !!SECOND_LINK_IDS[building.id];
+    var secondBase = SECOND_LINK_BASE;
+    var firstHeight = FIRST_FLOOR_H;
+    building.secondBase = secondBase;
+    building.firstHeight = firstHeight;
+    building.top = secondBase + SECOND_H;
+    var firstCenter = building.center;
+    if (!building.secondOnly) {
+      FACES = FACES.concat(extrudeVolume(building, building.poly, 0, firstHeight, 'roof', 'wall', true, '1F'));
+      firstCenter = building.center;
+    }
+    var secondPolys = building.secondPolys || [building.poly];
+    secondPolys.forEach(function (secondPoly) {
+      FACES = FACES.concat(extrudeVolume(building, secondPoly, secondBase, SECOND_H, 'secondRoof', 'secondWall', true, '2F'));
+    });
+    if (!building.secondOnly) building.center = firstCenter;
+    shadowPolys.push({ poly: building.poly, h: building.top });
+  }
+  for (var ci = 0; ci < CORRIDORS.length; ci++) {
+    var corridor = CORRIDORS[ci];
+    corridor.top = corridor.base + corridor.h;
+    FACES = FACES.concat(extrudeVolume(corridor, corridor.poly, corridor.base, corridor.h, 'corridorDeck', 'corridorEdge', true, corridor.floor));
+  }
+  for (var gi = 0; gi < GRAY.length; gi++) {
+    grayFaces = grayFaces.concat(extrudeBuilding(GRAY[gi], false));
+    shadowPolys.push({ poly: GRAY[gi].poly, h: GRAY[gi].h });
+  }
+  ['G', 'LG'].forEach(function (floor) {
+    var base = FLOOR_DEPTHS[floor];
+    var bounds = UNDER_PLATES[floor];
+    var floorRing = roundedRectPoly(bounds[0], bounds[1], bounds[2], bounds[3], 1.5);
+    FLOOR_FACES[floor].push({
+      pts: floorRing.map(function (p) { return v(p[0] * S, p[1] * S, base); }),
+      n: v(0, 0, 1), kind: 'floorPlate', floor: floor, pick: false
+    });
+    for (var fi = 0; fi < floorRing.length; fi++) {
+      var pa = floorRing[fi], pc = floorRing[(fi + 1) % floorRing.length];
+      var wallQuad = [v(pa[0] * S, pa[1] * S, base - 1), v(pc[0] * S, pc[1] * S, base - 1),
+                      v(pc[0] * S, pc[1] * S, base), v(pa[0] * S, pa[1] * S, base)];
+      var wallN = vnorm(vcross(vsub(wallQuad[1], wallQuad[0]), vsub(wallQuad[3], wallQuad[0])));
+      var wallMid = v((wallQuad[0].x + wallQuad[1].x) / 2, (wallQuad[0].y + wallQuad[1].y) / 2, base - 0.5);
+      if (vdot(wallN, vsub(wallMid, v(47, 90, base))) < 0) wallN = v(-wallN.x, -wallN.y, -wallN.z);
+      FLOOR_FACES[floor].push({ pts: wallQuad, n: wallN, kind: 'floorSide', floor: floor, pick: false });
+    }
+    FLOOR_ROOMS[floor].forEach(function (room) {
+      FLOOR_FACES[floor] = FLOOR_FACES[floor].concat(extrudeFloorRoom(room, floor));
+    });
+  });
+})();
+
+/* ================= 相机 ================= */
+var cam = { yaw: 0, pitch: 0.72, dist: 270, tx: 55.2, ty: 91.2, tz: 0 };
+var HOME = { yaw: 0, pitch: 0.72, dist: 270, tx: 55.2, ty: 91.2, tz: 0 };
+var FOV = 40 * Math.PI / 180;
+var NEAR = 6;
+var anim = null;
+var dragging = false;
+var lastInteract = performance.now();
+
+function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+function flyTo(to, dur) {
+  anim = { from: Object.assign({}, cam), to: to, t0: performance.now(), dur: dur || 800 };
+}
+function stepAnim(now) {
+  if (!anim) return;
+  var t = clamp((now - anim.t0) / anim.dur, 0, 1);
+  var e = ease(t);
+  ['yaw', 'pitch', 'dist', 'tx', 'ty', 'tz'].forEach(function (k) {
+    cam[k] = anim.from[k] + (anim.to[k] - anim.from[k]) * e;
+  });
+  if (t >= 1) anim = null;
+}
+
+var eyePos, fwdDir, rightDir, upDir, focal;
+function updateBasis() {
+  var cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+  eyePos = v(
+    cam.tx + cam.dist * cp * Math.sin(cam.yaw),
+    cam.ty + cam.dist * cp * Math.cos(cam.yaw),
+    cam.tz + cam.dist * sp
+  );
+  fwdDir = vnorm(vsub(v(cam.tx, cam.ty, cam.tz), eyePos));
+  rightDir = vnorm(vcross(v(0, 0, 1), fwdDir));
+  upDir = vcross(fwdDir, rightDir);
+}
+function project(p) {
+  var rel = vsub(p, eyePos);
+  var cz = vdot(rel, fwdDir);
+  if (cz < NEAR) return null;
+  return {
+    x: cw / 2 + focal * vdot(rel, rightDir) / cz,
+    y: ch / 2 - focal * vdot(rel, upDir) / cz,
+    d: cz
+  };
+}
+
+/* ================= 渲染 ================= */
+var canvas = document.getElementById('scene');
+var ctx = canvas.getContext('2d');
+var cw = 0, ch = 0, dpr = 1;
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = canvas.clientWidth; ch = canvas.clientHeight;
+  canvas.width = Math.round(cw * dpr);
+  canvas.height = Math.round(ch * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+
+var LIGHT = vnorm(v(-0.5, -0.32, 0.82));
+var WALL = [213, 220, 228], ROOF = [238, 243, 248];
+var GWALL = [178, 186, 196], GROOF = [206, 213, 222];
+var SECOND_WALL = [188, 205, 218], SECOND_ROOF = [226, 239, 248];
+var CORRIDOR_EDGE = [190, 182, 166], CORRIDOR_DECK = [232, 228, 217];
+var GROUND = [231, 235, 240], GROUND_SIDE = [206, 213, 221], PATHC = [219, 225, 232];
+var SEL_TINT = [226, 74, 57];
+var showLabels = true;
+var activeFloor = '1F';
+var hoverRef = null;
+var selection = null;
+var pickFaces = [];
+var ROOM_COLORS = {
+  gray: [177, 184, 192],
+  study: [205, 91, 76],
+  zone: [225, 169, 87],
+  dorm: [228, 205, 109],
+  dining: [78, 176, 165],
+  service: [186, 75, 63],
+  event: [230, 146, 90],
+  studio: [148, 174, 203],
+  avenue: [196, 52, 46]
+};
+
+function isSelFace(f) {
+  return !!(f.pick && f.ref && selection && selection.type === 'building' &&
+            selection.ids.indexOf(f.ref.id) >= 0);
+}
+function faceFloor(f) {
+  return f.floor || (f.ref && f.ref.floor) || '1F';
+}
+function faceAlpha(f) {
+  return faceFloor(f) === activeFloor ? 1 : 0.18;
+}
+function faceColor(f) {
+  var base;
+  if (f.kind === 'room') base = (f.ref && f.ref.color) || (f.ref && ROOM_COLORS[f.ref.category]) || ROOF;
+  else if (f.kind === 'roomWall') base = (f.ref && f.ref.color) || (f.ref && ROOM_COLORS[f.ref.category]) || WALL;
+  else if (f.kind === 'floorPlate') base = f.floor === 'G' ? [137, 124, 217] : [204, 113, 116];
+  else if (f.kind === 'floorSide') base = f.floor === 'G' ? [96, 87, 154] : [145, 79, 82];
+  else if (f.kind === 'secondRoof') base = SECOND_ROOF;
+  else if (f.kind === 'secondWall') base = SECOND_WALL;
+  else if (f.kind === 'corridorDeck') base = CORRIDOR_DECK;
+  else if (f.kind === 'corridorEdge') base = CORRIDOR_EDGE;
+  else base = f.kind === 'roof' ? (f.pick ? ROOF : GROOF) : (f.pick ? WALL : GWALL);
+  var bright = 0.58 + 0.42 * Math.max(0, vdot(f.n, LIGHT));
+  if (f.roof) bright = Math.min(1.04, bright + 0.1);
+  if (f.kind === 'roomWall') bright *= 0.72;
+  var sel = isSelFace(f);
+  if (f.pick && f.ref && hoverRef && hoverRef.id === f.ref.id && !sel) bright *= 1.06;
+  var r = base[0], g = base[1], b = base[2];
+  if (sel) { r = r * 0.55 + SEL_TINT[0] * 0.45; g = g * 0.55 + SEL_TINT[1] * 0.45; b = b * 0.55 + SEL_TINT[2] * 0.45; }
+  var alpha = faceAlpha(f);
+  return 'rgba(' + Math.round(clamp(r * bright, 0, 255)) + ',' +
+                  Math.round(clamp(g * bright, 0, 255)) + ',' +
+                  Math.round(clamp(b * bright, 0, 255)) + ',' + alpha + ')';
+}
+
+function drawFace(f, scr) {
+  ctx.beginPath();
+  ctx.moveTo(scr[0].x, scr[0].y);
+  for (var i = 1; i < scr.length; i++) ctx.lineTo(scr[i].x, scr[i].y);
+  ctx.closePath();
+  ctx.fillStyle = faceColor(f);
+  ctx.fill();
+  var sel = isSelFace(f);
+  var alpha = faceAlpha(f);
+  ctx.lineWidth = f.roof ? 1 : 0.75;
+  ctx.strokeStyle = sel ? 'rgba(226, 74, 57, ' + (alpha * 0.9) + ')' :
+    'rgba(72, 84, 96, ' + (0.06 + alpha * 0.16) + ')';
+  ctx.stroke();
+}
+
+function polyContains(pts, x, y) {
+  var inside = false;
+  for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+    var xi = pts[i].x, yi = pts[i].y, xj = pts[j].x, yj = pts[j].y;
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+
+function projectFaceList(list) {
+  var out = [];
+  for (var i = 0; i < list.length; i++) {
+    var f = list[i];
+    if (!isFrontFace(f)) continue;
+    var scr = [], ok = true, dsum = 0;
+    for (var k = 0; k < f.pts.length; k++) {
+      var p = project(f.pts[k]);
+      if (!p) { ok = false; break; }
+      scr.push(p); dsum += p.d;
+    }
+    if (ok) out.push({ f: f, scr: scr, depth: dsum / f.pts.length });
+  }
+  return out;
+}
+
+function isFrontFace(f) {
+  var cx = 0, cy = 0, cz = 0;
+  for (var i = 0; i < f.pts.length; i++) {
+    cx += f.pts[i].x; cy += f.pts[i].y; cz += f.pts[i].z;
+  }
+  var center = v(cx / f.pts.length, cy / f.pts.length, cz / f.pts.length);
+  return vdot(f.n, vsub(eyePos, center)) > 0;
+}
+
+function projectAll() {
+  return projectFaceList(FACES);
+}
+
+function drawShadowPolys() {
+  var off = vnorm(v(-LIGHT.x, -LIGHT.y, 0));
+  ctx.fillStyle = 'rgba(24, 34, 45, 0.16)';
+  for (var i = 0; i < shadowPolys.length; i++) {
+    var sp = shadowPolys[i];
+    var dx = off.x * sp.h * S * 0.32, dy = off.y * sp.h * S * 0.32;
+    var scr = [], ok = true;
+    for (var k = 0; k < sp.poly.length; k++) {
+      var p = project(v(sp.poly[k][0] * S + dx, sp.poly[k][1] * S + dy, 0.09));
+      if (!p) { ok = false; break; }
+      scr.push(p);
+    }
+    if (!ok) continue;
+    ctx.beginPath();
+    ctx.moveTo(scr[0].x, scr[0].y);
+    for (var m = 1; m < scr.length; m++) ctx.lineTo(scr[m].x, scr[m].y);
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+function displayName(value) {
+  var text = String(value || '').replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '').trim();
+  return text || value;
+}
+
+function drawLabels() {
+  if (!showLabels) return;
+  if (activeFloor === '2F') {
+    drawSecondFloorLabels();
+    return;
+  }
+  if (activeFloor !== '1F') {
+    drawRoomLabels();
+    return;
+  }
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (var i = 0; i < BUILDINGS.length; i++) {
+    var b = BUILDINGS[i];
+    if (b.secondOnly) continue;
+    var p = project(v(b.center.x, b.center.y, (b.top || b.h) + 0.6));
+    if (!p) continue;
+    var sel = selection && selection.type === 'building' && selection.ids.indexOf(b.id) >= 0;
+    var text = displayName(b.zh);
+    var size = text.length > 4 ? 10 : text.length > 2 ? 11 : 13;
+    ctx.font = '600 ' + size + 'px "Segoe UI", "Microsoft YaHei", system-ui, sans-serif';
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.strokeText(text, p.x, p.y);
+    ctx.fillStyle = sel ? '#d8432f' : 'rgba(84, 96, 108, 0.92)';
+    ctx.fillText(text, p.x, p.y);
+  }
+}
+
+function drawSecondFloorLabels() {
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  function polygonArea(poly) {
+    var area2 = 0;
+    for (var i = 0; i < poly.length; i++) {
+      var a = poly[i], b = poly[(i + 1) % poly.length];
+      area2 += a[0] * b[1] - b[0] * a[1];
+    }
+    return area2;
+  }
+  function polygonCentroid(poly) {
+    var area2 = 0, cx = 0, cy = 0;
+    for (var i = 0; i < poly.length; i++) {
+      var a = poly[i], b = poly[(i + 1) % poly.length];
+      var cross = a[0] * b[1] - b[0] * a[1];
+      area2 += cross;
+      cx += (a[0] + b[0]) * cross;
+      cy += (a[1] + b[1]) * cross;
+    }
+    area2 /= 2;
+    return [cx / (6 * area2), cy / (6 * area2)];
+  }
+  BUILDINGS.forEach(function (b) {
+    var polys = b.secondPolys || [b.poly];
+    var labelPoly = polys.reduce(function (best, poly) {
+      return Math.abs(polygonArea(poly)) > Math.abs(polygonArea(best)) ? poly : best;
+    });
+    var center = polygonCentroid(labelPoly);
+    var p = project(v(center[0] * S, center[1] * S, (b.top || b.h) + 0.6));
+    if (!p) return;
+    var sel = selection && selection.type === 'building' && selection.ids.indexOf(b.id) >= 0;
+    var text = displayName(b.zh);
+    var size = text.length > 4 ? 10 : text.length > 2 ? 11 : 13;
+    ctx.font = '600 ' + size + 'px "Segoe UI", "Microsoft YaHei", system-ui, sans-serif';
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.strokeText(text, p.x, p.y);
+    ctx.fillStyle = sel ? '#d8432f' : 'rgba(84, 96, 108, 0.92)';
+    ctx.fillText(text, p.x, p.y);
+  });
+}
+
+function drawStairs(now) {
+  ctx.font = '700 10px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (var i = 0; i < STAIRS.length; i++) {
+    var st = STAIRS[i];
+    var p = project(W(st.pos[0], st.pos[1]));
+    if (!p) continue;
+    var sel = selection && selection.type === 'stair' && selection.stair.id === st.id;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 8.5, 0, Math.PI * 2);
+    ctx.fillStyle = sel ? '#ff6a52' : '#c0392b';
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.fillText(st.id, p.x, p.y + 0.5);
+  }
+}
+
+function drawRoomLabels() {
+  if (!showLabels) return;
+  var rooms = FLOOR_ROOMS[activeFloor];
+  if (!rooms) return;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (var i = 0; i < rooms.length; i++) {
+    var room = rooms[i];
+    if (room.category === 'avenue' && room.id !== 'LGAV') continue;
+    if (room.num === '—') continue;
+    var p = project(room.center);
+    if (!p) continue;
+    var text = displayName(room.zh);
+    var size = text.length > 4 ? 9 : text.length > 2 ? 10 : 12;
+    ctx.font = '700 ' + size + 'px "Segoe UI", "Microsoft YaHei", system-ui, sans-serif';
+    var selected = !!(selection && selection.ids && selection.ids.indexOf(room.id) >= 0);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(18,24,32,0.68)';
+    ctx.strokeText(text, p.x, p.y);
+    ctx.fillStyle = selected ? '#fff' : 'rgba(255,255,255,0.9)';
+    ctx.fillText(text, p.x, p.y);
+  }
+}
+
+function drawFloorMarkers(now) {
+  if (activeFloor === 'LG') {
+    ctx.font = '700 8px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (var i = 0; i < LG_EXITS.length; i++) {
+      var pos = LG_EXITS[i];
+      var p = project(v(pos[0] * S, pos[1] * S, FLOOR_DEPTHS.LG + 0.5));
+      if (!p) continue;
+      ctx.fillStyle = '#1c7c46';
+      ctx.fillRect(p.x - 13, p.y - 6, 26, 12);
+      ctx.fillStyle = '#fff';
+      ctx.fillText('EXIT', p.x, p.y + 0.5);
+    }
+  }
+}
+
+function drawCompass() {
+  var p0 = project(v(cam.tx, cam.ty, cam.tz));
+  var p1 = project(v(cam.tx, cam.ty + 6, cam.tz));
+  if (!p0 || !p1) return;
+  var dx = p1.x - p0.x, dy = p1.y - p0.y;
+  var l = Math.hypot(dx, dy);
+  if (l < 1e-4) return;
+  dx /= l; dy /= l;
+  var cx = cw - 46, cy = ch - 92, r = 17;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(238, 242, 246, 0.88)';
+  ctx.fill();
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(90, 100, 112, 0.4)';
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx - dx * 11, cy - dy * 11);
+  ctx.lineTo(cx + dx * 12, cy + dy * 12);
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = '#d8432f';
+  ctx.stroke();
+  ctx.font = '700 10px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#3a444e';
+  ctx.fillText('N', cx + dx * (r + 8), cy + dy * (r + 8));
+}
+
+function render(now) {
+  ctx.clearRect(0, 0, cw, ch);
+  focal = (ch / 2) / Math.tan(FOV / 2);
+  updateBasis();
+  var gf = [];
+  for (var i = 0; i < groundFaces.length; i++) {
+    var f = groundFaces[i];
+    if (!isFrontFace(f)) continue;
+    var scr = [], ok = true, dsum = 0;
+    for (var k = 0; k < f.pts.length; k++) {
+      var p = project(f.pts[k]);
+      if (!p) { ok = false; break; }
+      scr.push(p); dsum += p.d;
+    }
+    if (ok) gf.push({ f: f, scr: scr, sub: f.sub, depth: dsum / f.pts.length });
+  }
+  gf.sort(function (a, b) { return a.sub - b.sub || b.depth - a.depth; });
+  for (var j = 0; j < gf.length; j++) {
+    var g = gf[j];
+    ctx.beginPath();
+    ctx.moveTo(g.scr[0].x, g.scr[0].y);
+    for (var m = 1; m < g.scr.length; m++) ctx.lineTo(g.scr[m].x, g.scr[m].y);
+    ctx.closePath();
+    var bright = 0.9 + 0.1 * Math.max(0, vdot(g.f.n, LIGHT));
+    var base = g.f.kind === 'ground' ? (g.f.sub === 0 ? GROUND_SIDE : GROUND) : PATHC;
+    var alpha = faceAlpha(g.f);
+    ctx.fillStyle = 'rgba(' + Math.round(base[0] * bright) + ',' + Math.round(base[1] * bright) + ',' + Math.round(base[2] * bright) + ',' + alpha + ')';
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(72, 84, 96, ' + (0.03 + alpha * 0.09) + ')';
+    ctx.stroke();
+  }
+  if (activeFloor === '1F') drawShadowPolys();
+  var all = projectAll();
+  for (var gi = 0; gi < grayFaces.length; gi++) {
+    var f2 = grayFaces[gi];
+    if (!isFrontFace(f2)) continue;
+    var scr2 = [], ok2 = true, dsum2 = 0;
+    for (var k2 = 0; k2 < f2.pts.length; k2++) {
+      var p2 = project(f2.pts[k2]);
+      if (!p2) { ok2 = false; break; }
+      scr2.push(p2);
+      dsum2 += p2.d;
+    }
+    if (ok2) all.push({ f: f2, scr: scr2, depth: dsum2 / f2.pts.length });
+  }
+  ['LG', 'G'].forEach(function (floor) {
+    all = all.concat(projectFaceList(FLOOR_FACES[floor]));
+  });
+  all.sort(function (a, b) { return b.depth - a.depth; });
+  pickFaces = [];
+  for (var q = 0; q < all.length; q++) {
+    drawFace(all[q].f, all[q].scr);
+    if (all[q].f.pick) pickFaces.push(all[q]);
+  }
+  if (activeFloor === '1F') drawStairs(now);
+  else drawFloorMarkers(now);
+  drawLabels();
+  drawCompass();
+}
+
+var lastT = 0;
+function tick(now) {
+  lastT = now;
+  stepAnim(now);
+  render(now);
+  requestAnimationFrame(tick);
+}
+/* ================= 拾取 ================= */
+function pickBuilding(x, y) {
+  for (var i = pickFaces.length - 1; i >= 0; i--) {
+    if (polyContains(pickFaces[i].scr, x, y)) return pickFaces[i].f.ref;
+  }
+  return null;
+}
+function pickStair(x, y) {
+  if (activeFloor !== '1F') return null;
+  for (var i = 0; i < STAIRS.length; i++) {
+    var st = STAIRS[i];
+    var p = project(W(st.pos[0], st.pos[1]));
+    if (p && Math.hypot(p.x - x, p.y - y) < 13) return st;
+  }
+  return null;
+}
+
+/* ================= 交互 ================= */
+var pointers = new Map();
+var pinchStart = null;
+
+canvas.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+
+canvas.addEventListener('pointerdown', function (e) {
+  canvas.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, {
+    x: e.clientX, y: e.clientY, moved: 0, button: e.button
+  });
+  lastInteract = performance.now();
+  if (pointers.size === 2) {
+    var pts = Array.from(pointers.values());
+    pinchStart = {
+      dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y),
+      d0: cam.dist
+    };
+  }
+  dragging = true;
+  anim = null;
+  canvas.classList.add('grabbing');
+});
+
+canvas.addEventListener('pointermove', function (e) {
+  lastInteract = performance.now();
+  var pt = pointers.get(e.pointerId);
+  if (!pt) {
+    var hb = pickBuilding(e.clientX, e.clientY);
+    var hs = hb ? null : pickStair(e.clientX, e.clientY);
+    hoverRef = hb;
+    canvas.classList.toggle('hovering', !!(hb || hs));
+    return;
+  }
+  var dx = e.clientX - pt.x, dy = e.clientY - pt.y;
+  pt.moved += Math.abs(dx) + Math.abs(dy);
+  pt.x = e.clientX; pt.y = e.clientY;
+  if (pointers.size === 2 && pinchStart) {
+    var arr = Array.from(pointers.values());
+    var d = Math.hypot(arr[0].x - arr[1].x, arr[0].y - arr[1].y);
+    cam.dist = clamp(pinchStart.d0 * pinchStart.dist / Math.max(20, d), 8, 700);
+    return;
+  }
+  if (pt.button === 2 || e.ctrlKey) {
+    var k = 2 * cam.dist * Math.tan(FOV / 2) / ch;
+    cam.tx = clamp(cam.tx - rightDir.x * dx * k + upDir.x * dy * k, -30, 140);
+    cam.ty = clamp(cam.ty - rightDir.y * dx * k + upDir.y * dy * k, -30, 215);
+  } else {
+    cam.yaw -= dx * 0.006;
+    cam.pitch = clamp(cam.pitch + dy * 0.006, 0.14, 1.5);
+  }
+});
+
+function endPointer(e) {
+  var pt = pointers.get(e.pointerId);
+  pointers.delete(e.pointerId);
+  if (pointers.size < 2) pinchStart = null;
+  if (pointers.size === 0) {
+    dragging = false;
+    canvas.classList.remove('grabbing');
+    lastInteract = performance.now();
+    if (pt && pt.moved < 8) {
+      var b = pickBuilding(e.clientX, e.clientY);
+      if (b) { selectBuilding(b.group || b.id); }
+      else {
+        var st = pickStair(e.clientX, e.clientY);
+        if (st) selectStair(st);
+        else clearSelection();
+      }
+    }
+  }
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
+
+canvas.addEventListener('wheel', function (e) {
+  e.preventDefault();
+  lastInteract = performance.now();
+  anim = null;
+  cam.dist = clamp(cam.dist * Math.exp(e.deltaY * 0.0012), 8, 700);
+}, { passive: false });
+
+/* ================= 选择与信息面板 ================= */
+var infoEl = document.getElementById('info');
+var infoChip = document.getElementById('infoChip');
+var infoZh = document.getElementById('infoZh');
+var infoEn = document.getElementById('infoEn');
+var infoDesc = document.getElementById('infoDesc');
+var legendEl = document.getElementById('legend');
+
+function findBuilding(id) {
+  for (var i = 0; i < BUILDINGS.length; i++) if (BUILDINGS[i].id === id) return BUILDINGS[i];
+  return null;
+}
+function findSelectable(id) {
+  return findBuilding(id) || FLOOR_ROOMS.G.filter(function (room) { return room.id === id; })[0] ||
+         FLOOR_ROOMS.LG.filter(function (room) { return room.id === id; })[0] ||
+         CORRIDORS.filter(function (corridor) { return corridor.id === id; })[0] || null;
+}
+function findLegendGroup(key) {
+  var lists = [LEGEND, G_LEGEND, LG_LEGEND];
+  for (var li = 0; li < lists.length; li++) {
+    for (var i = 0; i < lists[li].length; i++) {
+      if (lists[li][i].key === key) return lists[li][i];
+    }
+  }
+  return null;
+}
+
+function selectBuilding(key) {
+  var g = findLegendGroup(key);
+  if (!g) return;
+  selection = { type: 'building', ids: g.ids.slice(), group: g };
+  infoChip.textContent = g.num;
+  infoZh.textContent = g.zh;
+  infoEn.textContent = g.en;
+  var b = findSelectable(g.ids[0]);
+  infoDesc.textContent = b ? b.desc : '';
+  infoEl.classList.remove('hidden');
+  updateLegendActive();
+}
+
+function selectStair(st) {
+  selection = { type: 'stair', stair: st };
+  infoChip.textContent = st.id;
+  infoZh.textContent = '楼梯 ' + st.id;
+  infoEn.textContent = 'Staircase';
+  infoDesc.textContent = st.desc;
+  infoEl.classList.remove('hidden');
+  updateLegendActive();
+}
+
+function clearSelection() {
+  selection = null;
+  infoEl.classList.add('hidden');
+  updateLegendActive();
+}
+
+function updateLegendActive() {
+  var items = document.querySelectorAll('.legend-item');
+  for (var i = 0; i < items.length; i++) {
+    var active = !!(selection && selection.type === 'building' &&
+                    selection.group.key === items[i].getAttribute('data-key'));
+    items[i].classList.toggle('active', active);
+  }
+}
+
+function focusSelection() {
+  if (!selection) return;
+  if (selection.type === 'building') {
+    var bs = selection.ids.map(findSelectable).filter(Boolean);
+    var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9, hMax = 0;
+    bs.forEach(function (b) {
+      b.poly.forEach(function (p) {
+        minX = Math.min(minX, p[0] * S); maxX = Math.max(maxX, p[0] * S);
+        minY = Math.min(minY, p[1] * S); maxY = Math.max(maxY, p[1] * S);
+      });
+      hMax = Math.max(hMax, b.top || b.h || b.height || 0);
+    });
+    var w = maxX - minX, d = maxY - minY;
+    var depth = bs.length ? (FLOOR_DEPTHS[bs[0].floor] || 0) : 0;
+    flyTo({
+      yaw: cam.yaw, pitch: 0.62,
+      dist: clamp(Math.max(w, d) * 2.6 + hMax * 1.4 + 6, 8, 700),
+      tx: (minX + maxX) / 2, ty: (minY + maxY) / 2, tz: depth + hMax * 0.3
+    }, 750);
+  } else {
+    var st = selection.stair;
+    flyTo({ yaw: cam.yaw, pitch: 0.5, dist: 30, tx: st.pos[0] * S, ty: st.pos[1] * S, tz: 0 }, 650);
+  }
+}
+
+document.getElementById('btnFocus').addEventListener('click', focusSelection);
+document.getElementById('btnClose').addEventListener('click', clearSelection);
+
+/* ================= 图例 ================= */
+(function () {
+  function buildLegend() {
+  var list = document.getElementById('legendList');
+  var groups = FLOOR_LEGEND[activeFloor] || LEGEND;
+  list.innerHTML = '';
+  groups.forEach(function (g) {
+    var btn = document.createElement('button');
+    btn.className = 'legend-item';
+    btn.setAttribute('data-key', g.key);
+    btn.innerHTML =
+      '<span class="num-chip">' + g.num + '</span>' +
+      '<span class="legend-name"><b>' + g.zh + '</b><span>' + g.en + '</span></span>';
+    btn.addEventListener('click', function () {
+      selectBuilding(g.key);
+      focusSelection();
+    });
+    list.appendChild(btn);
+  });
+  }
+  window.__rebuildQzLegend = buildLegend;
+  buildLegend();
+})();
+
+function floorHome(floor) {
+  var bounds = [4, 3, 107.5, 179.5];
+  var width = bounds[2] - bounds[0];
+  var depth = bounds[3] - bounds[1];
+  var vTan = Math.tan(FOV / 2);
+  var hTan = vTan * (cw / Math.max(1, ch));
+  var fill = 0.68;
+  var dist = Math.max((depth / 2) / (vTan * fill), (width / 2) / (hTan * fill)) + 1.5;
+  return {
+    yaw: 0, pitch: 0.72,
+    dist: clamp(dist, 8, 700),
+    tx: (bounds[0] + bounds[2]) / 2,
+    ty: (bounds[1] + bounds[3]) / 2,
+    tz: floor === '2F' ? SECOND_LINK_BASE : FLOOR_DEPTHS[floor]
+  };
+}
+
+function setFloor(floor, animate) {
+  if (!FLOOR_META[floor]) return;
+  activeFloor = floor;
+  clearSelection();
+  HOME = floorHome(floor);
+  window.__rebuildQzLegend();
+  ['2F', '1F', 'G', 'LG'].forEach(function (name) {
+    var button = document.getElementById('floor' + name);
+    button.classList.toggle('active', name === floor);
+  });
+}
+
+/* ================= 顶部按钮 ================= */
+var btnLabels = document.getElementById('btnLabels');
+btnLabels.addEventListener('click', function () {
+  showLabels = !showLabels;
+  btnLabels.classList.toggle('active', showLabels);
+});
+var btnLegend = document.getElementById('btnLegend');
+btnLegend.addEventListener('click', function () {
+  legendEl.classList.toggle('hidden');
+  btnLegend.classList.toggle('active', !legendEl.classList.contains('hidden'));
+});
+['2F', '1F', 'G', 'LG'].forEach(function (floor) {
+  document.getElementById('floor' + floor).addEventListener('click', function () {
+    setFloor(floor, floor !== activeFloor);
+  });
+});
+
+/* ================= 启动 ================= */
+resize();
+setFloor('1F', false);
+flyTo(Object.assign({}, HOME), 1200);
+window.__qzUseThree = true;
+</script>
+<script>
+(function () {
+  if (!window.__qzUseThree || !window.THREE) return;
+  const labelCanvas = document.getElementById('scene');
+  const glCanvas = document.createElement('canvas');
+  glCanvas.id = 'three-scene';
+  labelCanvas.parentNode.insertBefore(glCanvas, labelCanvas);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(FOV * 180 / Math.PI, 1, 0.1, 1000);
+  camera.up.set(0, 0, 1);
+  const renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: true });
+  renderer.setClearColor(0x0d1116, 1);
+  renderer.sortObjects = true;
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  const faceMeshes = [];
+  function faceAxes(normal) {
+    const ax = Math.abs(normal.x), ay = Math.abs(normal.y), az = Math.abs(normal.z);
+    if (az >= ax && az >= ay) return ['x', 'y'];
+    if (ay >= ax && ay >= az) return ['x', 'z'];
+    return ['y', 'z'];
+  }
+  function addFace(face) {
+    const normal = face.n || vnorm(vcross(vsub(face.pts[1], face.pts[0]), vsub(face.pts[2], face.pts[0])));
+    const axes = faceAxes(normal);
+    const contour = face.pts.map(function (point) {
+      return axes[0] === 'x' ? new THREE.Vector2(point.x, point.y) :
+             axes[0] === 'y' ? new THREE.Vector2(point.y, point.z) :
+                               new THREE.Vector2(point.x, point.z);
+    });
+    let triangles;
+    try { triangles = THREE.ShapeUtils.triangulateShape(contour, []); } catch (error) { return; }
+    if (!triangles.length) return;
+    const positions = [];
+    triangles.forEach(function (triangle) {
+      triangle.forEach(function (index) {
+        positions.push(-face.pts[index].x, face.pts[index].y, face.pts[index].z);
+      });
+    });
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.userData.face = face;
+    scene.add(mesh);
+    faceMeshes.push(mesh);
+  }
+  groundFaces.forEach(addFace);
+  FACES.forEach(addFace);
+  grayFaces.forEach(addFace);
+  FLOOR_FACES.G.forEach(addFace);
+  FLOOR_FACES.LG.forEach(addFace);
+  function materialColor(face) {
+    const match = faceColor(face).match(/rgba?\(([^)]+)\)/);
+    const parts = match ? match[1].split(',').map(parseFloat) : [255, 255, 255];
+    return new THREE.Color((parts[0] || 0) / 255, (parts[1] || 0) / 255, (parts[2] || 0) / 255);
+  }
+  function updateMaterials() {
+    faceMeshes.forEach(function (mesh) {
+      const face = mesh.userData.face;
+      const alpha = faceAlpha(face);
+      const material = mesh.material;
+      material.color.copy(materialColor(face));
+      material.opacity = alpha;
+      material.transparent = alpha < 0.99;
+      material.depthWrite = alpha > 0.99;
+    });
+  }
+  function resizeThree() {
+    const width = window.innerWidth, height = window.innerHeight;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(width, height);
+    camera.aspect = width / Math.max(1, height);
+    camera.updateProjectionMatrix();
+  }
+  function updateCamera() {
+    const cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+    camera.position.set(
+      -cam.tx + cam.dist * cp * Math.sin(cam.yaw),
+      cam.ty + cam.dist * cp * Math.cos(cam.yaw),
+      cam.tz + cam.dist * sp
+    );
+    camera.lookAt(-cam.tx, cam.ty, cam.tz);
+    camera.updateMatrixWorld();
+  }
+  window.project = function (point) {
+    updateCamera();
+    const vector = new THREE.Vector3(-point.x, point.y, point.z).project(camera);
+    const direction = camera.getWorldDirection(new THREE.Vector3());
+    const relative = new THREE.Vector3(-point.x, point.y, point.z).sub(camera.position);
+    if (relative.dot(direction) < 0.1) return null;
+    return { x: (vector.x + 1) * cw / 2, y: (1 - vector.y) * ch / 2, d: relative.length() };
+  };
+  function canvasPoint(event) {
+    const rect = glCanvas.getBoundingClientRect();
+    pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  }
+  function pickFace(event) {
+    canvasPoint(event);
+    raycaster.setFromCamera(pointer, camera);
+    const hit = raycaster.intersectObjects(faceMeshes, false).find(function (item) {
+      const face = item.object.userData.face;
+      return face.pick && faceFloor(face) === activeFloor;
+    });
+    return hit ? hit.object.userData.face.ref : null;
+  }
+  function updateHover(event) {
+    const next = pickFace(event);
+    if (next !== hoverRef) {
+      hoverRef = next;
+      updateMaterials();
+    }
+    glCanvas.classList.toggle('hovering', !!next);
+  }
+  const activePointers = new Map();
+  let pinchStart = null;
+  glCanvas.addEventListener('contextmenu', function (event) { event.preventDefault(); });
+  glCanvas.addEventListener('pointerdown', function (event) {
+    glCanvas.setPointerCapture(event.pointerId);
+    activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY, moved: 0, button: event.button });
+    if (activePointers.size === 2) {
+      const points = Array.from(activePointers.values());
+      pinchStart = { dist: Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y), d0: cam.dist };
+    }
+    anim = null;
+    glCanvas.classList.add('grabbing');
+  });
+  glCanvas.addEventListener('pointermove', function (event) {
+    if (!activePointers.has(event.pointerId)) {
+      updateHover(event);
+      return;
+    }
+    const state = activePointers.get(event.pointerId);
+    const dx = event.clientX - state.x, dy = event.clientY - state.y;
+    state.moved += Math.abs(dx) + Math.abs(dy);
+    state.x = event.clientX; state.y = event.clientY;
+    if (activePointers.size === 2 && pinchStart) {
+      const points = Array.from(activePointers.values());
+      const distance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+      cam.dist = clamp(pinchStart.d0 * pinchStart.dist / Math.max(20, distance), 8, 700);
+      return;
+    }
+    if (state.button === 2 || event.ctrlKey) {
+      updateCamera();
+      const scale = 2 * cam.dist * Math.tan(FOV / 2) / ch;
+      const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
+      const up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
+      cam.tx = clamp(cam.tx + right.x * dx * scale + up.x * dy * scale, -30, 140);
+      cam.ty = clamp(cam.ty - right.y * dx * scale + up.y * dy * scale, -30, 215);
+    } else {
+      cam.yaw += dx * 0.006;
+      cam.pitch = clamp(cam.pitch + dy * 0.006, 0.14, 1.5);
+    }
+  });
+  function releasePointer(event) {
+    const state = activePointers.get(event.pointerId);
+    activePointers.delete(event.pointerId);
+    if (activePointers.size < 2) pinchStart = null;
+    if (!activePointers.size) {
+      glCanvas.classList.remove('grabbing');
+      if (state && state.moved < 8) {
+        const building = pickFace(event);
+        if (building) selectBuilding(building.group || building.id);
+        else {
+          const stair = pickStair(event.clientX, event.clientY);
+          if (stair) selectStair(stair); else clearSelection();
+        }
+      }
+    }
+  }
+  glCanvas.addEventListener('pointerup', releasePointer);
+  glCanvas.addEventListener('pointercancel', releasePointer);
+  glCanvas.addEventListener('wheel', function (event) {
+    event.preventDefault();
+    anim = null;
+    cam.dist = clamp(cam.dist * Math.exp(event.deltaY * 0.0012), 8, 700);
+  }, { passive: false });
+  const originalSelectBuilding = window.selectBuilding;
+  window.selectBuilding = function (key) { originalSelectBuilding(key); updateMaterials(); };
+  const originalSelectStair = window.selectStair;
+  window.selectStair = function (stair) { originalSelectStair(stair); updateMaterials(); };
+  const originalClearSelection = window.clearSelection;
+  window.clearSelection = function () { originalClearSelection(); updateMaterials(); };
+  const originalSetFloor = window.setFloor;
+  window.setFloor = function (floor, animate) { originalSetFloor(floor, animate); updateMaterials(); };
+  function tickThree(now) {
+    stepAnim(now);
+    updateCamera();
+    renderer.render(scene, camera);
+    ctx.clearRect(0, 0, cw, ch);
+    if (activeFloor === '1F') drawStairs(now); else drawFloorMarkers(now);
+    drawLabels();
+    drawCompass();
+    requestAnimationFrame(tickThree);
+  }
+  window.addEventListener('resize', function () { resizeThree(); });
+  resizeThree();
+  updateMaterials();
+  requestAnimationFrame(tickThree);
+})();
+</script>
+</body>
+</html>
