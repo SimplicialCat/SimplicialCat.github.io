@@ -543,7 +543,7 @@ var LG_ROOMS = [
 ];
 
 var LG_EXITS = [
-  [14, 6], [33, 6], [49, 6], [60, 6], [86, 71], [86, 104]
+  [14, 6], [33, 6], [49, 6], [60, 6], [86, 142.35], [86, 125.68]
 ];
 
 (function mirrorLGPlan() {
@@ -1652,7 +1652,7 @@ window.__qzInitThree = function () {
       if (state && state.moved < 8) {
         const building = pickFace(event);
         if (activeFloor === 'LG' && building && (building.id === 'LG35' || building.category === 'ziqiang-detail')) {
-          openZiqiangDetail();
+          selectBuilding('LG35');
           return;
         }
         hideZiqiangDetail();
@@ -1672,100 +1672,70 @@ window.__qzInitThree = function () {
     cam.dist = clamp(cam.dist * Math.exp(event.deltaY * 0.0012), 8, 700);
   }, { passive: false });
   const originalSelectBuilding = window.selectBuilding;
+  const originalSetFloor = window.setFloor;
   const ZIQIANG_ITEMS = [
-    { id: 'LG001', x: 80, y: 45, w: 120, h: 140 },
-    { id: 'LG006', x: 205, y: 95, w: 95, h: 90 },
-    { id: 'LG008', x: 300, y: 95, w: 95, h: 90 },
-    { id: 'LG002', x: 105, y: 215, w: 105, h: 250 },
-    { id: 'LG003', x: 105, y: 465, w: 105, h: 185 },
-    { id: 'LG004', x: 105, y: 650, w: 52, h: 50 },
-    { id: 'LG005', x: 157, y: 650, w: 53, h: 50 },
-    { id: 'LG009', x: 245, y: 235, w: 65, h: 245 },
-    { id: 'LG010', x: 310, y: 420, w: 95, h: 230 },
-    { id: 'LG007', x: 245, y: 655, w: 75, h: 70 },
-    { id: 'LG011', x: 320, y: 655, w: 85, h: 70 },
-    { id: 'LG012', x: 430, y: 605, w: 70, h: 85 },
-    { id: 'LG013', x: 500, y: 605, w: 70, h: 85 },
-    { id: 'LG014', x: 145, y: 550, w: 100, h: 130, red: 1 },
-    { id: 'LG024', x: 310, y: 720, w: 110, h: 85, red: 1 },
-    { id: 'LG025', x: 465, y: 690, w: 110, h: 90, red: 1 },
-    { id: 'LG015', x: 150, y: 730, w: 95, h: 160, red: 1 },
-    { id: 'LG016', x: 150, y: 890, w: 95, h: 145, red: 1 },
-    { id: 'LG020', x: 300, y: 840, w: 70, h: 85, red: 1 },
-    { id: 'LG021', x: 300, y: 925, w: 70, h: 125, red: 1 },
-    { id: 'LG019', x: 255, y: 975, w: 45, h: 75, red: 1 },
-    { id: 'LG026', x: 460, y: 855, w: 115, h: 120, red: 1 },
-    { id: 'LG027', x: 460, y: 975, w: 115, h: 130, red: 1 },
-    { id: 'LG017', x: 145, y: 1065, w: 100, h: 70, red: 1 },
-    { id: 'LG018', x: 145, y: 1135, w: 100, h: 170, red: 1 },
-    { id: 'LG022', x: 295, y: 1080, w: 80, h: 80, red: 1 },
-    { id: 'LG023', x: 300, y: 1255, w: 75, h: 130, red: 1 },
-    { id: 'LG028', x: 460, y: 1105, w: 115, h: 115, red: 1 },
-    { id: 'LG029', x: 460, y: 1220, w: 115, h: 85, red: 1 },
-    { id: 'LG030', x: 460, y: 1305, w: 115, h: 90, red: 1 },
-    { id: 'LG031', x: 460, y: 1395, w: 115, h: 185, red: 1 }
+    { id: 'LG001', x: 132, y: 17, w: 84, h: 132 },
+    { id: 'LG006', x: 225, y: 102, w: 79, h: 47 },
+    { id: 'LG008', x: 307, y: 102, w: 82, h: 47 },
+    { id: 'LG002', x: 133, y: 182, w: 84, h: 208 },
+    { id: 'LG003', x: 133, y: 395, w: 84, h: 113 },
+    { id: 'LG004', x: 133, y: 511, w: 41, h: 51 },
+    { id: 'LG005', x: 176, y: 511, w: 41, h: 51 },
+    { id: 'LG009', x: 307, y: 181, w: 84, h: 160 },
+    { id: 'LG010', x: 307, y: 345, w: 84, h: 163 },
+    { id: 'LG007', x: 250, y: 511, w: 54, h: 51 },
+    { id: 'LG011', x: 307, y: 511, w: 82, h: 51 },
+    { id: 'LG012', x: 420, y: 434, w: 55, h: 72 },
+    { id: 'LG013', x: 479, y: 434, w: 56, h: 72 },
+    { id: 'LG014', x: 132, y: 625, w: 85, h: 161, red: 1 },
+    { id: 'LG024', x: 339, y: 788, w: 106, h: 90, red: 1 },
+    { id: 'LG025', x: 479, y: 788, w: 92, h: 90, red: 1 },
+    { id: 'LG015', x: 132, y: 840, w: 85, h: 156, red: 1 },
+    { id: 'LG016', x: 132, y: 1003, w: 85, h: 82, red: 1 },
+    { id: 'LG020', x: 309, y: 909, w: 57, h: 59, red: 1 },
+    { id: 'LG021', x: 309, y: 971, w: 57, h: 126, red: 1 },
+    { id: 'LG019', x: 266, y: 1038, w: 39, h: 59, red: 1 },
+    { id: 'LG026', x: 479, y: 912, w: 92, h: 79, red: 1 },
+    { id: 'LG027', x: 479, y: 995, w: 92, h: 140, red: 1 },
+    { id: 'LG017', x: 132, y: 1140, w: 85, h: 55, red: 1 },
+    { id: 'LG018', x: 132, y: 1200, w: 85, h: 209, red: 1 },
+    { id: 'LG022', x: 309, y: 1147, w: 57, h: 79, red: 1 },
+    { id: 'LG023', x: 309, y: 1316, w: 57, h: 113, red: 1 },
+    { id: 'LG028', x: 479, y: 1139, w: 93, h: 104, red: 1 },
+    { id: 'LG029', x: 479, y: 1246, w: 92, h: 67, red: 1 },
+    { id: 'LG030', x: 479, y: 1316, w: 92, h: 81, red: 1 },
+    { id: 'LG031', x: 472, y: 1402, w: 100, h: 162, red: 1, section: 2 }
   ];
   const ZIQIANG_ZONES = [
-    { name: '玻尔区', x: 400, y: 10, w: 150, h: 115, zone: 'study' },
-    { name: '庭院', x: 400, y: 230, w: 80, h: 240, zone: 'yard' },
-    { name: '伽利略区', x: 485, y: 230, w: 95, h: 240, zone: 'study' },
-    { name: '牛顿区', x: 310, y: 530, w: 150, h: 90, zone: 'study' },
-    { name: '庭院', x: 300, y: 620, w: 130, h: 100, zone: 'yard' },
-    { name: '麦克斯韦区', x: 465, y: 595, w: 110, h: 95, zone: 'study' },
-    { name: '爱因斯坦区', x: 385, y: 850, w: 65, h: 110, zone: 'study' },
-    { name: '庭院', x: 300, y: 1160, w: 75, h: 95, zone: 'yard' },
-    { name: '海森堡区', x: 385, y: 1260, w: 65, h: 130, zone: 'study' },
-    { name: '庭院', x: 180, y: 1460, w: 85, h: 160, zone: 'yard' },
-    { name: '庭院', x: 350, y: 1660, w: 85, h: 80, zone: 'yard' },
-    { name: '狄拉克区', x: 440, y: 1660, w: 70, h: 105, zone: 'study' }
+    { name: '玻尔区', x: 479, y: 18, w: 54, h: 69, zone: 'study' },
+    { name: '庭院', x: 419, y: 101, w: 56, h: 151, zone: 'yard' },
+    { name: '伽利略区', x: 420, y: 266, w: 51, h: 140, zone: 'study' },
+    { name: '牛顿区', x: 317, y: 625, w: 128, h: 78, zone: 'study', section: 1 },
+    { name: '庭院', x: 317, y: 708, w: 129, h: 76, zone: 'yard', section: 1 },
+    { name: '麦克斯韦区', x: 480, y: 704, w: 91, h: 79, zone: 'study' },
+    { name: '爱因斯坦区', x: 390, y: 905, w: 60, h: 100, zone: 'study' },
+    { name: '庭院', x: 308, y: 1228, w: 58, h: 86, zone: 'yard' },
+    { name: '海森堡区', x: 390, y: 1316, w: 60, h: 119, zone: 'study' },
+    { name: '庭院', x: 301, y: 1655, w: 89, h: 88, zone: 'yard' },
+    { name: '狄拉克区', x: 394, y: 1656, w: 48, h: 84, zone: 'study' }
   ];
   const ziqiangRoomsB = [
-  { id: 'LG036', x: 270, y: 1465, w: 55, h: 45 },
-  { id: 'LG037', x: 325, y: 1465, w: 55, h: 45 },
-  { id: 'LG038', x: 380, y: 1465, w: 55, h: 45 },
-  { id: 'LG042', x: 435, y: 1465, w: 55, h: 45 },
-  { id: 'LG032', x: 265, y: 1540, w: 85, h: 120 },
-  { id: 'LG039', x: 350, y: 1540, w: 85, h: 120 },
-  { id: 'LG033', x: 265, y: 1660, w: 85, h: 140 },
-  { id: 'LG040', x: 350, y: 1740, w: 85, h: 60 },
-  { id: 'LG043', x: 515, y: 1540, w: 80, h: 160 },
-  { id: 'LG044', x: 515, y: 1700, w: 80, h: 110 },
-  { id: 'LG034', x: 265, y: 1855, w: 55, h: 65 },
-  { id: 'LG035', x: 320, y: 1855, w: 55, h: 65 },
-  { id: 'LG041', x: 390, y: 1855, w: 60, h: 65 }
+  { id: 'LG036', x: 251, y: 1490, w: 44, h: 49 },
+  { id: 'LG037', x: 299, y: 1490, w: 44, h: 49 },
+  { id: 'LG038', x: 347, y: 1490, w: 44, h: 49 },
+  { id: 'LG042', x: 394, y: 1490, w: 52, h: 49 },
+  { id: 'LG032', x: 219, y: 1569, w: 78, h: 83 },
+  { id: 'LG039', x: 301, y: 1569, w: 87, h: 83 },
+  { id: 'LG033', x: 219, y: 1656, w: 78, h: 163 },
+  { id: 'LG040', x: 301, y: 1745, w: 87, h: 74 },
+  { id: 'LG043', x: 471, y: 1569, w: 100, h: 164 },
+  { id: 'LG044', x: 479, y: 1738, w: 92, h: 82 },
+  { id: 'LG034', x: 219, y: 1851, w: 46, h: 69 },
+  { id: 'LG035', x: 269, y: 1851, w: 45, h: 69 },
+  { id: 'LG041', x: 344, y: 1851, w: 44, h: 69 }
 ];
   function ziqiangRoom() {
     return FLOOR_ROOMS.LG.find(function (room) { return room.id === 'LG35'; });
-  }
-  function ziqiangBuildingY(ids) {
-    let north = -Infinity, south = Infinity;
-    BUILDINGS.forEach(function (building) {
-      if (ids.indexOf(building.id) < 0) return;
-      building.poly.forEach(function (point) {
-        north = Math.max(north, point[1] * S);
-        south = Math.min(south, point[1] * S);
-      });
-    });
-    return { north, south };
-  }
-  const ZIQIANG_SECTIONS = [
-    { source: [0, 700], target: ziqiangBuildingY(['b7a', 'b7b']) },
-    { source: [500, 1600], target: ziqiangBuildingY(['b8', 'b9']) },
-    { source: [1450, 1945], target: ziqiangBuildingY(['b10']) }
-  ];
-  function ziqiangSection(item) {
-    const numericId = item.id ? parseInt(item.id.slice(2), 10) : NaN;
-    if (!isNaN(numericId)) {
-      if (numericId <= 13) return ZIQIANG_SECTIONS[0];
-      if (numericId <= 31) return ZIQIANG_SECTIONS[1];
-      return ZIQIANG_SECTIONS[2];
-    }
-    const sectionIndex = item.y < 700 ? 0 : item.y < 1450 ? 1 : 2;
-    return ZIQIANG_SECTIONS[sectionIndex];
-  }
-  function mapZiqiangY(sourceY, section) {
-    const ratio = clamp((sourceY - section.source[0]) / (section.source[1] - section.source[0]), 0, 1);
-    return section.target.north + ratio * (section.target.south - section.target.north);
   }
   const zqBounds = (function () {
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -1777,20 +1747,34 @@ window.__qzInitThree = function () {
   })();
   const detailMeshes = [];
   let ziqiangDetailOpen = false;
+  const ZQ_GREEN = [82, 156, 111];
+  const ZQ_RED = [176, 48, 46];
+  const ZQ_YELLOW = [226, 173, 111];
+  function ziqiangColor(item, isZone) {
+    if (isZone) {
+      if (item.name.indexOf('庭院') >= 0) return [232, 236, 242];
+      return item.y < 550 ? ZQ_GREEN : item.y < 1478 ? ZQ_RED : ZQ_YELLOW;
+    }
+    const numericId = parseInt(item.id.slice(2), 10);
+    return numericId <= 13 ? ZQ_GREEN : numericId <= 31 ? ZQ_RED : ZQ_YELLOW;
+  }
   function mapZiqiangPoly(item) {
-    const section = ziqiangSection(item);
     const x0 = zqBounds.maxX - (item.x / 620) * (zqBounds.maxX - zqBounds.minX);
     const x1 = zqBounds.maxX - ((item.x + item.w) / 620) * (zqBounds.maxX - zqBounds.minX);
-    const y0 = mapZiqiangY(item.y + item.h, section);
-    const y1 = mapZiqiangY(item.y, section);
+    const y0 = mapZiqiangY(item.y + item.h);
+    const y1 = mapZiqiangY(item.y);
     return [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+  }
+  function mapZiqiangY(sourceY) {
+    const ratio = clamp((sourceY - 45) / (1920 - 45), 0, 1);
+    return zqBounds.maxY - ratio * (zqBounds.maxY - zqBounds.minY);
   }
   function addZiqiangBox(item, isZone) {
     const poly = mapZiqiangPoly(item);
     const room = ziqiangRoom();
     const height = isZone ? 0.04 : 0.36;
     const base = room.base + room.height - height - (isZone ? 0.02 : 0.01);
-    const color = isZone ? [201, 87, 75] : item.red ? [171, 51, 44] : [213, 221, 229];
+    const color = ziqiangColor(item, isZone);
     const ref = {
       id: item.id || ('ZQ-' + item.name), zh: item.name || item.id, color,
       category: 'ziqiang-detail', floor: 'LG'
@@ -1849,7 +1833,6 @@ window.__qzInitThree = function () {
   }
   function openZiqiangDetail() {
     setZiqiangDetail(true);
-    clearSelection();
     focusZiqiang();
   }
   function hideZiqiangDetail() {
@@ -1880,12 +1863,19 @@ window.__qzInitThree = function () {
       ctx.fillText(item.id, point.x, point.y);
     });
   }
-  window.selectBuilding = function (key) { originalSelectBuilding(key); updateMaterials(); };
+  window.selectBuilding = function (key) {
+    originalSelectBuilding(key);
+    if (key === 'LG35') {
+      if (activeFloor !== 'LG') originalSetFloor('LG', false);
+      openZiqiangDetail();
+    }
+    else hideZiqiangDetail();
+    updateMaterials();
+  };
   const originalSelectStair = window.selectStair;
   window.selectStair = function (stair) { originalSelectStair(stair); updateMaterials(); };
   const originalClearSelection = window.clearSelection;
   window.clearSelection = function () { originalClearSelection(); updateMaterials(); };
-  const originalSetFloor = window.setFloor;
   window.setFloor = function (floor, animate) { hideZiqiangDetail(); originalSetFloor(floor, animate); updateMaterials(); };
   function tickThree(now) {
     stepAnim(now);
