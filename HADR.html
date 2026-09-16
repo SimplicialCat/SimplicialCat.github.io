@@ -55,6 +55,34 @@
         tbody tr:last-child td {
             border-bottom: none;
         }
+
+        .schedule-list {
+            margin: 10px 0 24px;
+        }
+
+        .schedule-row {
+            display: grid;
+            grid-template-columns: 5.2em 1fr;
+            gap: 16px;
+            align-items: baseline;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--line-light);
+        }
+
+        .schedule-row:last-child {
+            border-bottom: none;
+        }
+
+        .schedule-row dt {
+            color: var(--navy);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .schedule-row dd {
+            margin: 0;
+            color: var(--text-dim);
+        }
     </style>
 </head>
 <body class="lang-zh">
@@ -125,13 +153,19 @@
             <section id="organization" class="content-section">
                 <h2><span class="en">Organization</span><span class="zh">会务组织</span></h2>
                 <p>
-                    <span class="en">The seminar is planned for the Fall 2026 semester at Qiuzhen College. To finish the plan within one semester, there will be one talk each week. The Fall 2026 semester begins on September 14.</span>
-                    <span class="zh">讨论班计划于 2026 年秋季学期在求真书院举办. 为了在一学期之内完成计划, 每周举办一场. 2026 年秋季学期从 9 月 14 日开始.</span>
+                    <span class="en">The seminar is planned for the Fall 2026 semester. To finish the plan within one semester, there will be one talk each week. The Fall 2026 semester begins on September 14.</span>
+                    <span class="zh">讨论班计划于 2026 年秋季学期举办. 为了在一学期之内完成计划, 每周举办一场. 2026 年秋季学期从 9 月 14 日开始.</span>
                 </p>
-                <p class="convention">
-                    <span class="en">Specific time and place: TBD.</span>
-                    <span class="zh">具体时间地点待定.</span>
-                </p>
+                <dl class="schedule-list">
+                    <div class="schedule-row">
+                        <dt><span class="en">Time</span><span class="zh">时间</span></dt>
+                        <dd><span class="en">Mondays, 22:00-23:00 (Beijing Time)</span><span class="zh">每周一北京时间 22:00-23:00</span></dd>
+                    </div>
+                    <div class="schedule-row">
+                        <dt><span class="en">Venue</span><span class="zh">地点</span></dt>
+                        <dd><span class="en">None (online only)</span><span class="zh">暂无 (纯线上)</span></dd>
+                    </div>
+                </dl>
 
                 <iframe 
                     src="HADR/报告安排.pdf" 
