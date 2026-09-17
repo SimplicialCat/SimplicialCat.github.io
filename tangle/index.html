@@ -1,0 +1,108 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Three.js Rope Editor</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #cfe4f6; color: #eaeaf0; font-family: Inter, "Microsoft YaHei", sans-serif; }
+    #scene { position: fixed; inset: 0; display: block; }
+
+    .topbar {
+      position: fixed; left: 0; right: 0; top: 0; z-index: 10;
+      display: flex; align-items: stretch; gap: 12px;
+      padding: 8px 10px; background: rgba(18,18,24,.9); border-bottom: 1px solid rgba(255,255,255,.1);
+      backdrop-filter: blur(14px); user-select: none;
+    }
+    .toolbar { display: flex; flex: 1; gap: 5px; }
+    .actions { display: flex; gap: 5px; }
+    button {
+      border: 1px solid rgba(255,255,255,.14); background: #22232b; color: #fff;
+      border-radius: 7px; cursor: pointer; font-family: inherit; line-height: 1.2;
+    }
+    .tool {
+      flex: 1 1 0; min-width: 76px; height: 44px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 2px; font-size: 10px;
+    }
+    .tool span.icon { font-size: 16px; line-height: 1; }
+    .action { min-width: 68px; height: 44px; font-size: 11px; padding: 0 9px; }
+    button:hover:not(:disabled) { background: #2b3040; border-color: #66748f; }
+    button.active { background: #33507e; border-color: #7baaff; }
+    button:disabled { opacity: .4; cursor: not-allowed; }
+
+    #status {
+      position: fixed; left: 10px; bottom: 10px; z-index: 9; max-width: min(72vw, 620px);
+      padding: 8px 11px; border-radius: 8px; font-size: 11px; line-height: 1.45;
+      color: #b8b8c4; background: rgba(18,18,24,.8); border: 1px solid rgba(255,255,255,.09);
+    }
+    #status b { color: #fff; }
+
+    #settings-overlay {
+      position: fixed; inset: 0; z-index: 20; display: grid; place-items: center;
+      background: rgba(5,6,10,.55); backdrop-filter: blur(4px);
+    }
+    #settings-overlay.hidden { display: none; }
+    .settings {
+      width: min(410px, calc(100vw - 32px)); max-height: min(82vh, 640px); overflow: auto;
+      background: #17181f; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 16px;
+    }
+    .settings h2 { margin: 0 0 13px; font-size: 15px; }
+    .settings .group { padding-top: 12px; margin-top: 11px; border-top: 1px solid rgba(255,255,255,.08); }
+    .settings .group:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
+    .group-title { font-size: 10px; letter-spacing: .1em; color: #8f93a2; margin-bottom: 9px; }
+    .row { display: grid; grid-template-columns: 68px 1fr 46px; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 11px; color: #c8c8d2; }
+    input[type=range] { width: 100%; accent-color: #67a1ff; }
+    output { text-align: right; color: #fff; font-variant-numeric: tabular-nums; }
+    .note { margin-top: 9px; font-size: 10px; line-height: 1.5; color: #9a9aa7; }
+    .settings-actions { display: flex; justify-content: flex-end; margin-top: 14px; }
+    .settings-actions button { height: 30px; padding: 0 14px; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+
+  <div class="topbar">
+    <div class="toolbar">
+      <button class="tool active" data-tool="select"><span class="icon">✥</span>选择 / 拖动</button>
+      <button class="tool" data-tool="glue"><span class="icon">⧓</span>粘连</button>
+      <button class="tool" data-tool="cut"><span class="icon">✂</span>剪开</button>
+      <button class="tool" data-tool="lengthen"><span class="icon">＋</span>加长</button>
+      <button class="tool" data-tool="pin"><span class="icon">⭳</span>插地</button>
+      <button class="tool" data-tool="unpin"><span class="icon">⭱</span>拔起</button>
+    </div>
+    <div class="actions">
+      <button class="action" id="add-line">新建线</button>
+      <button class="action" id="add-loop">新建圈</button>
+      <button class="action" id="delete-rope">删除</button>
+      <button class="action" id="open-settings">设置</button>
+    </div>
+  </div>
+
+  <div id="status">准备就绪</div>
+
+  <div id="settings-overlay" class="hidden">
+    <div class="settings">
+      <h2>设置</h2>
+      <div class="group">
+        <div class="group-title">全局</div>
+        <div class="row"><label>半径</label><input id="radius" type="range" min="0.045" max="0.22" step="0.001" value="0.09"><output id="radius-out">0.090</output></div>
+      </div>
+      <div class="note">
+        段数不能直接修改。使用「加长」工具点击绳体中间可以插入一段；点击端点可以从端部延伸一段。
+      </div>
+      <div class="settings-actions"><button id="close-settings">完成</button></div>
+    </div>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
