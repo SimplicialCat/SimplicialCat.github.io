@@ -53,6 +53,8 @@ grid.material.opacity = .35;
 scene.add(grid);
 
 const GEOM_SEGMENTS = 20;
+const RING_COSINES = Array.from({ length: GEOM_SEGMENTS }, (_, index) => Math.cos(index / GEOM_SEGMENTS * Math.PI * 2));
+const RING_SINES = Array.from({ length: GEOM_SEGMENTS }, (_, index) => Math.sin(index / GEOM_SEGMENTS * Math.PI * 2));
 const MAX_ROPES = 12;
 const DEFAULT_COUNT = 110;
 const DEFAULT_LENGTH = 8;
@@ -163,6 +165,7 @@ class Rope {
     this.geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(vertexCount * 3), 3));
     this.geometry.setIndex(this.buildIndices());
     this.renderFrames = Array.from({ length: this.count }, () => new THREE.Vector3());
+    this.tangents = Array.from({ length: this.count }, () => new THREE.Vector3());
     if (this.mesh) this.mesh.geometry = this.geometry;
   }
 
@@ -278,18 +281,25 @@ class Rope {
   }
 
   updateGeometry() {
+    const positions = this.positions;
     const position = this.geometry.attributes.position.array;
     const normal = this.geometry.attributes.normal.array;
     const frameNormal = new THREE.Vector3();
     const binormal = new THREE.Vector3();
     const center = new THREE.Vector3();
     const radial = new THREE.Vector3();
-    const tangents = Array.from({ length: this.count }, () => new THREE.Vector3());
+    const tangents = this.tangents;
 
     for (let i = 0; i < this.count; i++) {
       const previousIndex = this.closed ? (i - 1 + this.count) % this.count : Math.max(0, i - 1);
       const nextIndex = this.closed ? (i + 1) % this.count : Math.min(this.count - 1, i + 1);
-      tangents[i].subVectors(this.point(nextIndex), this.point(previousIndex));
+      const previousIndex3 = previousIndex * 3;
+      const nextIndex3 = nextIndex * 3;
+      tangents[i].set(
+        positions[nextIndex3] - positions[previousIndex3],
+        positions[nextIndex3 + 1] - positions[previousIndex3 + 1],
+        positions[nextIndex3 + 2] - positions[previousIndex3 + 2]
+      );
       if (tangents[i].lengthSq() < 1e-12) tangents[i].set(0, 1, 0);
       tangents[i].normalize();
     }
@@ -319,10 +329,10 @@ class Rope {
       frameNormal.copy(this.renderFrames[i]);
       projectToTangentPlane(frameNormal, tangents[i]).normalize();
       binormal.crossVectors(tangents[i], frameNormal).normalize();
-      center.copy(this.point(i));
+      const centerIndex = i * 3;
+      center.set(positions[centerIndex], positions[centerIndex + 1], positions[centerIndex + 2]);
       for (let j = 0; j < GEOM_SEGMENTS; j++) {
-        const angle = j / GEOM_SEGMENTS * Math.PI * 2;
-        radial.copy(frameNormal).multiplyScalar(Math.cos(angle)).addScaledVector(binormal, Math.sin(angle));
+        radial.copy(frameNormal).multiplyScalar(RING_COSINES[j]).addScaledVector(binormal, RING_SINES[j]);
         const index = (i * GEOM_SEGMENTS + j) * 3;
         position[index] = center.x + radial.x * this.radius;
         position[index + 1] = center.y + radial.y * this.radius;
@@ -387,6 +397,11 @@ function deleteActiveRope() {
 }
 
 function resetAll() {
+  clearRopes();
+  createRope(false);
+}
+
+function clearRopes() {
   dragging = null;
   glueFirst = null;
   ropes.forEach(rope => {
@@ -395,7 +410,144 @@ function resetAll() {
   });
   ropes = [];
   setActiveRope(-1);
-  createRope(false);
+}
+
+function roundedFileValue(value) {
+  return Number(value.toFixed(6));
+}
+
+function exportTangle() {
+  const payload = {
+    format: 'tangle-scene',
+    version: 1,
+    settings: {
+      radius: Number(radiusInput.value),
+      gravity: Number(gravityInput.value)
+    },
+    activeRope: activeRopeIndex,
+    ropes: ropes.map(rope => ({
+      closed: rope.closed,
+      color: `#${rope.color.getHexString()}`,
+      segmentLength: roundedFileValue(rope.segmentRest),
+      pinned: rope.closed ? [] : [...rope.pinned],
+      points: Array.from({ length: rope.count }, (_, index) => {
+        const point = rope.point(index);
+        return [roundedFileValue(point.x), roundedFileValue(point.y), roundedFileValue(point.z)];
+      })
+    }))
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const timestamp = new Date().toISOString().slice(0, 19).replaceAll(':', '-');
+  link.href = url;
+  link.download = `tangle-${timestamp}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  setStatus(`已导出 ${ropes.length} 条绳索。`);
+}
+
+function parseTangleText(text) {
+  const data = JSON.parse(text);
+  if (!data || data.format !== 'tangle-scene' || data.version !== 1) {
+    throw new Error('不是支持的 tangle 文件。');
+  }
+  if (!data.settings || typeof data.settings !== 'object') {
+    throw new Error('文件缺少 settings。');
+  }
+  if (!Array.isArray(data.ropes)) {
+    throw new Error('文件缺少 ropes。');
+  }
+  if (data.ropes.length > MAX_ROPES) {
+    throw new Error(`文件包含 ${data.ropes.length} 条绳索，超过上限 ${MAX_ROPES}。`);
+  }
+
+  const radius = Number(data.settings.radius);
+  const gravity = Number(data.settings.gravity);
+  if (!Number.isFinite(radius) || radius <= 0) {
+    throw new Error('文件中的半径无效。');
+  }
+  if (!Number.isFinite(gravity)) {
+    throw new Error('文件中的重力无效。');
+  }
+
+  const importedRopes = data.ropes.map((ropeData, ropeIndex) => {
+    if (!ropeData || typeof ropeData !== 'object') {
+      throw new Error(`第 ${ropeIndex + 1} 条绳索无效。`);
+    }
+    if (typeof ropeData.closed !== 'boolean') {
+      throw new Error(`第 ${ropeIndex + 1} 条绳索的 closed 无效。`);
+    }
+    if (typeof ropeData.color !== 'string' || !/^#[0-9a-f]{6}$/i.test(ropeData.color)) {
+      throw new Error(`第 ${ropeIndex + 1} 条绳索的颜色无效。`);
+    }
+    const segmentLength = Number(ropeData.segmentLength);
+    if (!Number.isFinite(segmentLength) || segmentLength <= 0) {
+      throw new Error(`第 ${ropeIndex + 1} 条绳索的 segmentLength 无效。`);
+    }
+    if (!Array.isArray(ropeData.points)) {
+      throw new Error(`第 ${ropeIndex + 1} 条绳索缺少 points。`);
+    }
+    const minimumPoints = ropeData.closed ? 8 : 4;
+    if (ropeData.points.length < minimumPoints) {
+      throw new Error(`第 ${ropeIndex + 1} 条绳索的点数不足。`);
+    }
+    const points = ropeData.points.map((point, pointIndex) => {
+      if (!Array.isArray(point) || point.length !== 3 || point.some(value => !Number.isFinite(Number(value)))) {
+        throw new Error(`第 ${ropeIndex + 1} 条绳索的第 ${pointIndex + 1} 个点无效。`);
+      }
+      return [Number(point[0]), Number(point[1]), Number(point[2])];
+    });
+    const pinned = ropeData.closed
+      ? []
+      : (Array.isArray(ropeData.pinned) && ropeData.pinned.length === 2
+        ? ropeData.pinned.map(Boolean)
+        : [false, false]);
+
+    return { closed: ropeData.closed, color: ropeData.color, segmentLength, pinned, points };
+  });
+
+  return {
+    radius,
+    gravity,
+    activeRope: Number.isInteger(data.activeRope) ? data.activeRope : -1,
+    ropes: importedRopes
+  };
+}
+
+function importTangleText(text) {
+  const data = parseTangleText(text);
+  const newRopes = data.ropes.map((ropeData, index) => {
+    const count = ropeData.points.length;
+    const rope = new Rope({
+      count,
+      radius: data.radius,
+      closed: ropeData.closed,
+      color: new THREE.Color(ropeData.color),
+      layoutIndex: index
+    });
+    const positions = new Float32Array(count * 3);
+    ropeData.points.forEach((point, pointIndex) => {
+      positions[pointIndex * 3] = point[0];
+      positions[pointIndex * 3 + 1] = point[1];
+      positions[pointIndex * 3 + 2] = point[2];
+    });
+    rope.pinned = ropeData.pinned;
+    rope.setCenterline(positions, ropeData.segmentLength);
+    return rope;
+  });
+
+  clearRopes();
+  ropes = newRopes;
+  ropes.forEach(rope => scene.add(rope.mesh));
+  radiusInput.value = data.radius;
+  gravityInput.value = data.gravity;
+  radiusInput.dispatchEvent(new Event('input'));
+  gravityInput.dispatchEvent(new Event('input'));
+  setActiveRope(data.activeRope);
+  setStatus(`已读取 ${ropes.length} 条绳索。`);
 }
 
 function makeRopeFromPositions(positions, segmentRest, radius, color, layoutIndex, pinned = [false, false]) {
@@ -792,6 +944,21 @@ function setTool(tool) {
 document.getElementById('add-line').onclick = () => createRope(false);
 document.getElementById('add-loop').onclick = () => createRope(true);
 document.getElementById('delete-rope').onclick = deleteActiveRope;
+document.getElementById('export-tangle').onclick = exportTangle;
+const importFileInput = document.getElementById('import-file');
+document.getElementById('import-tangle').onclick = () => importFileInput.click();
+importFileInput.addEventListener('change', async () => {
+  const file = importFileInput.files?.[0];
+  if (!file) return;
+  try {
+    importTangleText(await file.text());
+  } catch (error) {
+    console.error(error);
+    setStatus(`读取失败：${error.message}`);
+  } finally {
+    importFileInput.value = '';
+  }
+});
 document.getElementById('reset-all')?.addEventListener('click', resetAll);
 
 const radiusInput = document.getElementById('radius');
@@ -1013,73 +1180,106 @@ function solveMinimumBendConstraints(rope) {
   });
 }
 
-function solveRepulsionConstraints(stiffness) {
-  if (stiffness <= 0) return;
+function buildRepulsionPairs() {
   const segments = [];
   ropes.forEach(rope => {
     const segmentCount = rope.closed ? rope.count : rope.count - 1;
-    for (let i = 0; i < segmentCount; i++) segments.push({ rope, index: i });
+    const margin = rope.radius + .002;
+    for (let i = 0; i < segmentCount; i++) {
+      const j = (i + 1) % rope.count;
+      const a = i * 3;
+      const b = j * 3;
+      segments.push({
+        rope,
+        index: i,
+        x0: Math.min(rope.positions[a], rope.positions[b]) - margin,
+        x1: Math.max(rope.positions[a], rope.positions[b]) + margin,
+        y0: Math.min(rope.positions[a + 1], rope.positions[b + 1]) - margin,
+        y1: Math.max(rope.positions[a + 1], rope.positions[b + 1]) + margin,
+        z0: Math.min(rope.positions[a + 2], rope.positions[b + 2]) - margin,
+        z1: Math.max(rope.positions[a + 2], rope.positions[b + 2]) + margin
+      });
+    }
   });
+  segments.sort((left, right) => left.x0 - right.x0);
+
+  const pairs = [];
   for (let first = 0; first < segments.length; first++) {
     const segmentA = segments[first];
     const ropeA = segmentA.rope;
     const i = segmentA.index;
-    const j = (i + 1) % ropeA.count;
-    const a = i * 3;
-    const b = j * 3;
-    for (let second = first + 1; second < segments.length; second++) {
+    for (let second = first + 1; second < segments.length && segments[second].x0 <= segmentA.x1; second++) {
       const segmentB = segments[second];
+      if (segmentB.y0 > segmentA.y1 || segmentA.y0 > segmentB.y1) continue;
+      if (segmentB.z0 > segmentA.z1 || segmentA.z0 > segmentB.z1) continue;
       const ropeB = segmentB.rope;
       const k = segmentB.index;
-      const l = (k + 1) % ropeB.count;
       if (ropeA === ropeB) {
         let separation = Math.abs(i - k);
         if (ropeA.closed) separation = Math.min(separation, ropeA.count - separation);
         const skip = Math.max(1, Math.ceil((ropeA.radius * 2 + .004) / ropeA.segmentRest));
         if (separation <= skip) continue;
       }
-      const c = k * 3;
-      const d = l * 3;
-      const positionsA = ropeA.positions;
-      const positionsB = ropeB.positions;
-      const { s, t } = closestPointParameters(
-        positionsA[a], positionsA[a + 1], positionsA[a + 2],
-        positionsA[b], positionsA[b + 1], positionsA[b + 2],
-        positionsB[c], positionsB[c + 1], positionsB[c + 2],
-        positionsB[d], positionsB[d + 1], positionsB[d + 2]
-      );
-      const contactAX = positionsA[a] + (positionsA[b] - positionsA[a]) * s;
-      const contactAY = positionsA[a + 1] + (positionsA[b + 1] - positionsA[a + 1]) * s;
-      const contactAZ = positionsA[a + 2] + (positionsA[b + 2] - positionsA[a + 2]) * s;
-      const contactBX = positionsB[c] + (positionsB[d] - positionsB[c]) * t;
-      const contactBY = positionsB[c + 1] + (positionsB[d + 1] - positionsB[c + 1]) * t;
-      const contactBZ = positionsB[c + 2] + (positionsB[d + 2] - positionsB[c + 2]) * t;
-      const dx = contactBX - contactAX;
-      const dy = contactBY - contactAY;
-      const dz = contactBZ - contactAZ;
-      const minDistance = ropeA.radius + ropeB.radius + .004;
-      const distanceSq = dx * dx + dy * dy + dz * dz;
-      if (distanceSq >= minDistance * minDistance || distanceSq < 1e-14) continue;
-      const distance = Math.sqrt(distanceSq);
-      const overlap = Math.min(minDistance - distance, minDistance * .5);
-      const scale = overlap / distance * stiffness * .5;
-      const weightA0 = (1 - s) * nodeWeight(ropeA, i);
-      const weightA1 = s * nodeWeight(ropeA, j);
-      const weightB0 = (1 - t) * nodeWeight(ropeB, k);
-      const weightB1 = t * nodeWeight(ropeB, l);
-      positionsA[a] -= dx * scale * weightA0;
-      positionsA[a + 1] -= dy * scale * weightA0;
-      positionsA[a + 2] -= dz * scale * weightA0;
-      positionsA[b] -= dx * scale * weightA1;
-      positionsA[b + 1] -= dy * scale * weightA1;
-      positionsA[b + 2] -= dz * scale * weightA1;
-      positionsB[c] += dx * scale * weightB0;
-      positionsB[c + 1] += dy * scale * weightB0;
-      positionsB[c + 2] += dz * scale * weightB0;
-      positionsB[d] += dx * scale * weightB1;
-      positionsB[d + 1] += dy * scale * weightB1;
-      positionsB[d + 2] += dz * scale * weightB1;
+      pairs.push({ a: segmentA, b: segmentB });
     }
+  }
+  return pairs;
+}
+
+function solveRepulsionConstraints(pairs, stiffness) {
+  if (stiffness <= 0) return;
+  for (let pairIndex = 0; pairIndex < pairs.length; pairIndex++) {
+    const segmentA = pairs[pairIndex].a;
+    const segmentB = pairs[pairIndex].b;
+    const ropeA = segmentA.rope;
+    const ropeB = segmentB.rope;
+    const i = segmentA.index;
+    const j = (i + 1) % ropeA.count;
+    const k = segmentB.index;
+    const l = (k + 1) % ropeB.count;
+    const a = i * 3;
+    const b = j * 3;
+    const c = k * 3;
+    const d = l * 3;
+    const positionsA = ropeA.positions;
+    const positionsB = ropeB.positions;
+    const { s, t } = closestPointParameters(
+      positionsA[a], positionsA[a + 1], positionsA[a + 2],
+      positionsA[b], positionsA[b + 1], positionsA[b + 2],
+      positionsB[c], positionsB[c + 1], positionsB[c + 2],
+      positionsB[d], positionsB[d + 1], positionsB[d + 2]
+    );
+    const contactAX = positionsA[a] + (positionsA[b] - positionsA[a]) * s;
+    const contactAY = positionsA[a + 1] + (positionsA[b + 1] - positionsA[a + 1]) * s;
+    const contactAZ = positionsA[a + 2] + (positionsA[b + 2] - positionsA[a + 2]) * s;
+    const contactBX = positionsB[c] + (positionsB[d] - positionsB[c]) * t;
+    const contactBY = positionsB[c + 1] + (positionsB[d + 1] - positionsB[c + 1]) * t;
+    const contactBZ = positionsB[c + 2] + (positionsB[d + 2] - positionsB[c + 2]) * t;
+    const dx = contactBX - contactAX;
+    const dy = contactBY - contactAY;
+    const dz = contactBZ - contactAZ;
+    const minDistance = ropeA.radius + ropeB.radius + .004;
+    const distanceSq = dx * dx + dy * dy + dz * dz;
+    if (distanceSq >= minDistance * minDistance || distanceSq < 1e-14) continue;
+    const distance = Math.sqrt(distanceSq);
+    const overlap = Math.min(minDistance - distance, minDistance * .5);
+    const scale = overlap / distance * stiffness * .5;
+    const weightA0 = (1 - s) * nodeWeight(ropeA, i);
+    const weightA1 = s * nodeWeight(ropeA, j);
+    const weightB0 = (1 - t) * nodeWeight(ropeB, k);
+    const weightB1 = t * nodeWeight(ropeB, l);
+    positionsA[a] -= dx * scale * weightA0;
+    positionsA[a + 1] -= dy * scale * weightA0;
+    positionsA[a + 2] -= dz * scale * weightA0;
+    positionsA[b] -= dx * scale * weightA1;
+    positionsA[b + 1] -= dy * scale * weightA1;
+    positionsA[b + 2] -= dz * scale * weightA1;
+    positionsB[c] += dx * scale * weightB0;
+    positionsB[c + 1] += dy * scale * weightB0;
+    positionsB[c + 2] += dz * scale * weightB0;
+    positionsB[d] += dx * scale * weightB1;
+    positionsB[d + 1] += dy * scale * weightB1;
+    positionsB[d + 2] += dz * scale * weightB1;
   }
 }
 
@@ -1101,6 +1301,7 @@ function simulateStep(stepDt) {
   const bendStiffness = PHYSICS.bend;
   const repulsionStiffness = PHYSICS.repulsion;
   ropes.forEach(rope => integrateRope(rope, stepDt));
+  const repulsionPairs = buildRepulsionPairs();
   for (let iteration = 0; iteration < solverIterations; iteration++) {
     ropes.forEach(rope => {
       solveSpringConstraints(rope, springStiffness);
@@ -1108,7 +1309,7 @@ function simulateStep(stepDt) {
       solveMinimumBendConstraints(rope);
       solveGroundConstraint(rope);
     });
-    solveRepulsionConstraints(repulsionStiffness);
+    solveRepulsionConstraints(repulsionPairs, repulsionStiffness);
   }
 }
 
