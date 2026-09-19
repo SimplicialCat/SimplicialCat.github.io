@@ -1,0 +1,153 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 30%, #101828 0%, #070b14 100%);
+  font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#globe-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: grab;
+}
+
+#globe-svg:active {
+  cursor: grabbing;
+}
+
+body.mode-geodesic #globe-svg {
+  cursor: crosshair;
+}
+
+#panel {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  background: rgba(13, 18, 32, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 14px 16px;
+  backdrop-filter: blur(8px);
+  z-index: 10;
+  max-width: 260px;
+}
+
+#panel h1 {
+  font-size: 16px;
+  color: #e8ecf4;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.sun-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #d8e0ec;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.sun-switch input {
+  width: 15px;
+  height: 15px;
+  accent-color: #ffb347;
+}
+
+.sun-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.sun-fields label {
+  display: grid;
+  gap: 5px;
+  color: #8894a8;
+  font-size: 11px;
+}
+
+.sun-fields input,
+#btn-now {
+  width: 100%;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 0;
+  color: #dce4f0;
+  padding: 5px 2px;
+  font: inherit;
+  font-size: 12px;
+}
+
+.sun-fields input:focus,
+#btn-now:hover {
+  outline: none;
+  border-color: rgba(255, 179, 71, 0.5);
+}
+
+.sun-fields input::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+}
+
+#btn-now {
+  margin-top: 10px;
+  width: auto;
+  cursor: pointer;
+}
+
+#sun-info {
+  margin-top: 9px;
+  color: #8894a8;
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+
+.btn-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.btn-row button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 0;
+  color: #c8d0dc;
+  padding: 3px 1px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.btn-row button:hover {
+  color: #ffffff;
+  border-bottom-color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-row button.active {
+  border-bottom-color: #ffb347;
+  color: #ffd166;
+}
+
+#sun-controls {
+  margin-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
+}

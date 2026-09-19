@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D 地球 · 矢量 SVG</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <svg id="globe-svg" xmlns="http://www.w3.org/2000/svg">
+    <defs id="defs"></defs>
+    <circle id="ocean" fill="url(#oceanGrad)"></circle>
+    <path id="land" fill="url(#landGrad)" fill-rule="evenodd"></path>
+    <path id="night" fill="rgba(3,10,28,0.55)" pointer-events="none"></path>
+    <circle id="horizon" fill="none" pointer-events="none"></circle>
+    <g id="arcs-front"></g>
+    <g id="cities"></g>
+    <g id="selection"></g>
+  </svg>
+
+  <div id="panel">
+    <h1>3D 地球</h1>
+    <div class="btn-row">
+      <button id="btn-geodesic" title="点击两点绘制测地线（Esc 退出）">连线模式</button>
+      <button id="btn-clear" title="清除所有测地线">清除连线</button>
+      <button id="btn-reset" title="恢复默认视角">重置视角</button>
+      <button id="btn-sun-toggle" type="button" aria-controls="sun-controls" aria-expanded="true">折叠设置</button>
+    </div>
+    <div id="sun-controls">
+      <label class="sun-switch">
+        <input id="night-toggle" type="checkbox" checked>
+        <span>显示昼夜</span>
+      </label>
+      <div class="sun-fields">
+        <label>
+          <span>日期</span>
+          <input id="sun-date" type="date">
+        </label>
+        <label>
+          <span>时间</span>
+          <input id="sun-time" type="time" step="1">
+        </label>
+      </div>
+      <button id="btn-now" type="button">同步当前时间</button>
+      <div id="sun-info"></div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
