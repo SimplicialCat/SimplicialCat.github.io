@@ -2,6 +2,10 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const canvas = document.getElementById('scene');
+const paperCanvas = document.getElementById('paper-canvas') ?? document.createElement('canvas');
+paperCanvas.id = 'paper-canvas';
+canvas.after(paperCanvas);
+const paperContext = paperCanvas.getContext('2d');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
@@ -61,6 +65,10 @@ const DEFAULT_LENGTH = 8;
 const MAX_DRAG_SPEED = 3;
 const PHYSICS = { spring: 1.0, bend: 1.0, repulsion: 1.0, damping: 1.0, friction: 1.0 };
 let nextRopeId = 1;
+const PAPER_LINE_WIDTH = 5;
+const PAPER_SEGMENT_SUBDIVISIONS = 4;
+const PAPER_OCCLUSION_MIN_DEPTH_PIXELS = PAPER_LINE_WIDTH * 4;
+let lineMode = false;
 
 function layoutCenter(index) {
   const column = index % 3;
@@ -374,6 +382,19 @@ function setActiveRope(index) {
   updateStatus();
 }
 
+function addRopeToScene(rope) {
+  rope.mesh.visible = !lineMode;
+  scene.add(rope.mesh);
+}
+
+function setLineMode(enabled) {
+  lineMode = enabled;
+  ropes.forEach(rope => {
+    rope.mesh.visible = !lineMode;
+  });
+  updateMarkers();
+}
+
 function createRope(closed) {
   if (ropes.length >= MAX_ROPES) return;
   const rope = new Rope({
@@ -382,7 +403,7 @@ function createRope(closed) {
     closed,
     layoutIndex: ropes.length
   });
-  scene.add(rope.mesh);
+  addRopeToScene(rope);
   ropes.push(rope);
   setActiveRope(ropes.length - 1);
 }
@@ -536,12 +557,21 @@ function importTangleText(text) {
     });
     rope.pinned = ropeData.pinned;
     rope.setCenterline(positions, ropeData.segmentLength);
+    if (!rope.closed) {
+      [0, rope.count - 1].forEach((index, endpointIndex) => {
+        if (!rope.pinned[endpointIndex]) return;
+        const point = rope.point(index);
+        point.y = -rope.radius;
+        rope.setPoint(index, point);
+        rope.previous.set([point.x, point.y, point.z], index * 3);
+      });
+    }
     return rope;
   });
 
   clearRopes();
   ropes = newRopes;
-  ropes.forEach(rope => scene.add(rope.mesh));
+  ropes.forEach(addRopeToScene);
   radiusInput.value = data.radius;
   gravityInput.value = data.gravity;
   radiusInput.dispatchEvent(new Event('input'));
@@ -563,7 +593,7 @@ function replaceRope(index, newRopes) {
   scene.remove(old.mesh);
   old.dispose();
   ropes.splice(index, 1, ...newRopes);
-  newRopes.forEach(rope => scene.add(rope.mesh));
+  newRopes.forEach(addRopeToScene);
   setActiveRope(index);
 }
 
@@ -633,7 +663,7 @@ function glueTwoRopes(first, second) {
   ropes[lowIndex].dispose();
   ropes.splice(lowIndex, 1);
   ropes.splice(lowIndex, 0, newRope);
-  scene.add(newRope.mesh);
+  addRopeToScene(newRope);
   dragging = null;
   glueFirst = null;
   setActiveRope(lowIndex);
@@ -679,10 +709,21 @@ function updateMarkers() {
     }
   });
   while (endpointMarkers.length < desired.length) {
-    const marker = new THREE.Mesh(
-      new THREE.SphereGeometry(.065, 20, 14),
-      new THREE.MeshBasicMaterial({ transparent: true, opacity: .95 })
+    const marker = new THREE.Group();
+    const head = new THREE.Mesh(
+      new THREE.SphereGeometry(.055, 20, 14),
+      new THREE.MeshStandardMaterial({ roughness: .35, metalness: .08 })
     );
+    const needle = new THREE.Mesh(
+      new THREE.CylinderGeometry(.011, .011, .18, 10),
+      new THREE.MeshStandardMaterial({ color: 0x2b2f36, roughness: .28, metalness: .55 })
+    );
+    needle.position.y = -.02;
+    needle.visible = false;
+    marker.add(head, needle);
+    marker.userData = { ropeIndex: -1, endpointIndex: -1, head, needle, headMaterial: head.material };
+    head.userData = marker.userData;
+    needle.userData = marker.userData;
     scene.add(marker);
     endpointMarkers.push(marker);
   }
@@ -692,11 +733,14 @@ function updateMarkers() {
     if (!item) return;
     marker.userData.ropeIndex = item.ropeIndex;
     marker.userData.endpointIndex = item.endpointIndex;
-    marker.position.copy(item.rope.point(item.endpointIndex ? item.rope.count - 1 : 0));
     const pinned = item.rope.pinned[item.endpointIndex];
-    marker.material.color.set(pinned ? 0xffb347 : item.rope.color);
+    const endpointPoint = item.rope.point(item.endpointIndex ? item.rope.count - 1 : 0);
+    marker.position.set(endpointPoint.x, pinned ? 0 : endpointPoint.y, endpointPoint.z);
+    marker.userData.head.position.y = pinned ? .07 : 0;
+    marker.userData.needle.visible = pinned;
+    marker.userData.headMaterial.color.set(pinned ? 0xffb347 : item.rope.color);
     if (glueFirst && glueFirst.ropeIndex === item.ropeIndex && glueFirst.endpointIndex === item.endpointIndex) {
-      marker.material.color.set(0xffffff);
+      marker.userData.headMaterial.color.set(0xffffff);
     }
   });
 }
@@ -728,6 +772,209 @@ function updateStatus(text) {
   document.getElementById('status').innerHTML = text ? `${info}<br><b>${text}</b>` : info;
 }
 
+function resizePaperCanvas() {
+  const ratio = Math.min(devicePixelRatio, 2);
+  paperCanvas.width = Math.round(innerWidth * ratio);
+  paperCanvas.height = Math.round(innerHeight * ratio);
+  paperContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+}
+
+function clearPaperCanvas() {
+  paperContext.save();
+  paperContext.setTransform(1, 0, 0, 1, 0, 0);
+  paperContext.clearRect(0, 0, paperCanvas.width, paperCanvas.height);
+  paperContext.restore();
+}
+
+function projectToPaper(point) {
+  const projected = point.clone().project(camera);
+  if (projected.z > 1) return null;
+  return {
+    x: (projected.x * .5 + .5) * innerWidth,
+    y: (-projected.y * .5 + .5) * innerHeight
+  };
+}
+
+function closestPaperSegmentParameters(aStart, aEnd, bStart, bEnd) {
+  const closest = closestPointParameters(
+    aStart.x, aStart.y, 0,
+    aEnd.x, aEnd.y, 0,
+    bStart.x, bStart.y, 0,
+    bEnd.x, bEnd.y, 0
+  );
+  const aX = aStart.x + (aEnd.x - aStart.x) * closest.s;
+  const aY = aStart.y + (aEnd.y - aStart.y) * closest.s;
+  const bX = bStart.x + (bEnd.x - bStart.x) * closest.t;
+  const bY = bStart.y + (bEnd.y - bStart.y) * closest.t;
+  return {
+    s: closest.s,
+    t: closest.t,
+    distanceSquared: (aX - bX) * (aX - bX) + (aY - bY) * (aY - bY)
+  };
+}
+
+function buildPaperGeometry() {
+  const coarseSegments = [];
+  const fineSegmentsByRope = [];
+  ropes.forEach((rope, ropeIndex) => {
+    const segmentCount = rope.closed ? rope.count : rope.count - 1;
+    const ropeFineSegments = [];
+    for (let segmentIndex = 0; segmentIndex < segmentCount; segmentIndex++) {
+      const next = (segmentIndex + 1) % rope.count;
+      const worldStart = rope.point(segmentIndex);
+      const worldEnd = rope.point(next);
+      const screenStart = projectToPaper(worldStart);
+      const screenEnd = projectToPaper(worldEnd);
+      if (!screenStart || !screenEnd) continue;
+      const screenLength = Math.hypot(screenEnd.x - screenStart.x, screenEnd.y - screenStart.y);
+      if (screenLength < 1e-6) continue;
+      const coarse = {
+        ropeIndex,
+        segmentIndex,
+        screenStart,
+        screenEnd,
+        worldStart,
+        worldEnd,
+        minX: Math.min(screenStart.x, screenEnd.x),
+        maxX: Math.max(screenStart.x, screenEnd.x),
+        minY: Math.min(screenStart.y, screenEnd.y),
+        maxY: Math.max(screenStart.y, screenEnd.y)
+      };
+      coarseSegments.push(coarse);
+      for (let part = 0; part < PAPER_SEGMENT_SUBDIVISIONS; part++) {
+        const startParameter = part / PAPER_SEGMENT_SUBDIVISIONS;
+        const endParameter = (part + 1) / PAPER_SEGMENT_SUBDIVISIONS;
+        const fineWorldStart = worldStart.clone().lerp(worldEnd, startParameter);
+        const fineWorldEnd = worldStart.clone().lerp(worldEnd, endParameter);
+        const fineScreenStart = part === 0 ? screenStart : projectToPaper(fineWorldStart);
+        const fineScreenEnd = part + 1 === PAPER_SEGMENT_SUBDIVISIONS ? screenEnd : projectToPaper(fineWorldEnd);
+        if (!fineScreenStart || !fineScreenEnd) continue;
+        ropeFineSegments.push({
+          ropeIndex,
+          coarseIndex: segmentIndex,
+          screenStart: fineScreenStart,
+          screenEnd: fineScreenEnd,
+          worldStart: fineWorldStart,
+          worldEnd: fineWorldEnd,
+          visible: true,
+          minX: Math.min(fineScreenStart.x, fineScreenEnd.x),
+          maxX: Math.max(fineScreenStart.x, fineScreenEnd.x),
+          minY: Math.min(fineScreenStart.y, fineScreenEnd.y),
+          maxY: Math.max(fineScreenStart.y, fineScreenEnd.y)
+        });
+      }
+    }
+    fineSegmentsByRope.push(ropeFineSegments);
+  });
+  return { coarseSegments, fineSegmentsByRope };
+}
+
+function markHiddenPaperSegments(coarseSegments, fineSegmentsByRope) {
+  const thresholdSquared = PAPER_LINE_WIDTH * PAPER_LINE_WIDTH;
+  const viewDepth = point => camera.position.distanceTo(point);
+  const depthGapThreshold = point => {
+    const distance = viewDepth(point);
+    const worldPerPixel = 2 * distance * Math.tan(camera.fov * Math.PI / 360) / innerHeight;
+    return PAPER_OCCLUSION_MIN_DEPTH_PIXELS * worldPerPixel;
+  };
+  for (const ropeFineSegments of fineSegmentsByRope) {
+    for (const fine of ropeFineSegments) {
+      fine.visible = true;
+      for (const coarse of coarseSegments) {
+        if (fine.ropeIndex === coarse.ropeIndex) {
+          const indexDistance = Math.abs(fine.coarseIndex - coarse.segmentIndex);
+          const rope = ropes[fine.ropeIndex];
+          const coarseCount = rope.closed ? rope.count : rope.count - 1;
+          const adjacent = indexDistance === 0
+            || indexDistance === 1
+            || (rope.closed && indexDistance === coarseCount - 1);
+          if (adjacent) continue;
+        }
+        if (fine.maxX + PAPER_LINE_WIDTH < coarse.minX
+          || fine.minX - PAPER_LINE_WIDTH > coarse.maxX
+          || fine.maxY + PAPER_LINE_WIDTH < coarse.minY
+          || fine.minY - PAPER_LINE_WIDTH > coarse.maxY) continue;
+        const closest = closestPaperSegmentParameters(
+          fine.screenStart,
+          fine.screenEnd,
+          coarse.screenStart,
+          coarse.screenEnd
+        );
+        if (closest.distanceSquared > thresholdSquared) continue;
+        const finePoint = fine.worldStart.clone().lerp(fine.worldEnd, closest.s);
+        const coarsePoint = coarse.worldStart.clone().lerp(coarse.worldEnd, closest.t);
+        const depthGap = Math.abs(viewDepth(finePoint) - viewDepth(coarsePoint));
+        if (depthGap >= depthGapThreshold(finePoint)
+          && camera.position.distanceToSquared(coarsePoint) + 1e-12
+            < camera.position.distanceToSquared(finePoint)) {
+          fine.visible = false;
+          break;
+        }
+      }
+    }
+  }
+}
+
+function strokePaperRun(run, closed = false) {
+  if (!run.length) return;
+  paperContext.beginPath();
+  paperContext.moveTo(run[0].screenStart.x, run[0].screenStart.y);
+  for (let i = 0; i < run.length; i++) {
+    paperContext.lineTo(run[i].screenEnd.x, run[i].screenEnd.y);
+  }
+  if (closed) paperContext.closePath();
+  paperContext.stroke();
+}
+
+function drawVisiblePaperSegments(fineSegments, closed) {
+  const visible = fineSegments.map(segment => segment.visible);
+  const runs = [];
+  if (closed) {
+    const firstHidden = visible.indexOf(false);
+    if (firstHidden === -1) {
+      runs.push({ segments: fineSegments, closed: true });
+    } else {
+      let run = [];
+      for (let offset = 1; offset <= visible.length; offset++) {
+        const index = (firstHidden + offset) % visible.length;
+        if (visible[index]) {
+          run.push(fineSegments[index]);
+        } else if (run.length) {
+          runs.push({ segments: run });
+          run = [];
+        }
+      }
+      if (run.length) runs.push({ segments: run });
+    }
+  } else {
+    let run = [];
+    for (let i = 0; i < fineSegments.length; i++) {
+      if (visible[i]) {
+        run.push(fineSegments[i]);
+      } else if (run.length) {
+        runs.push({ segments: run });
+        run = [];
+      }
+    }
+    if (run.length) runs.push({ segments: run });
+  }
+  for (const run of runs) strokePaperRun(run.segments, run.closed);
+}
+
+function drawPaperLines() {
+  clearPaperCanvas();
+  if (!lineMode) return;
+  const { coarseSegments, fineSegmentsByRope } = buildPaperGeometry();
+  markHiddenPaperSegments(coarseSegments, fineSegmentsByRope);
+  paperContext.strokeStyle = '#000000';
+  paperContext.lineWidth = PAPER_LINE_WIDTH;
+  paperContext.lineCap = 'round';
+  paperContext.lineJoin = 'round';
+  fineSegmentsByRope.forEach((fineSegments, ropeIndex) => {
+    drawVisiblePaperSegments(fineSegments, ropes[ropeIndex].closed);
+  });
+}
+
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 const dragPlane = new THREE.Plane();
@@ -740,12 +987,41 @@ function setPointer(event) {
 }
 
 function endpointHit() {
-  const hits = raycaster.intersectObjects(endpointMarkers.filter(marker => marker.visible));
+  const hits = raycaster.intersectObjects(endpointMarkers.filter(marker => marker.visible), true);
   return hits.length ? hits[0].object.userData : null;
 }
 
 function ropeHit() {
-  const hits = raycaster.intersectObjects(ropes.map(rope => rope.mesh));
+  if (lineMode) {
+    const pointerX = (pointer.x + 1) * .5 * innerWidth;
+    const pointerY = (-pointer.y + 1) * .5 * innerHeight;
+    const threshold = Math.max(12, PAPER_LINE_WIDTH * 1.6);
+    let best = null;
+    ropes.forEach((rope, ropeIndex) => {
+      const segmentCount = rope.closed ? rope.count : rope.count - 1;
+      for (let i = 0; i < segmentCount; i++) {
+        const next = (i + 1) % rope.count;
+        const start = projectToPaper(rope.point(i));
+        const end = projectToPaper(rope.point(next));
+        if (!start || !end) continue;
+        const dx = end.x - start.x;
+        const dy = end.y - start.y;
+        const lengthSquared = dx * dx + dy * dy || 1;
+        const t = Math.max(0, Math.min(1, ((pointerX - start.x) * dx + (pointerY - start.y) * dy) / lengthSquared));
+        const projectedX = start.x + dx * t;
+        const projectedY = start.y + dy * t;
+        const distance = Math.hypot(pointerX - projectedX, pointerY - projectedY);
+        if (distance < threshold && (!best || distance < best.distance)) {
+          const point = rope.point(i).lerp(rope.point(next), t);
+          best = { ropeIndex, point, distance };
+        }
+      }
+    });
+    return best;
+  }
+
+  const objects = ropes.map(rope => rope.mesh);
+  const hits = raycaster.intersectObjects(objects);
   return hits.length ? { ropeIndex: hits[0].object.userData.ropeIndex, point: hits[0].point } : null;
 }
 
@@ -896,13 +1172,11 @@ canvas.addEventListener('pointerdown', event => {
     const rope = ropes[endpoint.ropeIndex];
     const pinned = activeTool === 'pin';
     rope.pinned[endpoint.endpointIndex] = pinned;
-    if (pinned) {
-      const index = endpoint.endpointIndex ? rope.count - 1 : 0;
-      const point = rope.point(index);
-      point.y = rope.radius + .001;
-      rope.setPoint(index, point);
-      rope.previous.set([point.x, point.y, point.z], index * 3);
-    }
+    const index = endpoint.endpointIndex ? rope.count - 1 : 0;
+    const point = rope.point(index);
+    point.y = pinned ? -rope.radius : rope.radius + .001;
+    rope.setPoint(index, point);
+    rope.previous.set([point.x, point.y, point.z], index * 3);
     setActiveRope(endpoint.ropeIndex);
     updateMarkers();
     updateStatus(pinned ? '端点已固定在地面。' : '端点已拔起。');
@@ -967,6 +1241,11 @@ gravityRow.className = 'row';
 gravityRow.innerHTML = '<label>重力</label><input id=gravity type=range min=0 max=9.8 step=0.1 value=0><output id=gravity-out>0.0</output>';
 radiusInput.closest('.row').after(gravityRow);
 const gravityInput = document.getElementById('gravity');
+const lineModeRow = document.createElement('div');
+lineModeRow.className = 'row';
+lineModeRow.innerHTML = '<label>纸面线条</label><input id=line-mode type=checkbox><span></span>';
+gravityRow.after(lineModeRow);
+const lineModeInput = document.getElementById('line-mode');
 
 function bindRange(id, format = value => value.toFixed(3), onChange = null) {
   const input = document.getElementById(id);
@@ -985,7 +1264,9 @@ bindRange('radius', value => value.toFixed(3), value => {
     rope.radius = value;
     for (let i = 0; i < rope.count; i++) {
       const point = rope.point(i);
-      point.y = Math.max(point.y, rope.radius + .004);
+      const isPinnedEndpoint = !rope.closed
+        && ((i === 0 && rope.pinned[0]) || (i === rope.count - 1 && rope.pinned[1]));
+      point.y = isPinnedEndpoint ? -rope.radius : Math.max(point.y, rope.radius + .004);
       rope.setPoint(i, point);
     }
     rope.updateGeometry();
@@ -993,6 +1274,8 @@ bindRange('radius', value => value.toFixed(3), value => {
   updateMarkers();
 });
 bindRange('gravity', value => value.toFixed(1));
+lineModeInput.addEventListener('change', () => setLineMode(lineModeInput.checked));
+lineModeInput.checked = false;
 
 const settingsOverlay = document.getElementById('settings-overlay');
 document.getElementById('open-settings').onclick = () => settingsOverlay.classList.remove('hidden');
@@ -1332,14 +1615,17 @@ function loop() {
   updateMarkers();
   controls.update();
   renderer.render(scene, camera);
+  drawPaperLines();
 }
 
 addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
+  resizePaperCanvas();
 });
 
+resizePaperCanvas();
 createRope(false);
 setTool('select');
 loop();
