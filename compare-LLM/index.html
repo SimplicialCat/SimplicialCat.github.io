@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>并排打开 DeepSeek / Qwen / Doubao</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+    background: #0f1115;
+    color: #e6e8ee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card {
+    text-align: center;
+    padding: 48px 56px;
+    border: 1px solid #2a2f3a;
+    border-radius: 16px;
+    background: #161a22;
+    max-width: 560px;
+  }
+  h1 { font-size: 22px; margin-bottom: 8px; }
+  p.desc { color: #9aa3b2; font-size: 14px; line-height: 1.6; margin-bottom: 28px; }
+  button {
+    font-size: 16px;
+    padding: 14px 36px;
+    border: none;
+    border-radius: 10px;
+    background: #4f7cff;
+    color: #fff;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  button:hover { background: #3d6aef; }
+  button:disabled { background: #3a4050; cursor: not-allowed; }
+  .status { margin-top: 20px; font-size: 13px; min-height: 18px; }
+  .status.error { color: #ff7b72; }
+  .status.ok { color: #7ee787; }
+  .sites {
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    font-size: 12px;
+    color: #6b7482;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>三窗口并排启动器</h1>
+  <p class="desc">
+    点击下方按钮后，将按屏幕宽度把 DeepSeek、Qwen、豆包<br>
+    三个新对话页面以独立浏览器窗口左右并排打开。<br>
+    登录状态与手动打开时完全一致。
+  </p>
+  <button id="launch">并排打开三个窗口</button>
+  <div class="status" id="status"></div>
+  <div class="sites">
+    <span>DeepSeek</span><span>Qwen</span><span>Doubao</span>
+  </div>
+</div>
+
+<script>
+  // 如需更换某个站点，改这里即可。
+  const SITES = [
+    { name: "DeepSeek", url: "https://chat.deepseek.com/" },
+    { name: "Qwen",     url: "https://chat.qwen.ai/" },
+    { name: "Doubao",   url: "https://www.doubao.com/chat/" },
+  ];
+
+  const btn = document.getElementById("launch");
+  const statusEl = document.getElementById("status");
+
+  function setStatus(text, cls) {
+    statusEl.textContent = text;
+    statusEl.className = "status" + (cls ? " " + cls : "");
+  }
+
+  function tileFeatures(index, count) {
+    const availLeft  = window.screen.availLeft  || 0;
+    const availTop   = window.screen.availTop   || 0;
+    const availWidth = window.screen.availWidth;
+    const availHeight = window.screen.availHeight;
+    const width  = Math.floor(availWidth / count);
+    const left   = availLeft + index * width;
+    return `width=${width},height=${availHeight},left=${left},top=${availTop}`;
+  }
+
+  btn.addEventListener("click", () => {
+    btn.disabled = true;
+    setStatus("正在打开窗口…");
+
+    const opened = [];
+    for (let i = 0; i < SITES.length; i++) {
+      const site = SITES[i];
+      const win = window.open(site.url, "_blank_" + site.name, tileFeatures(i, SITES.length));
+      if (win) opened.push(win);
+    }
+
+    if (opened.length === SITES.length) {
+      opened.forEach(w => { try { w.focus(); } catch (e) {} });
+      setStatus("已打开 " + opened.length + " 个窗口。", "ok");
+    } else if (opened.length > 0) {
+      setStatus("部分窗口被拦截（打开了 " + opened.length + "/" + SITES.length + "）。请允许本页弹出窗口后重试。", "error");
+      btn.disabled = false;
+    } else {
+      setStatus("所有窗口都被浏览器拦截。请点击地址栏的弹出窗口提示，选择“始终允许”，然后重试。", "error");
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
