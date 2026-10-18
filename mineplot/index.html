@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#070b18" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23070b18'/%3E%3Cpath d='M16 45V20h8l8 12 8-12h8v25h-8V32l-8 12-8-12v13z' fill='%237abaff'/%3E%3C/svg%3E"
+    />
+    <meta
+      name="description"
+      content="Mineplot 是一个可以走进去的三维草图场：在方块表面取点，移动鼠标自动判断 X/Y/Z 轴向，也可以直接连接已有点。"
+    />
+    <title>Mineplot · 可行走的三维草图场</title>
+    <script type="module" crossorigin src="./assets/index-CoL2WGYI.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CEylWwoK.css">
+  </head>
+  <body>
+    <div id="app" data-tool="select">
+      <div id="viewport" aria-label="Mineplot 三维视图"></div>
+      <div id="vignette" aria-hidden="true"></div>
+
+      <header id="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="brand-copy">
+          <div class="brand-name">MINEPLOT</div>
+          <div class="brand-sub">可行走的三维草图场</div>
+        </div>
+      </header>
+
+      <section id="status-panel" aria-label="状态">
+        <div class="status-row">
+          <span class="status-key">碰撞</span>
+          <span id="collision-state" class="status-chip on">开 <kbd>空格×2</kbd></span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">坐标</span>
+          <span id="coords" class="status-value mono">0.5, 0.0, 0.5</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">存档</span>
+          <span id="save-state" class="status-value">准备中</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">FPS</span>
+          <span id="fps" class="status-value mono">--</span>
+        </div>
+      </section>
+
+      <div id="crosshair" aria-hidden="true"><span></span></div>
+
+      <div id="hotbar" class="hotbar" role="toolbar" aria-label="快捷栏"></div>
+
+      <div id="selection-info" class="hidden">
+        <span class="selection-dot"></span>
+        <span id="selection-text">已选中</span>
+        <kbd>Delete</kbd>
+      </div>
+
+      <div id="hint" class="hint">点击画面锁定鼠标，开始探索</div>
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+      <section id="main-menu" class="main-menu-screen hidden" aria-label="存档选择">
+        <div class="main-menu-layout">
+          <header class="main-menu-head">
+            <div class="main-menu-brand">
+              <span class="main-menu-mark" aria-hidden="true">
+                <span></span><span></span><span></span>
+              </span>
+              <div>
+                <h1>MINEPLOT</h1>
+                <p>可行走的三维草图场</p>
+              </div>
+            </div>
+            <div class="main-menu-meta">
+              <span class="main-menu-caption">存档</span>
+              <span id="save-count" class="main-menu-count">0</span>
+            </div>
+          </header>
+
+          <main class="main-menu-main">
+            <div id="save-list-head" class="save-list-head">
+              <span>存档列表</span>
+              <span id="save-list-hint">点击载入</span>
+            </div>
+            <div id="save-list" class="save-list"></div>
+
+            <form id="new-save-form" class="new-save-form hidden">
+              <span id="save-form-label" class="save-form-label">新建存档</span>
+              <div class="save-form-fields">
+                <input
+                  id="new-save-name"
+                  type="text"
+                  maxlength="32"
+                  autocomplete="off"
+                  placeholder="存档名称"
+                  aria-label="存档名称"
+                />
+                <button id="new-save-confirm" type="submit" class="primary-button">创建</button>
+                <button id="new-save-cancel" type="button" class="text-button">取消</button>
+              </div>
+              <div id="terrain-editor" class="terrain-editor">
+                <div class="terrain-head">
+                  <span>地形层</span>
+                  <span>基岩固定在最底层</span>
+                </div>
+                <div id="layer-list" class="layer-list"></div>
+                <button id="add-layer" type="button" class="text-button add-layer-button">＋ 添加一层</button>
+              </div>
+            </form>
+          </main>
+
+          <footer class="main-menu-footer">
+            <div class="main-menu-actions">
+              <button id="new-save-button" type="button" class="primary-button">新建存档</button>
+              <button id="import-save-button" type="button" class="secondary-button">导入存档</button>
+            </div>
+            <span class="main-menu-footnote">v0.1 · 本地自动保存</span>
+          </footer>
+
+          <input
+            id="save-import-file"
+            type="file"
+            accept=".json,application/json"
+            hidden
+          />
+        </div>
+      </section>
+
+      <section id="pause" class="screen paused-screen hidden">
+        <div class="pause-card">
+          <div class="eyebrow"><span></span> PAUSED</div>
+          <h2>鼠标已释放</h2>
+          <p class="body-copy">
+            点击画面或继续按钮回到第一人称。也可以查看操作说明，或返回主菜单。
+          </p>
+          <div class="pause-actions">
+            <button id="resume-button" class="primary-button">继续探索 <span aria-hidden="true">↗</span></button>
+            <button id="main-menu-button" class="secondary-button">返回主菜单</button>
+            <button id="help-button" class="secondary-button">操作说明</button>
+          </div>
+          <p class="pause-note">
+            双击 <kbd>Space</kbd> 切换飞行；飞行时 <kbd>W</kbd>/<kbd>S</kbd> 水平前后，<kbd>Space</kbd> / <kbd>Shift</kbd> 升降，<kbd>Ctrl</kbd> 加速。
+            按 <kbd>E</kbd> 打开背包配置快捷栏。
+          </p>
+        </div>
+      </section>
+
+      <section id="help" class="screen help-screen hidden">
+        <div class="help-card">
+          <div class="help-head">
+            <div>
+              <div class="eyebrow"><span></span> FIELD MANUAL</div>
+              <h2>操作说明</h2>
+            </div>
+            <button id="help-close" class="icon-button" aria-label="关闭操作说明">×</button>
+          </div>
+          <div class="help-columns">
+            <section>
+              <h3>行走</h3>
+              <dl>
+                <div><dt><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></dt><dd>移动</dd></div>
+                <div><dt><kbd>空格</kbd></dt><dd>跳跃 / 上升</dd></div>
+                <div><dt><kbd>Shift</kbd></dt><dd>疾跑 / 下降</dd></div>
+                <div><dt><kbd>空格</kbd>×2</dt><dd>切换飞行 / 碰撞</dd></div>
+                <div><dt><kbd>Esc</kbd></dt><dd>释放鼠标</dd></div>
+              </dl>
+              <p class="help-caption">飞行时 <kbd>W</kbd>/<kbd>S</kbd> 水平前后，<kbd>Space</kbd>/<kbd>Shift</kbd> 升降；俯仰角不改变飞行方向。</p>
+            </section>
+            <section>
+              <h3>快捷栏与背包</h3>
+              <dl>
+                <div><dt><kbd>1</kbd>–<kbd>9</kbd></dt><dd>选择快捷栏格子</dd></div>
+                <div><dt><kbd>滚轮</kbd></dt><dd>循环全部 9 格</dd></div>
+                <div><dt><kbd>E</kbd></dt><dd>打开 / 关闭背包</dd></div>
+                <div><dt><kbd>鼠标拖动</kbd></dt><dd>从背包放入快捷栏</dd></div>
+                <div><dt><kbd>右键</kbd></dt><dd>清空背包内快捷栏格子</dd></div>
+              </dl>
+            </section>
+            <section>
+              <h3>画一条线</h3>
+              <ol class="help-steps">
+                <li>点击方块表面，或点击一个已有点，确定起点。</li>
+                <li>移动鼠标：系统根据鼠标运动方向自动判断 X / Y / Z。</li>
+                <li>移动鼠标拉出长度，点击确认。</li>
+                <li>准星移到另一个已有点上，会直接吸附并连成线段。</li>
+                <li>线段创建后，两个端点会自动成为可再次起笔的点。</li>
+                <li>右键或 <kbd>Esc</kbd> 取消正在画的线。</li>
+              </ol>
+            </section>
+            <section>
+              <h3>画平面多边形</h3>
+              <ol class="help-steps">
+                <li>选择「多边形」工具。</li>
+                <li>逐个点击共面的点或方块表面，至少 3 个。</li>
+                <li>前三个点确定平面；之后只能点击同一平面内的点。</li>
+                <li>双击闭合；右键取消当前面。</li>
+                <li>闭合后校验共线、共面和边相交，生成实心面和一圈独立边线（已有线段复用）；面与线可分别选中、删除。</li>
+              </ol>
+            </section>
+            <section>
+              <h3>画曲线</h3>
+              <ol class="help-steps">
+                <li>选择「曲线」工具，点击曲线经过的点，至少 2 个；双击结束选点。</li>
+                <li>按顺序为每个曲线点点击一个切向参考点；参考点方向就是切线，距离控制弯曲强度。点击空中时会自动吸附到从该点出发的 X/Y/Z 轴；也可以直接按 <kbd>X</kbd>/<kbd>Y</kbd>/<kbd>Z</kbd> 选轴（<kbd>Shift</kbd> 反向，默认 2 格）。</li>
+                <li>每个点都必须有参考点；右键取消当前曲线。</li>
+                <li>创建后参考点和切线隐藏。用选择工具选中曲线，点击参考点进入拖动模式，参考点处会出现 X/Y/Z 三根箭头；拖动箭头时参考点和箭头一起按整数格沿该轴移动，视角仍可旋转。右键 / <kbd>Esc</kbd> / 点空白退出，箭头消失；箭头无碰撞且不被遮挡。</li>
+              </ol>
+            </section>
+            <section>
+              <h3>编辑与存档</h3>
+              <dl>
+                <div><dt><kbd>Delete</kbd></dt><dd>删除选中对象</dd></div>
+                <div><dt><kbd>Ctrl</kbd>+<kbd>Z</kbd></dt><dd>撤销</dd></div>
+                <div><dt><kbd>Ctrl</kbd>+<kbd>Y</kbd></dt><dd>重做</dd></div>
+                <div><dt><kbd>H</kbd></dt><dd>打开 / 关闭帮助</dd></div>
+                <div><dt>自动</dt><dd>保存到当前存档</dd></div>
+                <div><dt><kbd>Esc</kbd></dt><dd>暂停 / 返回主菜单</dd></div>
+              </dl>
+              <p class="help-caption">选中方块物品即进入建造模式：左键破坏，右键放置。</p>
+            </section>
+          </div>
+          <p class="help-foot">
+            点必须落在方块表面并吸附到格点；自动轴向线可以伸向空中。连接两个已有点时会保留两点之间的任意方向。线段端点会自动补成绘点，方便继续起笔。平面多边形至少需要 3 个点，闭合时会校验共线、共面与自交。曲线经过所有曲线点；切向参考点决定每点切线，选中曲线后手柄才会显示。
+          </p>
+        </div>
+      </section>
+
+      <section id="inventory" class="screen inventory-screen hidden" aria-label="背包">
+        <div class="inventory-card">
+          <div class="inventory-head">
+            <div>
+              <div class="eyebrow"><span></span> TOOL LIBRARY</div>
+              <h2>背包</h2>
+            </div>
+            <button id="inventory-close" class="icon-button" aria-label="关闭背包">×</button>
+          </div>
+          <div class="inventory-layout">
+            <div class="inventory-library">
+              <div id="inventory-tabs" class="inventory-tabs" role="tablist"></div>
+              <div id="inventory-grid" class="inventory-grid"></div>
+            </div>
+            <aside id="inventory-detail" class="inventory-detail"></aside>
+          </div>
+          <div class="inventory-hotbar-block">
+            <div class="inventory-hotbar-head">
+              <span>快捷栏</span>
+              <span>拖动图标到任意格子 · 覆盖已有物品</span>
+            </div>
+            <div id="inventory-hotbar" class="hotbar inventory-hotbar"></div>
+          </div>
+          <p class="inventory-foot">
+            背包是功能目录，拖出图标不会让它消失。拖出快捷栏或右键格子可以解除分配。
+          </p>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
