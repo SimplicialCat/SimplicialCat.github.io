@@ -13,8 +13,8 @@
       content="Mineplot 是一个可以走进去的三维草图场：在方块表面取点，移动鼠标自动判断 X/Y/Z 轴向，也可以直接连接已有点。"
     />
     <title>Mineplot · 可行走的三维草图场</title>
-    <script type="module" crossorigin src="./assets/index-CoL2WGYI.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CEylWwoK.css">
+    <script type="module" crossorigin src="./assets/index-Bw7ejBEG.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-jdr6AjIC.css">
   </head>
   <body>
     <div id="app" data-tool="select">
@@ -118,7 +118,7 @@
               <button id="new-save-button" type="button" class="primary-button">新建存档</button>
               <button id="import-save-button" type="button" class="secondary-button">导入存档</button>
             </div>
-            <span class="main-menu-footnote">v0.1 · 本地自动保存</span>
+            <span class="main-menu-footnote">v0.2 · 本地自动保存</span>
           </footer>
 
           <input
@@ -127,6 +127,75 @@
             accept=".json,application/json"
             hidden
           />
+        </div>
+      </section>
+
+      <section id="appearance-dialog" class="appearance-screen hidden" aria-label="外观设置">
+        <div class="appearance-card">
+          <header class="appearance-head">
+            <div>
+              <div class="eyebrow"><span></span> STYLE</div>
+              <h2>外观</h2>
+            </div>
+            <span id="appearance-target" class="appearance-target">点</span>
+          </header>
+
+          <div class="appearance-body">
+            <div class="appearance-color-column">
+              <div id="appearance-swatches" class="appearance-swatches"></div>
+              <div class="appearance-wheel-wrap">
+                <canvas
+                  id="appearance-wheel"
+                  width="200"
+                  height="200"
+                  aria-label="颜色转盘"
+                ></canvas>
+              </div>
+            </div>
+
+            <div class="appearance-preview-column">
+              <div class="appearance-preview-frame">
+                <canvas id="appearance-preview-canvas" width="300" height="220"></canvas>
+              </div>
+              <span class="appearance-preview-label">预览 · 拖动旋转</span>
+            </div>
+
+            <div class="appearance-controls">
+              <div class="appearance-current">
+                <span id="appearance-preview" class="appearance-preview"></span>
+                <span id="appearance-hex" class="appearance-hex">#000000</span>
+              </div>
+
+              <label id="appearance-saturation-row" class="appearance-slider-row">
+                <span>饱和度</span>
+                <input id="appearance-saturation" type="range" min="0" max="100" step="1" />
+                <output id="appearance-saturation-value">100%</output>
+              </label>
+
+              <label id="appearance-point-row" class="appearance-slider-row">
+                <span>点大小</span>
+                <input id="appearance-point-size" type="range" min="0.5" max="2.8" step="0.05" />
+                <output id="appearance-point-value">1.0</output>
+              </label>
+
+              <label id="appearance-line-row" class="appearance-slider-row">
+                <span>线粗细</span>
+                <input id="appearance-line-width" type="range" min="0.4" max="2.8" step="0.05" />
+                <output id="appearance-line-value">1.0</output>
+              </label>
+
+              <label id="appearance-face-row" class="appearance-slider-row">
+                <span>面厚薄</span>
+                <input id="appearance-face-thickness" type="range" min="0" max="0.35" step="0.01" />
+                <output id="appearance-face-value">0.00</output>
+              </label>
+            </div>
+          </div>
+
+          <div class="appearance-actions">
+            <button id="appearance-cancel" type="button" class="secondary-button">取消</button>
+            <button id="appearance-apply" type="button" class="primary-button">应用</button>
+          </div>
         </div>
       </section>
 
@@ -166,9 +235,10 @@
                 <div><dt><kbd>空格</kbd></dt><dd>跳跃 / 上升</dd></div>
                 <div><dt><kbd>Shift</kbd></dt><dd>疾跑 / 下降</dd></div>
                 <div><dt><kbd>空格</kbd>×2</dt><dd>切换飞行 / 碰撞</dd></div>
+                <div><dt>斜面</dt><dd>可以站立和行走</dd></div>
                 <div><dt><kbd>Esc</kbd></dt><dd>释放鼠标</dd></div>
               </dl>
-              <p class="help-caption">飞行时 <kbd>W</kbd>/<kbd>S</kbd> 水平前后，<kbd>Space</kbd>/<kbd>Shift</kbd> 升降；俯仰角不改变飞行方向。</p>
+              <p class="help-caption">飞行时 <kbd>W</kbd>/<kbd>S</kbd> 水平前后，<kbd>Space</kbd>/<kbd>Shift</kbd> 升降；俯仰角不改变飞行方向。斜向平面可以站立，同时面本身是实体障碍，不能从正面、背面或下方穿过。地面行走时，高出脚底不超过 0.5 格的障碍会自动踏上。</p>
             </section>
             <section>
               <h3>快捷栏与背包</h3>
@@ -219,8 +289,11 @@
                 <div><dt><kbd>H</kbd></dt><dd>打开 / 关闭帮助</dd></div>
                 <div><dt>自动</dt><dd>保存到当前存档</dd></div>
                 <div><dt><kbd>Esc</kbd></dt><dd>暂停 / 返回主菜单</dd></div>
+                <div><dt>右键对象</dt><dd>选择工具下打开外观设置</dd></div>
+                <div><dt>格式刷</dt><dd>左键读取外观，右键应用到对象</dd></div>
               </dl>
-              <p class="help-caption">选中方块物品即进入建造模式：左键破坏，右键放置。</p>
+              <p class="help-caption">外观可设置颜色、点大小、线粗细和面厚薄；格式刷在背包的「编辑」分类里。面受光照影响，厚度大于 0 的面会投影，零厚度面只接收阴影。</p>
+              <p class="help-caption">选中方块物品即进入建造模式：左键破坏，右键在方块或平面上放置；平面上的位置会取整到整数格。</p>
             </section>
           </div>
           <p class="help-foot">
